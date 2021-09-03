@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+   <springProfile name="local">
+        <property resource="logback-local.properties"/>
+    </springProfile>
+    <springProfile name="prod">
+        <property resource="logback-prod.properties"/>
+    </springProfile>
+
+	<property name="LOG_LEVEL" value="${logging.mode}"/>
+	<property name="LOG_DIR" value="${logging.dir}"/>
+
+    <!--콘솔 로그-->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n
+            </Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!--파일 로그-->
+    <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/app.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+            </Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+   
+	<!--파일 로그 (Roling)-->
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/archived/app_roling.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        
+        <!-- 10MB가 넘어가면 새로운 압축파일이 생성 -->
+        <triggeringPolicy
+            class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+
+        <!-- 파일을 덮어쓰는 정책 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <FileNamePattern>${LOG_DIR}/archived/app_roling.%i.log.zip</FileNamePattern>
+            <!--
+                10MB단위로 로그 압축 파일이 생성된다. (1 ~ 10)
+                10개가 넘어가면 오래된순으로 덮어쓰기 됩니다.
+            -->
+            <MinIndex>1</MinIndex>
+            <MaxIndex>50</MaxIndex>
+        </rollingPolicy>
+    </appender>   
+   
+    <!--에러 로그--> 
+    <appender name="Error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>${LOG_DIR}/error/error.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+            </Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/error/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+    
+    <logger name="org.springframework.web" level="INFO" additivity="false">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="File"/>
+        <appender-ref ref="Error"/>
+    </logger>
+    
+    <logger name="org.apache.ibatis" level="DEBUG" additivity="false">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="RollingFile"/>
+        <appender-ref ref="Error"/>
+    </logger>
+
+    <logger name="jdbc" level="off"/>
+    <logger name="jdbc.sqlonly" level="off"/>
+    <logger name="jdbc.sqltiming" level="debug"/>
+    <logger name="jdbc.audit" level="off"/>
+    <logger name="jdbc.resultset" level="off"/>
+    <logger name="jdbc.resultsettable" level="debug"/>
+    <logger name="jdbc.connection" level="off"/>
+	
+    <!--
+        DEBUG 레벨 로그를 Console, File, RollingFile에 남깁니다.
+        ERROR 인 경우 error.log에 남깁니다.
+    -->
+    <root level="${LOG_LEVEL}">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="File"/>
+        <appender-ref ref="RollingFile"/>
+        <appender-ref ref="Error"/>        
+    </root>
+
+</configuration>
