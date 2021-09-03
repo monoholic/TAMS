@@ -31,3 +31,27 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+### Directories ###
+/build/
+/bin/
+target/
+.idea
+classes/
+META-INF/
+
+### Package Files ###
+*.jar
+*.war
+*.ear
+*.db
+
+### Files ###
+*.class
+Thumbs.db 
+Desktop.ini
+.svn
+*.tmp
+*.bak
+*.swp
