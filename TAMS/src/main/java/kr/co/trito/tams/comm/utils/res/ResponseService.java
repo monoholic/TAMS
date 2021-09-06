@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import kr.co.trito.tams.comm.utils.Message;
-import kr.co.trito.tams.comm.utils.SearchCondition;
+import kr.co.trito.tams.comm.utils.msg.Message;
+import kr.co.trito.tams.comm.utils.search.SearchCondition;
 
 @Service
 public class ResponseService {

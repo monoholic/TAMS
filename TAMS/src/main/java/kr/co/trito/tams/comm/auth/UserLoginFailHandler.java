@@ -17,7 +17,7 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
-import kr.co.trito.tams.comm.utils.Message;
+import kr.co.trito.tams.comm.utils.msg.Message;
 
 public class UserLoginFailHandler implements AuthenticationFailureHandler {
 

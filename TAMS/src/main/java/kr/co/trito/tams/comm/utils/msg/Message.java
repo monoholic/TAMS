@@ -1,4 +1,4 @@
-package kr.co.trito.tams.comm.utils;
+package kr.co.trito.tams.comm.utils.msg;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

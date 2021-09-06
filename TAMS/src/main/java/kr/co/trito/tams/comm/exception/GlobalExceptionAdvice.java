@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import kr.co.trito.tams.comm.utils.Message;
+import kr.co.trito.tams.comm.utils.msg.Message;
 import kr.co.trito.tams.comm.utils.res.Response;
 import kr.co.trito.tams.comm.utils.res.ResponseService;
 

@@ -4,7 +4,7 @@
 
 <mapper namespace="kr.co.trito.tams.web.sample.mapper.BoardMapper">
    
-	<select id="webCountBoard" resultType="int" parameterType="kr.co.trito.tams.comm.utils.SearchCondition">
+	<select id="webCountBoard" resultType="int" parameterType="kr.co.trito.tams.comm.utils.search.SearchCondition">
 		SELECT COUNT(*) FROM BOARD
 		WHERE 1=1
 		<if test="params.searchTitle != null">
@@ -12,7 +12,7 @@
 		</if>		
 	</select>   
 
-	<select id="webSelectBoard" resultType="kr.co.trito.tams.web.sample.dto.BoardDto" parameterType="kr.co.trito.tams.comm.utils.SearchCondition">
+	<select id="webSelectBoard" resultType="kr.co.trito.tams.web.sample.dto.BoardDto" parameterType="kr.co.trito.tams.comm.utils.search.SearchCondition">
 		SELECT id,
 		       title
 		FROM (

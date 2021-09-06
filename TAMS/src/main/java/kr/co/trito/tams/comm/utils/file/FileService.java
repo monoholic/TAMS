@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.trito.tams.comm.exception.FileHandleException;
-import kr.co.trito.tams.comm.utils.Message;
+import kr.co.trito.tams.comm.utils.msg.Message;
 
 @Service
 public class FileService {

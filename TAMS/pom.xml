@@ -158,13 +158,13 @@
 			<groupId>org.mariadb.jdbc</groupId> 
 			<artifactId>mariadb-java-client</artifactId> 
 		</dependency>					
-					
+
+		<!-- Mail -->
 		<dependency>
-		    <groupId>com.zaxxer</groupId>
-		    <artifactId>HikariCP</artifactId>
-		    <version>4.0.3</version>
-		</dependency>					
-					
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
