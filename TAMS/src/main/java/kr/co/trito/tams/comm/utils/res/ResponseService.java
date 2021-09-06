@@ -22,11 +22,22 @@ public class ResponseService {
 		return ResponseEntity.ok().body(pageResponse);
 	}
 	
+	public <T>ResponseEntity<GeneralResponse<T>> success(String code, String message){
+		return this.success(code, message, null);
+	}	
+	
 	public <T>ResponseEntity<GeneralResponse<T>> success(T data){
 		GeneralResponse<T> generalResponse = new GeneralResponse<>(data);
 		this.setSuccessMsg(generalResponse);
 		return ResponseEntity.ok().body(generalResponse);
 	}
+	
+	public <T>ResponseEntity<GeneralResponse<T>> success(String code, String message, T data){
+		GeneralResponse<T> generalResponse = new GeneralResponse<>(data);
+		generalResponse.setCode(code);
+		generalResponse.setMessage(message);
+		return ResponseEntity.ok().body(generalResponse);
+	}	
 
 	public <T>ResponseEntity<ApiResponse<T>> success(T data, int totalCount, int currentPage, int numOfRows){
 		ApiResponse<T> apiResponse = new ApiResponse<>(data, totalCount, currentPage, numOfRows);

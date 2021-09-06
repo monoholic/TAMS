@@ -74,7 +74,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 			.csrf().disable() // csrf 속성을 disable 시킨다. security가 적용된 애플리케이션에서 POST 방식으로 요청시 csrf값을 전송해야 하는데 그러지 않기위해서 disable
 			.authorizeRequests() 
-			.antMatchers("/loginView", "/signupView", "/user/regist", "/logout").permitAll() 
+			.antMatchers("/loginView", "/signupView", "/user/regist", "/logout", "/mail").permitAll() 
 			.antMatchers("/").hasRole("USER") 
 			.antMatchers("/admin").hasRole("ADMIN") 
 			.antMatchers("/sample").hasRole("MANAGER")
