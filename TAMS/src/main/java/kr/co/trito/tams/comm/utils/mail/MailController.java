@@ -18,6 +18,14 @@ public class MailController {
 	private final Message message;	
 	private final MailService mailService;
 	
+	/*
+	 * form-data 전송
+	 * subject : 제목
+	 * to : 수신 (array)
+	 * cc : 참조 (array)
+	 * content : 본문내용 (java 단에서 html 포맷으로 변경 처리)
+	 * file : 첨부파일 (array)
+	 * */
 	@PostMapping("/mail")
 	public ResponseEntity<? extends Response> mailSend(MailDto mailDto) {
 		try {
