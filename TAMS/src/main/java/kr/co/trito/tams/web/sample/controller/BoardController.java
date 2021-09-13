@@ -60,9 +60,9 @@ public class BoardController {
 		if(!StringUtils.isEmpty(searchTitle)) 
 			params.put("searchTitle", searchTitle);
 
-		SearchCondition condition = new SearchCondition(params);
+		SearchCondition condition = new SearchCondition(currentPage, numOfRows, params);
 		int total = boardService.webCountBoard(condition);                            
-		condition.pageSetup(total, Integer.parseInt(currentPage), Integer.parseInt(numOfRows));		
+		condition.pageSetup(total);		
 
 		List<BoardDto> list = boardService.webSelectBoard(condition);
 		return responseService.success(condition, list);
