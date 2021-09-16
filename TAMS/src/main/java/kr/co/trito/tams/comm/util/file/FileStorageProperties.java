@@ -1,4 +1,4 @@
-package kr.co.trito.tams.comm.utils.file;
+package kr.co.trito.tams.comm.util.file;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

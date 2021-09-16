@@ -1,12 +1,12 @@
-package kr.co.trito.tams.comm.utils.mail;
+package kr.co.trito.tams.comm.util.mail;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import kr.co.trito.tams.comm.utils.msg.Message;
-import kr.co.trito.tams.comm.utils.res.Response;
-import kr.co.trito.tams.comm.utils.res.ResponseService;
+import kr.co.trito.tams.comm.util.msg.Message;
+import kr.co.trito.tams.comm.util.res.Response;
+import kr.co.trito.tams.comm.util.res.ResponseService;
 import lombok.RequiredArgsConstructor;
 
 @Controller

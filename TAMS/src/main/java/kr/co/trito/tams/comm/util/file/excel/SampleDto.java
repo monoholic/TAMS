@@ -1,4 +1,4 @@
-package kr.co.trito.tams.comm.utils.file.excel;
+package kr.co.trito.tams.comm.util.file.excel;
 
 import org.apache.poi.ss.usermodel.Row;
 

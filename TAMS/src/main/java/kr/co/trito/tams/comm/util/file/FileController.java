@@ -1,4 +1,4 @@
-package kr.co.trito.tams.comm.utils.file;
+package kr.co.trito.tams.comm.util.file;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -26,12 +26,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import kr.co.trito.tams.comm.utils.file.excel.ExcelConstant;
-import kr.co.trito.tams.comm.utils.file.excel.ExcelReader;
-import kr.co.trito.tams.comm.utils.file.excel.SampleDto;
-import kr.co.trito.tams.comm.utils.res.GeneralResponse;
-import kr.co.trito.tams.comm.utils.res.Response;
-import kr.co.trito.tams.comm.utils.res.ResponseService;
+import kr.co.trito.tams.comm.util.file.excel.ExcelConstant;
+import kr.co.trito.tams.comm.util.file.excel.ExcelReader;
+import kr.co.trito.tams.comm.util.file.excel.SampleDto;
+import kr.co.trito.tams.comm.util.res.GeneralResponse;
+import kr.co.trito.tams.comm.util.res.Response;
+import kr.co.trito.tams.comm.util.res.ResponseService;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller

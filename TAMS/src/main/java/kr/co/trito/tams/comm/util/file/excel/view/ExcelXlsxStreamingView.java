@@ -1,4 +1,4 @@
-package kr.co.trito.tams.comm.utils.file.excel.view;
+package kr.co.trito.tams.comm.util.file.excel.view;
 
 import java.util.Map;
 
@@ -9,7 +9,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.view.document.AbstractXlsxStreamingView;
 
-import kr.co.trito.tams.comm.utils.file.excel.ExcelWriter;
+import kr.co.trito.tams.comm.util.file.excel.ExcelWriter;
 
 @Component("excelXlsxStreamingView")
 public class ExcelXlsxStreamingView extends AbstractXlsxStreamingView{

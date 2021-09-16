@@ -1,4 +1,4 @@
-package kr.co.trito.tams.comm.utils.file.excel;
+package kr.co.trito.tams.comm.util.file.excel;
 
 public interface ExcelConstant {
 	public final String FILE_NAME = "fileName";

@@ -1,9 +1,9 @@
-package kr.co.trito.tams.comm.utils.res;
+package kr.co.trito.tams.comm.util.res;
 
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
-import kr.co.trito.tams.comm.utils.search.SearchCondition;
+import kr.co.trito.tams.comm.util.search.SearchCondition;
 import lombok.Getter;
 import lombok.Setter;
 

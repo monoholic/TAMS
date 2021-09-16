@@ -1,4 +1,4 @@
-package kr.co.trito.tams.comm.utils.mail;
+package kr.co.trito.tams.comm.util.mail;
 
 import java.io.IOException;
 

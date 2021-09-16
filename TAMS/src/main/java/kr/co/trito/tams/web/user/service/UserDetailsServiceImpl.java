@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.exception.UserNotFoundException;
-import kr.co.trito.tams.comm.utils.msg.Message;
+import kr.co.trito.tams.comm.util.msg.Message;
 import kr.co.trito.tams.web.user.dto.UserDto;
 import kr.co.trito.tams.web.user.mapper.UserMapper;
 

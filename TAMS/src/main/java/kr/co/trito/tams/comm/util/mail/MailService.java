@@ -1,4 +1,4 @@
-package kr.co.trito.tams.comm.utils.mail;
+package kr.co.trito.tams.comm.util.mail;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;

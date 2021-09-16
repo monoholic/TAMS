@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import kr.co.trito.tams.comm.utils.search.SearchCondition;
+import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.sample.dto.BoardDto;
 import kr.co.trito.tams.web.sample.mapper.BoardMapper;
 import lombok.RequiredArgsConstructor;

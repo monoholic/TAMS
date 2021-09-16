@@ -11,9 +11,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
 
-import kr.co.trito.tams.comm.utils.file.excel.view.ExcelXlsView;
-import kr.co.trito.tams.comm.utils.file.excel.view.ExcelXlsxStreamingView;
-import kr.co.trito.tams.comm.utils.file.excel.view.ExcelXlsxView;
+import kr.co.trito.tams.comm.util.file.excel.view.ExcelXlsView;
+import kr.co.trito.tams.comm.util.file.excel.view.ExcelXlsxStreamingView;
+import kr.co.trito.tams.comm.util.file.excel.view.ExcelXlsxView;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

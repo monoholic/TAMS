@@ -1,4 +1,4 @@
-package kr.co.trito.tams.comm.utils.res;
+package kr.co.trito.tams.comm.util.res;
 
 import java.util.List;
 
@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import kr.co.trito.tams.comm.utils.msg.Message;
-import kr.co.trito.tams.comm.utils.search.SearchCondition;
+import kr.co.trito.tams.comm.util.msg.Message;
+import kr.co.trito.tams.comm.util.search.SearchCondition;
 
 @Service
 public class ResponseService {

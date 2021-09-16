@@ -1,4 +1,4 @@
-package kr.co.trito.tams.comm.utils.file;
+package kr.co.trito.tams.comm.util.file;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.trito.tams.comm.exception.FileHandleException;
-import kr.co.trito.tams.comm.utils.msg.Message;
+import kr.co.trito.tams.comm.util.msg.Message;
 
 @Service
 public class FileService {

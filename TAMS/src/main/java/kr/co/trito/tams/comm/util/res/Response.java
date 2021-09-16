@@ -1,4 +1,4 @@
-package kr.co.trito.tams.comm.utils.res;
+package kr.co.trito.tams.comm.util.res;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

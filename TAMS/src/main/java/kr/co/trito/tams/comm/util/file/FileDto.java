@@ -1,4 +1,4 @@
-package kr.co.trito.tams.comm.utils.file;
+package kr.co.trito.tams.comm.util.file;
 
 import lombok.Builder;
 import lombok.Getter;

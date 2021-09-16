@@ -1,4 +1,4 @@
-package kr.co.trito.tams.comm.utils.search;
+package kr.co.trito.tams.comm.util.search;
 
 import java.util.Map;
 

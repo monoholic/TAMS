@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import kr.co.trito.tams.comm.utils.msg.Message;
+import kr.co.trito.tams.comm.util.msg.Message;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
