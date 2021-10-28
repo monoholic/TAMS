@@ -13,11 +13,14 @@
 	
 		<!-- [menu] 영역 시작 -->
 		<div th:replace="layout/fragments/menu :: menuFragment"></div>
-		<!-- [menu] 영역 끝 -->
+
 		
 		<!-- [content] 영역 시작 -->
-		<div layout:fragment="content"></div>
-		<!-- [content] 영역 끝 -->
+		<div id="container">
+			<div id="contents">
+				<div layout:fragment="content"></div>
+			</div>
+		</div>
 	
 	</body>
 </html>

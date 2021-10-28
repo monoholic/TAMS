@@ -35,8 +35,163 @@
 	</script> 
 </th:block>
 
-<div layout:fragment="content" style="width: 100%; height:100px; background: #f2d299;">
-	<h2>Sample Page</h2> 
-</div>
+	<div layout:fragment="content">
+		<!-- contents_head -->
+		<div class="bc">Home &gt; Menu &gt; Menu 2depth</div>
+		<h3>화면 타이틀</h3>
+		<!-- //contents_head -->
 
+		<!-- search -->
+		<div class="srch_wrap single">
+			<label for="Period">Year</label>
+			<select style="width:100px;">
+			<option>2020</option>
+			</select>
+			<!-- search_button -->
+			<a href="#;" class="btn_srch">Search</a>
+			<!-- //search_button -->
+		</div>
+		<!-- //search -->
+
+		<!-- list -->
+		<div class="list_wrap">
+			<!-- list_head -->
+			<div class="list_head">
+							<div class="result">Results : 0,000</div>
+							<!-- list_button -->
+							<div class="button">
+											<a class="btn_list_rd">신규 등록</a>
+											<a class="btn_list">다운로드</a>
+							</div>
+							<!-- list_button -->
+			</div>
+			<!-- //list_head -->
+			<!-- list_table -->
+			<table class="list_table">
+				<colgroup>
+					<col width="30px"/>
+					<col width="100px"/>
+					<col width="200px"/>
+					<col width="100px"/>
+					<col width="100px"/>
+					<col width="100px"/>
+					<col width="100px"/>
+					<col width="100px"/>
+					<col width=""/>
+				</colgroup>
+				<thead>
+					<tr>
+						<th><input type="checkbox" name="checkbox" /></th>
+						<th>업체명</th>
+						<th>로얼티 레포트 대상 IP</th>
+						<th>사업부</th>
+						<th>최종확정분기</th>
+						<th>정산상태</th>
+						<th>사업부 적용여부</th>
+						<th>로얼티 확정</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="tc"><input name="checkbox2" type="checkbox" checked="checked" /></td>
+						<td>ADI</td>
+						<td>Display Solution</td>
+						<td class="tc">Foundry</td>
+						<td class="tc">2021-2Q</td>
+						<td class="tc"><img src="../images/common/ico_point_green.png" alt="" title=""></td>
+						<td class="tc"><span class="green">정상</span></td>
+						<td class="tc">000,000 <span class="rgst_save"><a href="">저장</a></span></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+						<td></td>
+						<td></td>
+						<td class="tc"></td>
+						<td class="tc">&nbsp;</td>
+						<td class="tc"><img src="../images/common/ico_point_red.png" alt="" title=""></td>
+						<td class="tc"><span class="red">오류</span></td>
+						<td class="tc">000,000 <span class="rgst_cancel">오류</span></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+						<td></td>
+						<td></td>
+						<td class="tc"></td>
+						<td class="tc">&nbsp;</td>
+						<td class="tc"><img src="../images/common/ico_point_yellow.png" alt="" title=""></td>
+						<td class="tc"><span class="yellow">주위</span></td>
+						<td class="tc">000,000 <span class="rgst_processing"><a href="">처리중</a></span></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+						<td></td>
+						<td></td>
+						<td class="tc"></td>
+						<td class="tc">&nbsp;</td>
+						<td class="tc"><img src="../images/common/ico_point_gray.png" alt="" title=""></td>
+						<td class="tc"><span class="gray">상태</span></td>
+						<td class="tc">000,000 <span class="rgst_reject"><a href="">미적용</a></span></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+						<td></td>
+						<td></td>
+						<td class="tc"></td>
+						<td class="tc">&nbsp;</td>
+						<td class="tc"></td>
+						<td class="tc"></td>
+						<td class="tc">000,000 <span class="rgst_complete">확정</span></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+						<td></td>
+						<td></td>
+						<td class="tc"></td>
+						<td class="tc">&nbsp;</td>
+						<td class="tc"></td>
+						<td class="tc"></td>
+						<td class="tc">000,000</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+						<td></td>
+						<td></td>
+						<td class="tc"></td>
+						<td class="tc">&nbsp;</td>
+						<td class="tc"></td>
+						<td class="tc"></td>
+						<td class="tc"></td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- //list_table -->
+		</div>
+		<!-- //list -->
+		<!-- pagination -->
+		<div class="paginate">
+			<a class="first" href="#;"><img title="첫페이지" alt="첫페이지" src="../images/common/btn_pn_first.gif"></a>
+			<a class="pre" href="#;"><img title="이전페이지" alt="이전페이지" src="../images/common/btn_pn_pre.gif"></a>
+			<a href="#;">1</a>
+			<strong>2</strong>
+			<a href="#;">3</a>
+			<a href="#;">4</a>
+			<a href="#;">5</a>
+			<a href="#;">6</a>
+			<a href="#;">7</a>
+			<a href="#;">8</a>
+			<a href="#;">9</a>
+			<a href="#;">10</a>
+			<a class="next" href="#;"><img title="다음페이지" alt="다음페이지" src="../images/common/btn_pn_next.gif"></a>
+			<a class="last" href="#;"><img title="마지막페이지" alt="마지막페이지" src="../images/common/btn_pn_last.gif"></a>
+		</div>
+		<!-- //pagination -->		
+	</div>
 </html>
