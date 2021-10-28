@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html 	lang="ko"
+     	xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="headFragment">
+	<title layout:title-pattern="TAMS-$CONTENT_TITLE"></title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+	<!-- 파비콘 에러 방지 -->
+  	<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  	
+  	<!-- 공통으로 쓰이는 css파일을 넣는다.-->
+  	<link rel="stylesheet" th:href="@{css/common.css}">
+  	<link rel="stylesheet" th:href="@{css/dropdown.css}">  	
+  	<link rel="stylesheet" th:href="@{css/style.css}">
+
+	<!-- 개별적인 css -->
+	<th:block layout:fragment="css"></th:block>
+	
+	<!-- 공통으로 쓰이는 js 파일을 넣는다.-->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>	
+  	<script th:src="@{js/common.js}"></script>
+	
+	
+  	<!-- 컨텐츠페이지의 스크립트 영역이 들어감 -->
+  	<th:block layout:fragment="script"></th:block>	
+</head>
+
+</html>

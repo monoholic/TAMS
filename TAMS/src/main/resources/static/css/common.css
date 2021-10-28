@@ -1,0 +1,52 @@
+@charset "utf-8";
+@import 'dropdown.css';
+/* Samsung UI Standardization Team */
+html,body{height:100%;background:#f8f8f8;overflow:auto;}
+body,p,h1,h2,h3,h4,h5,h6,ul,ol,li,dl,dt,dd,table,th,td,form,fieldset,legend,input,textarea,button,select{margin:0;padding:0;}
+body{font-family:'malgun gothic','�룍��','dotum','援대┝';font-size:12px;color:#444;}
+input,textarea,select,button,table{font-size:12px;}
+input,textarea,select,button{font-family:'malgun gothic','�룍��','dotum','援대┝';}
+dt,dd,th,td{line-height:1.4em;font-weight:normal;text-align:left;}
+td div{line-height:normal;}
+img,fieldset{border:none;}
+ul,ol{list-style:none;}
+em,address{font-style:normal;}
+a{color:#000;text-decoration:none;}
+td a{color:#408fd9;}
+td a:hover{color:#2e75b7;}
+a:hover,a:active,a:focus{color:#2e7dab;}
+img{vertical-align:top;}
+label input{margin-right:3px;vertical-align:middle;}
+td input,td select,td img{vertical-align:middle;}
+
+
+#wrap{min-width:1200px;}
+
+/* gnb */
+#gnb{position:relative;height:63px;margin:0 auto;z-index:100;background:#1e346e;}
+#gnb h1{position:absolute;top:18px;left:15px;}
+
+header.gnb_collapsed{height:35px!important;}
+header.gnb_collapsed h1,header.gnb_collapsed .function{display:none;}
+header.gnb_collapsed .dropdown{top:0!important;}
+
+/* function */
+.function{z-index:110;position:absolute;top:22px;right:20px;font-size:12px;color:#5f7199;}
+.function a{position:relative;color:#95a0a2;padding:0 3px;top:2px;}
+.function a .tooltip{position:absolute;top:28px;left:50%;transform:translateX(-50%);display:none}
+.function a:hover .tooltip{background:#f0f0f0;border-radius:2px;display:block;height:15px;padding:2px 5px 4px;white-space:nowrap;text-indent:0!important;color:#111;border-right:1px solid #2f3942;border-bottom:1px solid #2f3942;border-left:1px solid #2f3942;}
+.function a:hover .tooltip:after{content:'';position:absolute;bottom:100%;left:50%;margin-left:-6px;width:0;height:0;border-bottom:6px solid #f0f0f0;border-right:6px solid transparent;border-left:6px solid transparent}
+.function a:hover{color:#fff}
+.function a.user span{padding:0 5px;cursor:default;color:#d0d1d4;}
+.function .confidential{height:11px;padding:2px 5px; background:#2676ef; color:#d9e3ec; vertical-align:middle;border:1px solid #2676ef;border-radius:2px;}
+.function a.setting{background:url(../images/common/icon_setting.png) no-repeat 0px 0px;display:inline-block;text-indent:-1000em;width:16px;height:16px}
+.function .ver_line{background:url(../images/common/ver_line.png) no-repeat 0px 0px;display:inline-block;text-indent:-1000em;width:11px;height:16px}
+
+/* footer */
+footer{background:url(../images/common/logo_trito.png) no-repeat 98% 10px;clear:both;padding:10px 0 10px 0px;font-size:.95em;color:#999; border-top:0px solid #f1f1f1;}
+footer p{padding:2px 0 5px 0;font-size:.95em;line-height:18px;}
+footer span.link{color:#ccc;margin-left:0px;}
+footer span.link a{margin:0 3px;color:#666;font-weight:normal}
+footer span.link a:hover{color:#2c6279;text-decoration:underline;}
+footer span.contact{color:#333;}
+footer span.contact strong{margin-left:3px;padding-left:7px;font-weight:normal}

@@ -15,6 +15,7 @@ import kr.co.trito.tams.comm.util.file.excel.view.ExcelXlsView;
 import kr.co.trito.tams.comm.util.file.excel.view.ExcelXlsxStreamingView;
 import kr.co.trito.tams.comm.util.file.excel.view.ExcelXlsxView;
 import lombok.RequiredArgsConstructor;
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 @RequiredArgsConstructor
 @Configuration
@@ -25,8 +26,16 @@ public class WebMvcConfig  implements WebMvcConfigurer{
     private final ExcelXlsxStreamingView excelXlsxStreamingView;			
 	
 	private static final String[] CLASSPATH_RESOURCE_LOCATIONS = { 
-			"classpath:/static/", "classpath:/public/", "classpath:/", "classpath:/resources/", "classpath:/META-INF/resources/", "classpath:/META-INF/resources/webjars/",
-			"\"/webjars/**\"", "swagger-ui.html"	};
+			 "classpath:/"
+			, "classpath:/static/**"
+			, "classpath:/templates/**"
+			, "classpath:/resources/"			
+			, "classpath:/public/"
+			, "classpath:/META-INF/resources/"
+			, "classpath:/META-INF/resources/webjars/"
+			, "\"/webjars/**\""
+			, "swagger-ui.html"	
+	};
 	
 	
 	@Bean
@@ -51,6 +60,12 @@ public class WebMvcConfig  implements WebMvcConfigurer{
     	//응답 시 따로 정해진 결과 페이지가 없는 기술을 사용하려면 반드시 BeanNameViewResolver 필요
     	return new BeanNameViewResolver();
     }     
+    
+    //thymeleaf layout
+	@Bean
+	public LayoutDialect layoutDialect() {
+	    return new LayoutDialect();
+	}    
     
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

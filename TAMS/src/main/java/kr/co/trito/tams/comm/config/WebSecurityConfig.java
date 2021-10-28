@@ -57,33 +57,37 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web
         	.ignoring()
         	.antMatchers(
-        			"/swagger**"
+        			 "/swagger**"
 	                ,"/swagger/**" 
 	                ,"/swagger-resources/**"
 	                ,"/webjars/**"                		
                     ,"/favicon.ico"
 	        		,"/v2/api-docs"
 	        		,"/v2/api-docs/**"
-	        		,"/resources/**"
+	        		,"/resources/**"	
+	        		,"/static/**"
+	        		,"/css/**"
+	        		,"/js/**"	        		
+	        		,"/images/**"	        		
 	        );
     }
     
     
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+
 		http
 			.csrf().disable() // csrf 속성을 disable 시킨다. security가 적용된 애플리케이션에서 POST 방식으로 요청시 csrf값을 전송해야 하는데 그러지 않기위해서 disable
 			.authorizeRequests() 
-			.antMatchers("/loginView", "/signupView", "/user/regist", "/logout", "/mail").permitAll() 
-			.antMatchers("/").hasRole("USER") 
-			.antMatchers("/admin").hasRole("ADMIN") 
-			.antMatchers("/sample").hasRole("MANAGER")
-			.anyRequest().authenticated() // 나머지 요청들은 권한의 종류에 상관 없이 권한이 있어야 접근 가능
-			//.anyRequest().permitAll()
-		
+			.antMatchers("/user/login", "/user/signup", "/user/regist", "/logout", "/mail", "/test").permitAll()
+			//.antMatchers("/").hasRole("USER") 
+			//.antMatchers("/admin").hasRole("ADMIN") 
+			//.anyRequest().authenticated() // 나머지 요청들은 권한의 종류에 상관 없이 권한이 있어야 접근 가능
+			.anyRequest().permitAll()
+
 	        .and()
 	        .formLogin() 
-	            .loginPage("/loginView")
+	            .loginPage("/user/login")
 	            .usernameParameter("email")
 	            .passwordParameter("password")
 	            .successHandler(userLoginSuccessHandler())
@@ -92,7 +96,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	        .and()
 	        .logout()
 	        	.logoutUrl("/logout")
-	        	.logoutSuccessUrl("/loginView") 
+	        	.logoutSuccessUrl("/user/login") 
 	        	.invalidateHttpSession(true)	
 			
 	        .and()
