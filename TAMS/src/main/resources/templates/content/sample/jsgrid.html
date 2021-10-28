@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/default">
+
+<head>
+    <title>Sample Page</title>
+</head>
+
+<!-- css -->
+<th:block layout:fragment="css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/jsgrid.css" />
+	<link rel="stylesheet" href="css/theme.css" />
+</th:block>
+
+<th:block layout:fragment="script">
+	<script src="js/jsgrid/db.js"></script>
+	
+    <script src="js/jsgrid/jsgrid.core.js"></script>
+    <script src="js/jsgrid/jsgrid.load-indicator.js"></script>
+    <script src="js/jsgrid/jsgrid.load-strategies.js"></script>
+    <script src="js/jsgrid/jsgrid.sort-strategies.js"></script>
+    <script src="js/jsgrid/jsgrid.field.js"></script>
+    <script src="js/jsgrid/fields/jsgrid.field.text.js"></script>
+    <script src="js/jsgrid/fields/jsgrid.field.number.js"></script>
+    <script src="js/jsgrid/fields/jsgrid.field.select.js"></script>
+    <script src="js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
+    <script src="js/jsgrid/fields/jsgrid.field.control.js"></script>	
+	
+    <script>
+        $(function() {
+
+            $("#jsGrid").jsGrid({
+                height: "500",
+                width: "100%",
+                filtering: true,
+                editing: true,
+                inserting: true,
+                sorting: true,
+                paging: true,
+                autoload: true,
+                pageSize: 15,
+                pageButtonCount: 5,
+                deleteConfirm: "Do you really want to delete the client?",
+                controller: db,
+                fields: [
+                    { name: "Name", type: "text", width: 150 },
+                    { name: "Age", type: "number", width: 50 },
+                    { name: "Address", type: "text", width: 200 },
+                    { name: "Country", type: "select", items: db.countries, valueField: "Id", textField: "Name" },
+                    { name: "Married", type: "checkbox", title: "Is Married", sorting: false },
+                    { type: "control" }
+                ]
+            });
+
+        });
+    </script>	
+	
+</th:block>
+
+	<div layout:fragment="content">
+		<!-- contents_head -->
+		<div class="bc">Home &gt; Menu &gt; Menu 2depth</div>
+		<h3>화면 타이틀</h3>
+		<!-- //contents_head -->
+
+		<!-- search -->
+		<div class="srch_wrap single">
+			<label for="Period">Year</label>
+			<select style="width:100px;">
+			<option>2020</option>
+			</select>
+			<!-- search_button -->
+			<a href="#;" class="btn_srch">Search</a>
+			<!-- //search_button -->
+		</div>
+		<!-- //search -->
+
+		<!-- list -->
+		<div id="jsGrid"></div>
+			
+	</div>
+</html>

@@ -25,7 +25,12 @@ public class IndexController {
     @GetMapping(value = "/sample")
     public String sample(Authentication authentication){
         return "/content/sample/sample";
-    }            
+    }
+    
+    @GetMapping(value = "/jsgrid")
+    public String jsgrid(Authentication authentication){
+        return "/content/sample/jsgrid";
+    }                
     
     
     @GetMapping(value = "/user/login")
