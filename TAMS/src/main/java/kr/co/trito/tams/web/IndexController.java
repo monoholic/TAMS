@@ -31,7 +31,11 @@ public class IndexController {
     public String jsgrid(Authentication authentication){
         return "/content/sample/jsgrid";
     }                
-    
+
+    @GetMapping(value = "/ex_source")
+    public String source(){
+        return "/content/sample/source";
+    } 
     
     @GetMapping(value = "/user/login")
     public String loginView(){

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>18-날짜+기간 달력</title>
+<link rel="stylesheet" href="../css/style.css" />
+<!--[if IE]> <script src="../js/html5.js"></script> <![endif]-->
+</head>
+<body>
+<div id="wrap">
+				<header id="gnb">
+				<!-- header -->
+								<h1><a href="#;"><img src="../images/common/logo_TAMS.png" alt="TRiTo Asset Management System"></a></h1>
+
+
+								<!-- dropdown_menu -->
+								<div class="vertical2">
+												<ul class="dropdown">
+																<li class="first"><a href="#;">자산등록</a>
+
+<!-- menu1_dropdown -->
+<div class="dropdown_depth" style="width:140px;"><!-- [D] Style의 넓이 : 140(넓이)*Coulmn(group)수, 넓이는 css에서 바꿀 수 있습니다.-->
+				<ul class="group">
+								<li><a href="#">자산등록Y</a>
+												<ul>
+																<li><a href="#">자산등록 Menu</a></li>
+																<li><a href="#">자산등록 Menu</a></li>
+																<li><a href="#">자산등록 Menu</a></li>
+																<li><a href="#">자산등록 Menu</a></li>
+												</ul>
+								</li>
+				</ul>
+				<ul class="group">
+        <li><a href="#">자산등록</a>
+												<ul>
+																<li><a href="#">자산등록 Menu</a></li>
+																<li><a href="#">자산등록 Menu</a></li>
+																<li><a href="#">자산등록 Menu</a></li>
+																<li><a href="#">자산등록 Menu</a></li>
+												</ul>
+								</li>
+				</ul>
+</div>
+<!-- //menu1_dropdown -->
+
+																</li>
+																<li><a href="#;">자산변동</a>
+
+<!-- menu1_dropdown -->
+<div class="dropdown_depth" style="width:140px;"><!-- [D] Style의 넓이 : 140(넓이)*Coulmn(group)수, 넓이는 css에서 바꿀 수 있습니다.-->
+				<ul class="group">
+								<li><a href="#">자산변동</a>
+												<ul>
+																<li><a href="#">자산변동 Menu</a></li>
+																<li><a href="#">자산변동 Menu</a></li>
+																<li><a href="#">자산변동 Menu</a></li>
+																<li><a href="#">자산변동 Menu</a></li>
+												</ul>
+								</li>
+				</ul>
+				<ul class="group">
+        <li><a href="#">자산변동</a>
+												<ul>
+																<li><a href="#">자산변동 Menu</a></li>
+																<li><a href="#">자산변동 Menu</a></li>
+																<li><a href="#">자산변동 Menu</a></li>
+																<li><a href="#">자산변동 Menu</a></li>
+												</ul>
+								</li>
+				</ul>
+</div>
+<!-- //menu1_dropdown -->
+
+																</li>
+																<li><a href="#;">자산유휴</a></li>
+																<li><a href="#;">자산처분</a></li>
+																<li><a href="#;">자산현황</a></li>
+																<li><a href="#;">자산실사</a></li>
+																<li><a href="#;">기준정보관리</a></li>
+																<li><a href="#;">시스템관리</a></li>
+												</ul>
+								</div>
+								<!-- //dropdown_menu -->
+
+								<!-- function -->
+								<div class="function">
+												<a href="#;" class="setting">Setting</a>
+												<span class="">l</span>
+												<a href="#;" class="user"><strong>TAMS 관리자</strong> <em class="tooltip">SI사업팀</em></a>
+												<span class="confidential">Confidential</span>
+								</div>
+								<!-- //function -->
+
+				<!-- //header -->
+				</header>
+
+				<!-- container -->
+				<div id="container">
+				<!-- contents -->
+				<div id="contents">
+
+								<!-- contents_head -->
+								<h3>기간 / 날짜 달력</h3>
+								<!-- //contents_head -->
+
+								<!-- detail_table -->
+												<table class="detail_table form_s">
+																<colgroup>
+																<col style="width:15%" />
+																<col />
+																<col style="width:15%" />
+																<col style="width:35%" />
+																</colgroup>
+																<tr>
+																				<th>기간</th>
+																				<td>
+																								<div class="form_wrap_date"><input type="date" style="width:80px;" value="2021-02-19"> ~ <input type="date" style="width:80px;" value="2021-03-22"> <a href="#;"><img src="../images/common/ico_date.png" alt="Calendar" title="Calendar"></a></div>
+
+<div class="cal_both" style="display:block"><!--[D] Default로 display:none; 되어있음 -->
+<a href="#;" class="layer_close">캘린더 닫기</a>
+				<!-- calendar layer -->
+				<div class="cal_wrap">
+								<!-- select date -->
+								<div class="cal_date">
+												<img src="../images/common/btn_pre1.png" alt="이전달" title="이전달 선택">
+												<select>
+																<option value=2016>2016</option>
+																<option value=2017>2017</option>
+																<option value=2018>2018</option>
+																<option value=2019>2019</option>
+																<option value=2020>2020</option>
+																<option value=2021 selected>2021</option>
+																<option value=2022>2022</option>
+												</select>
+												<select>
+																<option>1</option>
+																<option selected>2</option>
+																<option>3</option>
+																<option>4</option>
+																<option>5</option>
+																<option>6</option>
+																<option>7</option>
+																<option>8</option>
+																<option>9</option>
+																<option>10</option>
+																<option>11</option>
+																<option>12</option>
+												</select>
+												<img src="../images/common/btn_next1.png" alt="다음달" title="다음달 선택">
+								</div>
+								<!-- //select date -->
+								<!-- date -->
+								<table class="cal_table">
+												<colgroup>
+												<col style="width:15%">
+												<col style="width:14%">
+												<col style="width:14%">
+												<col style="width:14%">
+												<col style="width:14%">
+												<col style="width:14%">
+												<col style="width:15%">
+												</colgroup>
+												<tr>
+																<th>Sun</th>
+																<th>Mon</th>
+																<th>Tue</th>
+																<th>Wed</th>
+																<th>Thu</th>
+																<th>Fri</th>
+																<th>Sat</th>
+												</tr>
+												<tr>
+																<td class="pre weekend">31</td><!-- [D]previous monthk, weekend -->
+																<td>1</td>
+																<td>2</td>
+																<td>3</td>
+																<td>4</td>
+																<td>5</td><!-- [D]selected date -->
+																<td>6</td>
+												</tr>
+												<tr>
+																<td class="weekend">7</td>
+																<td>8</td>
+																<td>9</td>
+																<td>10</td>
+																<td>11</td>
+																<td>12</td>
+																<td>13</td>
+												</tr>
+												<tr>
+																<td class="weekend">14</td>
+																<td>15</td>
+																<td>16</td>
+																<td>17</td>
+																<td>18</td>
+																<td class="select">19</td><!-- [D] today -->
+																<td>20</td>
+												</tr>
+												<tr>
+																<td class="weekend">21</td>
+																<td>22</td>
+																<td>23</td>
+																<td>24</td>
+																<td>25</td>
+																<td>26</td>
+																<td>27</td>
+												</tr>
+												<tr>
+																<td>28</td>
+																<td class="next">1</td><!-- [D]next month -->
+																<td class="next">2</td>
+																<td class="next">3</td>
+																<td class="next">4</td>
+																<td class="next">5</td>
+																<td class="next">6</td>
+												</tr>
+								</table>
+								<!-- //date -->
+				</div>
+				<div class="cal_wrap cal_to">
+								<!-- select date -->
+								<div class="cal_date">
+												<img src="../images/common/btn_pre1.png" alt="이전달" title="이전달 선택">
+												<select>
+																<option value=2016>2016</option>
+																<option value=2017>2017</option>
+																<option value=2018>2018</option>
+																<option value=2019>2019</option>
+																<option value=2020>2020</option>
+																<option value=2021 selected>2021</option>
+																<option value=2022>2022</option>
+												</select>
+												<select>
+																<option>1</option>
+																<option>2</option>
+																<option selected>3</option>
+																<option>4</option>
+																<option>5</option>
+																<option>6</option>
+																<option>7</option>
+																<option>8</option>
+																<option>9</option>
+																<option>10</option>
+																<option>11</option>
+																<option>12</option>
+												</select>
+												<img src="../images/common/btn_next1.png" alt="다음달" title="다음달 선택">
+								</div>
+								<!-- //select date -->
+								<!-- date -->
+								<table class="cal_table">
+												<colgroup>
+												<col style="width:15%">
+												<col style="width:14%">
+												<col style="width:14%">
+												<col style="width:14%">
+												<col style="width:14%">
+												<col style="width:14%">
+												<col style="width:15%">
+												</colgroup>
+												<tr>
+																<th>Sun</th>
+																<th>Mon</th>
+																<th>Tue</th>
+																<th>Wed</th>
+																<th>Thu</th>
+																<th>Fri</th>
+																<th>Sat</th>
+												</tr>
+												<tr>
+																<td class="pre weekend">28</td><!-- [D]previous monthk, weekend -->
+																<td>1</td>
+																<td>2</td>
+																<td>3</td>
+																<td>4</td>
+																<td class="select">5</td><!-- [D]selected date -->
+																<td>6</td>
+												</tr>
+												<tr>
+																<td class="weekend">7</td>
+																<td>8</td>
+																<td>9</td>
+																<td>10</td>
+																<td>11</td>
+																<td>12</td>
+																<td>13</td>
+												</tr>
+												<tr>
+																<td class="weekend">14</td>
+																<td>15</td>
+																<td>16</td>
+																<td>17</td>
+																<td>18</td>
+																<td class="today" title="Today">19</td><!-- [D] today -->
+																<td>20</td>
+												</tr>
+												<tr>
+																<td class="weekend">21</td>
+																<td>22</td>
+																<td>23</td>
+																<td>24</td>
+																<td>25</td>
+																<td>26</td>
+																<td>27</td>
+												</tr>
+												<tr>
+																<td>28</td>
+																<td>29</td>
+																<td>30</td>
+																<td>31</td>
+																<td class="next">1</td><!-- [D]next month -->
+																<td class="next">2</td>
+																<td class="next">3</td>
+												</tr>
+								</table>
+								<!-- //date -->
+				</div>
+				<!-- //calendar layer -->
+</div>
+
+
+																				</td>
+																				<th>날짜</th>
+																				<td>
+																								<div class="form_wrap_date"><input type="date" style="width:80px;" value="2021-03-05"> <a href="#;"><img src="../images/common/ico_date.png" alt="Calendar" title="Calendar"></a></div>
+
+<!-- calendar layer -->
+<div class="cal_wrap" style="display:block"><!--[D] Default로 display:none; 되어있음 -->
+				<a href="#;" class="layer_close">캘린더 닫기</a>
+				<!-- select date -->
+				<div class="cal_date">
+								<img src="../images/common/btn_pre1.png" alt="이전달" title="이전달 선택">
+								<select>
+												<option value=2016>2016</option>
+												<option value=2017>2017</option>
+												<option value=2018>2018</option>
+												<option value=2019>2019</option>
+												<option value=2020>2020</option>
+												<option value=2021 selected>2021</option>
+												<option value=2022>2022</option>
+								</select>
+								<select>
+												<option>1</option>
+												<option>2</option>
+												<option selected>3</option>
+												<option>4</option>
+												<option>5</option>
+												<option>6</option>
+												<option>7</option>
+												<option>8</option>
+												<option>9</option>
+												<option>10</option>
+												<option>11</option>
+												<option>12</option>
+								</select>
+								<img src="../images/common/btn_next1.png" alt="다음달" title="다음달 선택">
+				</div>
+				<!-- //select date -->
+				<!-- date -->
+				<table class="cal_table">
+								<colgroup>
+								<col style="width:15%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:15%">
+								</colgroup>
+								<tr>
+												<th>Sun</th>
+												<th>Mon</th>
+												<th>Tue</th>
+												<th>Wed</th>
+												<th>Thu</th>
+												<th>Fri</th>
+												<th>Sat</th>
+								</tr>
+								<tr>
+												<td class="pre weekend">28</td><!-- [D]previous monthk, weekend -->
+												<td>1</td>
+												<td>2</td>
+												<td>3</td>
+												<td>4</td>
+												<td class="select">5</td><!-- [D]selected date -->
+												<td>6</td>
+								</tr>
+								<tr>
+												<td class="weekend">7</td>
+												<td>8</td>
+												<td>9</td>
+												<td>10</td>
+												<td>11</td>
+												<td>12</td>
+												<td>13</td>
+								</tr>
+								<tr>
+												<td class="weekend">14</td>
+												<td>15</td>
+												<td>16</td>
+												<td>17</td>
+												<td>18</td>
+												<td class="today" title="Today">19</td><!-- [D] today -->
+												<td>20</td>
+								</tr>
+								<tr>
+												<td class="weekend">21</td>
+												<td>22</td>
+												<td>23</td>
+												<td>24</td>
+												<td>25</td>
+												<td>26</td>
+												<td>27</td>
+								</tr>
+								<tr>
+												<td>28</td>
+												<td>29</td>
+												<td>30</td>
+												<td>31</td>
+												<td class="next">1</td><!-- [D]next month -->
+												<td class="next">2</td>
+												<td class="next">3</td>
+								</tr>
+				</table>
+				<!-- //date -->
+</div>
+<!-- //calendar layer -->
+
+
+
+																				</td>
+																</tr>
+												</table>
+												<!-- //detail_table -->
+
+
+				</div>
+				<!-- contents -->
+				</div>
+				<!-- //container -->
+
+</div>
+</body>
+</html>

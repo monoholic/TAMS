@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>19-게시판 등록</title>
+<link rel="stylesheet" href="../css/style.css" />
+<!--[if IE]> <script src="../js/html5.js"></script> <![endif]-->
+</head>
+<body>
+<div id="wrap">
+				<header id="gnb">
+				<!-- header -->
+								<h1><a href="#;"><img src="../images/common/logo_TAMS.png" alt="TRiTo Asset Management System"></a></h1>
+
+
+								<!-- dropdown_menu -->
+								<div class="vertical2">
+												<ul class="dropdown">
+																<li class="first"><a href="#;">자산등록</a>
+
+<!-- menu1_dropdown -->
+<div class="dropdown_depth" style="width:140px;"><!-- [D] Style의 넓이 : 140(넓이)*Coulmn(group)수, 넓이는 css에서 바꿀 수 있습니다.-->
+				<ul class="group">
+								<li><a href="#">자산등록Y</a>
+												<ul>
+																<li><a href="#">자산등록 Menu</a></li>
+																<li><a href="#">자산등록 Menu</a></li>
+																<li><a href="#">자산등록 Menu</a></li>
+																<li><a href="#">자산등록 Menu</a></li>
+												</ul>
+								</li>
+				</ul>
+				<ul class="group">
+        <li><a href="#">자산등록</a>
+												<ul>
+																<li><a href="#">자산등록 Menu</a></li>
+																<li><a href="#">자산등록 Menu</a></li>
+																<li><a href="#">자산등록 Menu</a></li>
+																<li><a href="#">자산등록 Menu</a></li>
+												</ul>
+								</li>
+				</ul>
+</div>
+<!-- //menu1_dropdown -->
+
+																</li>
+																<li><a href="#;">자산변동</a>
+
+<!-- menu1_dropdown -->
+<div class="dropdown_depth" style="width:140px;"><!-- [D] Style의 넓이 : 140(넓이)*Coulmn(group)수, 넓이는 css에서 바꿀 수 있습니다.-->
+				<ul class="group">
+								<li><a href="#">자산변동</a>
+												<ul>
+																<li><a href="#">자산변동 Menu</a></li>
+																<li><a href="#">자산변동 Menu</a></li>
+																<li><a href="#">자산변동 Menu</a></li>
+																<li><a href="#">자산변동 Menu</a></li>
+												</ul>
+								</li>
+				</ul>
+				<ul class="group">
+        <li><a href="#">자산변동</a>
+												<ul>
+																<li><a href="#">자산변동 Menu</a></li>
+																<li><a href="#">자산변동 Menu</a></li>
+																<li><a href="#">자산변동 Menu</a></li>
+																<li><a href="#">자산변동 Menu</a></li>
+												</ul>
+								</li>
+				</ul>
+</div>
+<!-- //menu1_dropdown -->
+
+																</li>
+																<li><a href="#;">자산유휴</a></li>
+																<li><a href="#;">자산처분</a></li>
+																<li><a href="#;">자산현황</a></li>
+																<li><a href="#;">자산실사</a></li>
+																<li><a href="#;">기준정보관리</a></li>
+																<li><a href="#;">시스템관리</a></li>
+												</ul>
+								</div>
+								<!-- //dropdown_menu -->
+
+								<!-- function -->
+								<div class="function">
+												<a href="#;" class="setting">Setting</a>
+												<span class="">l</span>
+												<a href="#;" class="user"><strong>TAMS 관리자</strong> <em class="tooltip">SI사업팀</em></a>
+												<span class="confidential">Confidential</span>
+								</div>
+								<!-- //function -->
+
+				<!-- //header -->
+				</header>
+
+				<!-- container -->
+				<div id="container">
+				<!-- contents -->
+				<div id="contents"><div class="bc">관리기능 &gt; SDP 관리자용게시판 &gt; <strong>공지사항</strong></div><h3>공지사항</h3>
+			<!-- 각 개발된 화면 UI 입력되는 Part -->
+
+								<!-- list_head -->
+								<div class="list_head">
+												<h6>게시판 등록</h6>
+												<!-- list_button -->
+												<div class="button">
+																<a class="btn_list">저장</a>
+																<a class="btn_list">취소</a>
+												</div>
+												<!-- list_button -->
+								</div>
+								<!-- //list_head -->
+								<!-- detail_table -->
+								<table class="detail_table form_s">
+												<colgroup>
+												<col style="width:15%" />
+												<col />
+												<col style="width:15%" />
+												<col style="width:35%" />
+												</colgroup>
+												<tr>
+																<th>제목 <span class="required">*</span></th>
+																<td colspan="3"><input style="width:100%;" type="text"></td>
+												</tr>
+												<tr>
+																<th>팝업사용</th>
+																<td>
+																				<div class="form_radio">
+																								<label class="form_multi_radio"><input name="radio" type="radio" value="yes">Y</label>
+																								<label><input name="radio" type="radio" value="no">N</label>
+																				</div>
+																</td>
+																<th>팝업 사이즈(Pixel)</th>
+																<td>넓이&nbsp;:&nbsp;<input style="width:15%;" type="text">&nbsp;&nbsp;&nbsp;&nbsp;높이&nbsp;:&nbsp;<input style="width:15%;" type="text"></td>
+												</tr>
+												<tr>
+																<th>팝업시작일 <span class="required">*</span></th>
+																<td>
+																				<div class="form_wrap_date"><input type="date" style="width:80px;" value="2021-03-05"> <a href="#;"><img src="../images/common/ico_date.png" alt="Calendar" title="Calendar"></a></div>
+
+<!-- calendar layer -->
+<div class="cal_wrap" style="display:block"><!--[D] Default로 display:none; 되어있음 -->
+				<a href="#;" class="layer_close">캘린더 닫기</a>
+				<!-- select date -->
+				<div class="cal_date">
+								<img src="../images/common/btn_pre1.png" alt="이전달" title="이전달 선택">
+								<select>
+												<option value=2016>2016</option>
+												<option value=2017>2017</option>
+												<option value=2018>2018</option>
+												<option value=2019>2019</option>
+												<option value=2020>2020</option>
+												<option value=2021 selected>2021</option>
+												<option value=2022>2022</option>
+								</select>
+								<select>
+												<option>1</option>
+												<option>2</option>
+												<option selected>3</option>
+												<option>4</option>
+												<option>5</option>
+												<option>6</option>
+												<option>7</option>
+												<option>8</option>
+												<option>9</option>
+												<option>10</option>
+												<option>11</option>
+												<option>12</option>
+								</select>
+								<img src="../images/common/btn_next1.png" alt="다음달" title="다음달 선택">
+				</div>
+				<!-- //select date -->
+				<!-- date -->
+				<table class="cal_table">
+								<colgroup>
+								<col style="width:15%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:15%">
+								</colgroup>
+								<tr>
+												<th>Sun</th>
+												<th>Mon</th>
+												<th>Tue</th>
+												<th>Wed</th>
+												<th>Thu</th>
+												<th>Fri</th>
+												<th>Sat</th>
+								</tr>
+								<tr>
+												<td class="pre weekend">28</td><!-- [D]previous monthk, weekend -->
+												<td>1</td>
+												<td>2</td>
+												<td>3</td>
+												<td>4</td>
+												<td class="select">5</td><!-- [D]selected date -->
+												<td>6</td>
+								</tr>
+								<tr>
+												<td class="weekend">7</td>
+												<td>8</td>
+												<td>9</td>
+												<td>10</td>
+												<td>11</td>
+												<td>12</td>
+												<td>13</td>
+								</tr>
+								<tr>
+												<td class="weekend">14</td>
+												<td>15</td>
+												<td>16</td>
+												<td>17</td>
+												<td>18</td>
+												<td class="today" title="Today">19</td><!-- [D] today -->
+												<td>20</td>
+								</tr>
+								<tr>
+												<td class="weekend">21</td>
+												<td>22</td>
+												<td>23</td>
+												<td>24</td>
+												<td>25</td>
+												<td>26</td>
+												<td>27</td>
+								</tr>
+								<tr>
+												<td>28</td>
+												<td>29</td>
+												<td>30</td>
+												<td>31</td>
+												<td class="next">1</td><!-- [D]next month -->
+												<td class="next">2</td>
+												<td class="next">3</td>
+								</tr>
+				</table>
+				<!-- //date -->
+</div>
+<!-- //calendar layer -->
+
+
+
+																				</td>
+																				<th>팝업종료일 <span class="required">*</span></th>
+																				<td>
+																								<div class="form_wrap_date"><input type="date" style="width:80px;" value="2021-03-05"> <a href="#;"><img src="../images/common/ico_date.png" alt="Calendar" title="Calendar"></a></div>
+
+<!-- calendar layer -->
+<div class="cal_wrap" style="display:block"><!--[D] Default로 display:none; 되어있음 -->
+				<a href="#;" class="layer_close">캘린더 닫기</a>
+				<!-- select date -->
+				<div class="cal_date">
+								<img src="../images/common/btn_pre1.png" alt="이전달" title="이전달 선택">
+								<select>
+												<option value=2016>2016</option>
+												<option value=2017>2017</option>
+												<option value=2018>2018</option>
+												<option value=2019>2019</option>
+												<option value=2020>2020</option>
+												<option value=2021 selected>2021</option>
+												<option value=2022>2022</option>
+								</select>
+								<select>
+												<option>1</option>
+												<option>2</option>
+												<option selected>3</option>
+												<option>4</option>
+												<option>5</option>
+												<option>6</option>
+												<option>7</option>
+												<option>8</option>
+												<option>9</option>
+												<option>10</option>
+												<option>11</option>
+												<option>12</option>
+								</select>
+								<img src="../images/common/btn_next1.png" alt="다음달" title="다음달 선택">
+				</div>
+				<!-- //select date -->
+				<!-- date -->
+				<table class="cal_table">
+								<colgroup>
+								<col style="width:15%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:15%">
+								</colgroup>
+								<tr>
+												<th>Sun</th>
+												<th>Mon</th>
+												<th>Tue</th>
+												<th>Wed</th>
+												<th>Thu</th>
+												<th>Fri</th>
+												<th>Sat</th>
+								</tr>
+								<tr>
+												<td class="pre weekend">28</td><!-- [D]previous monthk, weekend -->
+												<td>1</td>
+												<td>2</td>
+												<td>3</td>
+												<td>4</td>
+												<td class="select">5</td><!-- [D]selected date -->
+												<td>6</td>
+								</tr>
+								<tr>
+												<td class="weekend">7</td>
+												<td>8</td>
+												<td>9</td>
+												<td>10</td>
+												<td>11</td>
+												<td>12</td>
+												<td>13</td>
+								</tr>
+								<tr>
+												<td class="weekend">14</td>
+												<td>15</td>
+												<td>16</td>
+												<td>17</td>
+												<td>18</td>
+												<td>19</td>
+												<td>20</td>
+								</tr>
+								<tr>
+												<td class="weekend">21</td>
+												<td>22</td>
+												<td>23</td>
+												<td>24</td>
+												<td>25</td>
+												<td>26</td>
+												<td>27</td>
+								</tr>
+								<tr>
+												<td>28</td>
+												<td>29</td>
+												<td>30</td>
+												<td class="today" title="Today">31</td><!-- [D] today -->
+												<td class="next">1</td><!-- [D]next month -->
+												<td class="next">2</td>
+												<td class="next">3</td>
+								</tr>
+				</table>
+				<!-- //date -->
+</div>
+<!-- //calendar layer -->
+
+
+																				</td>
+																</tr>
+								</table>
+								<!-- //detail_table -->
+
+								<!-- Edit Area-->
+								<div style="background:#f8f8f8;width: 100%; height: 350px;">
+
+												<div class="form_wrap_textarea"><div class="cleditorMain" style="width: 100%; height: 350px;"><div class="cleditorToolbar" style="height: 27px;"><div class="cleditorGroup" style="width: 145px;"><div title="Bold" class="cleditorButton"></div><div title="Italic" class="cleditorButton" style="background-position: -24px; background-color: transparent;"></div><div title="Underline" class="cleditorButton" style="background-position: -48px; background-color: transparent;"></div><div title="Strikethrough" class="cleditorButton" style="background-position: -72px; background-color: transparent;"></div><div title="Subscript" class="cleditorButton" style="background-position: -96px;"></div><div title="Superscript" class="cleditorButton" style="background-position: -120px;"></div><div class="cleditorDivider"></div></div><div class="cleditorGroup" style="width: 73px;"><div title="Font" class="cleditorButton" style="background-position: -144px; background-color: transparent;"></div><div title="Font Size" class="cleditorButton" style="background-position: -168px; background-color: transparent;"></div><div title="Style" class="cleditorButton" style="background-position: -192px;"></div><div class="cleditorDivider"></div></div><div class="cleditorGroup" style="width: 73px;"><div title="Font Color" class="cleditorButton" style="background-position: -216px;"></div><div title="Text Highlight Color" class="cleditorButton" style="background-position: -240px; background-color: transparent;"></div><div title="Remove Formatting" class="cleditorButton" style="background-position: -264px;"></div><div class="cleditorDivider"></div></div><div class="cleditorGroup" style="width: 49px;"><div title="Bullets" class="cleditorButton" style="background-position: -288px;"></div><div title="Numbering" class="cleditorButton" style="background-position: -312px;"></div><div class="cleditorDivider"></div></div><div class="cleditorGroup" style="width: 49px;"><div title="Outdent" class="cleditorButton" style="background-position: -336px;"></div><div title="Indent" class="cleditorButton" style="background-position: -360px;"></div><div class="cleditorDivider"></div></div><div class="cleditorGroup" style="width: 97px;"><div title="Align Text Left" class="cleditorButton" style="background-position: -384px;"></div><div title="Center" class="cleditorButton" style="background-position: -408px;"></div><div title="Align Text Right" class="cleditorButton" style="background-position: -432px;"></div><div title="Justify" class="cleditorButton" style="background-position: -456px;"></div><div class="cleditorDivider"></div></div><div class="cleditorGroup" style="width: 49px;"><div title="Undo" disabled="disabled" class="cleditorButton cleditorDisabled" style="background-position: -480px;"></div><div title="Redo" disabled="disabled" class="cleditorButton cleditorDisabled" style="background-position: -504px;"></div><div class="cleditorDivider"></div></div><div class="cleditorGroup" style="width: 97px;"><div title="Insert Horizontal Rule" class="cleditorButton" style="background-position: -528px;"></div><div title="Insert Image" class="cleditorButton" style="background-position: -552px;"></div><div title="Insert Hyperlink" disabled="disabled" class="cleditorButton cleditorDisabled" style="background-position: -576px;"></div><div title="Remove Hyperlink" disabled="disabled" class="cleditorButton cleditorDisabled" style="background-position: -600px;"></div><div class="cleditorDivider"></div></div><div class="cleditorGroup" style="width: 97px;"><div title="Cut" disabled="disabled" class="cleditorButton cleditorDisabled" style="background-position: -624px;"></div><div title="Copy" disabled="disabled" class="cleditorButton cleditorDisabled" style="background-position: -648px;"></div><div title="Paste" class="cleditorButton" style="background-position: -672px; background-color: transparent;"></div><div title="Paste as Text" disabled="disabled" class="cleditorButton cleditorDisabled" style="background-position: -696px;"></div><div class="cleditorDivider"></div></div><div class="cleditorGroup" style="width: 49px;"><div title="Print" class="cleditorButton" style="background-position: -720px;"></div><div title="Show Source" class="cleditorButton" style="background-position: -744px;"></div></div></div><textarea name="commuDetail" class="text_area" id="commuDetail" style="width: 100%; height: 323px; display: none;" rows="23"></textarea><iframe src="javascript:true;" frameborder="0" style="width: 100%; height: 323px; display: inline;"></iframe></div></div>
+
+								</div>
+								<!-- //Edit Area-->
+								<p class="space10"></p>
+
+								<!-- 이미지 attach_file -->
+								<h4>이미지 <span class="focus">(10MB까지 첨부 가능합니다)</span></h4>
+								<div class="attach_check">
+												<label><input type="checkbox" value=""></label>
+												<a class="btn_list_sm_rd">파일찾기</a>
+												<a class="btn_list_sm">삭제</a>
+												<div class="file_size">(712.79KB/10MB)</div><!-- 전체용량 적용 가능시 -->
+								</div>
+								<div class="attach_file">
+												<ul>
+																<li>
+																				<label><input type="checkbox" value=""><a href="#"><img src="../images/common/ico_f_img.gif">첨부파일이름</a></label>
+																				<div class="file_size">1,301.5KB</div>
+																</li>
+												</ul>
+								</div>
+								<!-- // 이미지 attach_file -->
+								<p class="space10"></p>
+
+								<!-- 첨부파일 attach_file -->
+								<h4>첨부파일 <span class="focus">(10MB까지 첨부 가능합니다)</span></h4>
+								<div class="attach_check">
+												<label><input type="checkbox" value=""></label>
+												<a class="btn_list_sm_rd">파일찾기</a>
+												<a class="btn_list_sm">아래</a>
+												<a class="btn_list_sm">위</a>
+												<a class="btn_list_sm">삭제</a>
+												<div class="file_size">(712.79KB/10MB)</div><!-- 전체용량 적용 가능시 -->
+								</div>
+								<div class="attach_file">
+												<ul>
+												<li><label><input type="checkbox" value=""><a href="#"><img src="../images/common/ico_f_ppt.gif">첨부파일이름.ppt</a></label>
+												<div class="file_size">1,301.5KB</div>
+												</li>
+												<li><label><input type="checkbox" value=""><a href="#"><img src="../images/common/ico_f_xls.gif">첨부파일이름.xls</a></label>
+												<div class="file_size">901.5KB</div>
+												</li>
+												<li><label><input type="checkbox" value=""><a href="#"><img src="../images/common/ico_f_doc.gif">첨부파일이름.doc</a></label>
+												<div class="file_size">5301.15KB</div>
+												</li>
+												</ul>
+								</div>
+								<!-- // 첨부파일 attach_file -->
+
+
+
+				</div>
+				<!-- contents -->
+				</div>
+				<!-- //container -->
+
+</div>
+</body>
+</html>

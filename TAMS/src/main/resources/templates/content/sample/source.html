@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/default">
+
+<head>
+    <title>Sample Page</title>
+</head>
+
+<!-- css -->
+<th:block layout:fragment="css">
+	<link rel="stylesheet" href="css/style.css" />
+</th:block>
+
+<th:block layout:fragment="script">
+	<script>
+		$(document).ready(function(){
+			let url = 'http://localhost:8080/sample/boardList';
+			let reqType = 'GET';				
+			let data = {
+					"currentPage":"1",
+					"numOfRows":"10",
+					"searchTitle": "title2"
+			}
+			$.commRequest(url, reqType, data)
+				.then((res) => {
+					console.log(res.code);
+					console.log(res.message);
+					console.log(res.data);
+				})
+				.catch((error) => {
+					console.log(error)
+				})
+		});		
+	</script> 
+</th:block>
+
+	<div layout:fragment="content">
+		<!-- contents_head -->
+		<div class="bc">Home &gt; Menu &gt; 샘플자료</div>
+		<h3>화면 개발 자료</h3>
+		<!-- //contents_head -->
+		<div>
+			<div>
+				<h5>메뉴</h5>
+				<a href="/sample/menu1">예시1</a>&nbsp;<a href="/sample/menu2">예시2</a>&nbsp;<a href="/sample/menu3">예시3</a>&nbsp;<a href="/sample/menu4">예시4</a>&nbsp;<a href="/sample/menu5">예시5</a>
+				<h5>화면구성</h5>
+				<a href="/sample/screen">예시1</a>
+				<h5>탭/검색</h5>
+				<a href="">예시1</a>&nbsp;<a href="">예시2</a>&nbsp;<a href="">예시3</a>
+				<h5>메시지창 모달</h5>
+				<a href="">예시1</a>&nbsp;<a href="">예시2</a>&nbsp;<a href="">예시3</a>
+				<h5>검색/리스트</h5>
+				<a href="">예시1</a>&nbsp;<a href="">예시2</a>&nbsp;<a href="">예시3</a>
+				<h5>팝업호출버튼</h5>
+				<a href="">예시1</a>&nbsp;<a href="">예시2</a>&nbsp;<a href="">예시3</a>
+				<h5>리스트안내문구</h5>
+				<a href="">예시1</a>&nbsp;<a href="">예시2</a>&nbsp;<a href="">예시3</a>
+				<h5>선택박스(다중)</h5>
+				<a href="">예시1</a>&nbsp;<a href="">예시2</a>&nbsp;<a href="">예시3</a>
+				<h5>팝업뷰</h5>
+				<a href="">예시1</a>&nbsp;<a href="">예시2</a>&nbsp;<a href="">예시3</a>
+				<h5>Help관련</h5>
+				<a href="">예시1</a>&nbsp;<a href="">예시2</a>&nbsp;<a href="">예시3</a>
+				<h5>팝업이미지뷰</h5>
+				<a href="">예시1</a>&nbsp;<a href="">예시2</a>&nbsp;<a href="">예시3</a>
+				<h5>탭/검색</h5>
+				<a href="">예시1</a>&nbsp;<a href="">예시2</a>&nbsp;<a href="">예시3</a>
+			</div>
+			<div>
+			</div>
+		</div>
+	</div>
+</html>

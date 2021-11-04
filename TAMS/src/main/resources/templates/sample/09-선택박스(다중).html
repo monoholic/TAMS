@@ -1,0 +1,280 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>09-선택박스(다중)</title>
+<link rel="stylesheet" href="../css/style.css" />
+<!--[if IE]> <script src="../js/html5.js"></script> <![endif]-->
+</head>
+<body>
+<div id="wrap">
+				<header id="gnb">
+				<!-- header -->
+								<h1><a href="#;"><img src="../images/common/logo_TAMS.png" alt="TRiTo Asset Management System"></a></h1>
+
+
+								<!-- dropdown_menu -->
+								<div class="vertical2">
+												<ul class="dropdown">
+																<li class="first"><a href="#;">자산등록</a></li>
+																<li><a href="#;">자산변동</a></li>
+																<li><a href="#;">자산유휴</a></li>
+																<li><a href="#;">자산처분</a></li>
+																<li><a href="#;">자산현황</a></li>
+																<li><a href="#;">자산실사</a></li>
+																<li><a href="#;">기준정보관리</a></li>
+																<li><a href="#;">시스템관리</a></li>
+												</ul>
+								</div>
+								<!-- //dropdown_menu -->
+
+								<!-- function -->
+								<div class="function">
+												<a href="#;" class="setting">Setting</a>
+												<span class="">l</span>
+												<a href="#;" class="user"><strong>TAMS 관리자</strong> <em class="tooltip">SI사업팀</em></a>
+												<span class="confidential">Confidential</span>
+								</div>
+								<!-- //function -->
+
+				<!-- //header -->
+				</header>
+
+				<!-- container -->
+				<div id="container">
+				<!-- contents -->
+				<div id="contents">
+
+								<!-- contents_head -->
+								<div class="bc">Home &gt; Menu &gt; Menu 2depth</div>
+								<h3>화면 타이틀</h3>
+								<!-- //contents_head -->
+
+								<div class="" id="">
+												<!-- tab -->
+												<ul class="tabs">
+																<li class="on"><a href="#;">Tap menu1</a></li>
+																<li><a href="#;">Tap menu2</a></li>
+																<li><a href="#;">Tap menu3</a></li>
+																<li><a href="#;">Tap menu4</a></li>
+																<li><a href="#;">Tap menu5</a></li>
+																<div class="button">
+																				<a class="btn_list">이전</a>
+																</div>
+												</ul>
+												<!-- //tab -->
+								</div>
+
+								<!-- search -->
+								<div class="srch_wrap">
+												<!-- search_form -->
+												<div class="srch_form">
+																<table class="srch_table">
+																<colgroup>
+																				<col width="8%"/>
+																				<col width="15%"/>
+																				<col width="8%"/>
+																				<col width="15%"/>
+																				<col width="8%"/>
+																				<col width=""/>
+																</colgroup>
+																				<tr>
+																								<th>기간</th>
+																								<td>
+																												<select style="width:80%;">
+																												<option></option>
+																												<option>2021-1Q</option>
+																												<option>2021-2Q</option>
+																												<option>2021-3Q</option>
+																												</select>
+																								</td>
+																								<th>구분</th>
+																								<td>
+																												<select style="width:80%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<th>사업부</th>
+																								<td>
+																								<!-- multi_select_box -->
+																								<div class="form_dropdown_wrap" style="width:200px;"><input style="width:100%;" type="text" value="다중선택">
+																								<a title="Select Product" class="ico_dropdown" style="display:none;" href="#;"></a><a title="Close Select Product" class="ico_dropdown_close" href="#;"></a><!-- [D]자동완성 레이어 오픈 상태에 따라서 -->
+																								<div class="list_box" style="height:138px;">
+																												<ul>
+																												<li><label><input type="checkbox">ALL</label></li>
+																												<li class="selected"><label><input type="checkbox" checked="">ARM1020</label></li>
+																												<li><label><input type="checkbox">ARM1026</label></li>
+																												<li><label><input type="checkbox" checked="">ARM1136</label></li>
+																												<li><label><input type="checkbox">ARM1056</label></li>
+																												<li><label><input type="checkbox">ARM1076</label></li>
+																												<li><label><input type="checkbox">ARM1086</label></li>
+																												<li><label><input type="checkbox">ARM1096</label></li>
+																												</ul>
+																								</div>
+																								</div>
+																								<!-- //multi_select_box -->
+
+																								</td>
+																				</tr>
+																</table>
+																<!-- search_button -->
+																<div class="button">
+																				<a href="#;" class="btn_reset">Reset</a>
+																				<a href="#;" class="btn_srch">Search</a>
+																</div>
+																<!-- //search_button -->
+												</div>
+												<!-- //search_form -->
+								</div>
+								<!-- //search -->
+
+								<!-- list -->
+								<div class="list_wrap">
+												<!-- list_table -->
+												<table class="list_table">
+												<colgroup>
+												<col width="100px"/>
+												<col width="100px"/>
+												<col width="200"/>
+												<col width="80px"/>
+												<col width=""/>
+												<col width="80px"/>
+												<col width="80px"/>
+												<col width="80px"/>
+												<col width="80px"/>
+												</colgroup>
+																<thead>
+																				<tr>
+																								<th>Material No7</th>
+																								<th>Prod Code7</th>
+																								<th>PG2</th>
+																								<th>DR</th>
+																								<th>도입IP 취합</th>
+																								<th>수량</th>
+																								<th>매출</th>
+																								<th>조정매출</th>
+																								<th>Royal Due</th>
+																				</tr>
+																</thead>
+																<tbody>
+																				<tr>
+																								<td class="tc">GOLF-S3</td>
+																								<td class="tc">S4LL128</td>
+																								<td>Display Solution</td>
+																								<td>0.00</td>
+																								<td>NTSC/PAL Analog Video Decoder SIF Decoder 모두 사용, Cortex-A9, ali-400</td>
+																								<td class="tr">000,000</td>
+																								<td class="tr">000,000.00</td>
+																								<td class="tr">235,959.36</td>
+																								<td class="tr">3,113.41</td>
+																				</tr>
+																				<tr>
+																								<td class="tc"></td>
+																								<td class="tc"></td>
+																								<td>&nbsp;</td>
+																								<td></td>
+																								<td></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																				</tr>
+																				<tr>
+																								<td class="tc"></td>
+																								<td class="tc"></td>
+																								<td>&nbsp;</td>
+																								<td></td>
+																								<td></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																				</tr>
+																				<tr>
+																								<td class="tc"></td>
+																								<td class="tc"></td>
+																								<td>&nbsp;</td>
+																								<td></td>
+																								<td></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																				</tr>
+																				<tr>
+																								<td class="tc"></td>
+																								<td class="tc"></td>
+																								<td>&nbsp;</td>
+																								<td></td>
+																								<td></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																				</tr>
+																				<tr>
+																								<td class="tc"></td>
+																								<td class="tc"></td>
+																								<td>&nbsp;</td>
+																								<td></td>
+																								<td></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																				</tr>
+																				<tr>
+																								<td class="tc"></td>
+																								<td class="tc"></td>
+																								<td>&nbsp;</td>
+																								<td></td>
+																								<td></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																				</tr>
+																				<tr>
+																								<td class="tc"></td>
+																								<td class="tc"></td>
+																								<td>&nbsp;</td>
+																								<td></td>
+																								<td></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																								<td class="tr"></td>
+																				</tr>
+																</tbody>
+												</table>
+												<!-- //list_table -->
+								</div>
+								<!-- //list -->
+<!-- pagination -->
+<div class="paginate">
+<a class="first" href="#;"><img title="첫페이지" alt="첫페이지" src="../images/common/btn_pn_first.gif"></a>
+<a class="pre" href="#;"><img title="이전페이지" alt="이전페이지" src="../images/common/btn_pn_pre.gif"></a>
+<a href="#;">1</a>
+<strong>2</strong>
+<a href="#;">3</a>
+<a href="#;">4</a>
+<a href="#;">5</a>
+<a href="#;">6</a>
+<a href="#;">7</a>
+<a href="#;">8</a>
+<a href="#;">9</a>
+<a href="#;">10</a>
+<a class="next" href="#;"><img title="다음페이지" alt="다음페이지" src="../images/common/btn_pn_next.gif"></a>
+<a class="last" href="#;"><img title="마지막페이지" alt="마지막페이지" src="../images/common/btn_pn_last.gif"></a>
+</div>
+<!-- //pagination -->
+
+
+				</div>
+				<!-- contents -->
+				</div>
+				<!-- //container -->
+
+</div>
+</body>
+</html>

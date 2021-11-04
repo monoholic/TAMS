@@ -29,32 +29,198 @@
     <script src="js/jsgrid/fields/jsgrid.field.control.js"></script>	
 	
     <script>
+    
+    //let nowPageIndex = 1;
+    let currentPage = 1;
+    var status = true;
+    
         $(function() {
 
             $("#jsGrid").jsGrid({
                 height: "500",
                 width: "100%",
-                filtering: true,
+                filtering: false,
                 editing: true,
                 inserting: true,
                 sorting: true,
                 paging: true,
-                autoload: true,
-                pageSize: 15,
+                sorter: "number",
+                pageIndex:currentPage,
+                pageFirstText: '<a class="first"><img src="../images/common/btn_pn_first.gif"></img></a>',
+                pagePrevText: '<a class="pre"><img src="../images/common/btn_pn_pre.gif"></img></a>',
+                pageNextText: '<a class="next"><img src="../images/common/btn_pn_next.gif"></img></a>',
+                pageLastText: '<a class="last"><img src="../images/common/btn_pn_last.gif"></img></a>',
+                pagerFormat: "{first} {prev} {pages} {next} {last}",
+                pagerContainer:null,
+                pageLoading: true,
+                pager: "#pager",
+                autoload: status,
+                pageSize: 12,
                 pageButtonCount: 5,
-                deleteConfirm: "Do you really want to delete the client?",
-                controller: db,
+                loadonce: true,
+                updateOnResize: true,
+                rowClick: function(args) {
+                	console.log(args);
+                	
+                    $("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
+                    .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
+                    .on("change", function () {
+					  	 $(this).is(":checked") ? selectItem($(this).parent().next().text()) : unselectItem($(this).parent().next().text());
+					});
+                },
+                pagerContainerClass: "paginate",
+                //pagerClass: "pagination justify-content-center",
+                deleteConfirm: "삭제하시겠습니까?",
+                controller: {
+                	loadData:function(filter){
+                		console.log(filter);
+                		let d = $.Deferred();
+                		
+	                	currentPage = filter.pageIndex;    
+                		
+            			let url = '/sample/boardList';
+            			let reqType = 'GET';				
+            			let data = {
+            					"currentPage":currentPage,
+            					"numOfRows":"16",
+            					"searchTitle": "",
+            					"sortField": filter.sortField,
+            					"sortOrder": filter.sortOrder
+            			}
+            			$.commRequest(url, reqType, data)
+            				.then((res) => {
+            					console.log(res);
+            					
+            					d.resolve({data : res.data, itemsCount: res.condition.totalCount});
+            				})
+            				.catch((error) => {
+            					console.log(error);
+            				})
+            			
+            			return d.promise();
+                	},
+                	updateItem: function(item) {
+                		updatedItems.push(item);
+	                	$("#jsGrid").jsGrid("option", "pageIndex", $("#jsGrid").jsGrid("option", "pageIndex"));
+	                	let url = '/sample/boardUpdate';
+	                	let reqType = 'GET';
+	                	$.commRequest(url, reqType, item)
+	                		.then((res) => {
+	                			console.log(res);
+	                		})
+	                		.catch((error) => {
+	                			console.log(error);
+	                		})
+                    },
+                 	deleteItem: function(item) {
+            			$("#curr_Idx").val(currentPage);
+            			let url = '/sample/boardDelete';
+            			let reqType = 'GET';
+            			$.commRequest(url, reqType, item)
+            				.then((res) => {
+            					console.log(res);
+            					
+            				})
+            				.catch((error) => {
+            					console.log(error);
+            				})
+                	},
+                 	insertItem: function(item) {
+            			let url = '/sample/boardInsert';
+            			let reqType = 'GET';
+            			$.commRequest(url, reqType, item)
+            				.then((res) => {
+            					console.log(res);
+            					
+            				})
+            				.catch((error) => {
+            					console.log(error);
+            				})
+                	}
+                },
                 fields: [
-                    { name: "Name", type: "text", width: 150 },
-                    { name: "Age", type: "number", width: 50 },
-                    { name: "Address", type: "text", width: 200 },
-                    { name: "Country", type: "select", items: db.countries, valueField: "Id", textField: "Name" },
-                    { name: "Married", type: "checkbox", title: "Is Married", sorting: false },
-                    { type: "control" }
+                	{  name : "checkbox"
+                	 , align: "center"
+                	 , width: 10
+                	 , title: ""
+                	 , editing: false
+                	 , sorting: false
+                	 , filtering: false, 
+                	   itemTemplate: function(value, item) {
+                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
+                       .prop("checked", $.inArray(item.firstName, selectedItems) > -1)
+                       .on("change", function () {
+  					  	 $(this).is(":checked") ? selectItem($(this).parent().next().text()) : unselectItem($(this).parent().next().text());
+  					  	 });
+            		}
+                	 , headerTemplate : function ()  { 
+					  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
+	                     .on("change", function (item) {
+	             	    	selectedItems = [];
+	            	    	if(this.checked) { // check select status
+	            	            $('.singleCheckbox').each(function() { 
+	            	                this.checked = true;   
+	            	                selectItem($(this).parent().next().text());           
+	            	            });			         
+	            	        }else {
+	            	        	
+	            	            $('.singleCheckbox').each(function() { 
+	            	                this.checked = false;      
+	            	                unselectItem(item);
+	            	            });  
+	            	            selectedItems = [];
+	            	        }
+	    				   });
+				 	 } ,
+                	},
+                	{name : "id", type: "disabled", width: 20, title: "id"},
+                	{name : "title", type: "text", width: 150, title: "title"},
+                	{type:"control"}
                 ]
             });
-
         });
+        
+   		var selectedItems = [];
+	 	var updatedItems = [];
+   		
+	    var selectItem = function(item) {
+	    	if(!selectedItems.includes(item))
+		    selectedItems.push(item);
+		    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+             $("#selectAllCheckbox").prop("checked", true);
+         } else {
+             $("#selectAllCheckbox").prop("checked", false);
+         }
+		};
+	     
+	    var unselectItem = function(item) {
+		    selectedItems = $.grep(selectedItems, function(i) {
+		    return i !== item;
+		    });
+		    if(selectedItems.length == 0) {
+		    	$('#selectAllCheckbox').attr('checked', false);
+		    }
+		    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+             $("#selectAllCheckbox").prop("checked", true);
+         } else {
+             $("#selectAllCheckbox").prop("checked", false);
+         }
+	    };
+        
+        $("#pager").on("change", function() {
+            var page = parseInt($(this).val(), 10);
+            $("#jsGrid").jsGrid("openPage", page);
+        });
+        
+    	$(function() {
+    	    $(".button .btn_list_rd").click(function() {
+    	        console.log(selectedItems);
+    	    });
+    	    $(".button .btn_list").click(function() {
+    	        console.log(updatedItems);
+    	    });
+    	});
+        
     </script>	
 	
 </th:block>
@@ -76,9 +242,18 @@
 			<!-- //search_button -->
 		</div>
 		<!-- //search -->
-
+		<div class="list_head">
+				<div class="result">Results : 0,000</div>
+				<!-- list_button -->
+				<div class="button">
+								<a class="btn_list_rd">신규 등록</a>
+								<a class="btn_list">다운로드</a>
+				</div>
+				<!-- list_button -->
+		</div>
 		<!-- list -->
 		<div id="jsGrid"></div>
+		<input type="hidden" id="curr_Idx"/>
 			
 	</div>
 </html>

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>01-입력+리스트 재활용(재활용의뢰작성)</title>
+<link rel="stylesheet" href="../css/style.css" />
+<!--[if IE]> <script src="../js/html5.js"></script> <![endif]-->
+</head>
+<body>
+<div id="wrap">
+				<header id="gnb">
+				<!-- header -->
+								<h1><a href="#;"><img src="../images/common/logo_TAMS.png" alt="TRiTo Asset Management System"></a></h1>
+
+
+								<!-- dropdown_menu -->
+								<div class="vertical2">
+												<ul class="dropdown">
+																<li class="first"><a href="#;">자산등록</a></li>
+																<li><a href="#;">자산변동</a></li>
+																<li><a href="#;">자산유휴</a></li>
+																<li><a href="#;">자산처분</a></li>
+																<li><a href="#;">자산현황</a></li>
+																<li><a href="#;">자산실사</a></li>
+																<li><a href="#;">기준정보관리</a></li>
+																<li><a href="#;">시스템관리</a></li>
+												</ul>
+								</div>
+								<!-- //dropdown_menu -->
+
+								<!-- function -->
+								<div class="function">
+												<a href="#;" class="user"><strong>TAMS 관리자</strong> <em class="tooltip">재경그룹(DS)</em></a>
+												<span class="confidential">Confidential</span>
+								</div>
+								<!-- //function -->
+
+				<!-- //header -->
+				</header>
+
+				<!-- container -->
+				<div id="container">
+				<!-- contents -->
+				<div id="contents">
+
+								<!-- contents_head -->
+								<!-- <div class="bc" >Home &gt; 투자정보 조회</div> -->
+								<h3>재활용의뢰작성</h3>
+								<!-- //contents_head -->
+
+
+								<!-- list -->
+								<div class="list_wrap">
+												<!-- list_head -->
+												<div class="list_head">
+																<h6>의뢰 정보</h6>
+																<!-- list_button -->
+																<div class="button">
+																				<a class="btn_list">저장</a>
+																				<a class="btn_list">삭제</a>
+																				<a class="btn_list">결재상신</a>
+																				<a class="btn_list_rd">반출증 출력</a>
+																</div>
+																<!-- list_button -->
+												</div>
+												<!-- //list_head -->
+
+												<!-- detail_table -->
+												<table class="detail_table form_s">
+																<colgroup>
+																<col style="width:12%" />
+																<col style="width:20%" />
+																<col style="width:12%" />
+																<col style="width:20%" />
+																<col style="width:12%" />
+																<col />
+																</colgroup>
+																<tr>
+																				<th>의뢰구분</th>
+																				<td>재활용</td>
+																				<th>의뢰번호</th>
+																				<td>RU2021082123</td>
+																				<th>의뢰일시</th>
+																				<td>2021-09-01</td>
+																</tr>
+																<tr>
+																				<th>의뢰사업부</th>
+																				<td>
+																								<select style="width:100%;">
+																								<option>select</option>
+																								</select>
+																				</td>
+																				<th>의뢰부서</th>
+																				<td>
+																								<select style="width:100%;">
+																								<option>select</option>
+																								</select>
+																				</td>
+																				<th>의뢰자</th>
+																				<td>
+																								<select style="width:100%;">
+																								<option>select</option>
+																								</select>
+																				</td>
+																</tr>
+																<tr>
+																				<th>의뢰명</th>
+																				<td><input type="text" style="width:100%;" value=""></td>
+																				<th>의뢰사유</th>
+																				<td colspan="3"><input type="text" style="width:100%;" value=""></td>
+																</tr>
+																<tr>
+																				<th>반출여부</th>
+																				<td>
+																								<select style="width:100%;">
+																								<option>select</option>
+																								</select>
+																				</td>
+																				<th>부서</th>
+																				<td>
+																								<select style="width:100%;">
+																								<option>select</option>
+																								</select>
+																				</td>
+																				<th>자산담당자</th>
+																				<td>
+																								<select style="width:100%;">
+																								<option>select</option>
+																								</select>
+																				</td>
+																</tr>
+																<tr>
+																				<th>사업장</th>
+																				<td>
+																								<select style="width:100%;">
+																								<option>select</option>
+																								</select>
+																				</td>
+																				<th>반출일자</th>
+																				<td colspan="3">
+																								<div class="form_wrap_date"><input type="date" style="width:80px;" value="2021-10-20"> <a href="#;"><img src="../images/common/ico_date.png" alt="Calendar" title="Calendar"></a></div>
+
+<!-- calendar layer -->
+<div class="cal_wrap" style="display:none"><!--[D] Default로 display:none; 되어있음 -->
+				<a href="#;" class="layer_close">캘린더 닫기</a>
+				<!-- select date -->
+				<div class="cal_date">
+								<img src="../images/common/btn_pre1.png" alt="이전달" title="이전달 선택">
+								<select>
+												<option value=2016>2016</option>
+												<option value=2017>2017</option>
+												<option value=2018>2018</option>
+												<option value=2019>2019</option>
+												<option value=2020>2020</option>
+												<option value=2021 selected>2021</option>
+												<option value=2022>2022</option>
+								</select>
+								<select>
+												<option>1</option>
+												<option>2</option>
+												<option >3</option>
+												<option>4</option>
+												<option>5</option>
+												<option>6</option>
+												<option>7</option>
+												<option>8</option>
+												<option>9</option>
+												<option selected>10</option>
+												<option>11</option>
+												<option>12</option>
+								</select>
+								<img src="../images/common/btn_next1.png" alt="다음달" title="다음달 선택">
+				</div>
+				<!-- //select date -->
+				<!-- date -->
+				<table class="cal_table">
+								<colgroup>
+								<col style="width:15%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:14%">
+								<col style="width:15%">
+								</colgroup>
+								<tr>
+												<th>Sun</th>
+												<th>Mon</th>
+												<th>Tue</th>
+												<th>Wed</th>
+												<th>Thu</th>
+												<th>Fri</th>
+												<th>Sat</th>
+								</tr>
+								<tr>
+												<td class="pre weekend">26</td><!-- [D]previous monthk, weekend -->
+												<td class="pre weekend">27</td>
+												<td class="pre weekend">28</td>
+												<td class="pre weekend">29</td>
+												<td class="pre weekend">30</td>
+												<td class="select">1</td><!-- [D]selected date -->
+												<td>2</td>
+								</tr>
+								<tr>
+												<td class="weekend">3</td>
+												<td>4</td>
+												<td>5</td>
+												<td>6</td>
+												<td>7</td>
+												<td>8</td>
+												<td>9</td>
+								</tr>
+								<tr>
+												<td class="weekend">10</td>
+												<td>11</td>
+												<td>12</td>
+												<td>13</td>
+												<td>14</td>
+												<td>15</td>
+												<td>16</td>
+								</tr>
+								<tr>
+												<td class="weekend">17</td>
+												<td>18</td>
+												<td>19</td>
+												<td class="today" title="Today">20</td><!-- [D] today -->
+												<td>21</td>
+												<td>22</td>
+												<td>23</td>
+								</tr>
+								<tr>
+												<td>24</td>
+												<td>25</td>
+												<td>26</td>
+												<td>27</td>
+												<td>28</td>
+												<td>29</td>
+												<td>30</td>
+								</tr>
+				</table>
+				<!-- //date -->
+</div>
+<!-- //calendar layer -->
+																				</td>
+																</tr>
+												</table>
+												<!-- //detail_table -->
+
+
+								</div>
+								<!-- //list -->
+
+								<p class="space10"></p>
+
+								<!-- list -->
+								<div class="list_wrap">
+												<!-- list_head -->
+
+												<div class="list_head">
+																<h6>대상자산 목록목
+																<span class="result_line">Total : 10</span></h6>
+																<!-- list_button -->
+																<div class="button">
+																				<a class="btn_list">자산추가</a>
+																				<a class="btn_list">저장</a>
+																				<a class="btn_list_rd">삭제</a>
+																</div>
+																<!-- list_button -->
+												</div>
+												<!-- //list_head -->
+												<!-- list_table -->
+												<table class="list_table">
+												<colgroup>
+												<col width="30px"/>
+												<col width="90px"/>
+												<col width="90px"/>
+												<col width="90px"/>
+												<col width="90px"/>
+												<col width="100px"/>
+												<col width="100px"/>
+												<col width="100px"/>
+												<col width="100px"/>
+												<col width="100px"/>
+												<col width="100px"/>
+												<col width="100px"/>
+												<col width="100px"/>
+												<col width="70px"/>
+												<col width="80px"/>
+												<col width=""/>
+												<col width="75px"/>
+												</colgroup>
+																<thead style="">
+																				<tr>
+																								<th><input type="checkbox" name="checkbox" /></th>
+																								<th>자산번호</th>
+																								<th>자산유형1</th>
+																								<th>자산유형2</th>
+																								<th>자산유형3</th>
+																								<th>메이커</th>
+																								<th>모델</th>
+																								<th>S/N</th>
+																								<th>사업부</th>
+																								<th>부서</th>
+																								<th>재활용<br>담당자</th>
+																								<th>재활용후<br>비용부서</th>
+																								<th>사업장</th>
+																								<th>건물</th>
+																								<th>층</th>
+																								<th>상세위치</th>
+																								<th>재활용<br>태킹여부</th>
+																				</tr>
+																</thead>
+																<tbody>
+																				<tr>
+																								<td class="tc"><input type="checkbox" name="checkbox3" checked="" /></td>
+																								<td>A20211000001</td>
+																								<td>유형자산</td>
+																								<td>IT자산</td>
+																								<td>서버</td>
+																								<td>S사</td>
+																								<td>LED100</td>
+																								<td>K12345</td>
+																								<td>A사업부</td>
+																								<td>A팀</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td><input type="text" style="width:100%;" value="20" class=""></td>
+																								<td class="tc">Y</td>
+																				</tr>
+																				<tr>
+																								<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+																								<td class="" ></td>
+																								<td class=""></td>
+																								<td>모니터</td>
+																								<td></td>
+																								<td class="">100</td>
+																								<td class="">K123455</td>
+																								<td class=""></td>
+																								<td class="">A사업부</td>
+																								<td class="">A팀</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td><input type="text" style="width:100%;" value="20" class=""></td>
+																								<td class="tc">Y</td>
+																				</tr>
+																				<tr class="over">
+																								<td class="tc"><input name="checkbox2" type="checkbox" checked="checked" /></td>
+																								<td class="" ></td>
+																								<td class=""></td>
+																								<td>키보드</td>
+																								<td></td>
+																								<td>100</td>
+																								<td>K12345555</td>
+																								<td class=""></td>
+																								<td class="">A사업부</td>
+																								<td class="">A팀</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td>
+																												<select style="width:100%;">
+																												<option></option>
+																												</select>
+																								</td>
+																								<td><input type="text" style="width:100%;" value="20" class=""></td>
+																								<td class="tc">Y</td>
+																				</tr>
+																				<tr>
+																								<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td class="tc"></td>
+																				</tr>
+																				<tr>
+																								<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td class="tc"></td>
+																				</tr>
+																				<tr>
+																								<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td class="tc"></td>
+																				</tr>
+																				<tr>
+																								<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td class="tc"></td>
+																				</tr>
+																				<tr>
+																								<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td class="tc"></td>
+																				</tr>
+																				<tr>
+																								<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td class="tc"></td>
+																				</tr>
+																				<tr>
+																								<td class="tc"><input type="checkbox" name="checkbox3" /></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td></td>
+																								<td class="tc"></td>
+																				</tr>
+																</tbody>
+												</table>
+												<!-- //list_table -->
+
+								</div>
+								<!-- //list -->
+
+
+
+				</div>
+				<!-- contents -->
+				</div>
+				<!-- //container -->
+
+</div>
+</body>
+</html>

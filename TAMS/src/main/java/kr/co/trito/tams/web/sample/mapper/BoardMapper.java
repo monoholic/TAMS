@@ -11,6 +11,9 @@ import kr.co.trito.tams.web.sample.dto.BoardDto;
 public interface BoardMapper {
 	public int webCountBoard(SearchCondition condtion);
 	public List<BoardDto> webSelectBoard(SearchCondition condtion);
+	public int webUpdateBoard(BoardDto board);
+	public int webDeleteBoard(BoardDto board);
+	public int webInsertBoard(BoardDto board);
 	public int apiCountBoard(SearchCondition condtion);
-	public List<BoardDto> apiSelectBoard(SearchCondition condtion);	
+	public List<BoardDto> apiSelectBoard(SearchCondition condtion);
 }

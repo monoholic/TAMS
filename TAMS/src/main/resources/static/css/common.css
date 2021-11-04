@@ -50,3 +50,8 @@ footer span.link a{margin:0 3px;color:#666;font-weight:normal}
 footer span.link a:hover{color:#2c6279;text-decoration:underline;}
 footer span.contact{color:#333;}
 footer span.contact strong{margin-left:3px;padding-left:7px;font-weight:normal}
+
+.grid_header{
+	background: #f9f9f9;
+	text-align: center;
+}

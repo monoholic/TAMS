@@ -23,9 +23,37 @@
 					WHERE 1=1 
 					<if test="params.searchTitle != null">
 						AND title LIKE CONCAT('%', #{params.searchTitle}, '%') 		
-					</if>								
+					</if>		
 			   ) AS a
 		WHERE rn BETWEEN #{start} AND #{end}
+		<if test="params.sortField != null">
+			ORDER BY ${params.sortField} ${params.sortOrder}		
+		</if>
 	</select>
-
+	
+	<update id="webUpdateBoard" parameterType="kr.co.trito.tams.web.sample.dto.BoardDto">
+		UPDATE BOARD
+		SET title = #{title}
+		WHERE 1 = 1
+		AND id = #{id}
+	</update>
+	
+	<delete id="webDeleteBoard" parameterType="kr.co.trito.tams.web.sample.dto.BoardDto">
+		DELETE 
+		FROM BOARD
+		WHERE id = #{id}
+	</delete>
+	
+	<insert id="webInsertBoard" parameterType="kr.co.trito.tams.web.sample.dto.BoardDto">
+		INSERT INTO BOARD
+		(
+		 id,
+		 title
+		)
+		VALUES
+		(
+		 nextval(tams.sq_boardid),
+		 #{title}
+		)
+	</insert>
 </mapper>
