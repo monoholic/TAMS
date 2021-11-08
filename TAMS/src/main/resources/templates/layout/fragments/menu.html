@@ -1,126 +1,103 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	
 	<div id="wrap" th:fragment="menuFragment">
 		<header id="gnb">
-			
 			<!-- header -->
-			<h1><a href="#;"><img src="images/common/logo_TAMS.png" alt="TRiTo Asset Management System"></a></h1>
+			<h1><a href="#;"><img src="/images/common/logo_TAMS.png" alt="TRiTo Asset Management System"></a></h1>
+			
+			<!-- 메뉴 조회 -->
+			<script >
+			    
+				function getMyMenu() { 
+						let url = '/system/menu/menulist';
+						let reqType = 'POST';				
+						let data = {
+							"email": ""
+						};
+						$.commRequest(url, reqType, JSON.stringify(data))
+							.then((res) => {
+
+								//1 level
+								makeMenu(res.data, "1");
+								
+								//2 level
+								makeMenu(res.data, "2");
+								
+							})
+							.catch((error) => {
+								alert('메뉴조회 실패!!');
+							});								
+				}
+				
+				//조회된 정보로 메뉴를 구성한다.
+				function makeMenu(data, level) {
+					
+					
+					//상단 메뉴 초기화
+					if(level == "1") {
+						//상단 메뉴 초기화
+						console.log();
+					}
+					
+					$.each (data, function (index, el) {
+						  
+						  var menuId = el.menuId;
+						  var menuNm = el.menuNm;
+						  var menuDesc = el.menuDesc;
+						  var url    = el.url;
+						  var lvl    = el.lvl;
+						  var uppMenuId = el.uppMenuId;
+						  
+						  if( url == null ) url = "#;";
+						  
+						  if( lvl == "1" && lvl == level ) {
+
+							var li_class = "";
+						  	if( index == 0 ) li_class = "class='first'";
+						  	else             li_class = "";
+						  		
+							$("#mymenu").append('<li id="'+menuId+'" '+li_class+'><a href="'+ url +'">'+ menuNm +'</a><div id="sub_'+menuId+'" ></div></li>');
+							
+						  }
+						  
+						  if( lvl == "2" && lvl == level ) {
+
+							  $("#mymenu").find("#sub_"+uppMenuId).attr("class","dropdown_depth"); 
+							  $("#mymenu").find("#sub_"+uppMenuId).attr("style","with:140px;"); 
+							  $("#mymenu").find("#sub_"+uppMenuId).append('<ul class="group"><li id="'+menuId+'"><a href="#">'+menuNm+'</a></li></ul>');
+							  //
+							  $("#mymenu").find("#sub_"+uppMenuId).find("#"+menuId).click(function (){
+								  
+								 var $form = $('<form></form>'); 
+								 $form.attr('action', url); 
+								 $form.attr('method', 'post'); 
+								 $form.appendTo('body'); 
+								 
+								 var menuIdStr 	= $('<input type="hidden" value="'+menuId+'" name="menuId">'); 
+								 var menuNmStr 	= $('<input type="hidden" value="'+menuNm+'" name="menuNm">'); 
+								 var menuDescStr= $('<input type="hidden" value="'+menuDesc+'" name="menuDesc">'); 
+								 
+								 $form.append(menuIdStr).append(menuNmStr).append(menuDescStr);
+								 
+								 $form.submit();
+
+							  
+							  });
+							  
+						  }
+
+					});
+				}
+				
+				
+				getMyMenu();
+				
+				</script>	
 			
 			<!-- dropdown_menu -->
-			<div class="vertical2">
-				<ul class="dropdown">
-				
-					<li class="first"><a href="#;">자산등록</a>				
-						<!-- menu1_dropdown -->
-						<div class="dropdown_depth" style="width:140px;">
-							<ul class="group">
-								<li><a href="#">투자자산등록</a></li>
-							</ul>
-							<ul class="group">
-								<li><a href="#">부외자산등록</a></li>
-							</ul>
-						</div>
-						<!-- //menu1_dropdown -->
-					</li>
-					
-					<li><a href="#;" class="dir">자산변동</a>
-						<!-- menu1_dropdown -->
-						<div class="dropdown_depth" style="width:140px;">
-							<ul class="group">
-								<li><a href="#">자산정보수정</a></li>
-							</ul>
-							<ul class="group">
-								<li><a href="#">이동의뢰</a></li>
-							</ul>
-						</div>
-						<!-- //menu1_dropdown -->
-					</li>
-					<li><a href="#;">자산유휴</a>
-						<!-- menu1_dropdown -->
-						<div class="dropdown_depth" style="width:140px;">
-							<ul class="group">
-								<li><a href="#">유휴의뢰</a></li>
-							</ul>
-							<ul class="group">
-								<li><a href="#">재활용의뢰</a></li>
-							</ul>
-						</div>
-						<!-- //menu1_dropdown -->
-					</li>
-					<li><a href="#;">자산처분</a>
-						<!-- menu1_dropdown -->
-						<div class="dropdown_depth" style="width:140px;">
-							<ul class="group">
-								<li><a href="#">매각의뢰</a></li>
-							</ul>
-							<ul class="group">
-								<li><a href="#">패기의뢰</a></li>
-							</ul>
-						</div>
-						<!-- //menu1_dropdown -->
-					</li>
-					
-					<li><a href="#;">자산현황</a>
-						<!-- menu1_dropdown -->
-						<div class="dropdown_depth" style="width:140px;">
-							<ul class="group">
-								<li><a href="#">자산정보조회</a></li>
-							</ul>
-							<ul class="group">
-								<li><a href="#">부서별자산현황</a></li>
-							</ul>
-							<ul class="group">
-								<li><a href="#">직원별자산현황</a></li>
-							</ul>
-						</div>
-						<!-- //menu1_dropdown -->
-					</li>
-					
-					<li><a href="#;">자산실사</a>
-						<!-- menu1_dropdown -->
-						<div class="dropdown_depth" style="width:140px;">
-							<ul class="group">
-								<li><a href="#">실사관리</a></li>
-							</ul>
-							<ul class="group">
-								<li><a href="#">자산관리</a></li>
-							</ul>
-						</div>
-						<!-- //menu1_dropdown -->
-					</li>
-					
-					<li><a href="#;">기준정보관리</a>
-						<!-- menu1_dropdown -->
-						<div class="dropdown_depth" style="width:140px;">
-							<ul class="group">
-								<li><a href="#">태그 발행</a></li>
-							</ul>
-							<ul class="group">
-								<li><a href="#">공통코드관리</a></li>
-							</ul>
-							<ul class="group">
-								<li><a href="#">투자정보관리</a></li>
-							</ul>
-						</div>
-						<!-- //menu1_dropdown -->
-					</li>
-					
-					<li><a href="#;">시스템관리</a>
-						<!-- menu1_dropdown -->
-						<div class="dropdown_depth" style="width:140px;">
-							<ul class="group">
-								<li><a href="#">사용자관리</a></li>
-							</ul>
-							<ul class="group">
-								<li><a href="#">메뉴관리</a></li>
-							</ul>
-							<ul class="group">
-								<li><a href="#">역할관리</a></li>
-							</ul>
-						</div>
-						<!-- //menu1_dropdown -->
-					</li>
-					<li><a href="/ex_source">샘플자료</a></li>
+			<div class="vertical2" id="topmenu">
+				<ul class="dropdown" id="mymenu">
 				</ul>
 			</div>
 			<!-- //dropdown_menu -->
@@ -136,4 +113,6 @@
 		<!-- //header -->
 		</header>
 	</div>
+	
+
 </html>

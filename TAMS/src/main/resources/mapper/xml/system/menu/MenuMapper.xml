@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.trito.tams.web.system.menu.mapper.MenuMapper">
+   
+	<select id="selectMenuList" resultType="kr.co.trito.tams.web.system.menu.dto.MenuDto" parameterType="String">
+		WITH RECURSIVE CTE AS ( 
+		    SELECT 
+		           MENU_ID, MENU_NM, UPP_MENU_ID, MENU_LVL , URL, MENU_DESC , USE_YN       
+		    FROM TB_COM_MENU  
+		    WHERE MENU_LVL = 1
+		      AND USE_YN = 'Y'
+		    UNION ALL 
+		    SELECT 
+		         B.MENU_ID, B.MENU_NM, B.UPP_MENU_ID, B.MENU_LVL , B.URL, B.MENU_DESC , B.USE_YN      
+		    FROM TB_COM_MENU B 
+		    INNER JOIN CTE C ON B.UPP_MENU_ID = C.MENU_ID 
+		    WHERE B.USE_YN = 'Y'
+		    ) 
+		SELECT MENU_ID      AS menuId
+		     , MENU_NM      AS menuNm
+		     , UPP_MENU_ID  AS uppMenuId
+		     , MENU_LVL     AS lvl
+		     , URL          AS url 
+		     , MENU_DESC    AS menuDesc
+		     , USE_YN       AS useYn
+		  FROM CTE 
+		ORDER BY MENU_ID
+	</select>
+	
+	
+	<select id="selectCountMenu" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		SELECT count(*) cnt 
+		  FROM TB_COM_MENU 
+		 WHERE 1=1
+		 <if test="params.searchText != null">
+			AND ( MENU_ID LIKE CONCAT('%', #{params.searchText}, '%')		
+			      OR MENU_NM LIKE CONCAT('%', #{params.searchText}, '%') )
+		</if>	
+	</select>
+	
+	<select id="selectMenuMgrList" resultType="kr.co.trito.tams.web.system.menu.dto.MenuDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		WITH RECURSIVE CTE AS ( 
+		    SELECT 
+		           MENU_ID, MENU_NM, UPP_MENU_ID, MENU_LVL , URL, MENU_DESC , USE_YN, POPUP_YN, SORT_ODR, REGR, REG_DT, UPDR, UP_DT       
+		    FROM TB_COM_MENU  
+		    WHERE MENU_LVL = 1
+		      AND USE_YN = 'Y'
+		    UNION ALL 
+		    SELECT 
+		         B.MENU_ID, B.MENU_NM, B.UPP_MENU_ID, B.MENU_LVL , B.URL, B.MENU_DESC , B.USE_YN, B.POPUP_YN, B.SORT_ODR, B.REGR, B.REG_DT, B.UPDR, B.UP_DT      
+		    FROM TB_COM_MENU B 
+		    INNER JOIN CTE C ON B.UPP_MENU_ID = C.MENU_ID 
+		    WHERE B.USE_YN = 'Y'
+		    ) 
+		, MENUS AS (
+		SELECT MENU_ID      AS menuId
+		     , MENU_NM      AS menuNm
+		     , UPP_MENU_ID  AS uppMenuId
+		     , MENU_LVL     AS lvl
+		     , URL          AS url 
+		     , MENU_DESC    AS menuDesc
+		     , USE_YN       AS useYn
+		     , POPUP_YN     AS popupYn
+		     , SORT_ODR     AS sortOdr
+		     , REGR         AS regr
+		     , REG_DT       AS regDt
+		     , UPDR         AS updr
+		     , UP_DT        AS upDt
+		  FROM CTE 
+		ORDER BY MENU_ID
+		)
+		SELECT *
+		FROM (
+		 SELECT ROW_NUMBER() OVER(ORDER BY CAST(m.menuId AS int)) AS rn,
+		        m.*
+		  FROM MENUS m
+		 WHERE 1=1
+			 <if test="params.searchText != null">
+				AND ( menuId LIKE CONCAT('%', #{params.searchText}, '%')		
+				      OR menuNm LIKE CONCAT('%', #{params.searchText}, '%') )
+			</if>
+		) A
+		WHERE rn BETWEEN #{start} AND #{end}	
+	</select>
+	
+	<insert id="menuMgrInsert" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
+		INSERT INTO TB_COM_MENU (MENU_ID, MENU_NM, URL
+		                       <if test="uppMenuId != null and uppMenuId !=''">
+		                       , UPP_MENU_ID
+		                       </if>
+		                       , MENU_DESC, MENU_LVL, POPUP_YN, SORT_ODR, REGR)
+		                  VALUES(#{menuId}, #{menuNm}, #{url}
+		                       <if test="uppMenuId != null and uppMenuId !=''">
+		                       , #{uppMenuId}
+		                       </if>
+		                       , #{menuDesc}, #{lvl}, #{popupYn}, #{sortOdr}, #{regr})
+	</insert>
+	
+	<update id="menuMgrUpdate" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
+		UPDATE TB_COM_MENU 
+		   SET MENU_NM	 	= #{menuNm}
+		     , URL	 		= #{url}
+             <if test="uppMenuId != null and uppMenuId !=''">
+             , UPP_MENU_ID	= #{uppMenuId}
+             </if>
+		     , MENU_DESC	= #{menuDesc}
+		     , MENU_LVL		= #{lvl}
+		     , POPUP_YN		= #{popupYn}
+		     , SORT_ODR		= #{sortOdr}
+		     , UPDR			= #{updr}
+		     , UP_DT		= current_timestamp()
+        WHERE  MENU_ID = #{menuId}
+	</update>
+	
+	<delete id="menuMgrDelete" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
+		DELETE FROM TB_COM_MENU 
+        WHERE  MENU_ID = #{menuId}
+	</delete>
+
+</mapper>

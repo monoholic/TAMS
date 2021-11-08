@@ -10,23 +10,23 @@
 <!-- css -->
 <th:block layout:fragment="css">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="css/jsgrid.css" />
-	<link rel="stylesheet" href="css/theme.css" />
+	<link rel="stylesheet" href="/css/jsgrid.css" />
+	<link rel="stylesheet" href="/css/theme.css" />
 </th:block>
 
 <th:block layout:fragment="script">
-	<script src="js/jsgrid/db.js"></script>
+	<script src="/js/jsgrid/db.js"></script>
 	
-    <script src="js/jsgrid/jsgrid.core.js"></script>
-    <script src="js/jsgrid/jsgrid.load-indicator.js"></script>
-    <script src="js/jsgrid/jsgrid.load-strategies.js"></script>
-    <script src="js/jsgrid/jsgrid.sort-strategies.js"></script>
-    <script src="js/jsgrid/jsgrid.field.js"></script>
-    <script src="js/jsgrid/fields/jsgrid.field.text.js"></script>
-    <script src="js/jsgrid/fields/jsgrid.field.number.js"></script>
-    <script src="js/jsgrid/fields/jsgrid.field.select.js"></script>
-    <script src="js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
-    <script src="js/jsgrid/fields/jsgrid.field.control.js"></script>
+    <script src="/js/jsgrid/jsgrid.core.js"></script>
+    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
+    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
+    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
+    <script src="/js/jsgrid/jsgrid.field.js"></script>
+    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
+    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
+    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
+    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
+    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>
 	
     <script>
     
@@ -84,7 +84,7 @@
             			$.commRequest(url, reqType, data)
             				.then((res) => {
             					console.log(res);
-            					
+            					$(".result").text("Results : " + res.data.length);
             					d.resolve({data : res.data, itemsCount: res.condition.totalCount});
             				})
             				.catch((error) => {
@@ -237,25 +237,17 @@
 					<col width=""/>
 			</colgroup>
 				<tr>
-					<th>투자번호</th>
-					<td><input type="text" style="width:100%;"></td>
-					<th>투자명</th>
-					<td><input type="text" style="width:100%;"></td>
-					<th>PO번호</th>
-					<td><input type="text" style="width:100%;"></td>
-				</tr>
-					<tr>
-					<th>품명</th>
-					<td><input type="text" style="width:100%;"></td>
-					<th>부서</th>
-					<td><input type="text" style="width:100%;"></td>
-					<th>담당자</th>
-					<td><input type="text" style="width:100%;"></td>
+					<td>
+						<select id="searchTxt" style="width:130px; margin:10px; margin-left:25px;">
+							<option value="none">검색항목 선택</option>
+						</select>
+					</td>
+					<td><input type="text" style="width:100%; margin:10px;"></td>
 				</tr>
 		</table>
 		<!-- search_button -->
 		<div class="button">
-			<a href="#;" class="btn_reset">Reset</a>
+			<a href="#;" class="btn_reset" style="margin:10px;">Reset</a>
 			<a href="#;" class="btn_srch">Search</a>
 		</div>
 		</div>
@@ -266,8 +258,9 @@
 				<div class="result">Results : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
-								<a class="btn_list_rd">신규 등록</a>
-								<a class="btn_list">다운로드</a>
+								<a class="btn_list">추가</a>
+								<a class="btn_list">삭제</a>
+								<a class="btn_list">수정</a>
 				</div>
 				<!-- list_button -->
 		</div>
