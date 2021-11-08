@@ -99,51 +99,45 @@ public class MenuController {
 	
 	
 	/** 메뉴관리 화면 : 등록 */
-	@GetMapping(value="/menumng/menuinsert")
-	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String menumngInsert( 
-			@ApiParam(value = "메뉴ID", required = true) @RequestParam(value = "items", required = true) String  menus
-			) { 
-		
-		String code = "202";
-		
-		List<MenuDto> menuList = new ArrayList<MenuDto>();
-		
-		//System.out.println(menus);
-		try {
-			JSONArray arr = new JSONArray(menus);
-			int len = arr.length();
-			for(int i=0; i<len; i++) {
-				//System.out.println("@@@ "+arr.getJSONObject(i).getString("menuNm"));
-				MenuDto dto = new MenuDto();
-				dto.setMenuId(arr.getJSONObject(i).getString("menuId"));
-				dto.setMenuNm(arr.getJSONObject(i).getString("menuNm"));
-				dto.setMenuDesc(arr.getJSONObject(i).getString("menuDesc"));
-				dto.setUppMenuId(arr.getJSONObject(i).getString("uppMenuId"));
-				dto.setUrl(arr.getJSONObject(i).getString("url"));
-				dto.setLvl(arr.getJSONObject(i).getString("lvl"));
-				dto.setUseYn(arr.getJSONObject(i).getString("useYn"));
-				dto.setPopupYn(arr.getJSONObject(i).getString("popupYn"));
-				dto.setSortOdr(arr.getJSONObject(i).getString("sortOdr"));
-				
-				dto.setRegr("system");
-				menuList.add(dto);
-			}
-		} catch(Exception e) {e.printStackTrace();}
-
-		int cnt = 0;
-		for(MenuDto menu : menuList) {
-			if( menuService.selectMenuMgrInsert(menu) > 0 ) cnt++;
-		}
-		
-//		int cnt = menuService.selectMenuMgrInsert(dto);
-		if( cnt > 0) code = "200";
-		
-		return code;
-	} 
+	   @GetMapping(value="/menumng/menuinsert")
+	   @ResponseBody
+	   @ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
+	   @ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	   @ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	   public String menuMgrInsert( 
+	         @ApiParam(value = "메뉴ID", required = true) @RequestParam(value = "menuId", required = true) String menuId,
+	         @ApiParam(value = "메뉴명", required = true) @RequestParam(value = "menuNm", required = true) String menuNm,
+	         @ApiParam(value = "상위메뉴ID", required = false) @RequestParam(value = "uppMenuId", required = true) String uppMenuId,
+	         @ApiParam(value = "메뉴설명", required = false) @RequestParam(value = "menuDesc", required = true) String menuDesc,
+	         @ApiParam(value = "메뉴경로", required = false) @RequestParam(value = "url", required = true) String url,
+	         @ApiParam(value = "메뉴레벨", required = false) @RequestParam(value = "lvl", required = true) String lvl,
+	         @ApiParam(value = "사용여부", required = false) @RequestParam(value = "useYn", required = true) String useYn,
+	         @ApiParam(value = "팝업구분", required = false) @RequestParam(value = "popupYn", required = true) String popupYn,
+	         @ApiParam(value = "정렬순서", required = false) @RequestParam(value = "sortOdr", required = true) String sortOdr
+	         ) { 
+	      
+	      String code = "202";
+	      
+	      MenuDto dto = new MenuDto();
+	      
+	      if (StringUtils.isNotEmpty(menuId)) dto.setMenuId(menuId);
+	      if (StringUtils.isNotEmpty(menuNm)) dto.setMenuNm(menuNm);
+	      
+	      dto.setUppMenuId(uppMenuId);
+	      dto.setMenuDesc(menuDesc);
+	      dto.setUrl(url);
+	      dto.setLvl(lvl);
+	      dto.setUseYn(useYn);
+	      dto.setPopupYn(popupYn);
+	      dto.setSortOdr(sortOdr);
+	      
+	      dto.setRegr("system"); //임시
+	      
+	      int cnt = menuService.selectMenuMgrInsert(dto);
+	      if( cnt > 0) code = "200";
+	      
+	      return code;
+	   } 
 	
 //	/** 메뉴관리 화면 : 등록 */
 //	@GetMapping(value="/menumgr/menuinsert")

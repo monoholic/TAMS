@@ -55,3 +55,6 @@ footer span.contact strong{margin-left:3px;padding-left:7px;font-weight:normal}
 	background: #f9f9f9;
 	text-align: center;
 }
+.search {
+    text-align: end;
+}

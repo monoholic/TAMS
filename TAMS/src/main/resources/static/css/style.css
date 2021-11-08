@@ -136,7 +136,7 @@ div .bot_line{border-bottom:1px solid #aeaeae;overflow:auto;}
 .srch_table{width:100%;border-collapse:collapse;}
 .srch_table th,.srch_table td{border:none;vertical-align:top;}
 .srch_table th{padding:6px 0 0 20px;text-align:left;font-weight:bold;line-height:1.3em;}
-.srch_table td{padding:2px 0 5px 0;}
+.srch_table td{padding:2px 0 5px 0; vertical-align: middle;}
 .srch_table input,.srch_table select,.srch_table span,.srch_table img{vertical-align:middle;}
 
 .srch_simple{position:relative;float:right;margin-top:-40px;z-index:1000;}

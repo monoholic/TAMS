@@ -32,6 +32,7 @@
 	    <script>
 	    
 	    let numOfRows = 20;
+	    let pageIdx = 1;
 	    var status = true;
         var selectedItems = [];
 	 	var insertedItems = [];
@@ -40,7 +41,7 @@
 	    $(function(){
 	    	
 	        $("#jsGrid").jsGrid({
-	        	height: "500",
+	        	height: "650",
                 width: "100%",
                 filtering: false,
                 editing: true,
@@ -48,7 +49,7 @@
                 sorting: true,
                 paging: true,
                 sorter: "number",
-                pageIndex:1,
+                pageIndex:pageIdx,
                 pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
                 pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
                 pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
@@ -69,7 +70,7 @@
 						//detail form
 						showDetailForm(args.item);
 					} else {
-					    selectedItems.push(args.item);
+						
 					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
 					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
 					                .on("change", function () {
@@ -100,30 +101,32 @@
             			}
 						$.commRequest(url, reqType, data)
 							.then((res) => {
-								
+								$(".result").text("Results : " + res.condition.totalCount);
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
-
 							})
 							.catch((error) => {
 								console.log('메뉴조회 실패!!');
-							});						
+							});
 	                    
 	                    return d.promise();
 	                },
-
 	            updateItem: function(item) { 
             		updatedItems.push(item);
+            		pageIdx = $("#jsGrid").jsGrid("option", "pageIndex");
                 	//$("#jsGrid").jsGrid("option", "pageIndex", $("#jsGrid").jsGrid("option", "pageIndex"));
                 	let url = "/system/menu/menumng/menuupdate";
                 	let reqType = 'GET';
                 	$.commRequest(url, reqType, item)
                 		.then((res) => {
                 			console.log(res);
-                			$(".save_btn").click();
+                			//$(".save_btn").click();
+                			alert("수정이 완료되었습니다.");
+                			$("#jsGrid").jsGrid("loadData");
                 		})
                 		.catch((error) => {
                 			console.log(error);
                 		})
+                	
                 },
              	deleteItem: function(item) { 
         			let url = "/system/menu/menumng/menudelete";
@@ -137,22 +140,19 @@
         				})
         			
             	},
-             	insertItem: function(item) { 
-             		//insertedItems.push(item);
-             		/*
-        			let url = "/menu/menumng/menuinsert";
-        			let reqType = 'GET';
-        			$.commRequest(url, reqType, item)
-        				.then((res) => {
-        					console.log(res);
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        				})
-        		    */
-            	}
+             	insertItem: function(item) {
+        		    let url = "/system/menu/menumng/menuinsert";
+        		    let reqType = 'GET';
+        		    $.commRequest(url, reqType, item)
+        		    	.then((res) => {
+        		    		console.log(res);
+        		    	})
+        		    	.catch((error) => {
+        		    		console.log(error);
+        		    	})
+            	    }
         		    
-            },
+            	},
 	            fields: [
 	            	{  name : "chk"
 	                	 , align: "center"
@@ -230,7 +230,7 @@
 	        
 		    var selectItem = function(item) {
 		    	if(!selectedItems.includes(item))
-			    //selectedItems.push(item);
+			    selectedItems.push(item);
 			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
 	             $("#selectAllCheckbox").prop("checked", true);
 	         } else {
@@ -239,17 +239,20 @@
 			};
 		     
 		    var unselectItem = function(item) {
+		    	
 			    selectedItems = $.grep(selectedItems, function(i) {
 			    return i !== item;
 			    });
+			    
 			    if(selectedItems.length == 0) {
 			    	$('#selectAllCheckbox').attr('checked', false);
 			    }
 			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             $("#selectAllCheckbox").prop("checked", true);
-	         } else {
-	             $("#selectAllCheckbox").prop("checked", false);
-	         }
+	             	$("#selectAllCheckbox").prop("checked", true);
+		        } else {
+		            $("#selectAllCheckbox").prop("checked", false);
+		        }
+			    
 		    };
 	        
 	        $("#pager").on("change", function() {
@@ -379,9 +382,16 @@
     	    	
     	    });
 
-          	//수정
+          	//수정 버튼
     	    $(".btn_update").click(function() {
-    	    	showDetailForm(selectedItems[0]);
+    	    	var items = $("#jsGrid").jsGrid("option", "data");
+    	    	var item = items.filter(arr => arr.menuId == selectedItems[0]);
+    	    	showDetailForm(item[0]);
+    	    });
+          	
+          	//리셋 버튼
+    	    $(".btn_reset").click(function() {
+    	    	$("#searchText").val("");
     	    });
 	     	
 	     	// 팝업창 닫기 버튼 처리
@@ -485,7 +495,7 @@
 					<col width=""/>
 			</colgroup>
 				<tr>
-					<td><label for="searchText" style="width:130px; margin:10px; margin-left:25px;">메뉴 명</label></td>
+					<td><label for="searchText" class="menu_label">메뉴 명</label></td>
 					<td><input id="searchText" type="text" style="width:100%; margin:10px;"></td>
 					<td class="search" colspan="3">
 						<a href="#;" class="btn_reset">Reset</a>
