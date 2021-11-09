@@ -15,7 +15,6 @@
 </th:block>
 
 <th:block layout:fragment="script">
-	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="/js/jsgrid/db.js"></script>
     <script src="/js/jsgrid/jsgrid.core.js"></script>
     <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
@@ -85,7 +84,6 @@
 	            },
                 controller: {
                 	loadData:function(filter){
-                		console.log(filter);
                 		let d = $.Deferred();
                 		
 	                	currentPage = filter.pageIndex;    
@@ -95,14 +93,14 @@
             			let data = {
             					"currentPage":currentPage,
             					"numOfRows":"16",
-            					"searchTitle": "",
+            					"searchType" : $("#searchType").val(),
+            					"searchText": $("#searchText").val(),
             					"sortField": filter.sortField,
             					"sortOrder": filter.sortOrder
             			}
             			$.commRequest(url, reqType, data)
             				.then((res) => {
-            					console.log(res);
-            					$(".result").text("Results : " + res.data.length);
+            					$(".result").text("Total : " + res.data.length);
             					d.resolve({data : res.data, itemsCount: res.condition.totalCount});
             				})
             				.catch((error) => {
@@ -114,7 +112,7 @@
                 	updateItem: function(item) {
                 		updatedItems.push(item);
 	                	$("#jsGrid").jsGrid("option", "pageIndex", $("#jsGrid").jsGrid("option", "pageIndex"));
-	                	let url = '/sample/boardUpdate';
+	                	let url = '/system/role/roleMng/roleUpdate';
 	                	let reqType = 'GET';
 	                	$.commRequest(url, reqType, item)
 	                		.then((res) => {
@@ -126,7 +124,7 @@
                     },
                  	deleteItem: function(item) {
             			$("#curr_Idx").val(currentPage);
-            			let url = '/sample/boardDelete';
+            			let url = '/system/role/roleMng/roleDelete';
             			let reqType = 'GET';
             			$.commRequest(url, reqType, item)
             				.then((res) => {
@@ -138,7 +136,7 @@
             				})
                 	},
                  	insertItem: function(item) {
-            			let url = '/sample/boardInsert';
+            			let url = '/system/role/roleMng/roleInsert';
             			let reqType = 'GET';
             			$.commRequest(url, reqType, item)
             				.then((res) => {
@@ -185,41 +183,40 @@
 	    				   });
 				 	 } ,
                 	},
-                	{name : "roleId", type: "disabled", width: 40, title: "권한ID"},
-                	{name : "roleNm", type: "text", width: 70, title: "권한명"},
-                	{name : "roleDesc", type: "text", width: 150, title: "설명"},
-                	{name : "useYn", type: "text", width: 40, title: "사용구분"},
-                	{name : "regDt", type: "text", width: 70, title: "등록일자"},
+                	{name : "roleId", index:"role_id", type: "disabled", width: 40, title: "권한코드"},
+                	{name : "roleNm", index:"role_nm", type: "text", width: 70, title: "권한명"},
+                	{name : "roleDesc", index:"role_desc", type: "text", width: 150, title: "설명"},
+                	{name : "useYn", index:"use_yn", type: "text", width: 40, title: "사용구분", sorting: false},
+                	{name : "regDt", index:"reg_dt", type: "text", width: 70, title: "등록일자"},
                 ]
             });
-        });
         
-	    var selectItem = function(item) {
-	    	if(!selectedItems.includes(item))
-		    selectedItems.push(item);
-		    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-             $("#selectAllCheckbox").prop("checked", true);
-         } else {
-             $("#selectAllCheckbox").prop("checked", false);
-         }
-		};
-	     
-	    var unselectItem = function(item) {
-	    	
-		    selectedItems = $.grep(selectedItems, function(i) {
-		    return i !== item;
-		    });
-		    
-		    if(selectedItems.length == 0) {
-		    	$('#selectAllCheckbox').attr('checked', false);
-		    }
-		    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-             	$("#selectAllCheckbox").prop("checked", true);
-	        } else {
-	            $("#selectAllCheckbox").prop("checked", false);
-	        }
-		    
-	    };
+		    var selectItem = function(item) {
+		    	if(!selectedItems.includes(item))
+			    selectedItems.push(item);
+			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+	             $("#selectAllCheckbox").prop("checked", true);
+	         } else {
+	             $("#selectAllCheckbox").prop("checked", false);
+	         }
+			};
+		     
+		    var unselectItem = function(item) {
+		    	
+			    selectedItems = $.grep(selectedItems, function(i) {
+			    return i !== item;
+			    });
+			    
+			    if(selectedItems.length == 0) {
+			    	$('#selectAllCheckbox').attr('checked', false);
+			    }
+			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+	             	$("#selectAllCheckbox").prop("checked", true);
+		        } else {
+		            $("#selectAllCheckbox").prop("checked", false);
+		        }
+			    
+		    };
         
         $("#pager").on("change", function() {
             var page = parseInt($(this).val(), 10);
@@ -244,7 +241,7 @@
 	    	});
 	    	
 	    	//별도 호출
-	    	let url = "/system/role/rolemng/roleDelete";
+	    	let url = "/system/role/roleMng/roleDelete";
 			let reqType = 'GET';
 			dataType: 'json';
 			let data={
@@ -265,54 +262,61 @@
 	    });
 	    
         $(".btn_srch").on("click",function (){
-    	   $("#jsGrid").jsGrid().trigger("loadData");
-        });
+	    	   $("#jsGrid").jsGrid().trigger("loadData");
+	    });
         
      	// 팝업창 저장 버튼 처리
         $('.save_btn').on('click', function (e) {
             e.preventDefault();
             
-            var insert_item = {};
-                insert_item.roleId 		= $(".detail_table").find("#roleId").val();
-	    		insert_item.roleNm 		= $(".detail_table").find("#roleNm").val();
-	    		insert_item.roleDesc 	= $(".detail_table").find("#roleDesc").val();
-	    		insert_item.useYn	 	= $(".detail_table").find("#useYn").val();
-
-	        var action = "";
-	    	if(save_mode == "insert") {
-	    		action = "insertItem";
-	    		//insertedItems.push(insert_item); --일괄
-	    	}else if(save_mode == "update") {
-	    		action = "updateItem";
-	    		//updatedItems.push(insert_item); --일괄
-	    	}
-	
-			$("#jsGrid").jsGrid(action, insert_item);
+            // 권한코드에 ROLE_이 포함되었는지 확인한다.
+            if($(".detail_table").find("#roleId").val().toUpperCase().includes("ROLE_")){
             
-    		clearDetailForm();
-            $(this).parents("#detailForm").hide();
-            save_mode = "";
+	            var insert_item = {};
+	                insert_item.roleId 		= $(".detail_table").find("#roleId").val();
+		    		insert_item.roleNm 		= $(".detail_table").find("#roleNm").val();
+		    		insert_item.roleDesc 	= $(".detail_table").find("#roleDesc").val();
+		    		insert_item.useYn	 	= $(".detail_table").find("#useYn").val();
+	
+		        var action = "";
+		    	if(save_mode == "insert") {
+		    		action = "insertItem";
+		    		//insertedItems.push(insert_item); --일괄
+		    	}else if(save_mode == "update") {
+		    		action = "updateItem";
+		    		//updatedItems.push(insert_item); --일괄
+		    	}
+		
+				$("#jsGrid").jsGrid(action, insert_item);
+	            
+				alert("권한이 등록되었습니다.");
+	    		clearDetailForm();
+	            $(this).parents("#detailForm").hide();
+	            save_mode = "";
+            }else{
+            	alert("권한코드를 확인해주세요.");
+            }
         });
      	
       	//수정 버튼
 	    $(".btn_update").click(function() {
 	    	var items = $("#jsGrid").jsGrid("option", "data");
-	    	var item = items.filter(arr => arr.menuId == selectedItems[0]);
+	    	var item = items.filter(arr => arr.roleId == selectedItems[0]);
 	    	showDetailForm(item[0]);
 	    });
       	
       	//리셋 버튼
 	    $(".btn_reset").click(function() {
 	    	$("#searchText").val("");
+	    	$("#searchType option:eq(0)").prop("selected", true);
 	    });
      	
      	// 팝업창 닫기 버튼 처리
         $('.close_btn').on('click', function (e) {
-/*             e.preventDefault();
+            e.preventDefault();
             clearDetailForm();
             $(this).parents("#detailForm").hide();
-            selectedItems = []; */
-            console.log("hi");
+            selectedItems = [];
         });
      	
         //drag 활성화
@@ -325,7 +329,9 @@
             this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
             return this;
         }
-    
+        
+     });
+        
     function clearDetailForm() {
 	    $(".detail_table").find("#roleId").val("");
 		$(".detail_table").find("#roleNm").val("");
@@ -338,19 +344,19 @@
     	
     	if(selectedItems.length <= 1){
 	    	
-	    	let title = "메뉴 등록";
+	    	let title = "권한 등록";
 	    	 var readOnly = false;
 	    	 
 	    	 if( item != null ) {
-	    		 title = "메뉴 수정";
+	    		 title = "권한 수정";
 	    		 save_mode = "update";
 	    		 
 	    		 readOnly = false;
-	    		 $(".detail_table").find("#roleId").val(item.menuId);
-	    		 
+	    		 $(".detail_table").find("#roleId").val(item.roleId);
 	    		 $(".detail_table").find("#roleId").attr("readOnly", true);
-	    		 $(".detail_table").find("#roleNm").val(item.menuNm);
-	    		 $(".detail_table").find("#roleDesc").val(item.menuDesc);
+	    		 
+	    		 $(".detail_table").find("#roleNm").val(item.roleNm);
+	    		 $(".detail_table").find("#roleDesc").val(item.roleDesc);
 	    		 $(".detail_table").find("#useYn").val(item.useYn);
 	    	 } else {
 	    		 save_mode = "insert";
@@ -396,9 +402,10 @@
 			</colgroup>
 				<tr>
 					<td>
-						<select>
+						<select id="searchType">
 							<option value="none">검색항목 선택</option>
-							<option>굳</option>
+							<option value="role_id">권한코드</option>
+							<option value="role_nm">권한명</option>
 						</select>
 					</td>
 					<td><input id="searchText" type="text" style="width:100%; margin:10px;"></td>
@@ -411,7 +418,7 @@
 		</div>
 		<!-- //search -->
 		<div class="list_head">
-				<div class="result">Results : 0,000</div>
+				<div class="result">Total : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
 					<a class="btn_add">등록</a>
@@ -446,7 +453,7 @@
 					<table class="detail_table">
 						<tr>
 							<th>권한코드</th>
-							<td><input type="text" id="roleId" /></td>
+							<td style="width:400px"><input type="text" id="roleId" placeholder="ROLE_" /></td>
 						</tr>
 						<tr>
 							<th>권한명</th>

@@ -41,7 +41,7 @@ public class MenuController {
 	ResponseService responseService;		
 	
 	/** 메뉴 - 상단 메뉴 조회 */
-	@PostMapping("/menulist")
+	@PostMapping("/menuList")
 	@ResponseBody
 	public ResponseEntity<? extends Response> menulist(String str) { 
 		
@@ -50,20 +50,20 @@ public class MenuController {
 	}
 	
 	/** 메뉴관리 화면 */
-	@PostMapping("/menumng")
+	@PostMapping("/menuMng")
 	public ModelAndView menumngView(HttpServletRequest request) {
 		
 		ModelAndView view = new ModelAndView();
 		view.addObject("menuId", request.getParameter("menuId"));
 		view.addObject("menuNm", request.getParameter("menuNm"));
 		view.addObject("menuDesc", request.getParameter("menuDesc"));
-		view.setViewName("/content/system/menu/menumng");
+		view.setViewName("/content/system/menu/menuMng");
 		    
 		return view;
 	} 	
 	
 	/** 메뉴관리 화면 : 조회 */
-	@GetMapping(value="/menumng/menulist")
+	@GetMapping(value="/menuMng/menuList")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
@@ -93,13 +93,13 @@ public class MenuController {
 		int total = menuService.selectCountMenu(condition);
 		condition.pageSetup(total);
 		
-		List<MenuDto> list = menuService.selectMenuMgrList(condition);
+		List<MenuDto> list = menuService.selectMenuMngList(condition);
 		return responseService.success(condition, list);
 	} 	
 	
 	
 	/** 메뉴관리 화면 : 등록 */
-	   @GetMapping(value="/menumng/menuinsert")
+	   @GetMapping(value="/menuMng/menuInsert")
 	   @ResponseBody
 	   @ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
 	   @ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
@@ -133,55 +133,14 @@ public class MenuController {
 	      
 	      dto.setRegr("system"); //임시
 	      
-	      int cnt = menuService.selectMenuMgrInsert(dto);
+	      int cnt = menuService.menuMngInsert(dto);
 	      if( cnt > 0) code = "200";
 	      
 	      return code;
 	   } 
 	
-//	/** 메뉴관리 화면 : 등록 */
-//	@GetMapping(value="/menumgr/menuinsert")
-//	@ResponseBody
-//	@ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
-//	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-//			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-//	public String menuMgrInsert( 
-//			@ApiParam(value = "메뉴ID", required = true) @RequestParam(value = "menuId", required = true) String menuId,
-//			@ApiParam(value = "메뉴명", required = true) @RequestParam(value = "menuNm", required = true) String menuNm,
-//			@ApiParam(value = "상위메뉴ID", required = false) @RequestParam(value = "uppMenuId", required = true) String uppMenuId,
-//			@ApiParam(value = "메뉴설명", required = false) @RequestParam(value = "menuDesc", required = true) String menuDesc,
-//			@ApiParam(value = "메뉴경로", required = false) @RequestParam(value = "url", required = true) String url,
-//			@ApiParam(value = "메뉴레벨", required = false) @RequestParam(value = "lvl", required = true) String lvl,
-//			@ApiParam(value = "사용여부", required = false) @RequestParam(value = "useYn", required = true) String useYn,
-//			@ApiParam(value = "팝업구분", required = false) @RequestParam(value = "popupYn", required = true) String popupYn,
-//			@ApiParam(value = "정렬순서", required = false) @RequestParam(value = "sortOdr", required = true) String sortOdr
-//			) { 
-//		
-//		String code = "202";
-//		
-//		MenuDto dto = new MenuDto();
-//		
-//		if (StringUtils.isNotEmpty(menuId)) dto.setMenuId(menuId);
-//		if (StringUtils.isNotEmpty(menuNm)) dto.setMenuNm(menuNm);
-//		
-//		dto.setUppMenuId(uppMenuId);
-//		dto.setMenuDesc(menuDesc);
-//		dto.setUrl(url);
-//		dto.setLvl(lvl);
-//		dto.setUseYn(useYn);
-//		dto.setPopupYn(popupYn);
-//		dto.setSortOdr(sortOdr);
-//		
-//		dto.setRegr("system"); //임시
-//		
-//		int cnt = menuService.selectMenuMgrInsert(dto);
-//		if( cnt > 0) code = "200";
-//		
-//		return code;
-//	} 
-	
 	/** 메뉴관리 화면 : 수정 */
-	@GetMapping(value="/menumng/menuupdate")
+	@GetMapping(value="/menuMng/menuUpdate")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr Update", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
@@ -215,7 +174,7 @@ public class MenuController {
 		
 		dto.setUpdr("system"); //임시
 		
-		int cnt = menuService.selectMenuMgrUpdate(dto);
+		int cnt = menuService.menuMngUpdate(dto);
 		if( cnt > 0) code = "200";
 		
 		return code;
@@ -223,7 +182,7 @@ public class MenuController {
 	
 	
 	/** 메뉴관리 화면 : 삭제 */
-	@GetMapping(value="/menumng/menudelete")
+	@GetMapping(value="/menuMng/menuDelete")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr Delete", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
@@ -240,22 +199,8 @@ public class MenuController {
 			System.out.println("@@@@@@@@@@ "+menuId);
 			MenuDto dto = new MenuDto();
 			dto.setMenuId(menuId);
-			if( menuService.selectMenuMgrDelete(dto) > 0 ) cnt++;
+			if( menuService.menuMngDelete(dto) > 0 ) cnt++;
 		}
-		
-		
-//		if (StringUtils.isNotEmpty(menuId)) dto.setMenuId(menuId);
-//		if (StringUtils.isNotEmpty(menuNm)) dto.setMenuNm(menuNm);
-//		
-//		dto.setUppMenuId(uppMenuId);
-//		dto.setMenuDesc(menuDesc);
-//		dto.setUrl(url);
-//		dto.setLvl(lvl);
-//		dto.setUseYn(useYn);
-//		dto.setPopupYn(popupYn);
-//		dto.setSortOdr(sortOdr);
-//		dto.setUpdr("system"); //임시
-		
 		
 		if( cnt > 0) code = "200";
 		

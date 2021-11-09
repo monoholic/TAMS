@@ -13,12 +13,12 @@ public interface MenuMapper {
 	
 	public int selectCountMenu(SearchCondition condtion);
 	
-	public List<MenuDto> selectMenuMgrList(SearchCondition condtion);
+	public List<MenuDto> selectMenuMngList(SearchCondition condtion);
 	
-	public int menuMgrInsert(MenuDto dto);
+	public int menuMngInsert(MenuDto dto);
 	
-	public int menuMgrUpdate(MenuDto dto);
+	public int menuMngUpdate(MenuDto dto);
 	
-	public int menuMgrDelete(MenuDto dto);
+	public int menuMngDelete(MenuDto dto);
 	
 }

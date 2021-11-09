@@ -16,7 +16,6 @@
 	</th:block>
 	
 	<th:block layout:fragment="script">
-		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="/js/jsgrid/db.js"></script>
 	    <script src="/js/jsgrid/jsgrid.core.js"></script>
 	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
@@ -90,7 +89,7 @@
 	                    
 	                    currentPage = filter.pageIndex; 
                
-	                    let url = "/system/menu/menumng/menulist";
+	                    let url = "/system/menu/menuMng/menuList";
 						let reqType = 'GET';	
 						let data = {
             				"currentPage": filter.pageIndex,
@@ -114,7 +113,7 @@
             		updatedItems.push(item);
             		pageIdx = $("#jsGrid").jsGrid("option", "pageIndex");
                 	//$("#jsGrid").jsGrid("option", "pageIndex", $("#jsGrid").jsGrid("option", "pageIndex"));
-                	let url = "/system/menu/menumng/menuupdate";
+                	let url = "/system/menu/menuMng/menuUpdate";
                 	let reqType = 'GET';
                 	$.commRequest(url, reqType, item)
                 		.then((res) => {
@@ -129,7 +128,7 @@
                 	
                 },
              	deleteItem: function(item) { 
-        			let url = "/system/menu/menumng/menudelete";
+        			let url = "/system/menu/menuMng/menuDelete";
         			let reqType = 'GET';
         			$.commRequest(url, reqType, item)
         				.then((res) => {
@@ -141,7 +140,7 @@
         			
             	},
              	insertItem: function(item) {
-        		    let url = "/system/menu/menumng/menuinsert";
+        		    let url = "/system/menu/menuMng/menuInsert";
         		    let reqType = 'GET';
         		    $.commRequest(url, reqType, item)
         		    	.then((res) => {
@@ -188,7 +187,6 @@
 		    				   });
 					 	 } ,
 	                	},
-	                //{ name: "chk", type: "checkbox", width: 30, readOnly:false , title: "Sel<br><br>" },
 	                { name: "menuId", type: "number", width: 40, readOnly:true , title: "MENU ID" },
 	                { name: "menuNm", type: "text", width: 100 ,align: "left"  , title: "MENU NAME" },
 	                { name: "url", type: "text", width: 120 ,align: "left"  , title: "URL" },
@@ -212,19 +210,6 @@
 	                ,{ name: "regDt", type: "date", width: 80, align: "center", readOnly:true  , title: "등록일시" }
 	                ,{ name: "updr", type: "text", width: 60, align: "center", readOnly:true  , title: "수정" }
 	                ,{ name: "upDt", type: "date", width: 80, align: "center", readOnly:true  , title: "수정일시" }
-	                /*
-	                ,
-	                { name: "Country", type: "select", items: db.countries, valueField: "Id", textField: "Name" },
-	                { name: "Married", type: "checkbox", title: "Is Married", sorting: false },
-	                */
-	                /*
-	                ,
-	                {   type: "control"
-	                   ,updateButton: false
-	                   ,deleteButton: false
-	                   ,inserting: false
-	                }
-	                */
 	            ]
 	        });
 	        
@@ -278,7 +263,7 @@
     	    	});
     	    	
     	    	//별도 호출
-    	    	let url = "/system/menu/menumng/menudelete";
+    	    	let url = "/system/menu/menuMng/menuDelete";
     			let reqType = 'GET';
     			dataType: 'json';
     			let data={
@@ -343,7 +328,7 @@
     	    $(".btn_saveall").click(function() {
     	    	
     	    	if( insertedItems.length > 0 ) {
-        			let url = "/system/menu/menumng/menuinsert";
+        			let url = "/system/menu/menuMng/menuInsert";
         			let reqType = 'GET';
         			let data = {
         				"items": JSON.stringify(insertedItems)
@@ -362,7 +347,7 @@
     	    	}
     	    	
     	    	if( updatedItems.length > 0 ) {
-    	    		let url = "/system/menu/menumng/menuupdate";
+    	    		let url = "/system/menu/menuMng/menuUpdate";
         			let reqType = 'GET';
         			let data = {
         				"items": JSON.stringify(updatedItems)

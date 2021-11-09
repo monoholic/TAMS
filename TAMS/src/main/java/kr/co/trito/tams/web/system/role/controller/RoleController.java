@@ -24,6 +24,7 @@ import io.swagger.annotations.ApiResponses;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.system.menu.dto.MenuDto;
 import kr.co.trito.tams.web.system.role.dto.RoleDto;
 import kr.co.trito.tams.web.system.role.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,137 +43,140 @@ public class RoleController {
 	/** 메뉴관리 화면 */
 	@PostMapping("/roleMng")
 	public ModelAndView menumngView(HttpServletRequest request) {
-		
+
 		ModelAndView view = new ModelAndView();
 		view.addObject("menuId", request.getParameter("menuId"));
 		view.addObject("menuNm", request.getParameter("menuNm"));
 		view.addObject("menuDesc", request.getParameter("menuDesc"));
 		view.setViewName("/content/system/role/roleMng");
-		    
+
 		return view;
-	} 
-	
+	}
+
 	/** 권한관리 화면 : 조회 */
-	@GetMapping(value="/roleMng/roleList")
+	@GetMapping(value = "/roleMng/roleList")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> roleMngList(
-				@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage",required = true) String currentPage,
-				@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
-				@ApiParam(value = "검색 조건(메뉴ID, 메뉴명)", required = false) @RequestParam(value = "searchText", required = false) String searchText,
-				@ApiParam(value = "정렬 필드", required = false) @RequestParam(value = "sortField", required = false) String sortField,
-				@ApiParam(value = "정렬 타입", required = false) @RequestParam(value = "sortOrder", required = false) String sortOrder
-                              ) {
-		
+			@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage", required = true) String currentPage,
+			@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
+			@ApiParam(value = "검색 타입(role_id, role_nm)", required = false) @RequestParam(value = "searchType", required = false) String searchType,
+			@ApiParam(value = "검색 조건(권한코드, 권한명)", required = false) @RequestParam(value = "searchText", required = false) String searchText,
+			@ApiParam(value = "정렬 필드", required = false) @RequestParam(value = "sortField", required = false) String sortField,
+			@ApiParam(value = "정렬 타입", required = false) @RequestParam(value = "sortOrder", required = false) String sortOrder) {
+
 		if (StringUtils.isEmpty(currentPage) || StringUtils.isEmpty(numOfRows))
-		throw new IllegalArgumentException("Request parameter error.");
-		
+			throw new IllegalArgumentException("Request parameter error.");
+
 		Map<String, Object> params = new HashMap<>();
+		if (!StringUtils.isEmpty(searchType))
+			params.put("searchType", searchType);
+		
 		if (!StringUtils.isEmpty(searchText))
-		params.put("searchText", searchText);
-		
+			params.put("searchText", searchText);
+
 		if (!StringUtils.isEmpty(sortField))
-		params.put("sortField", sortField);
-		
+			params.put("sortField", sortField);
+
 		if (!StringUtils.isEmpty(sortOrder))
-		params.put("sortOrder", sortOrder);
-		
+			params.put("sortOrder", sortOrder);
+
 		SearchCondition condition = new SearchCondition(currentPage, numOfRows, params);
 		int total = roleService.selectCountRole(condition);
 		condition.pageSetup(total);
-		
+
 		List<RoleDto> list = roleService.selectRoleMngList(condition);
 		return responseService.success(condition, list);
-	} 	
+	}
 
-	/*
-	 * @GetMapping(value = "/roleUpdate")
-	 * 
-	 * @ResponseBody
-	 * 
-	 * @ApiOperation(value = "Web API Board test", notes = "Web API Test")
-	 * 
-	 * @ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-	 * 
-	 * @ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") }) public String
-	 * webUpdateList(
-	 * 
-	 * @ApiParam(value = "게시글번호", required = true) @RequestParam(value = "id",
-	 * required = true) String id,
-	 * 
-	 * @ApiParam(value = "게시글제목", required = true) @RequestParam(value = "title",
-	 * required = true) String title) {
-	 * 
-	 * String code = "202";
-	 * 
-	 * BoardDto board = new BoardDto();
-	 * 
-	 * if (StringUtils.isNotEmpty(id)) board.setId(id);
-	 * 
-	 * if (StringUtils.isNotEmpty(title)) board.setTitle(title);
-	 * 
-	 * if (roleService.webUpdateBoard(board) > 0) code = "200";
-	 * 
-	 * return code; }
-	 * 
-	 * @GetMapping(value = "/roleDelete")
-	 * 
-	 * @ResponseBody
-	 * 
-	 * @ApiOperation(value = "Web API Board test", notes = "Web API Test")
-	 * 
-	 * @ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-	 * 
-	 * @ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") }) public String
-	 * webDeleteList(
-	 * 
-	 * @ApiParam(value = "게시글번호", required = true) @RequestParam(value = "id",
-	 * required = true) String id,
-	 * 
-	 * @ApiParam(value = "게시글제목", required = true) @RequestParam(value = "title",
-	 * required = true) String title) {
-	 * 
-	 * String code = "202";
-	 * 
-	 * BoardDto board = new BoardDto();
-	 * 
-	 * if (StringUtils.isNotEmpty(id)) board.setId(id);
-	 * 
-	 * if (StringUtils.isNotEmpty(title)) board.setTitle(title);
-	 * 
-	 * if (boardService.webDeleteBoard(board) > 0) code = "200";
-	 * 
-	 * return code; }
-	 * 
-	 * @GetMapping(value = "/roleInsert")
-	 * 
-	 * @ResponseBody
-	 * 
-	 * @ApiOperation(value = "Web API Board test", notes = "Web API Test")
-	 * 
-	 * @ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-	 * 
-	 * @ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") }) public String
-	 * webInsertList(
-	 * 
-	 * @ApiParam(value = "게시글번호", required = true) @RequestParam(value = "id",
-	 * required = true) String id,
-	 * 
-	 * @ApiParam(value = "게시글제목", required = true) @RequestParam(value = "title",
-	 * required = true) String title) {
-	 * 
-	 * String code = "202";
-	 * 
-	 * BoardDto board = new BoardDto();
-	 * 
-	 * if (StringUtils.isNotEmpty(id)) board.setId(id);
-	 * 
-	 * if (StringUtils.isNotEmpty(title)) board.setTitle(title);
-	 * 
-	 * if (boardService.webInsertBoard(board) > 0) code = "200";
-	 * 
-	 * return code; }
-	 */
+	/** 메뉴관리 화면 : 등록 */
+	   @GetMapping(value="/roleMng/roleInsert")
+	   @ResponseBody
+	   @ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
+	   @ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	   @ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	   public String roleMngInsert( 
+	         @ApiParam(value = "권한코드", required = true) @RequestParam(value = "roleId", required = true) String roleId,
+	         @ApiParam(value = "권한명", required = true) @RequestParam(value = "roleNm", required = true) String roleNm,
+	         @ApiParam(value = "권한설명", required = false) @RequestParam(value = "roleDesc", required = true) String roleDesc,
+	         @ApiParam(value = "사용여부", required = false) @RequestParam(value = "useYn", required = true) String useYn
+	         ) { 
+	      
+	      String code = "202";
+	      
+	      RoleDto dto = new RoleDto();
+	      
+	      if (StringUtils.isNotEmpty(roleId)) dto.setRoleId(roleId);
+	      if (StringUtils.isNotEmpty(roleNm)) dto.setRoleNm(roleNm);
+	      
+	      dto.setRoleDesc(roleDesc);
+	      dto.setUseYn(useYn);
+	      
+	      dto.setRegr("system"); //임시
+	      
+	      int cnt = roleService.roleMngInsert(dto);
+	      if( cnt > 0) code = "200";
+	      
+	      return code;
+	   } 
+	   
+	/** 메뉴관리 화면 : 수정 */
+		@GetMapping(value="/roleMng/roleUpdate")
+		@ResponseBody
+		@ApiOperation(value = "Web API Role Mng Update", notes = "Web API Test")
+		@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+		@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+		public String roleMngUpdate( 
+		         @ApiParam(value = "권한코드", required = true) @RequestParam(value = "roleId", required = true) String roleId,
+		         @ApiParam(value = "권한명", required = true) @RequestParam(value = "roleNm", required = true) String roleNm,
+		         @ApiParam(value = "권한설명", required = false) @RequestParam(value = "roleDesc", required = true) String roleDesc,
+		         @ApiParam(value = "사용여부", required = false) @RequestParam(value = "useYn", required = true) String useYn
+				) { 
+			
+			String code = "202";
+			
+			RoleDto dto = new RoleDto();
+			
+		    if (StringUtils.isNotEmpty(roleId)) dto.setRoleId(roleId);
+		    if (StringUtils.isNotEmpty(roleNm)) dto.setRoleNm(roleNm);
+		      
+		    dto.setRoleDesc(roleDesc);
+		    dto.setUseYn(useYn);
+			
+			dto.setUpdr("system"); //임시
+			
+			int cnt = roleService.roleMngUpdate(dto);
+			if( cnt > 0) code = "200";
+			
+			return code;
+		} 	
+		
+		
+	/** 메뉴관리 화면 : 삭제 */
+		@GetMapping(value="/roleMng/roleDelete")
+		@ResponseBody
+		@ApiOperation(value = "Web API Role Mng Delete", notes = "Web API Test")
+		@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+				@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+		public String roleMngDelete( 
+				@ApiParam(value = "메뉴ID", required = true) @RequestParam(value = "items", required = true) List<String> items
+				) { 
+			
+			String code = "202";
+			
+			int cnt = 0;
+			
+			for(String roleId : items) {
+				System.out.println("@@@@@@@@@@ "+ roleId);
+				RoleDto dto = new RoleDto();
+				dto.setRoleId(roleId);
+				if( roleService.roleMngDelete(dto) > 0 ) cnt++;
+			}
+			
+			if( cnt > 0) code = "200";
+			
+			return code;
+		}
 }

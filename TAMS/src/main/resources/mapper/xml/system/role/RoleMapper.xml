@@ -7,65 +7,55 @@
 	<select id="selectCountRole" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
 		SELECT count(*) cnt 
 		  FROM TB_COM_ROLE
+		 WHERE 1=1
+ 		<if test="params.searchText != null">
+			AND ${params.searchType} LIKE CONCAT('%', #{params.searchText}, '%')
+		</if>
 	</select>
 	
 	<select id="selectRoleMngList" resultType="kr.co.trito.tams.web.system.role.dto.RoleDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-		SELECT a.role_id
-		     , a.role_nm
-		     , a.role_desc
-		     , a.use_yn
-		     , a.reg_dt
+		SELECT a.role_id as roleId
+		     , a.role_nm as roleNm
+		     , a.role_desc as roleDesc
+		     , a.use_yn as useYn
+		     , a.reg_dt as regDt
 		FROM (
 					SELECT ROW_NUMBER() OVER(ORDER BY CAST(role_id AS int)) AS rn, 
 					       role_id,
 					       role_nm,
 					       role_desc,
 					       use_yn,
-					       reg_dt
+					       date_format(reg_dt, '%Y/%m/%d %h:%i') as reg_dt
 					FROM TB_COM_ROLE
 					WHERE 1=1 
-					<if test="params.searchTitle != null">
-						AND title LIKE CONCAT('%', #{params.searchTitle}, '%') 		
-					</if>		
+			 		<if test="params.searchText != null">
+						AND ${params.searchType} LIKE CONCAT('%', #{params.searchText}, '%')
+					</if>	
 			   ) AS a
 		WHERE rn BETWEEN #{start} AND #{end}
 		<if test="params.sortField != null">
-			ORDER BY ${params.sortField} ${params.sortOrder}		
+			ORDER BY ${params.sortField} ${params.sortOrder}
 		</if>	
 	</select>
 	
-	<insert id="menuMgrInsert" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
-		INSERT INTO TB_COM_MENU (MENU_ID, MENU_NM, URL
-		                       <if test="uppMenuId != null and uppMenuId !=''">
-		                       , UPP_MENU_ID
-		                       </if>
-		                       , MENU_DESC, MENU_LVL, POPUP_YN, SORT_ODR, REGR)
-		                  VALUES(#{menuId}, #{menuNm}, #{url}
-		                       <if test="uppMenuId != null and uppMenuId !=''">
-		                       , #{uppMenuId}
-		                       </if>
-		                       , #{menuDesc}, #{lvl}, #{popupYn}, #{sortOdr}, #{regr})
+	<insert id="roleMngInsert" parameterType="kr.co.trito.tams.web.system.role.dto.RoleDto">
+		INSERT INTO TB_COM_ROLE (ROLE_ID, ROLE_NM, ROLE_DESC, USE_YN, REGR, REG_DT)
+		                 VALUES (#{roleId}, #{roleNm}, #{roleDesc}, #{useYn}, #{regr}, now())
 	</insert>
 	
-	<update id="menuMgrUpdate" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
-		UPDATE TB_COM_MENU 
-		   SET MENU_NM	 	= #{menuNm}
-		     , URL	 		= #{url}
-             <if test="uppMenuId != null and uppMenuId !=''">
-             , UPP_MENU_ID	= #{uppMenuId}
-             </if>
-		     , MENU_DESC	= #{menuDesc}
-		     , MENU_LVL		= #{lvl}
-		     , POPUP_YN		= #{popupYn}
-		     , SORT_ODR		= #{sortOdr}
+	<update id="roleMngUpdate" parameterType="kr.co.trito.tams.web.system.role.dto.RoleDto">
+		UPDATE TB_COM_ROLE 
+		   SET ROLE_NM	 	= #{roleNm}
+		     , ROLE_DESC	= #{roleDesc}
 		     , UPDR			= #{updr}
+		     , USE_YN		= #{useYn}
 		     , UP_DT		= current_timestamp()
-        WHERE  MENU_ID = #{menuId}
+        WHERE  ROLE_ID = #{roleId}
 	</update>
 	
-	<delete id="menuMgrDelete" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
-		DELETE FROM TB_COM_MENU 
-        WHERE  MENU_ID = #{menuId}
+	<delete id="roleMngDelete" parameterType="kr.co.trito.tams.web.system.role.dto.RoleDto">
+		DELETE FROM TB_COM_ROLE 
+        WHERE  ROLE_ID = #{roleId}
 	</delete>
 
 </mapper>

@@ -40,7 +40,7 @@
 		</if>	
 	</select>
 	
-	<select id="selectMenuMgrList" resultType="kr.co.trito.tams.web.system.menu.dto.MenuDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+	<select id="selectMenuMngList" resultType="kr.co.trito.tams.web.system.menu.dto.MenuDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
 		WITH RECURSIVE CTE AS ( 
 		    SELECT 
 		           MENU_ID, MENU_NM, UPP_MENU_ID, MENU_LVL , URL, MENU_DESC , USE_YN, POPUP_YN, SORT_ODR, REGR, REG_DT, UPDR, UP_DT       
@@ -85,7 +85,7 @@
 		WHERE rn BETWEEN #{start} AND #{end}	
 	</select>
 	
-	<insert id="menuMgrInsert" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
+	<insert id="menuMngInsert" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
 		INSERT INTO TB_COM_MENU (MENU_ID, MENU_NM, URL
 		                       <if test="uppMenuId != null and uppMenuId !=''">
 		                       , UPP_MENU_ID
@@ -98,7 +98,7 @@
 		                       , #{menuDesc}, #{lvl}, #{popupYn}, #{sortOdr}, #{regr})
 	</insert>
 	
-	<update id="menuMgrUpdate" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
+	<update id="menuMngUpdate" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
 		UPDATE TB_COM_MENU 
 		   SET MENU_NM	 	= #{menuNm}
 		     , URL	 		= #{url}
@@ -114,7 +114,7 @@
         WHERE  MENU_ID = #{menuId}
 	</update>
 	
-	<delete id="menuMgrDelete" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
+	<delete id="menuMngDelete" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
 		DELETE FROM TB_COM_MENU 
         WHERE  MENU_ID = #{menuId}
 	</delete>
