@@ -46,13 +46,11 @@
 		           MENU_ID, MENU_NM, UPP_MENU_ID, MENU_LVL , URL, MENU_DESC , USE_YN, POPUP_YN, SORT_ODR, REGR, REG_DT, UPDR, UP_DT       
 		    FROM TB_COM_MENU  
 		    WHERE MENU_LVL = 1
-		      AND USE_YN = 'Y'
 		    UNION ALL 
 		    SELECT 
 		         B.MENU_ID, B.MENU_NM, B.UPP_MENU_ID, B.MENU_LVL , B.URL, B.MENU_DESC , B.USE_YN, B.POPUP_YN, B.SORT_ODR, B.REGR, B.REG_DT, B.UPDR, B.UP_DT      
 		    FROM TB_COM_MENU B 
-		    INNER JOIN CTE C ON B.UPP_MENU_ID = C.MENU_ID 
-		    WHERE B.USE_YN = 'Y'
+		    INNER JOIN CTE C ON B.UPP_MENU_ID = C.MENU_ID
 		    ) 
 		, MENUS AS (
 		SELECT MENU_ID      AS menuId
@@ -109,6 +107,7 @@
 		     , MENU_LVL		= #{lvl}
 		     , POPUP_YN		= #{popupYn}
 		     , SORT_ODR		= #{sortOdr}
+		     , USE_YN		= #{useYn}
 		     , UPDR			= #{updr}
 		     , UP_DT		= current_timestamp()
         WHERE  MENU_ID = #{menuId}

@@ -117,6 +117,7 @@
 	                	$.commRequest(url, reqType, item)
 	                		.then((res) => {
 	                			console.log(res);
+	                			alert("권한이 수정되었습니다.");
 	                		})
 	                		.catch((error) => {
 	                			console.log(error);
@@ -129,7 +130,6 @@
             			$.commRequest(url, reqType, item)
             				.then((res) => {
             					console.log(res);
-            					
             				})
             				.catch((error) => {
             					console.log(error);
@@ -140,8 +140,7 @@
             			let reqType = 'GET';
             			$.commRequest(url, reqType, item)
             				.then((res) => {
-            					console.log(res);
-            					
+            					alert("권한이 등록되었습니다.");
             				})
             				.catch((error) => {
             					console.log(error);
@@ -273,7 +272,7 @@
             if($(".detail_table").find("#roleId").val().toUpperCase().includes("ROLE_")){
             
 	            var insert_item = {};
-	                insert_item.roleId 		= $(".detail_table").find("#roleId").val();
+	                insert_item.roleId 		= $(".detail_table").find("#roleId").val().toUpperCase();
 		    		insert_item.roleNm 		= $(".detail_table").find("#roleNm").val();
 		    		insert_item.roleDesc 	= $(".detail_table").find("#roleDesc").val();
 		    		insert_item.useYn	 	= $(".detail_table").find("#useYn").val();
@@ -289,7 +288,6 @@
 		
 				$("#jsGrid").jsGrid(action, insert_item);
 	            
-				alert("권한이 등록되었습니다.");
 	    		clearDetailForm();
 	            $(this).parents("#detailForm").hide();
 	            save_mode = "";
