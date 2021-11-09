@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.trito.tams.web.system.role.mapper.RoleMapper">
+   
+	<select id="selectCountRole" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		SELECT count(*) cnt 
+		  FROM TB_COM_ROLE
+	</select>
+	
+	<select id="selectRoleMngList" resultType="kr.co.trito.tams.web.system.role.dto.RoleDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		SELECT a.role_id
+		     , a.role_nm
+		     , a.role_desc
+		     , a.use_yn
+		     , a.reg_dt
+		FROM (
+					SELECT ROW_NUMBER() OVER(ORDER BY CAST(role_id AS int)) AS rn, 
+					       role_id,
+					       role_nm,
+					       role_desc,
+					       use_yn,
+					       reg_dt
+					FROM TB_COM_ROLE
+					WHERE 1=1 
+					<if test="params.searchTitle != null">
+						AND title LIKE CONCAT('%', #{params.searchTitle}, '%') 		
+					</if>		
+			   ) AS a
+		WHERE rn BETWEEN #{start} AND #{end}
+		<if test="params.sortField != null">
+			ORDER BY ${params.sortField} ${params.sortOrder}		
+		</if>	
+	</select>
+	
+	<insert id="menuMgrInsert" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
+		INSERT INTO TB_COM_MENU (MENU_ID, MENU_NM, URL
+		                       <if test="uppMenuId != null and uppMenuId !=''">
+		                       , UPP_MENU_ID
+		                       </if>
+		                       , MENU_DESC, MENU_LVL, POPUP_YN, SORT_ODR, REGR)
+		                  VALUES(#{menuId}, #{menuNm}, #{url}
+		                       <if test="uppMenuId != null and uppMenuId !=''">
+		                       , #{uppMenuId}
+		                       </if>
+		                       , #{menuDesc}, #{lvl}, #{popupYn}, #{sortOdr}, #{regr})
+	</insert>
+	
+	<update id="menuMgrUpdate" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
+		UPDATE TB_COM_MENU 
+		   SET MENU_NM	 	= #{menuNm}
+		     , URL	 		= #{url}
+             <if test="uppMenuId != null and uppMenuId !=''">
+             , UPP_MENU_ID	= #{uppMenuId}
+             </if>
+		     , MENU_DESC	= #{menuDesc}
+		     , MENU_LVL		= #{lvl}
+		     , POPUP_YN		= #{popupYn}
+		     , SORT_ODR		= #{sortOdr}
+		     , UPDR			= #{updr}
+		     , UP_DT		= current_timestamp()
+        WHERE  MENU_ID = #{menuId}
+	</update>
+	
+	<delete id="menuMgrDelete" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
+		DELETE FROM TB_COM_MENU 
+        WHERE  MENU_ID = #{menuId}
+	</delete>
+
+</mapper>
