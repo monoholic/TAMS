@@ -1,0 +1,15 @@
+package kr.co.trito.tams.web.common.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.common.dto.DeptDto;
+
+@Mapper
+public interface CommonMapper {
+	
+	public List<DeptDto> selectDeptPopupList(SearchCondition condtion);
+	
+}
