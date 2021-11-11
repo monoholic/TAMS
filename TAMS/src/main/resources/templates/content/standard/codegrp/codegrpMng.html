@@ -31,7 +31,7 @@
 		
 	    <script>
 	    
-	    let numOfRows = 20;
+	    let numOfRows = 10;
 	    var status = true;
         var selectedItems = [];
 	 	var insertedItems = [];
@@ -40,7 +40,7 @@
 	    $(function(){
 	    	
 	        $("#jsGrid").jsGrid({
-	        	height: "500",
+	        	height: "400",
                 width: "100%",
                 filtering: false,
                 editing: true,
@@ -67,7 +67,7 @@
 	            	
 					if(target instanceof HTMLTableCellElement) {
 						// detail form
-						// alert(JSON.stringify(args));
+						/* alert(JSON.stringify(args)); */
 						showDetailForm(args.item);
 						
 					} else {
@@ -281,9 +281,11 @@
     	    	//$("#jsGrid").jsGrid().trigger("");
     	    });
     	    
-	        $(".btn_srch").on("click",function (){
+    	    $(".btn_srch").on("click",function (){
 	    	   $("#jsGrid").jsGrid().trigger("loadData");
 	        });
+	        
+	        
 	        
 	     	// 팝업창 저장 버튼 처리
             $('.save_btn').on('click', function (e) {
@@ -438,6 +440,12 @@
 	    		alert("수정은 1개이상 되지 않습니다.");
 	    	}
 	    }
+	    
+	    function enterkey() {
+	    	if (window.event.keyCode == 13) {
+	    		$("#jsGrid").jsGrid().trigger("loadData");
+	        }
+	    }
 	    </script>	
 	</th:block>
 
@@ -467,7 +475,7 @@
 						</select>
 					</td>	
 					<td>
-						<input id="searchText" type="text" style="width:90%; margin:10px;">
+						<input id="searchText" type="text" onkeyup="enterkey()" style="width:90%; margin:10px;">
 					</td>
 					
 					<td>
