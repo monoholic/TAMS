@@ -1,6 +1,5 @@
 package kr.co.trito.tams.web.standard.codegrp.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,9 +25,7 @@ import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.standard.codegrp.dto.CodegrpDto;
-import kr.co.trito.tams.web.standard.codegrp.mapper.CodegrpMapper;
 import kr.co.trito.tams.web.standard.codegrp.service.CodegrpService;
-import kr.co.trito.tams.web.system.menu.dto.MenuDto;
 
 @Controller
 @RequestMapping("/standard/codegrp")
@@ -41,7 +37,7 @@ public class CodegrpController {
 	@Autowired
 	CodegrpService codegrpService;
 	
-	/* 공통코드관리 화면 */
+	/* 공통코드 그룹 관리 화면 */
 	@PostMapping("/codegrpMng")
 	public ModelAndView codegrpMngView(HttpServletRequest request) {
 		
@@ -54,7 +50,7 @@ public class CodegrpController {
 		return view;
 	}
 	
-	/* 공통코드관리 화면 : 조회 */
+	/* 공통코드 그룹 관리 화면 : 조회 */
 	@GetMapping(value="/codegrpMng/codegrpList")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
@@ -94,13 +90,11 @@ public class CodegrpController {
 		int total = codegrpService.selectCountCodegrp(condition);
 		condition.pageSetup(total);
 		
-		System.out.println("@@@@" + condition);
-		
 		List<CodegrpDto> list = codegrpService.selectCodegrpList(condition);
 		return responseService.success(condition, list);
 	}
 	
-	/* 공통코드관리 화면 : 등록 */ 
+	/* 공통코드 그룹 관리 화면 : 등록 */ 
 	@GetMapping(value="/codegrpMng/codegrpInsert")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
@@ -137,7 +131,7 @@ public class CodegrpController {
 		return code;
 	}
 	
-	/* 공통코드관리 화면 : 수정 */
+	/* 공통코드 그룹 관리 화면 : 수정 */
 	@GetMapping(value="/codegrpMng/codegrpUpdate")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr Update", notes = "Web API Test")
@@ -181,7 +175,7 @@ public class CodegrpController {
 		return code;
 	}
 	
-	/** 메뉴관리 화면 : 삭제 */
+	/* 공통코드 그룹 화면 : 삭제 */
 	@GetMapping(value="/codegrpMng/codegrpDelete")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr Delete", notes = "Web API Test")

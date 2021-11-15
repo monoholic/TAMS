@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.trito.tams.web.standard.code.mapper.CodeMapper">
+
+	<select id="selectCodeList" resultType="kr.co.trito.tams.web.standard.code.dto.CodeDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		SELECT  CODE_ID    	 AS code_id    
+			  , CODE_GRP_ID	 AS code_grp_id
+			  , CODE_NM      AS code_nm    
+			  , CODE_ENG_NM  AS code_eng_nm
+			  , UPP_CODE_ID  AS upp_code_id
+			  , CODE_LVL     AS code_lvl   
+			  , CODE_DESC    AS code_desc  
+			  , SORT_ODR     AS sort_odr   
+			  , RESV1        AS resv1      
+			  , RESV2        AS resv2      
+			  , RESV3        AS resv3      
+			  , USE_YN       AS use_yn     
+			  , UPDR         AS updr       
+			  , UP_DT        AS up_dt      
+			  , REGR         AS regr       
+			  , REG_DT       AS reg_dt
+		FROM (
+					  SELECT  CODE_ID      AS code_id    
+						    , CODE_GRP_ID  AS code_grp_id
+						    , CODE_NM      AS code_nm    
+						    , CODE_ENG_NM  AS code_eng_nm
+					  		, UPP_CODE_ID  AS upp_code_id
+						    , CODE_LVL     AS code_lvl   
+						    , CODE_DESC    AS code_desc  
+						    , SORT_ODR     AS sort_odr   
+						    , RESV1        AS resv1      
+						    , RESV2        AS resv2      
+						    , RESV3        AS resv3      
+						    , USE_YN       AS use_yn     
+						    , UPDR         AS updr       
+						    , UP_DT        AS up_dt      
+						    , REGR         AS regr       
+						    , REG_DT       AS reg_dt
+						    , ROW_NUMBER() OVER(ORDER BY CODE_GRP_ID, CODE_LVL, SORT_ODR) AS rn
+		     FROM TB_COM_CODE
+		     WHERE 1=1
+		     	<if test="params.searchText != null">
+					AND ( code_id LIKE CONCAT('%', #{params.searchText}, '%')		
+				       OR code_grp_id LIKE CONCAT('%', #{params.searchText}, '%'))
+			 	</if>
+			 	
+			 	<choose>
+			 		<when test="params.searchOption == 'code_id'">
+			 			<if test="params.searchText != null">
+							AND code_id LIKE CONCAT('%', #{params.searchText}, '%')
+					 	</if>
+			 		</when>
+			 		
+			 		<when test="params.searchOption == 'code_grp_id'" >
+			 			<if test="params.searchText != null">
+			 				AND code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
+			 			</if>
+			 		</when>
+			 	</choose>
+			 	
+				<if test="params.useYnOption != null">
+					AND use_yn = #{params.useYnOption}
+		 		</if>    
+		     ) AS a
+		WHERE rn BETWEEN #{start} AND #{end}
+		ORDER BY CODE_GRP_ID, CODE_LVL, SORT_ODR
+	</select>
+	
+	<select id="selectCountCode" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 
+   		SELECT count(*) cnt 
+		FROM TB_COM_CODE
+		WHERE 1=1
+		    <if test="params.searchText != null">
+					AND ( code_id LIKE CONCAT('%', #{params.searchText}, '%')		
+				       OR code_grp_id LIKE CONCAT('%', #{params.searchText}, '%'))
+		 	</if>
+		 	<choose>
+		 		<when test="params.searchOption == 'code_id'">
+		 			<if test="params.searchText != null">
+						AND code_id LIKE CONCAT('%', #{params.searchText}, '%')
+				 	</if>
+		 		</when>
+		 		
+		 		<when test="params.searchOption == 'code_grp_id'" >
+		 			<if test="params.searchText != null">
+		 				AND code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
+		 			</if>
+		 		</when>
+		 	</choose>
+		 	
+			<if test="params.useYnOption != null">
+				AND use_yn = #{params.useYnOption}
+	 		</if>  
+   	</select>
+   	
+   	<select id="selectCodeGrpList" resultType="kr.co.trito.tams.web.standard.code.dto.CodeDto" parameterType="String"> 
+   		SELECT code_grp_id, sort_odr
+		FROM tb_com_code_grp
+		WHERE use_yn = "Y"
+		ORDER BY sort_odr;
+   	</select>
+   	
+   	<insert id="codeMngInsert" parameterType="kr.co.trito.tams.web.standard.code.dto.CodeDto">
+		INSERT INTO tb_com_code (code_id, code_grp_id, code_nm, code_eng_nm, upp_code_id, code_lvl, code_desc, sort_odr, resv1, resv2, resv3, use_yn, regr, reg_dt)
+		VALUES (#{codeId}, #{codeGrpId}, #{codeNm}, #{codeEngNm}, #{uppCodeId}, #{codeLvl}, #{codeDesc}, #{sortOdr}, #{resv1}, #{resv2}, #{resv3}, #{useYn}, #{regr}, current_timestamp())
+	</insert>
+	
+	<update id="codeMngUpdate" parameterType="kr.co.trito.tams.web.standard.code.dto.CodeDto">
+		UPDATE tb_com_code         
+		   SET code_grp_id = #{codeGrpId}
+		     , code_nm     = #{codeNm}
+		     , code_eng_nm = #{codeEngNm}
+		     , upp_code_id = #{uppCodeId}
+		     , code_lvl    = #{codeLvl}
+		     , code_desc   = #{codeDesc}
+			 , sort_odr    = #{sortOdr}
+			 , resv1       = #{resv1}
+			 , resv2       = #{resv2}
+			 , resv3       = #{resv3}
+			 , use_yn      = #{useYn}
+			 , updr        = #{updr}
+			 , up_dt       = current_timestamp()
+		WHERE code_id = #{codeId}              
+	</update>                       
+	
+	<delete id="codeMngDelete" parameterType="kr.co.trito.tams.web.standard.code.dto.CodeDto">
+		DELETE 
+		FROM tb_com_code 
+        WHERE code_id = #{codeId} AND code_grp_id = #{codeGrpId}
+	</delete>
+	
+</mapper>
