@@ -1,5 +1,9 @@
 package kr.co.trito.tams.comm.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
 
+import kr.co.trito.tams.comm.interceptor.CertificationInterceptor;
 import kr.co.trito.tams.comm.util.file.excel.view.ExcelXlsView;
 import kr.co.trito.tams.comm.util.file.excel.view.ExcelXlsxStreamingView;
 import kr.co.trito.tams.comm.util.file.excel.view.ExcelXlsxView;
@@ -36,7 +41,6 @@ public class WebMvcConfig  implements WebMvcConfigurer{
 			, "\"/webjars/**\""
 			, "swagger-ui.html"	
 	};
-	
 	
 	@Bean
     public MessageSource messageSource() {
@@ -65,11 +69,37 @@ public class WebMvcConfig  implements WebMvcConfigurer{
 	@Bean
 	public LayoutDialect layoutDialect() {
 	    return new LayoutDialect();
-	}    
+	}  
+	
+	 /*
+     * 로그인 인증 Interceptor 설정
+     * */
+    @Autowired
+    CertificationInterceptor certificationInterceptor;
+    
+    private List<String> notLoadList;
     
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localeChangeInterceptor());
+    	notLoadList = new ArrayList<String>();
+    	notLoadList.add("/user/login");
+    	notLoadList.add("/swagger**");
+    	notLoadList.add("/swagger-resources/**");
+    	notLoadList.add("/webjars/**");
+    	notLoadList.add("/favicon.ico");
+    	notLoadList.add("/v2/api-docs");
+    	notLoadList.add("/v2/api-docs/**");
+    	notLoadList.add("/resources/**");
+    	notLoadList.add("/static/**");
+    	notLoadList.add("/css/**");
+    	notLoadList.add("/js/**");
+    	notLoadList.add("/images/**");
+    	notLoadList.add("/sample/**");
+        registry.addInterceptor(certificationInterceptor)
+                .addPathPatterns("/**/**")
+                .excludePathPatterns(notLoadList)	    
+                ;
+//        registry.addInterceptor(localeChangeInterceptor());
     }
     
     @Override 

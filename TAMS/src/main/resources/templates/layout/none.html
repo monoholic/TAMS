@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html 	lang="ko" 
+        xmlns:th="http://www.thymeleaf.org" 
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+	<!-- [head] -->
+	<head th:replace="layout/fragments/head :: headFragment">
+		<title layout:title-pattern="TAMS-$CONTENT_TITLE">default</title>
+	</head>
+	<!-- [head] -->
+	
+	<header id="gnb">
+		<!-- header -->
+		<h1><a href="#;"><img src="/images/common/logo_TAMS.png" alt="TRiTo Asset Management System"></a></h1>
+	</header>
+
+	<body>
+		<!-- [content] 영역 시작 -->
+		<div id="container">
+			<div id="contents">
+				<div layout:fragment="content"></div>
+				<!-- [footer] -->
+				<footer th:replace="layout/fragments/footer :: footerFragment"></footer>
+			</div>
+		</div>
+	
+	</body>
+</html>

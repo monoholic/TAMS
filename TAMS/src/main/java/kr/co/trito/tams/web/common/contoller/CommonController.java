@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,6 +22,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import kr.co.trito.tams.comm.util.file.FileDto;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
@@ -29,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/common/popup")
+@RequestMapping("/common")
 public class CommonController {
 	
 	@Autowired
@@ -40,7 +43,7 @@ public class CommonController {
 	
 	
 	/** 부서팝업 화면 */
-	@GetMapping("/deptPopup")
+	@GetMapping("/popup/deptPopup")
 	public ModelAndView deptPopupView(HttpServletRequest request) {
 		
 		ModelAndView view = new ModelAndView();
@@ -53,7 +56,7 @@ public class CommonController {
 	}
 	
 	/** 부서팝업 조회 */
-	@GetMapping("/deptPopupList")
+	@GetMapping("/popup/deptPopupList")
 	@ResponseBody
 	@ApiOperation(value = "Web API Common test", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
@@ -72,6 +75,83 @@ public class CommonController {
 		condition.pageSetup(list.size());
 		
 		return responseService.success(condition, list);
+		
+	}
+	
+	
+	/** 첨부파일 목록 조회 */
+	@GetMapping("/file/selectFileList")
+	@ResponseBody
+	@ApiOperation(value = "Web API Common test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response>  selectFileList(
+			@ApiParam(value = "검색 조건(참조키)", required = false) @RequestParam(value="searchText",required = false) String searchText) {
+		
+		Map<String, Object> params = new HashMap<>();
+		if (!StringUtils.isEmpty(searchText))
+			params.put("searchText", searchText);
+		
+		SearchCondition condition = new SearchCondition("0","0",params);
+		
+		List<FileDto> list = commonService.selectFileList(condition);
+		condition.pageSetup(list.size());
+		
+		return responseService.success(condition, list);
+		
+	}
+	
+	
+	
+	/** 파일정보 저장 */
+	@PostMapping("/file/saveFiles")
+	@ResponseBody
+	@ApiOperation(value = "Web API Common test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public String saveFiles(
+			@ApiParam(value = "검색 조건(파일정보)", required = false) @RequestBody(required = false) List<FileDto> files) {
+		
+		String code = "202";
+		
+		int idx = 0;
+		int cnt = 0;
+		for(FileDto dto : files) {
+			
+			dto.setSortOdr(idx);
+			dto.setDwldCnt(0);
+			dto.setUseYn("Y");
+			
+			dto.setRegr("system");
+			dto.setUpdr("system");
+			
+			if( commonService.saveFiles(dto) > 0 ) cnt++ ;
+			
+			idx++;
+		}
+		
+		if( cnt > 0) code = "200";
+		
+		return code;
+		
+	}
+	
+	/** 파일정보 저장 */
+	@PostMapping("/file/updateDwldCnt")
+	@ResponseBody
+	@ApiOperation(value = "Web API Common test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public String updateDwldCnt(
+			@ApiParam(value = "검색 조건(파일정보)", required = false) @RequestBody(required = false) FileDto file) {
+		
+		String code = "202";
+		
+		file.setUpdr("system");
+			
+		if( commonService.updateDwldCnt(file) > 0 ) code = "200";
+		
+		return code;
 		
 	} 	
 	

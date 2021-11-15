@@ -16,9 +16,10 @@ import lombok.Setter;
 @Getter
 @ApiModel("사용자 정보")
 public class UserDto {
-	private String email;
-	private String name;
-	private String password;	
+	private String userId;
+	private String userNm;
+	private String userPw;	
+	private String email;	
 	private String useYn;
 	private String updr;
 	private String regr;

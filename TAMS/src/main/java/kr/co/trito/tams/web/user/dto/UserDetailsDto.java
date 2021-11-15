@@ -21,7 +21,7 @@ public class UserDetailsDto implements UserDetails {
 
 	@Override 
 	public String getPassword() { 
-		return userDto.getPassword(); 
+		return userDto.getUserPw(); 
 	}
 	
 	@Override 

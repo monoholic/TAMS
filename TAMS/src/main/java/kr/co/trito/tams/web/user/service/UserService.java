@@ -20,7 +20,7 @@ public class UserService {
 	
 	public UserDto insertUser(UserDto userDto) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		userDto.setPassword(encoder.encode(userDto.getPassword()));
+		userDto.setUserPw(encoder.encode(userDto.getUserPw()));
 		userDto.setUseYn("Y");
 		userDto.setUpdr("System");
 		userDto.setRegr("System");

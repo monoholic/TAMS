@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.trito.tams.web.common.mapper.CommonMapper">
+
+	<!-- 부서팝업 조회 -->
+	<select id="selectDeptPopupList" resultType="kr.co.trito.tams.web.common.dto.DeptDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		WITH RECURSIVE CTE AS ( 
+		    SELECT
+				DEPT_CD ,
+				DEPT_NM ,
+				UPP_DEPT_CD ,
+				DEPT_CHRGR_ID,
+				1 AS LEVEL
+			FROM
+				TB_DEPT
+			WHERE
+				UPP_DEPT_CD IS NULL
+				AND USE_YN = 'Y'
+			UNION ALL
+			SELECT
+				B.DEPT_CD ,
+				B.DEPT_NM ,
+				B.UPP_DEPT_CD ,
+				B.DEPT_CHRGR_ID,
+				C.LEVEL + 1 AS LEVEL
+		    FROM TB_DEPT B 
+		    INNER JOIN CTE C ON B.UPP_DEPT_CD = C.DEPT_CD 
+		    ) 
+		SELECT DEPT_CD        AS deptCd
+		     , DEPT_NM        AS deptNm 
+		     , DEPT_CHRGR_ID  AS deptChrgrId
+		     , UPP_DEPT_CD    AS uppDeptCd
+		  FROM CTE 
+	   	WHERE 1=1
+	   	<if test="params.searchText!=null">
+	   	  AND (DEPT_CD LIKE CONCAT('%', #{params.searchText}, '%') OR DEPT_NM LIKE CONCAT('%', #{params.searchText}, '%') )
+	   	</if>
+		ORDER BY DEPT_CD
+	</select>
+	
+	<!-- 첨부파일 목록 조회 -->
+	<select id="selectFileList" resultType="kr.co.trito.tams.comm.util.file.FileDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		    SELECT   FILE_ID                AS fileId
+					,RFNC_KEY1              AS rfncKey1
+					,FILE_NM                AS fileNm
+					,ORG_FILE_NM            AS orgFileNm
+					,FILE_SIZE              AS fileSize
+					,SORT_ODR               AS sortOdr
+					,FILE_DOWNLOAD_URI      AS fileDownloadUri
+					,DWLD_CNT               AS dwldCnt
+					,USE_YN                 AS userYn
+					,UPDR                   AS updr
+					,UP_DT                  AS upDt
+					,REGR                   AS regr
+					,REG_DT                 AS regDt
+			 FROM TB_COM_FILE
+		   	WHERE 1=1
+		   	  AND RFNC_KEY1 = #{params.searchText}
+			  AND USE_YN = 'Y'
+		ORDER BY SORT_ODR
+	</select>
+	
+	
+	<insert id="saveFileInfo" parameterType="kr.co.trito.tams.comm.util.file.FileDto">
+		INSERT INTO TB_COM_FILE(FILE_ID, RFNC_KEY1, FILE_NM, ORG_FILE_NM, FILE_SIZE, SORT_ODR, FILE_DOWNLOAD_URI, DWLD_CNT, USE_YN, REGR, UPDR)
+		                 VALUES( nextval(tams.sq_fileid), #{rfncKey1}, #{fileNm}, #{orgFileNm}, #{fileSize}, #{sortOdr}, #{fileDownloadUri}, #{dwldCnt}, #{useYn}, #{regr}, #{updr})
+	</insert>
+	
+	<update id="updateDwldCnt" parameterType="kr.co.trito.tams.comm.util.file.FileDto">
+		UPDATE TB_COM_FILE 
+		   SET DWLD_CNT = DWLD_CNT + 1
+		     , UPDR     = #{updr}
+		 WHERE FILE_ID = #{fileId}
+	</update>
+	
+</mapper>
