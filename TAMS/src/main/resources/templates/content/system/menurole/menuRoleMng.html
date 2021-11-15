@@ -46,7 +46,7 @@
 				.then((res) => {
 					var str = '';
 					$.each(res.data, function(i){
-						str += '<option value="' + res.data[i].groupId + '">' + res.data[i].groupNm + '</option>';
+						str += '<option value="' + res.data[i].codeId + '">' + res.data[i].codeNm + '</option>';
 					})
 					$("#searchType").append(str);
 				})

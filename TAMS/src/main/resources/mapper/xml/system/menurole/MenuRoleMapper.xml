@@ -4,9 +4,9 @@
 
 <mapper namespace="kr.co.trito.tams.web.system.menurole.mapper.MenuRoleMapper">
    
-	<select id="selectRoleGroup" resultType="kr.co.trito.tams.web.system.menurole.dto.RoleGroupDto">
-		SELECT role_id as groupId
-			 , role_nm as groupNm
+	<select id="selectRoleGroup" resultType="kr.co.trito.tams.web.common.dto.ComCodeDto">
+		SELECT role_id as codeId
+			 , role_nm as codeNm
 		FROM TB_COM_ROLE
 		WHERE use_yn = 'Y'
 	</select>
