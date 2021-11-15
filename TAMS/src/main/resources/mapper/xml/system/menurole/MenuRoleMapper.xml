@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.trito.tams.web.system.menurole.mapper.MenuRoleMapper">
+   
+	<select id="selectRoleGroup" resultType="kr.co.trito.tams.web.system.menurole.dto.RoleGroupDto">
+		SELECT role_id as groupId
+			 , role_nm as groupNm
+		FROM TB_COM_ROLE
+		WHERE use_yn = 'Y'
+	</select>
+	
+	<select id="selectCountMenu" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		SELECT count(*) cnt 
+		  FROM TB_COM_MENU 
+		 WHERE 1=1
+		 <if test="params.searchText != null">
+			AND ( MENU_ID LIKE CONCAT('%', #{params.searchText}, '%')		
+			      OR MENU_NM LIKE CONCAT('%', #{params.searchText}, '%') )
+		</if>	
+	</select>
+	
+	<select id="selectMenuRoleMngList" resultType="kr.co.trito.tams.web.system.menurole.dto.MenuRoleDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		WITH RECURSIVE CTE AS (
+		    SELECT
+		           MENU_ID, MENU_NM, UPP_MENU_ID, MENU_LVL , URL, MENU_DESC , USE_YN, POPUP_YN, SORT_ODR, REGR, REG_DT, UPDR, UP_DT
+		    FROM TB_COM_MENU
+		    WHERE MENU_LVL = 1
+		    UNION ALL
+		    SELECT
+		         B.MENU_ID, B.MENU_NM, B.UPP_MENU_ID, B.MENU_LVL , B.URL, B.MENU_DESC , B.USE_YN, B.POPUP_YN, B.SORT_ODR, B.REGR, B.REG_DT, B.UPDR, B.UP_DT
+		    FROM TB_COM_MENU B
+		    INNER JOIN CTE C ON B.UPP_MENU_ID = C.MENU_ID
+		    )
+		, MENUS AS (
+		SELECT MENU_ID      AS menuId
+		     , MENU_NM      AS menuNm
+		     , UPP_MENU_ID  AS uppMenuId
+		     , MENU_LVL     AS lvl
+		     , URL          AS url
+		     , CASE WHEN MENU_LVL = 1 THEN MENU_DESC
+		     		WHEN MENU_LVL = 2 THEN CONCAT('└ ',SUBSTR(MENU_DESC, INSTR(MENU_DESC,'>') + 2))
+		     		ELSE '' END as menuDesc
+		     , USE_YN       AS useYn_2
+		     , POPUP_YN     AS popupYn
+		     , SORT_ODR     AS sortOdr
+		     , REGR         AS regr
+		     , REG_DT       AS regDt
+		     , UPDR         AS updr
+		     , UP_DT        AS upDt
+		  FROM CTE
+		ORDER BY MENU_ID
+		)
+		SELECT '' as chk
+		     , menuId
+		     , menuDesc as menuNm
+		     , CASE 
+		       WHEN menuYn = '' THEN ''
+		       ELSE 'Y' END as menuYn
+		     , CASE 
+		       WHEN inqrYn = '' THEN ''
+		       ELSE 'Y' END as inqrYn
+		     , CASE 
+		       WHEN regYn = '' THEN ''
+		       ELSE 'Y' END as regYn
+		     , CASE 
+		       WHEN updYn = '' THEN ''
+		       ELSE 'Y' END as updYn
+		     , CASE 
+		       WHEN delYn = '' THEN ''
+		       ELSE 'Y' END as delYn
+		     , IFNULL(regr, '') as regr
+		     , IFNULL(regDt, '') as regDt
+		     , IFNULL(updr, '') as updr
+		     , IFNULL(upDt, '') as upDt
+		     , #{params.roleId} as groupId
+		FROM (
+		 SELECT ROW_NUMBER() OVER(ORDER BY CAST(m.menuId AS int)) AS rn
+		      , m.*
+		      , IFNULL(b.menu_id, '') as menuId2
+		      , IFNULL(b.menu_yn, '') as menuYn
+		      , IFNULL(b.inqr_yn, '') as inqrYn
+		      , IFNULL(b.reg_yn, '') as regYn
+		      , IFNULL(b.upd_yn, '') as updYn
+		      , IFNULL(b.del_yn, '') as delYn
+		  FROM MENUS m
+		  LEFT OUTER JOIN(
+		  	SELECT *
+		  	FROM TB_COM_MENU_ROLE b
+		  ) b
+		 ON 1=1
+		 AND menuId = b.menu_id
+		 <if test="params.roleId != null and params.roleId !=''">
+		 AND b.role_id = #{params.roleId}
+		 </if>
+		) A
+	</select>
+	
+	<insert id="menuRoleMngRoleSave" parameterType="kr.co.trito.tams.web.system.menurole.dto.MenuRoleDto">
+		INSERT INTO 
+		TB_COM_MENU_ROLE ( role_id, menu_id, menu_yn, inqr_yn, reg_yn, upd_yn, del_yn, regr )
+		VALUES ( #{groupId}, #{menuId}, #{menuYn}, #{inqrYn}, #{regYn}, #{updYn}, #{delYn}, #{regr} )
+		ON DUPLICATE KEY
+		UPDATE menu_yn = #{menuYn}
+		  	 , inqr_yn = #{inqrYn}
+		  	 , reg_yn = #{regYn}
+		  	 , upd_yn = #{updYn}
+		  	 , del_yn = #{delYn}
+		  	 , updr = #{updr}
+		  	 , up_dt = CURRENT_TIMESTAMP()
+	</insert>
+	
+	<update id="menuMngUpdate" parameterType="kr.co.trito.tams.web.system.menurole.dto.MenuRoleDto">
+		UPDATE TB_COM_MENU 
+		   SET MENU_NM	 	= #{menuNm}
+		     , URL	 		= #{url}
+             <if test="uppMenuId != null and uppMenuId !=''">
+             , UPP_MENU_ID	= #{uppMenuId}
+             </if>
+		     , MENU_DESC	= #{menuDesc}
+		     , MENU_LVL		= #{lvl}
+		     , POPUP_YN		= #{popupYn}
+		     , SORT_ODR		= #{sortOdr}
+		     , USE_YN		= #{useYn}
+		     , UPDR			= #{updr}
+		     , UP_DT		= current_timestamp()
+        WHERE  MENU_ID = #{menuId}
+	</update>
+	
+	<delete id="menuMngDelete" parameterType="kr.co.trito.tams.web.system.menurole.dto.MenuRoleDto">
+		DELETE FROM TB_COM_MENU 
+        WHERE  MENU_ID = #{menuId}
+	</delete>
+
+</mapper>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/default">
+
+	<head>
+	    <title>메뉴관리</title>
+	</head>
+        
+	<!-- css -->
+	<th:block layout:fragment="css">
+	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/jsgrid.css" />
+		<link rel="stylesheet" href="/css/theme.css" />
+		
+	</th:block>
+	
+	<th:block layout:fragment="script">
+		<script src="/js/jsgrid/db.js"></script>
+	    <script src="/js/jsgrid/jsgrid.core.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.field.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
+		
+	    <script>
+	    
+	    let numOfRows = 20;
+	    let pageIdx = 1;
+	    var status = true;
+        var selectedItems = [];
+	 	var insertedItems = [];
+	 	var updatedItems = [];
+	    
+	    $(function(){
+	    	
+            let url = "/system/menurole/menuRoleMng/roleGroup";
+			let reqType = 'GET';	
+			let data = {}
+			$.commRequest(url, reqType, data)
+				.then((res) => {
+					var str = '';
+					$.each(res.data, function(i){
+						str += '<option value="' + res.data[i].groupId + '">' + res.data[i].groupNm + '</option>';
+					})
+					$("#searchType").append(str);
+				})
+				.catch((error) => {
+					console.log('조회 실패');
+				});
+			
+	        $("#jsGrid").jsGrid({
+	        	height: "650",
+                width: "100%",
+                filtering: false,
+                editing: false,
+                inserting: true,
+                sorting: true,
+                paging: false,
+                sorter: "number",
+                pageIndex:pageIdx,
+                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
+                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
+                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
+                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
+                pagerFormat: "{first} {prev} {pages} {next} {last}",
+                pagerContainer:null,
+                pageLoading: true,
+                pager: "#pager",
+                autoload: true,
+                pageSize: numOfRows,
+                pageButtonCount: 5,
+                loadonce: true,
+                updateOnResize: true, 
+	            pagerContainerClass: "paginate",
+	            deleteConfirm: function(item) {
+	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
+	            },
+	            controller:  {
+	                loadData: function(filter) {
+	                    var d = $.Deferred();
+	                    
+	                    currentPage = filter.pageIndex; 
+               
+	                    let url = "/system/menurole/menuRoleMng/menuRoleMngList";
+						let reqType = 'GET';	
+						let data = {
+            				"currentPage": filter.pageIndex,
+            				"numOfRows"  : numOfRows,
+            				"searchType" : $("#searchType").val(),
+            				"sortField"  : filter.sortField,
+            				"sortOrder"  : filter.sortOrder
+            			}
+						$.commRequest(url, reqType, data)
+							.then((res) => {
+								console.log(res);
+								$(".result").text("Totals : " + res.data.filter(arr => arr.chk != '').length);
+								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
+							})
+							.catch((error) => {
+								console.log('메뉴조회 실패!!');
+							});
+	                    
+	                    return d.promise();
+	            },
+             	insertItem: function(items) {
+             		
+        		    let url = "/system/menurole/menuRoleMng/menuRoleSave";
+        		    let reqType = 'POST';
+        		    $.commRequest(url, reqType, JSON.stringify(items))
+        		    	.then((res) => {
+        		    		console.log(res);
+        		    		$("#jsGrid").jsGrid().trigger("loadData");
+        		    	})
+        		    	.catch((error) => {
+        		    		console.log(error);
+        		    	})
+            	    }
+            	},
+	            fields: [{ name : "chk"
+	                	 , align: "center"
+	                	 , width: 20
+	                	 , title: ""
+	                	 , editing: false
+	                	 , sorting: false
+	                	 , filtering: false
+	                	 , itemTemplate: function(value, item) {
+	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox").attr("id", function(){
+	                    	   
+	                    	   return "checkbox" + $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.menuNm == item.menuNm);
+	                       })
+	                       .attr("checked", function(){
+	                    	  return value || item.checked;
+	                       })
+	                       .on("change", function () {
+	  					  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
+	  					  	 });
+	            		   }
+	                	 , headerTemplate : function ()  { 
+						  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
+		                     .on("change", function (item) {
+		            	    	if(this.checked) { 
+/* 		            	            $('.singleCheckbox').each(function(i) {
+		            	            	$("#checkbox" + i).prop("checked", true).change();
+		            	            }); */
+		            	            for (var i = 0; i <= $("#jsGrid").jsGrid("option", "data").length; i++) {
+		            	            	$("#checkbox" + i).prop("checked", true).change();
+									}
+		            	        }else {
+		            	            $('.singleCheckbox').each(function(i) { 
+		            	            	$("#checkbox" + i).prop("checked", false).change();
+		            	            });  
+		            	        }
+		    				   });
+					 	 } ,
+	                	}
+	            	,{ name: "menuId", type: "text", align: "left", title: "메뉴ID", editing: false, visible: false }
+	                ,{ name: "menuNm", type: "text", width: 100 , align: "left"  , title: "메뉴명", editing: false }
+	                ,{ name: "menuYn", type: "checkbox", width: 40 , align: "center", title: "메뉴사용", sorting: false
+	                	, itemTemplate: function(value, item) {
+	                		   return checkBoxClass("menuCheckbox", "menuYn", value, item);
+	                	 }
+	                 }
+	                ,{ name: "inqrYn", type: "checkbox", width: 40 , align: "center", title: "조회", sorting: false
+	                   , itemTemplate: function(value, item) {
+	                	   	   return checkBoxClass("inqrCheckbox", "inqrYn", value, item);
+		                 } 
+	                 }
+	                ,{ name: "regYn", type: "checkbox", width: 40 , align: "center", title: "생성", sorting: false
+	                   , itemTemplate: function(value, item) {
+		                       return checkBoxClass("regCheckbox", "regYn", value, item);
+		                 } 
+	                 }
+	                ,{ name: "updYn", type: "checkbox", width: 40 , align: "center", title: "수정", sorting: false
+	                   , itemTemplate: function(value, item) {
+		                       return checkBoxClass("updCheckbox", "updYn", value, item);
+ 		                 } 
+	                 }
+	                ,{ name: "delYn", type: "checkbox", width: 40 , align: "center", title: "삭제", sorting: false
+	                   , itemTemplate: function(value, item) {
+		                       return checkBoxClass("delCheckbox", "delYn", value, item);
+		                 } 
+	                 }
+	            ]
+	        });
+	        
+		    var selectItem = function(item) {
+		    	
+			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+	             $("#selectAllCheckbox").prop("checked", true);
+	            } else {
+	                $("#selectAllCheckbox").prop("checked", false);
+	            }
+		        var find_idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.menuNm == item.menuNm);
+		        
+		        //change()를 붙여줘야 event가 실행됨.
+   		        $(".menuCheckbox" + find_idx).prop("checked", true).change();
+		        $(".inqrCheckbox" + find_idx).prop("checked", true).change();
+		        $(".regCheckbox" + find_idx).prop("checked", true).change();
+		        $(".updCheckbox" + find_idx).prop("checked", true).change();
+		        $(".delCheckbox" + find_idx).prop("checked", true).change();
+			};
+		     
+		    var unselectItem = function(item) {
+			    
+			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+	             	$("#selectAllCheckbox").prop("checked", true);
+		        }
+		        var find_idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.menuNm == item.menuNm);
+		       
+		        //change()를 붙여줘야 event가 실행됨.
+   		        $(".menuCheckbox" + find_idx).prop("checked", false).change();
+		        $(".inqrCheckbox" + find_idx).prop("checked", false).change();
+		        $(".regCheckbox" + find_idx).prop("checked", false).change();
+		        $(".updCheckbox" + find_idx).prop("checked", false).change();
+		        $(".delCheckbox" + find_idx).prop("checked", false).change();
+			  
+		    };
+		    
+    	    // 검색 버튼
+	        $(".btn_srch").on("click",function (e){
+	        	
+	           if($("#searchType").val() != 'none'){
+	    	   	   $("#jsGrid").jsGrid().trigger("loadData");
+	           }else{
+	        	   alert("검색항목을 선택해주세요.");
+	           }
+	        });
+	        
+	     	// 저장 버튼
+            $('.btn_save').on('click', function (e) {
+                e.preventDefault();
+                
+                if($("#searchType").val() != 'none'){
+                	
+					var insert_item = $("#jsGrid").jsGrid("option", "data");
+					
+					if(insert_item[0].groupId == "none" || insert_item[0].groupId == null){
+						
+						insert_item[0].groupId = $("#searchType").val();
+						
+					}
+						
+	    			$("#jsGrid").jsGrid("insertItem", insert_item);
+	    			
+                }else{
+                	alert("권한그룹을 선택해주세요.");
+                }
+
+            });
+
+          	// 리셋 버튼
+    	    $(".btn_reset").click(function() {
+    	    	$("#searchType option:eq(0)").prop("selected", true);
+    	    });
+	     	
+    	});
+	    
+	    
+	    function checkBoxClass(className, colNm, value, item){
+	    	
+	    	return $("<input>").attr("type", "checkbox").attr("checked", value || item.Checked).attr("class", function(){
+         	    return className + $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.menuNm == item.menuNm);})
+            	.on("change", function(){
+       				$(this).is(":checked") ? item[colNm] = 'Y' : item[colNm] = '';
+       	 	});
+	    	
+	    }
+	       
+	    </script>	
+	</th:block>
+
+	<div layout:fragment="content">
+		<!-- contents_head -->
+		<div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div>
+		<h3><span th:text="${menuNm}"></span></h3>
+		<!-- //contents_head -->
+
+		<!-- search -->
+		<div class="srch_wrap single">
+			<table class="srch_table">
+			<colgroup>
+					<col width="10%"/>
+					<col width="20%"/>
+					<col width="15%"/>
+					<col width="20%"/>
+					<col width="15%"/>
+					<col width=""/>
+			</colgroup>
+				<tr>
+					<td><label for="searchText" class="menu_label">권한그룹</label></td>
+					<td>
+						<select id="searchType">
+							<option value="none">권한그룹을 선택하세요</option>
+						</select>
+					</td>
+					<td class="search" colspan="3">
+						<a href="#;" class="btn_reset">Reset</a>
+						<a href="#;" class="btn_srch">Search</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!-- //search -->
+		<div class="list_head">
+				<div class="result">Results : 0,000</div>
+				<!-- list_button -->
+				<div class="button">
+					<a class="btn_save">저장</a>
+				</div>
+				<!-- list_button -->
+		</div>
+		<!-- list -->
+		<!-- //search -->
+
+		<!-- list -->
+		<div id="jsGrid"></div>
+		<!-- //list -->
+	
+				 
+</div>
+</html>
