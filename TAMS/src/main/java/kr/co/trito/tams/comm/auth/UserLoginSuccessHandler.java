@@ -29,18 +29,20 @@ public class UserLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
 		SecurityContextHolder.getContext().setAuthentication(authentication); 
 		
 		//인증 성공후 session에 정보 등록
-		HttpSession session = request.getSession();
 		UserDetails userInfo = (UserDetails)authentication.getPrincipal();
 		
 		UserMngDto user = userMngService.selectUserInfo(userInfo.getUsername());
 		
-		session.setAttribute("authentication", userInfo);
-		
-		List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
-        //String strAuth = authorities.get(0).getAuthority();
-        session.setAttribute("auth", authorities);
-		
-		session.setAttribute("userInfo", user);
+		/*
+		 * HttpSession session = request.getSession();
+		 * session.setAttribute("authentication", userInfo);
+		 * 
+		 * List<GrantedAuthority> authorities = (List<GrantedAuthority>)
+		 * authentication.getAuthorities(); //String strAuth =
+		 * authorities.get(0).getAuthority(); session.setAttribute("auth", authorities);
+		 * 
+		 * session.setAttribute("userInfo", user);
+		 */
 		
 		response.sendRedirect("/"); 
 	}

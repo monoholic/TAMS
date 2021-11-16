@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html 	xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
         layout:decorator="layout/none">
 	<head>
 		<meta charset="UTF-8">
@@ -98,6 +99,7 @@
 	
 		<div id="divMain" style="position:absoulte;width:340px;height:200px;background-color:rgba(237, 233, 232, 0.7);"></div>
 		<div id="divLogin" style="position:absoulte;width:300px;height:160px;">
+			<div sec:authorize="!isAuthenticated()">
 			<h2>로그인 </h2>
 				<table  class="detail_table">
 					<colgroup>
@@ -106,7 +108,7 @@
 					</colgroup>
 				    <tr>
 				        <th>사용자 ID</th>
-				        <td><input type="text" id="userId" value="test2"></td>
+				        <td><input type="text" id="userId" value="" sec:authentication="name"></td>
 				    </tr>
 				    <tr>
 				        <th>비밀번호</th>
@@ -122,7 +124,7 @@
 				        </td>				        
 				    </tr>
 				</table>
-				
+			</div>
 		</div>
 		
 	</div>

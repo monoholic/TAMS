@@ -71,9 +71,9 @@
 	<update id="userMngUpdate" parameterType="kr.co.trito.tams.web.system.user.dto.UserMngDto">
 		UPDATE TB_USER 
 		   SET USER_NM	 	= #{userNm}
-		   <if test="userPw!=null">
-		     , USER_Pw 		= #{userPw}
-		   </if>
+			 <if test='userPw!=null and userPw!=""'>
+			 , USER_Pw      = #{userPw}
+			 </if>
 		     , DEPT_CD 		= #{deptCd}
 		     , EMAIL 		= #{email}
 		     , TELNO		= #{telno}

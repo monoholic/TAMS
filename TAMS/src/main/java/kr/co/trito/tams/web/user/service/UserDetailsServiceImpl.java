@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import kr.co.trito.tams.comm.exception.UserNotFoundException;
 import kr.co.trito.tams.comm.util.msg.Message;
 import kr.co.trito.tams.web.user.dto.UserDto;
+import kr.co.trito.tams.web.user.dto.UserInfo;
 import kr.co.trito.tams.web.user.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,9 +60,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			});
 		}
 		
-		return new org.springframework.security.core.userdetails.User(userDto.getUserId(),
+		return new UserInfo(userDto.getUserId(),
 				userDto.getUserPw(),
-		       grantedAuthorities);
+				grantedAuthorities, userDto);
+		
+		/*
+		 * return new
+		 * org.springframework.security.core.userdetails.User(userDto.getUserId(),
+		 * userDto.getUserPw(), grantedAuthorities);
+		 */
+		
     }
 	
 }

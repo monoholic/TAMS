@@ -185,7 +185,9 @@ public class UserMngController {
 //			LinkedHashMap obj = parser.parseObject();
 //			dto.setUserId(obj.get("userId").toString());
 //			dto.setUserPw(obj.get("userPw").toString());
-			dto.setUserPw(encoder.encode(dto.getUserPw()));
+			if( !StringUtils.isEmpty(dto.getUserPw())) {
+	            dto.setUserPw(encoder.encode(dto.getUserPw()));
+	         }
 //			dto.setUserNm(obj.get("userNm").toString());
 //			dto.setDeptCd(obj.get("deptCd").toString());
 //			dto.setEmail (obj.get("email").toString());

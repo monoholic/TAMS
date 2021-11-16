@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 	
 	<div id="wrap" th:fragment="menuFragment">
 		<header id="gnb">
@@ -112,9 +112,9 @@
 						 $form.submit();
 					});
 					
-					$("#divLogout").mouseout(function(){
+/* 					$("#divLogout").mouseout(function(){
 						hideLogout();
-					});
+					}); */
 					
 				});
 				
@@ -127,9 +127,9 @@
 					.show();
 				}
 				
-				function hideLogout() {
+/* 				function hideLogout() {
 					$("#divLogout").hide();
-				}
+				} */
 				
 				</script>	
 			
@@ -144,12 +144,15 @@
 			<div class="function">
 				<a href="#;" class="setting">Setting</a>
 				<span class="">l</span>
-				<a href="#;" class="user"><strong><span th:text="${session.userInfo.userNm}"></span></strong> <em class="tooltip" th:text="${session.userInfo.deptNm}"></em><em class="tooltip" th:each="a : ${session.auth}"><span th:text="${a.authority}"></span></em></a>
-				<span class="confidential">Confidential</span>
-			</div>
-			<div id="divLogout" style="position:relative;width:100px;height:30px;background-color:rgb(237, 233, 232,1);display:none;text-align:center;border:1 solid;border-color:#000000;" >
-				<a href="#;" id="logout"><strong>logout</strong></a>
-			</div>			
+				<a href="#;" class="user"><strong>
+				<span sec:authentication="principal.dto.userNm"></span>|
+				<span sec:authentication="name" ></span>|
+				<span sec:authentication="principal.authorities[0].authority"></span>
+				<span><a href="#;" id="logout"><strong>logout</strong></a></span>
+				</strong>
+				</a>
+ 				<span class="confidential">Confidential</span>
+			</div>		
 			<!-- //function -->
 		<!-- //header -->
 		</header>
