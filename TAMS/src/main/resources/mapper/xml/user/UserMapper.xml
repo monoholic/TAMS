@@ -2,91 +2,69 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.co.trito.tams.web.system.user.mapper.UserMngMapper">
-	
-	<select id="selectCountUser" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-		SELECT count(*) cnt 
-		  FROM TB_USER
-		 WHERE 1=1 
-		 <if test="params.searchText != null">
-			AND ( USER_ID LIKE CONCAT('%', #{params.searchText}, '%')		
-			      OR USER_NM LIKE CONCAT('%', #{params.searchText}, '%') )
-		</if>	
-	</select>
-	
-	<select id="selectUserInfo" resultType="kr.co.trito.tams.web.system.user.dto.UserMngDto" parameterType="String">
-			 SELECT  USER_ID      AS userId
-			     , USER_PW      AS userPw
-			     , DEPT_CD      AS deptCd
-			     , (SELECT B.DEPT_NM FROM TB_DEPT B WHERE B.DEPT_CD = A.DEPT_CD)          AS deptNm
-			     , USER_NM      AS userNm
-			     , EMAIL        AS email
-			     , TELNO        AS telno 
-			     , SEX          AS sex
-			     , USE_YN       AS useYn
-			     , REGR         AS regr
-			     , REGDT       AS regdt
-			     , UPDR         AS updr
-			     , UPDT        AS updt
-			     ,'' as chk
-			  FROM TB_USER A
-			 WHERE 1=1
- 			   AND USER_ID = #{userId}		
-	</select>
-	
-	<select id="selectUserMngList" resultType="kr.co.trito.tams.web.system.user.dto.UserMngDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-		SELECT *
-		FROM (
-			 SELECT ROW_NUMBER() OVER(ORDER BY CAST(USER_ID AS int)) AS rn
-			     , USER_ID      AS userId
-			     , USER_PW      AS userPw
-			     , DEPT_CD      AS deptCd
-			     , (SELECT B.DEPT_NM FROM TB_DEPT B WHERE B.DEPT_CD = A.DEPT_CD)          AS deptNm
-			     , USER_NM      AS userNm
-			     , EMAIL        AS email
-			     , TELNO        AS telno 
-			     , SEX          AS sex
-			     , USE_YN       AS useYn
-			     , REGR         AS regr
-			     , REGDT       AS regdt
-			     , UPDR         AS updr
-			     , UPDT        AS updt
-			     ,'' as chk
-			  FROM TB_USER A
-			 WHERE 1=1
-				 <if test="params.searchText != null">
-					AND ( USER_ID LIKE CONCAT('%', #{params.searchText}, '%')		
-					      OR USER_NM LIKE CONCAT('%', #{params.searchText}, '%') )
-				</if>
-			ORDER BY USER_ID
-		) A
-		WHERE rn BETWEEN #{start} AND #{end}
-	</select>
-	
-	<insert id="userMngInsert" parameterType="kr.co.trito.tams.web.system.user.dto.UserMngDto">
-		INSERT INTO TB_USER (USER_ID, USER_PW, DEPT_CD, USER_NM, EMAIL, TELNO, SEX, USE_YN, REGR)
-		                  VALUES(#{userId}, #{userPw}, #{deptCd}, #{userNm}, #{email}, #{telno}, #{sex}, #{useYn}, #{regr})
-	</insert>
-	
-	<update id="userMngUpdate" parameterType="kr.co.trito.tams.web.system.user.dto.UserMngDto">
-		UPDATE TB_USER 
-		   SET USER_NM	 	= #{userNm}
-		   <if test="userPw!=null">
-		     , USER_Pw 		= #{userPw}
-		   </if>
-		     , DEPT_CD 		= #{deptCd}
-		     , EMAIL 		= #{email}
-		     , TELNO		= #{telno}
-		     , SEX			= #{sex}
-		     , USE_YN		= #{useYn}
-		     , UPDR			= #{updr}
-		     , UPDT			= current_timestamp()
-        WHERE  USER_ID      = #{userId}
-	</update>
-	
-	<delete id="userMngDelete" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
-		DELETE FROM TB_USER 
-        WHERE  USER_ID = #{userId}
-	</delete>
+<mapper namespace="kr.co.trito.tams.web.user.mapper.UserMapper">
+   
+	<insert id="insertUser" parameterType="kr.co.trito.tams.web.user.dto.UserDto">
+		INSERT INTO user (
+		      email
+		    , password
+		    , name
+		    , use_yn
+		    , udt
+		    , updr
+		    , rdt
+		    , regr 
+		) VALUES (
+			  #{email}
+			, #{password}
+		    , #{name}
+		    , #{useYn}
+		    , now()
+		    , #{updr}
+		    , now()
+		    , #{regr} 
+		)
+	</insert>        
 
+	<insert id="insertUserRole" parameterType="hashMap">
+		INSERT INTO user_has_role (
+		      email
+		    , role_id
+		    , use_yn
+		    , udt
+		    , updr
+		    , rdt
+		    , regr  
+		) VALUES (
+			#{email}
+		    , #{roleId}
+		    , #{useYn}
+		    , now()
+		    , #{updr}
+		    , now()
+		    , #{regr} 		    
+		)
+	</insert>  
+
+  	<select id="selectUserByEmail" resultType="kr.co.trito.tams.web.user.dto.UserDto">  
+		SELECT user_id
+			, user_pw
+		    , user_Nm
+		    , email
+		    , use_yn
+		    , updt
+		    , updr
+		    , regdt
+		    , regr		    
+		FROM tb_user
+		WHERE user_id = #{email}
+  	</select> 	
+  
+  	<select id="selectUserRoleByEmail" resultType="String">
+		SELECT b.code
+		FROM user_has_role a
+		INNER JOIN user_role b
+		  ON a.role_id = b.id 
+		WHERE email = #{email}   	
+  	</select>
 </mapper>
