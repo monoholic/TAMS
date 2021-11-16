@@ -43,7 +43,9 @@
 		     WHERE 1=1
 		     	<if test="params.searchText != null">
 					AND ( code_id LIKE CONCAT('%', #{params.searchText}, '%')		
-				       OR code_grp_id LIKE CONCAT('%', #{params.searchText}, '%'))
+				       OR code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
+				       OR code_nm LIKE CONCAT('%', #{params.searchText}, '%')
+				       OR code_desc LIKE CONCAT('%', #{params.searchText}, '%'))
 			 	</if>
 			 	
 			 	<choose>
@@ -56,6 +58,18 @@
 			 		<when test="params.searchOption == 'code_grp_id'" >
 			 			<if test="params.searchText != null">
 			 				AND code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
+			 			</if>
+			 		</when>
+			 		
+			 		<when test="params.searchOption == 'code_nm'" >
+			 			<if test="params.searchText != null">
+			 				AND code_nm LIKE CONCAT('%', #{params.searchText}, '%')
+			 			</if>
+			 		</when>
+			 		
+			 		<when test="params.searchOption == 'code_desc'" >
+			 			<if test="params.searchText != null">
+			 				AND code_desc LIKE CONCAT('%', #{params.searchText}, '%')
 			 			</if>
 			 		</when>
 			 	</choose>
@@ -73,9 +87,12 @@
 		FROM TB_COM_CODE
 		WHERE 1=1
 		    <if test="params.searchText != null">
-					AND ( code_id LIKE CONCAT('%', #{params.searchText}, '%')		
-				       OR code_grp_id LIKE CONCAT('%', #{params.searchText}, '%'))
+				AND ( code_id LIKE CONCAT('%', #{params.searchText}, '%')		
+			       OR code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
+			       OR code_nm LIKE CONCAT('%', #{params.searchText}, '%')
+			       OR code_desc LIKE CONCAT('%', #{params.searchText}, '%'))
 		 	</if>
+		 	
 		 	<choose>
 		 		<when test="params.searchOption == 'code_id'">
 		 			<if test="params.searchText != null">
@@ -86,6 +103,18 @@
 		 		<when test="params.searchOption == 'code_grp_id'" >
 		 			<if test="params.searchText != null">
 		 				AND code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
+		 			</if>
+		 		</when>
+		 		
+		 		<when test="params.searchOption == 'code_nm'" >
+		 			<if test="params.searchText != null">
+		 				AND code_nm LIKE CONCAT('%', #{params.searchText}, '%')
+		 			</if>
+		 		</when>
+		 		
+		 		<when test="params.searchOption == 'code_desc'" >
+		 			<if test="params.searchText != null">
+		 				AND code_desc LIKE CONCAT('%', #{params.searchText}, '%')
 		 			</if>
 		 		</when>
 		 	</choose>

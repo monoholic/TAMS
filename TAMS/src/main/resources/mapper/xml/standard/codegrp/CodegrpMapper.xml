@@ -31,7 +31,8 @@
 					WHERE 1=1 
 						<if test="params.searchText != null">
 							AND ( code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')		
-						       OR code_grp_nm LIKE CONCAT('%', #{params.searchText}, '%'))
+						       OR code_grp_nm LIKE CONCAT('%', #{params.searchText}, '%')
+						       OR code_grp_desc LIKE CONCAT('%', #{params.searchText}, '%'))
 					 	</if>
 					 	
 					 	<choose>
@@ -44,6 +45,12 @@
 					 		<when test="params.searchOption == 'code_grp_nm'" >
 					 			<if test="params.searchText != null">
 					 				AND code_grp_nm LIKE CONCAT('%', #{params.searchText}, '%')
+					 			</if>
+					 		</when>
+					 		
+					 		<when test="params.searchOption == 'code_grp_desc'" >
+					 			<if test="params.searchText != null">
+					 				AND code_grp_desc LIKE CONCAT('%', #{params.searchText}, '%')
 					 			</if>
 					 		</when>
 					 	</choose>
@@ -99,7 +106,8 @@
 		 WHERE 1=1
 			<if test="params.searchText != null">
 				AND ( code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')		
-			       OR code_grp_nm LIKE CONCAT('%', #{params.searchText}, '%'))
+			       OR code_grp_nm LIKE CONCAT('%', #{params.searchText}, '%')
+			       OR code_grp_desc LIKE CONCAT('%', #{params.searchText}, '%'))
 		 	</if>
 		 	
 		 	<choose>
@@ -109,6 +117,12 @@
 		 		
 		 		<when test="params.searchOption eq 'code_grp_nm'" >
 		 			AND code_grp_nm LIKE CONCAT('%', #{params.searchText}, '%')
+		 		</when>
+		 		
+		 		<when test="params.searchOption == 'code_grp_desc'" >
+		 			<if test="params.searchText != null">
+		 				AND code_grp_desc LIKE CONCAT('%', #{params.searchText}, '%')
+		 			</if>
 		 		</when>
 		 	</choose>
 		 	
