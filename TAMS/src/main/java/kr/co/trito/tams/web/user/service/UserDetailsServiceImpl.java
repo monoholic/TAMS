@@ -57,8 +57,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			});
 		}
 		
-		return new org.springframework.security.core.userdetails.User(userDto.getEmail(),
-				userDto.getPassword(),
+		return new org.springframework.security.core.userdetails.User(userDto.getUserId(),
+				userDto.getUserPw(),
 		       grantedAuthorities);
     }
 	

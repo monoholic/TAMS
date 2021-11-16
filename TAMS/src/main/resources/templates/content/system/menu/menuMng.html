@@ -214,13 +214,16 @@
 	        });
 	        
 		    var selectItem = function(item) {
-		    	if(!selectedItems.includes(item))
-			    selectedItems.push(item);
+		    	
+		    	if(!selectedItems.includes(item)){
+			    	selectedItems.push(item);
+		    	}
+		    	
 			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
 	             $("#selectAllCheckbox").prop("checked", true);
-	         } else {
-	             $("#selectAllCheckbox").prop("checked", false);
-	         }
+	            } else {
+	                $("#selectAllCheckbox").prop("checked", false);
+	            }
 			};
 		     
 		    var unselectItem = function(item) {
@@ -237,7 +240,6 @@
 		        } else {
 		            $("#selectAllCheckbox").prop("checked", false);
 		        }
-			    
 		    };
 	        
 	        $("#pager").on("change", function() {
@@ -245,8 +247,6 @@
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
 	        });
 
-	        
-	        ////////////////////////////////////////////////////////////////////
     	    $(".btn_add").click(function() {
     	    	//$("#jsGrid").jsGrid("option", "inserting", "true");
     	    	showDetailForm();
@@ -283,15 +283,9 @@
     	    	
     	    });
     	    
-    	    $(".btn_download").click(function() {
-    	    	//$("#jsGrid").jsGrid().trigger("");
-    	    });
-    	    
 	        $(".btn_srch").on("click",function (){
 	    	   $("#jsGrid").jsGrid().trigger("loadData");
 	        });
-	        
-	        
 	        
 	     	// 팝업창 저장 버튼 처리
             $('.save_btn').on('click', function (e) {
@@ -323,49 +317,6 @@
                 $(this).parents("#detailForm").hide();
                 save_mode = "";
             });
-	     	
-          	//일괄저장
-    	    $(".btn_saveall").click(function() {
-    	    	
-    	    	if( insertedItems.length > 0 ) {
-        			let url = "/system/menu/menuMng/menuInsert";
-        			let reqType = 'GET';
-        			let data = {
-        				"items": JSON.stringify(insertedItems)
-        			};
-        			$.commRequest(url, reqType, data)
-        				.then((res) => {
-        					console.log(res);
-        					alert("저장되었습니다!");
-        					$(".btn_srch").click();
-        					insertedItems = [];
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        					alert("오류가 발생했습니다 "+error);
-        				})
-    	    	}
-    	    	
-    	    	if( updatedItems.length > 0 ) {
-    	    		let url = "/system/menu/menuMng/menuUpdate";
-        			let reqType = 'GET';
-        			let data = {
-        				"items": JSON.stringify(updatedItems)
-        			};
-        			$.commRequest(url, reqType, data)
-        				.then((res) => {
-        					console.log(res);
-        					alert("저장되었습니다!");
-        					updatedItems = [];
-        					$(".btn_srch").click();
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        					alert("오류가 발생했습니다");
-        				})
-    	    	}
-    	    	
-    	    });
 
           	//수정 버튼
     	    $(".btn_update").click(function() {
@@ -458,7 +409,11 @@
 	    	}
 	    }
 	    	
-	       
+	    function enterkey() {
+	    	if (window.event.keyCode == 13) {
+	    		$("#jsGrid").jsGrid().trigger("loadData");
+	        }
+	    }  
 	    </script>	
 	</th:block>
 
@@ -481,7 +436,7 @@
 			</colgroup>
 				<tr>
 					<td><label for="searchText" class="menu_label">메뉴 명</label></td>
-					<td><input id="searchText" type="text" style="width:100%; margin:10px;"></td>
+					<td><input id="searchText" type="text" style="width:100%; margin:10px;" onkeyup="enterkey()"></td>
 					<td class="search" colspan="3">
 						<a href="#;" class="btn_reset">Reset</a>
 						<a href="#;" class="btn_srch">Search</a>
@@ -494,10 +449,6 @@
 				<div class="result">Results : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
-<!-- 				
-					<a class="btn_add">메뉴 등록</a>
-					<a class="btn_saveall">일괄 저장</a>
-					<a class="btn_del">메뉴 삭제</a> -->
 					<a class="btn_add">등록</a>
 					<a class="btn_update">수정</a>
 					<a class="btn_del">삭제</a>

@@ -1,6 +1,7 @@
 package kr.co.trito.tams.comm.util.file;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.thymeleaf.util.StringUtils;
 
 import kr.co.trito.tams.comm.util.file.excel.ExcelConstant;
 import kr.co.trito.tams.comm.util.file.excel.ExcelReader;
@@ -36,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-@RequestMapping("file")
+@RequestMapping("/file")
 public class FileController {
 	
 	@Autowired
@@ -48,7 +50,7 @@ public class FileController {
 	@Autowired
 	private ExcelReader excelReader;
 	
-	@PostMapping("upload")
+	@PostMapping("/upload")
 	@ResponseBody
 	public ResponseEntity<? extends Response> upload(@RequestParam("files") MultipartFile[] files) {
 		List<FileDto> list = Arrays.asList(files)
@@ -58,43 +60,61 @@ public class FileController {
 		return responseService.success(new GeneralResponse<>(list));
 	}
 	
-	@GetMapping("download/{fileName:.+}")
+//	@GetMapping("/download/{fileName:.+}")
+	@PostMapping("/download/{fileName:.+}/{orgFileName:.+}")
 	@ResponseBody
-	public ResponseEntity<Resource> download(@PathVariable String fileName, HttpServletRequest request){
+//	public ResponseEntity<Resource> download(@PathVariable(value="fileName") String fileName, HttpServletRequest request){
+	public ResponseEntity<Resource> download(@PathVariable(value="fileName") String fileName, @PathVariable(value="orgFileName") String orgFileName, HttpServletRequest request){
 		String contentType = null;
-		Resource resource = fileService.load(fileName);
+		Resource resource = fileService.load(fileName); 
 		
 		try {
+			log.error("@@@@ "+resource.getFile().getAbsolutePath());
 			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+			
+			if( StringUtils.isEmpty(contentType) ) contentType = "application/octet-stream";
+			
 		} catch (Exception e) {
 			log.info("Could not determine file type.");
 			contentType = "application/octet-stream";
 		}
 		
+		String originFileName = "";
+		try{
+			originFileName = URLDecoder.decode(orgFileName, "UTF-8");
+		}catch(IOException ioe) {}
+		log.error("@@@@ [orgFileName] "+originFileName);
+		
         return ResponseEntity.ok()
             	.contentType(MediaType.parseMediaType(contentType))
-            	.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+//            	.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+            	.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + originFileName + "\"")
             	.body(resource);		
 	}
 	
-	@PostMapping("readExcel")
+	@PostMapping("/readExcel")
 	@ResponseBody
 	public List<SampleDto> readExcel(@RequestParam("file") MultipartFile multipartFile) throws IOException, InvalidFormatException {
 		return excelReader.readFileToList(multipartFile, SampleDto::row);
 	}	
 	
 	private FileDto upload(MultipartFile file) {
+		String orgFileName = org.springframework.util.StringUtils.cleanPath(file.getOriginalFilename());
 		String saveName = fileService.store(file);
+		
 		String downloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
 				.path("/file/download/")
 				.path(saveName)
+				.path("/")
+				.path(orgFileName)
 				.toUriString();
 		
 		return FileDto.builder()
-				.fileName(saveName)
+				.fileNm(saveName)
+				.orgFileNm(orgFileName)
 				.fileDownloadUri(downloadUri)
 				.fileType(file.getContentType())
-				.size(file.getSize())
+				.fileSize(file.getSize())
 				.build();
 	}	
 	

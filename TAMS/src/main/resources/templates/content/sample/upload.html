@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/default">
+
+<head>
+    <title>Sample Page</title>
+</head>
+
+<!-- css -->
+<th:block layout:fragment="css">
+	<link rel="stylesheet" href="/css/style.css" />
+	
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="/css/jsgrid.css" />
+	<link rel="stylesheet" href="/css/theme.css" />
+</th:block>
+
+<th:block layout:fragment="script">
+
+	<script src="/js/jsgrid/db.js"></script>
+	<script src="/js/jsgrid/jsgrid.core.js"></script>
+	<script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
+	<script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
+	<script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
+	<script src="/js/jsgrid/jsgrid.field.js"></script>
+	<script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
+	<script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
+	<script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
+	<script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
+	<script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
+	    
+	<script>
+		var fileGridData = [];
+		var saveFileData = [];
+		
+		$(function(){
+			
+			//////////////////////////////////////////////
+			$("#jsGrid").jsGrid({
+				
+	        	height: "650",
+                width: "100%",
+                data: fileGridData, 
+                autoload: false,
+                loadonce: true,
+                updateOnResize: true, 
+	            rowClick: function(args) {
+	            	
+	            	console.log(args.item.fileDownloadUri);
+	            	
+	            if( confirm("다운로드 하시겠습니까?") ) {
+	            		      
+	            	//파일 다운로드
+	            	var $form = $('<form></form>'); 
+					$form.attr('action', args.item.fileDownloadUri); 
+					$form.attr('target','_blank'); 
+					$form.attr('method','post'); 
+					$form.appendTo('body'); 
+					$form.submit(); 		 			 
+					
+					
+                    url = "/common/file/updateDwldCnt";
+					reqType = 'POST';	
+					console.log(args.item);
+					$.commRequest(url, reqType, JSON.stringify(args.item))
+						.then((res) => { 
+							//$(".result").text("Results : " + res.condition.totalCount);
+							console.log( '다운로드 카운트 업데이트 성공!!');
+							$("#btn_search").click(); 
+						})
+						.catch((error) => {
+							console.log('다운로드 카운트 업데이트 실패!!');
+						});
+					
+					return false;
+					 
+					 
+	            }
+	            	//var target = args.event.target;
+	            	
+					/* if(target instanceof HTMLTableCellElement) {
+						//detail form
+						showDetailForm(args.item);
+					} else {
+						
+					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
+					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
+					                .on("change", function () {
+						  	 $(this).is(":checked") ? selectItem($(this).parent().next().text()) : unselectItem($(this).parent().next().text());
+						});
+						
+					} */
+
+	            }, 
+	            //pagerContainerClass: "paginate",
+	            //controller: { loadData: db.client },
+	            /* 
+	            controller:  {
+	                loadData: function(filter) { 
+	                    var d = $.Deferred();
+	                    
+	                    //currentPage = filter.pageIndex; 
+               
+	                    let url = "/common/file/selectFileList";
+						let reqType = 'GET';	
+						let data = {
+            				"searchText" : $("#searchText").val()
+            			};
+						$.commRequest(url, reqType, data)
+							.then((res) => { 
+								//$(".result").text("Results : " + res.condition.totalCount);
+								//console.log( res.condition.totalCount);
+								d.resolve({data: res.data, itemsCount: res.condition.totalCount});
+							})
+							.catch((error) => {
+								console.log('파일목록 조회 실패!!');
+							});
+	                    
+	                    return d.promise(); 
+	                },
+	            },
+	             */
+	            fields: [
+	            	{ name: "fileId"   , type: "number"  , width: 50 ,align: "right"  , title: "파일ID" },
+	            	{ name: "fileNm"   , type: "text"    , width: 150 ,align: "left"  , title: "저장 파일명" },
+	                { name: "orgFileNm", type: "text"    , width: 150  ,align: "left"  , title: "원본 파일명" },
+	                { name: "fileSize" , type: "number"  , width: 50 ,align: "right"  , title: "파일크기" },
+	                { name: "dwldCnt" , type: "number"    , width: 50 ,align: "right"  , title: "다운횟수" }
+	                /*,
+	                { name: "fileDownloadUri" , type: "text"    , width: 300 ,align: "left"  , title: "다운로드 Uri" } */
+	            ]
+	        });
+			//////////////////////////////////////////////
+			
+			
+			$("#btn_addfile").on("click", function(e){
+				e.preventDefault();
+				
+				var upType = $("[name='upType']:checked").val();
+				
+				if( upType == "M") $("#upfile").attr("multiple","multiple");
+				else               $("#upfile").removeAttr("multiple"); 
+				
+				$("#upfile").click();
+			});
+			
+			$(document).on('click', '.button-delete-file', function(event) {
+				var obj = event.target ? event.target : event.srcElement;
+				var idx = $(obj).attr("id");
+				//console.log(idx);
+				deleteFormData(idx);
+				$(this).parent().parent().parent().remove(); //목록 삭제 처리
+			});
+			
+			
+			$(".btn_upload").on("click", function(){
+				
+				var d = $.Deferred();
+				var files = fileData.getAll("files")
+				//console.log(fileData.getAll("files"));
+				if( files.length < 1 ) {
+					alert("첨부할 파일을 추가하세요");
+					return false;
+				}
+				
+				let url = "/file/upload";
+				let reqType = 'POST';	
+				$.commRequestFile(url, reqType, fileData)
+					.then((res) => {
+						console.log('업로드 성공!!');
+						setGridData(res.data.data);
+					})
+					.catch((error) => {
+						console.log('업로드 실패!!');
+					});
+				
+				$("#addFile").empty();
+				fileData.delete("files");
+				
+				return d.promise();
+				
+			});
+			
+			
+			$("#btn_search").on("click", function(){ 
+				//$("#jsGrid").trigger("reloadGrid");
+				//$("#jsGrid").jsGrid().trigger("loadData");
+				searchFileList();
+			});
+		});	
+		
+		var fileData = new FormData();
+		var tmpFiles = [];
+		function addFile(e) {
+			
+			var obj = e.target? e.target:e.srcElement;
+			
+			var addFiles = obj.files;
+			
+			//화면 표시용
+			var html = "";
+			
+			$.each(addFiles, function(index, item){
+				//console.log(index,item);
+				var fileval = item.name.replace(/^C:\\fakepath\\/i, '');
+				//console.log(fileval);
+				
+				html += "<tr>";
+				html += "<td class='tc'><div id='item_"+index+"'><button class='btn_list button-delete-file' id='"+index+"'>del</button></div></td>";
+				html += "<td class='tl upfile'><input type='text' id='tfile_'"+index+" readonly value='"+fileval+"' style='width:100%;' /></td>";
+				html += "<td class='tc'><input type='text' class='tr' readonly value='"+item.size+"' style='width:100%;' /></td>";
+				html += "</tr>";
+				
+				//첨부파일 추가
+				fileData.append("files", item);
+				
+				//파일 삭제 처리용
+				tmpFiles.push(item);
+				
+			});
+			
+			$("#addFile").append(html);
+		}
+		
+		//파일 삭제처리
+		function deleteFormData(idx) {
+			
+			tmpFiles.splice(idx, 1);
+			fileData.delete("files");
+			console.log("bf : "+fileData.getAll("files").length);
+			
+			$.each(tmpFiles, function(idx, item){
+				fileData.append("files", item);
+			});
+			
+			//console.log("af : "+fileData.getAll("files").length);
+		}
+		
+		function setGridData(items) {
+			fileGridData.length = 0;
+			saveFileData.length = 0;
+			//var files = [];
+			$.each(items, function(idx, item){
+				//console.log(item);
+				 /* var f = {
+						"name": item.fileNm,
+						"size": item.fileSize,
+						"type": item.fileType,
+						"downUrl": item.fileDownloadUri
+				}; */ 
+				var f = {
+						"fileNm": item.fileNm,
+						"fileSize": item.fileSize,
+						"orgFileNm": item.orgFileNm,
+						"fileDownloadUri": item.fileDownloadUri,
+						"rfncKey1": 'Test01'
+				}; 
+				
+				//fileGridData.push(f);
+				saveFileData.push(f);
+			}); 
+			
+			
+			let url = "/common/file/saveFiles";
+			let reqType = 'POST';	
+			$.commRequest(url, reqType, JSON.stringify(saveFileData))
+				.then((res) => {
+					console.log('파일정보 저장성공!!');
+					//$("#jsGrid").jsGrid().trigger("loadData");
+					$("#btn_search").click();
+					
+					
+					
+				})
+				.catch((error) => {
+					console.log('파일정보 저장실패!!');
+				});
+			
+			//console.log(fileGridData);
+			//$("#jsGrid").jsGrid().trigger("loadData");
+		}
+		
+		
+		function searchFileList() {
+			var d = $.Deferred();
+   
+            let url = "/common/file/selectFileList";
+			let reqType = 'GET';	
+			let data = {
+				"searchText" : $("#searchText").val()
+			};
+			$.commRequest(url, reqType, data)
+				.then((res) => { 
+					//console.log( res.condition.totalCount);
+					//d.resolve({data: res.data, itemsCount: res.condition.totalCount});
+					fileGridData.length = 0;
+					
+
+					$.each(res.data, function(idx, item){
+						var f = {
+								"fileId": item.fileId,
+								"fileNm": item.fileNm,
+								"fileSize": item.fileSize,
+								"orgFileNm": item.orgFileNm,
+								"dwldCnt": item.dwldCnt,
+								"fileDownloadUri": item.fileDownloadUri,
+								"rfncKey1": 'Test01'
+						}; 
+						
+						fileGridData.push(f);
+					}); 
+					
+					$("#jsGrid").jsGrid().trigger("loadData");
+				})
+				.catch((error) => {
+					console.log('파일목록 조회 실패!!');
+				});
+            
+            return d.promise(); 
+		}
+		
+	</script> 
+</th:block>
+
+	<div layout:fragment="content">
+		<!-- contents_head -->
+		<div class="bc">Home &gt; Menu &gt; Menu 2depth</div>
+		<h3>업로드 테스트</h3>
+		<!-- //contents_head -->
+
+		<!-- search -->
+		<div class="srch_wrap single">
+			<!-- search_button -->
+			<div><input type='file' id='upfile' name="files" onchange='addFile(event)' style='display:none;' /></div>
+			<table style="width:100%;">
+				<colgroup>
+				<col width="49%">
+				<col width="2%">
+				<col width="49%">
+				</colgroup>
+				<tr>
+					<td>
+						<input type="radio" name="upType" value="S" checked>Single
+						<input type="radio" name="upType" value="M">Multi
+						<a href="#;" id="btn_addfile" class="btn_srch">파일추가</a>
+						<a href="#;" class="btn_upload">업로드</a>
+					</td>
+					<td></td>
+					<td align="right">
+						<input type="text" id="searchText" name="searchText" value=""/>
+						<a href="#;" id="btn_search" class="btn_srch">Search</a>
+					</td>
+				</tr>
+			</table>
+			<!-- //search_button -->
+		</div>
+		<!-- //search -->
+			
+			
+		<!-- list -->
+		<div class="list_wrap">
+			<!-- list_table -->
+		<table>
+			<colgroup>
+				<col width="49%">
+				<col width="2%">
+				<col width="49%">
+			</colgroup>
+			<tr>
+				<td valign="top">
+				
+					<table class="list_table">
+						<colgroup>
+							<col width="30px"/>
+							<col width="400px"/>
+							<col width="60px"/>
+						</colgroup>
+						<thead>
+							<tr>
+								<th>선택</th>
+								<th>파일명</th>
+								<th>파일크기</th>
+							</tr>
+						</thead>
+						<tbody id="addFile">
+						</tbody>
+					</table>
+					
+				</td>
+				<td></td>
+				<td valign="top">
+				    <!-- 파일 업로드 결과용  -->
+					<div id="jsGrid"></div>
+					
+				</td>
+			</tr>
+		</table>	
+		
+			
+			<!-- //list_table -->
+		</div>
+		
+		<div id="fileDown"></div>
+
+	</div>
+</html>

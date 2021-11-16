@@ -93,6 +93,44 @@
 				
 				getMyMenu();
 				
+				/////////////////////////////////////////////////////
+				$(function() {
+					
+					$(".setting").on("click",function(){
+						showLogout();
+					});
+					$(".setting").mouseover(function(){
+						showLogout();
+					});
+					
+					$("#logout").on("click", function(){
+						 var $form = $('<form></form>'); 
+						 $form.attr('action', "/logout"); 
+						 $form.attr('method', 'post'); 
+						 $form.appendTo('body'); 
+						 
+						 $form.submit();
+					});
+					
+					$("#divLogout").mouseout(function(){
+						hideLogout();
+					});
+					
+				});
+				
+				function showLogout() {
+					var top = $(".function").position().top - 10;
+					var left = $(".function").position().left  - 10;
+					console.log($(".function").position());
+					$("#divLogout").css("top",top)
+					               .css("left",left)
+					.show();
+				}
+				
+				function hideLogout() {
+					$("#divLogout").hide();
+				}
+				
 				</script>	
 			
 			<!-- dropdown_menu -->
@@ -106,9 +144,12 @@
 			<div class="function">
 				<a href="#;" class="setting">Setting</a>
 				<span class="">l</span>
-				<a href="#;" class="user"><strong>TAMS 관리자</strong> <em class="tooltip">SI사업팀</em></a>
+				<a href="#;" class="user"><strong><span th:text="${session.userInfo.userNm}"></span></strong> <em class="tooltip" th:text="${session.userInfo.deptNm}"></em></a>
 				<span class="confidential">Confidential</span>
 			</div>
+			<div id="divLogout" style="position:relative;width:100px;height:30px;background-color:rgb(237, 233, 232,1);display:none;text-align:center;border:1 solid;border-color:#000000;" >
+				<a href="#;" id="logout"><strong>logout</strong></a>
+			</div>			
 			<!-- //function -->
 		<!-- //header -->
 		</header>

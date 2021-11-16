@@ -1,33 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/none">
 	<head>
 		<meta charset="UTF-8">
 		<title>Login</title>
-		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">	 
+		
+	<th:block layout:fragment="script">	
+		<script>
+			$(function(){
+				//div 가운데로
+	             $.fn.center = function () { 
+	                this.css("position","absolute");
+	                this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
+	                this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
+	                return this;
+	            } 
+	            
+				//로그인 폼 가운데 위치
+				$("#divMain").center();
+				$("#divLogin").center();
+				
+				//메인 div 사이즈 조정
+				$("#divCont").css("width", ($(window).width() - 50)+"px");
+				$("#divCont").css("height", ($(window).height() - 210)+"px");
+				
+				//브라우저 사이즈 변경시...
+				$(window).resize(function(){ 
+					$("#divMain").center();
+					$("#divLogin").center();
+				});
+				
+				
+				//로그인 버튼 클릭시...
+				$("#btnLogin").on("click", function(){
+					goLogin();
+				});
+				
+				$("#userId").keydown(function(key){
+					if (key.keyCode == 13) {
+	                	goLogin();
+	                }
+				});
+				$("#userPw").keydown(function(key){
+					if (key.keyCode == 13) {
+	                	goLogin();
+	                }
+				});
+				
+				//리셋 버튼 클릭시 입력값 초기화
+				$("#btnReset").on("click", function(){ console.log("reset");
+					$("#userId").val("");   
+					$("#userPw").val("");   
+				});
+				
+				$("#btnJoin").on("click", function(){
+					//
+				});
+				
+			});
+			
+			//로그인 처리
+			function goLogin() {
+				
+				var userId = $("#userId").val();
+				var userPw = $("#userPw").val();
+				
+				if( userId == null || userId == "" ) {
+					alert("사용자 ID를 입력하세요");
+					$("#userId").focus();
+					return false;
+				}
+				if( userPw == null || userPw == "" ) {
+					alert("비밀번호를 입력하세요");
+					$("#userPw").focus();
+					return false;
+				}
+				
+				//  
+				 var $form = $('<form></form>'); 
+				 $form.attr('action', "/login"); 
+				 $form.attr('method', 'post'); 
+				 $form.appendTo('body'); 
+				 var userIdStr 	= $('<input type="hidden" value="'+userId+'" name="userId">'); 
+				 var userPwStr 	= $('<input type="hidden" value="'+userPw+'" name="userPw">'); 
+				 $form.append(userIdStr).append(userPwStr);
+				 $form.submit();
+			}
+			
+		</script>
+	</th:block>
+		
 	</head>
 	<body>
-		<h2>로그인 </h2>
-			<form name="form1" method="post" action="/login">
-				<table>
-				    <tr height="40px">
-				        <td>유저ID</td>
-				        <td><input type="text" name="email" value="youngho.kim@trito.co.kr"></td>
+	
+	<div layout:fragment="content" id="divCont">
+	
+		<div id="divMain" style="position:absoulte;width:340px;height:200px;background-color:rgba(237, 233, 232, 0.7);"></div>
+		<div id="divLogin" style="position:absoulte;width:300px;height:160px;">
+			<h2>로그인 </h2>
+				<table  class="detail_table">
+					<colgroup>
+						<col width="30%">
+						<col width="70%">
+					</colgroup>
+				    <tr>
+				        <th>사용자 ID</th>
+				        <td><input type="text" id="userId" value="test2"></td>
 				    </tr>
-				    <tr height="40px">
-				        <td>패스워드</td>
-				        <td><input type="password" name="password" value=""></td>
+				    <tr>
+				        <th>비밀번호</th>
+				        <td><input type="password" id="userPw" value="1111"></td>
 				    </tr>
 				</table>
 				<table>
 				    <tr>
-				        <td align="center"><input type="submit" value="로그인"></td>
-				        <td align="center"><input type="reset" value="리셋"></td>
+				        <td align="center"><input type="button" id="btnLogin" class="btn_list" value="로그인"></td>
+				        <td align="center"><input type="button" id="btnReset" class="btn_list" value="리셋"></td>
 				        <td align="center">
-				        	<input type="button" value="회원가입" onClick="location.href='/signupView'">
+				        	<input type="button" value="회원가입" id="btnJoin" class="btn_list"  onClick="location.href='/signupView'">
 				        </td>				        
 				    </tr>
 				</table>
-			</form>
+				
+		</div>
+		
+	</div>
+	
 	</body>
 </html>

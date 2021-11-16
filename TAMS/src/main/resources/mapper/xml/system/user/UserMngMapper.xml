@@ -14,6 +14,26 @@
 		</if>	
 	</select>
 	
+	<select id="selectUserInfo" resultType="kr.co.trito.tams.web.system.user.dto.UserMngDto" parameterType="String">
+			 SELECT  USER_ID      AS userId
+			     , USER_PW      AS userPw
+			     , DEPT_CD      AS deptCd
+			     , (SELECT B.DEPT_NM FROM TB_DEPT B WHERE B.DEPT_CD = A.DEPT_CD)          AS deptNm
+			     , USER_NM      AS userNm
+			     , EMAIL        AS email
+			     , TELNO        AS telno 
+			     , SEX          AS sex
+			     , USE_YN       AS useYn
+			     , REGR         AS regr
+			     , REGDT       AS regdt
+			     , UPDR         AS updr
+			     , UPDT        AS updt
+			     ,'' as chk
+			  FROM TB_USER A
+			 WHERE 1=1
+ 			   AND USER_ID = #{userId}		
+	</select>
+	
 	<select id="selectUserMngList" resultType="kr.co.trito.tams.web.system.user.dto.UserMngDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
 		SELECT *
 		FROM (
@@ -31,6 +51,7 @@
 			     , REGDT       AS regdt
 			     , UPDR         AS updr
 			     , UPDT        AS updt
+			     ,'' as chk
 			  FROM TB_USER A
 			 WHERE 1=1
 				 <if test="params.searchText != null">

@@ -99,7 +99,7 @@
 						$.commRequest(url, reqType, data)
 							.then((res) => {
 								console.log(res);
-								$(".result").text("Totals : " + res.data.filter(arr => arr.chk != '').length);
+								$(".result").text("Totals : " + res.data.length);
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
 							})
 							.catch((error) => {
@@ -132,7 +132,7 @@
 	                	 , itemTemplate: function(value, item) {
 	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox").attr("id", function(){
 	                    	   
-	                    	   return "checkbox" + $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.menuNm == item.menuNm);
+	                    	  return "checkbox" + $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.menuNm == item.menuNm);
 	                       })
 	                       .attr("checked", function(){
 	                    	  return value || item.checked;
@@ -145,12 +145,9 @@
 						  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
 		                     .on("change", function (item) {
 		            	    	if(this.checked) { 
-/* 		            	            $('.singleCheckbox').each(function(i) {
+ 		            	            $('.singleCheckbox').each(function(i) {
 		            	            	$("#checkbox" + i).prop("checked", true).change();
-		            	            }); */
-		            	            for (var i = 0; i <= $("#jsGrid").jsGrid("option", "data").length; i++) {
-		            	            	$("#checkbox" + i).prop("checked", true).change();
-									}
+		            	            });
 		            	        }else {
 		            	            $('.singleCheckbox').each(function(i) { 
 		            	            	$("#checkbox" + i).prop("checked", false).change();
@@ -271,7 +268,16 @@
        	 	});
 	    	
 	    }
-	       
+	    
+	    function enterkey() {
+	    	if (window.event.keyCode == 13) {
+		        if($("#searchType").val() != 'none'){
+		    	   $("#jsGrid").jsGrid().trigger("loadData");
+		        }else{
+		       	   alert("검색항목을 선택해주세요.");
+		        }
+	        }
+	    }   
 	    </script>	
 	</th:block>
 
@@ -295,7 +301,7 @@
 				<tr>
 					<td><label for="searchText" class="menu_label">권한그룹</label></td>
 					<td>
-						<select id="searchType">
+						<select id="searchType" onkeyup="enterkey()">
 							<option value="none">권한그룹을 선택하세요</option>
 						</select>
 					</td>

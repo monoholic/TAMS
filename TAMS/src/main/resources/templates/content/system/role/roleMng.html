@@ -86,8 +86,14 @@
                 	loadData:function(filter){
                 		let d = $.Deferred();
                 		
+                		let searchTxt = $("#searchText").val();
+                		
 	                	currentPage = filter.pageIndex;    
                 		
+	                	if(!searchTxt.toUpperCase().includes("ROLE_")){
+	                		searchTxt = "ROLE_" + searchTxt.toUpperCase();
+	                	}
+	                	
             			let url = '/system/role/roleMng/roleList';
             			let reqType = 'GET';				
             			let data = {
@@ -223,9 +229,7 @@
         });
 
         
-        ////////////////////////////////////////////////////////////////////
 	    $(".btn_add").click(function() {
-	    	//$("#jsGrid").jsGrid("option", "inserting", "true");
 	    	showDetailForm();
 	    });
         
@@ -234,7 +238,6 @@
 	    	var arr_item = [];
 	    	var items = [];
 	    	
-	    	//$("#jsGrid").jsGrid("deleteItem",delete_item);
 	    	$.each(selectedItems, function(index,item){
 	    		items.push(item);
 	    	});
@@ -261,7 +264,11 @@
 	    });
 	    
         $(".btn_srch").on("click",function (){
-	    	   $("#jsGrid").jsGrid().trigger("loadData");
+        	if($("#searchType").val() != 'none'){
+	    	   $("#jsGrid").jsGrid().trigger("loadData");        		
+        	}else{
+        	   alert("검색항목을 선택해주세요.");
+        	}
 	    });
         
      	// 팝업창 저장 버튼 처리
@@ -376,11 +383,18 @@
     		alert("수정은 1개이상 되지 않습니다.");
     	}
     }
-        
-    </script>	
-	
+    
+    function enterkey() {
+    	if (window.event.keyCode == 13) {
+        	if($("#searchType").val() != 'none'){
+ 	    	   $("#jsGrid").jsGrid().trigger("loadData");        		
+         	}else{
+         	   alert("검색항목을 선택해주세요.");
+         	}
+        }
+    }
+    </script>
 </th:block>
-
 	<div layout:fragment="content">
 		<!-- contents_head -->
 		<div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div>
@@ -406,7 +420,7 @@
 							<option value="role_nm">권한명</option>
 						</select>
 					</td>
-					<td><input id="searchText" type="text" style="width:100%; margin:10px;"></td>
+					<td><input id="searchText" type="text" style="width:100%; margin:10px;" onkeyup="enterkey()"></td>
 					<td class="search" colspan="3">
 						<a href="#;" class="btn_reset">Reset</a>
 						<a href="#;" class="btn_srch">Search</a>

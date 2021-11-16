@@ -48,14 +48,14 @@
 
   	<select id="selectUserByEmail" resultType="kr.co.trito.tams.web.user.dto.UserDto">  
 		SELECT email
-			, password
-		    , `name`
+			, user_pw
+		    , user_Nm
 		    , use_yn
-		    , udt
+		    , up_dt
 		    , updr
-		    , rdt
+		    , reg_dt
 		    , regr		    
-		FROM user
+		FROM tb_user
 		WHERE email = #{email} 
   	</select> 	
   

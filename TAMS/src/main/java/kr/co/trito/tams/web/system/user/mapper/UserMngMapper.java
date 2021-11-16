@@ -12,6 +12,8 @@ public interface UserMngMapper {
 	
 	public int selectCountUser(SearchCondition condtion);
 	
+	public UserMngDto selectUserInfo(String userId);
+	
 	public List<UserMngDto> selectUserMngList(SearchCondition condtion);
 	
 	public int userMngInsert(UserMngDto dto);

@@ -23,6 +23,10 @@ public class UserMngService {
 	}
 	
 	
+	public UserMngDto selectUserInfo(String userId){
+		return mapper.selectUserInfo(userId);
+	}	
+	
 	public List<UserMngDto> selectUserMngList(SearchCondition condition){
 		return mapper.selectUserMngList(condition);
 	}	
