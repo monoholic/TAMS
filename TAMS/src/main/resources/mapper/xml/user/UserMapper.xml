@@ -47,17 +47,17 @@
 	</insert>  
 
   	<select id="selectUserByEmail" resultType="kr.co.trito.tams.web.user.dto.UserDto">  
-		SELECT user_id
-			, user_pw
-		    , user_Nm
-		    , email
-		    , use_yn
-		    , updt
-		    , updr
-		    , regdt
-		    , regr		    
-		FROM tb_user
-		WHERE user_id = #{email}
+		SELECT  USER_ID      AS userId
+		      , USER_PW      AS userPw
+		      , DEPT_CD      AS deptCd
+		      , (SELECT B.DEPT_NM FROM TB_DEPT B WHERE B.DEPT_CD = A.DEPT_CD)  AS deptNm
+		      , USER_NM      AS userNm
+		      , EMAIL        AS email
+		      , TELNO        AS telno 
+		      , USE_YN       AS useYn
+		 FROM TB_USER A
+		WHERE 1=1
+	 	  AND USER_ID = #{userId}	
   	</select> 	
   
   	<select id="selectUserRoleByEmail" resultType="String">

@@ -18,8 +18,11 @@ import lombok.Setter;
 public class UserDto {
 	private String userId;
 	private String userNm;
-	private String userPw;	
+	private String userPw;
+	private String deptCd;
+	private String deptNm;
 	private String email;	
+	private String telNo;	
 	private String useYn;
 	private String updr;
 	private String regr;
