@@ -14,8 +14,10 @@ import kr.co.trito.tams.comm.exception.UserNotFoundException;
 import kr.co.trito.tams.comm.util.msg.Message;
 import kr.co.trito.tams.web.user.dto.UserDto;
 import kr.co.trito.tams.web.user.mapper.UserMapper;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired

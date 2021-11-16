@@ -57,14 +57,14 @@
 		    , regdt
 		    , regr		    
 		FROM tb_user
-		WHERE user_id = #{email}
+		WHERE user_id = 'test2' <!-- #{email} --> 
   	</select> 	
   
   	<select id="selectUserRoleByEmail" resultType="String">
-		SELECT b.code
-		FROM user_has_role a
-		INNER JOIN user_role b
-		  ON a.role_id = b.id 
-		WHERE email = #{email}   	
+		SELECT B.ROLE_ID
+		FROM TB_USER_ROLE a
+		INNER JOIN TB_COM_ROLE b
+		  ON a.role_id = b.role_id
+		WHERE a.user_id = #{userId}   	
   	</select>
 </mapper>
