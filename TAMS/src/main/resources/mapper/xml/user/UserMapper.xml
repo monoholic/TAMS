@@ -47,16 +47,17 @@
 	</insert>  
 
   	<select id="selectUserByEmail" resultType="kr.co.trito.tams.web.user.dto.UserDto">  
-		SELECT email
+		SELECT user_id
 			, user_pw
 		    , user_Nm
+		    , email
 		    , use_yn
-		    , up_dt
+		    , updt
 		    , updr
-		    , reg_dt
+		    , regdt
 		    , regr		    
 		FROM tb_user
-		WHERE email = #{email} 
+		WHERE user_id = #{email}
   	</select> 	
   
   	<select id="selectUserRoleByEmail" resultType="String">
