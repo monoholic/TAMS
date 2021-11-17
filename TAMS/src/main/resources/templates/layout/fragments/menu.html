@@ -57,34 +57,38 @@
 								  if( index == 0 ) li_class = "class='first'";
 								  else             li_class = "";
 									
-							  $("#mymenu").append('<li id="'+menuId+'" '+li_class+'><a href="#;">'+ menuNm +'</a><div id="sub_'+menuId+'" ></div></li>');
-								  if (url != "#;") {
-									 	$("#mymenu").find("#"+menuId).click(function (){
-										var $form = $('<form></form>'); 
-										$form.attr('action', url); 
-										$form.attr('method', 'post'); 
-										$form.appendTo('body'); 
-										
-										var menuIdStr 	= $('<input type="hidden" value="'+menuId+'" name="menuId">'); 
-										var menuNmStr 	= $('<input type="hidden" value="'+menuNm+'" name="menuNm">'); 
-										var menuDescStr= $('<input type="hidden" value="'+menuDesc+'" name="menuDesc">'); 
-										
-										$form.append(menuIdStr).append(menuNmStr).append(menuDescStr);
-										
-										$form.submit();
+							  $("#mymenu").append('<li id="'+menuId+'" '+li_class+'><a id="m_'+menuId+'" href="#;">'+ menuNm +'</a><div id="sub_'+menuId+'" ></div></li>');
+								   if (url != "#;") {
+									 	//$("#mymenu").*/
+									 	$("#m_"+menuId).on("click",function (){
+											var $form = $('<form id="form_1"></form>'); 
+											$form.attr('action', url); 
+											$form.attr('method', 'post'); 
+											$form.appendTo('body'); 
+											
+											var menuIdStr 	= $('<input type="hidden" value="'+menuId+'" name="menuId">'); 
+											var menuNmStr 	= $('<input type="hidden" value="'+menuNm+'" name="menuNm">'); 
+											var menuDescStr= $('<input type="hidden" value="'+menuDesc+'" name="menuDesc">'); 
+											
+											$form.append(menuIdStr).append(menuNmStr).append(menuDescStr);
+											
+											$form.submit();
 								   	  });
-							   	  }
+							   	  } 
 							  }
 						  
 						  if( lvl == "2" && lvl == level ) {
 
 							  $("#mymenu").find("#sub_"+uppMenuId).attr("class","dropdown_depth"); 
 							  $("#mymenu").find("#sub_"+uppMenuId).attr("style","with:140px;"); 
-							  $("#mymenu").find("#sub_"+uppMenuId).append('<ul class="group"><li id="'+menuId+'"><a href="#">'+menuNm+'</a></li></ul>');
+							  $("#mymenu").find("#sub_"+uppMenuId).append('<ul class="group"><li id="'+menuId+'"><a id="c_'+menuId+'" href="#">'+menuNm+'</a></li></ul>');
 							  //
-							  $("#mymenu").find("#sub_"+uppMenuId).find("#"+menuId).click(function (){
-								  
-								 var $form = $('<form></form>'); 
+							  //$("#mymenu").find("#sub_"+uppMenuId).
+							  $("#c_"+menuId).on("click",function (){ 
+							  	
+							  	$("#form_2").remove();
+							  
+								 var $form = $('<form id="form_2"></form>'); 
 								 $form.attr('action', url); 
 								 $form.attr('method', 'post'); 
 								 $form.appendTo('body'); 
@@ -172,6 +176,7 @@
 		<!-- //header -->
 		</header>
 	</div>
+	
 	
 
 </html>
