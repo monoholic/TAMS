@@ -128,6 +128,20 @@
 						 	 } ,
 						 	 */
 		                	},
+		            	{  name : "sel"
+		                	 , align: "center"
+		                	 , width: 60
+		                	 , title: "선택"
+		                	 , editing: false
+		                	 , sorting: false
+		                	 , filtering: false
+		                	 , itemTemplate: function(value, item) {
+		                       return $("<input>").attr("type", "button").attr("class","btn_list_rd").attr("value","선택")
+		                       .on("click", function () {
+		  					  	 	selectItem(item);
+		  					  	 });
+		            		   }
+		                },
 		                { name: "deptCd", type: "text", width: 80, align: "center", readOnly:true , title: "부서코드" },
 		                { name: "deptNm", type: "text", width: 130 ,align: "left"  , title: "부서명" },
 		                { name: "uppDeptCd", type: "text", width: 80 ,align: "left"  , title: "상위 부서코드" },
@@ -210,6 +224,16 @@
 
 
 			});
+			
+		  //선택 버튼클릭시 
+		  function selectItem(obj) {
+			 console.log(obj);
+			  var rst = {}; 
+			  rst.deptCd = obj.deptCd;
+			  rst.deptNm = obj.deptNm;
+			  setResult(rst);
+			  closePopup($("#ModalPopup"));
+		  }
 			
 		   function returnResult(idx) {
 			   var rst = {};
