@@ -1,23 +1,38 @@
 ﻿<!DOCTYPE html>
 <html 	xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorator="layout/popup">
+        layout:decorator="layout/popup2">
 <head>
 <meta charset="utf-8" />
-<title>부서팝업</title>
+<title>사용자팝업</title>
 
 	<!-- css -->
 	<th:block layout:fragment="css">
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/jsgrid.css" />
+		<link rel="stylesheet" href="/css/theme.css" />
 	</th:block>
 
 	 <th:block layout:fragment="script">
+	 	<script src="/js/jsgrid/db.js"></script>
+	    <script src="/js/jsgrid/jsgrid.core.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.field.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>
+	 
 		<script>
 		
 		 	var popSelectedItems = [];
 		 	
 			$(function() {
 				
-				$("#pJsGrid").jsGrid({
+				$("#jsGrid").jsGrid({
 		        	height: "300",
 	                width: "100%",
 	                filtering: false,
@@ -41,7 +56,7 @@
 	                loadonce: true,
 	                updateOnResize: true, 
 	                rowClick: function(args) {
-	                	
+	                	/*
 	                	var target = args.event.target; 
 						if(target.type == "checkbox" ) {
 							chkOne(args.itemIndex);
@@ -56,11 +71,11 @@
 			  	 				popUnselectItem($(this).parent().next().text());
 			  	 			}
 						});
-					 
+	                	*/					 
 	                },	                	
 		            rowDoubleClick: function(args) {
 		            	//더블 클릭시 확인버튼 동일 기능
-		            	returnResult(args.itemIndex);
+		            	returnResult(args.item);
 		            }, 
 		            pagerContainerClass: "paginate",
 		            deleteConfirm: function(item) {
@@ -70,12 +85,12 @@
 		                loadData: function(filter) { 
 		                    var d = $.Deferred();
 		                    
-		                    currentPage = filter.pageIndex; 
+		                    //currentPage = filter.pageIndex; 
 	               
-		                    let url = "/common/popup/deptPopupList";
+		                    let url = "/common/popup/userPopupList";
 							let reqType = 'GET';	
 							let data = {
-	            				"searchText" : $("#deptNm").val()
+	            				"searchText" : $("#userNm").val()
 	            			};
 							 
 							$.commRequest(url, reqType, data)
@@ -92,6 +107,7 @@
 	        		    
 	            	},
 	            	fields: [
+	            		/*
 		            	{  name : "chk"
 		                	 , align: "center"
 		                	 , width: 20
@@ -126,8 +142,9 @@
 			            	        }
 			    				   });
 						 	 } ,
-						 	 */
+						 	 * /
 		                	},
+		                	*/
 		            	{  name : "sel"
 		                	 , align: "center"
 		                	 , width: 60
@@ -142,11 +159,10 @@
 		  					  	 });
 		            		   }
 		                },
-		                { name: "deptCd", type: "text", width: 80, align: "center", readOnly:true , title: "부서코드" },
-		                { name: "deptNm", type: "text", width: 130 ,align: "left"  , title: "부서명" },
-		                { name: "uppDeptCd", type: "text", width: 80 ,align: "left"  , title: "상위 부서코드" },
-		                { name: "loc", type: "text", width: 120 ,align: "left"  , title: "위치" },
-		                { name: "deptChrgrId", type: "text", width: 60 ,align: "center"  , title: "담당자ID" }
+		                { name: "userId", type: "text", width: 80, align: "center", readOnly:true , title: "사용자ID" },
+		                { name: "userNm", type: "text", width: 130 ,align: "left"  , title: "사용자명" },
+		                { name: "deptCd", type: "text", width: 80 ,align: "left"  , title: "부서코드" },
+		                { name: "deptNm", type: "text", width: 80 ,align: "left"  , title: "부서명" },
 		                /*,
 		                { name: "sortOdr", type: "number", width: 100 ,align: "center"  , title: "정렬순서" },
 		                { name: "useYn", type: "select", width: 40 ,align: "center"
@@ -193,33 +209,26 @@
 				
 				//팝업창 닫기
 				$("#btn_close_pop").on("click",function(){ 
-					//부모 페이지에 반드시 구현
-					closePopup($("#ModalPopup"));
-
-				});
-				
-				//선택된 항목 부모창에 전달
-				$(".btn_list_rd").on("click", function() {
-					returnResult();
+					window.close();
 				});
 				
 				
 				$(".btn_srch").on("click",function (){ 
-		    	   $("#pJsGrid").jsGrid().trigger("loadData");
+		    	   $("#jsGrid").jsGrid().trigger("loadData");
 		        });
 				
-				// deptNm로 가지는 곳에서 키를 누를 경우
-	            $("#deptNm").keydown(function(key) {
+				// userNm로 가지는 곳에서 키를 누를 경우
+	            $("#userNm").keydown(function(key) {
 	                //키의 코드가 13번일 경우 (13번은 엔터키)
 	                if (key.keyCode == 13) {
-	                	 $("#pJsGrid").jsGrid().trigger("loadData"); 
+	                	 $("#jsGrid").jsGrid().trigger("loadData"); 
 	                }
 	            });
 				
 				
 	          	//리셋 버튼
 	    	    $(".btn_reset").click(function() {
-	    	    	$("#deptNm").val("");
+	    	    	$("#userNm").val("");
 	    	    });
 
 
@@ -228,34 +237,13 @@
 		  //선택 버튼클릭시 
 		  function selectItem(obj) {
 			 console.log(obj);
-			  var rst = {}; 
-			  rst.deptCd = obj.deptCd;
-			  rst.deptNm = obj.deptNm;
-			  setResult(rst);
-			  closePopup($("#ModalPopup"));
+			  opener.setResult(obj); //부모창에 구현
+			  window.close();
 		  }
 			
-		   function returnResult(idx) {
-			   var rst = {};
-				
-				var selIdx;
-				
-				if( idx != null ) {
-					selIdx = idx;
-				} else {
-					$(".popSingleCheckbox").each(function(index, el){ 
-						   if( $(el).is(":checked") ) {
-							  selIdx = index;
-						   }
-					});
-				}
-				
-				var items = $("#pJsGrid").jsGrid("option", "data");
-				console.log(items[selIdx]);
-				rst.deptCd = items[selIdx].deptCd;
-				rst.deptNm = items[selIdx].deptNm;
-				setResult(rst);
-				closePopup($("#ModalPopup"));
+		   function returnResult(item) {
+				opener.setResult(item);
+				window.close();
 		   }
 			
 		   function chkOne(idx) {
@@ -279,8 +267,8 @@
 	<div id="pop_wrap" >
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
 					<!-- head -->
-					<h3>부서선택
-					<a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a>
+					<h3>사용자 선택
+						 <!-- <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a> -->
 					</h3>
 					<!-- //head -->
 					<!-- contents -->
@@ -298,9 +286,9 @@
 											<col width=""/>
 									</colgroup>
 									<tr>
-										<th>부서명</th>
+										<th>사용자명</th>
 										<td>
-											<input type="text" id="deptNm"/>
+											<input type="text" id="userNm"/>
 										</td>
 									</tr>
 								</table>
@@ -316,7 +304,7 @@
 						<!-- //search -->
 
 						<!-- list 1 -->
-						<div id="pJsGrid"></div>
+						<div id="jsGrid"></div>
 						<!-- //list 1 -->
 	
 					</div>
@@ -324,7 +312,7 @@
 					<!-- button -->
 					<div class="pop_button">
 						<p>
-						<a href="#;" class="btn_list_rd">확인</a>
+						<a href="#;" id="btn_close_pop" class="btn_list_rd">닫기</a>
 						</p>
 					</div>
 					<!-- //button -->
