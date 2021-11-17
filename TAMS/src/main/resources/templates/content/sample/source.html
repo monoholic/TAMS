@@ -13,6 +13,31 @@
 </th:block>
 
 <th:block layout:fragment="script">
+	<script>
+		$(function(){
+			
+			
+			//팝업 호출 
+    	    $("#openPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/userPopup";
+    	       
+    	        var w  = 650;
+    	        var h = 416;
+    	        var sTop = Math.max(0, (($(window).height() - h) / 2) + $(window).scrollTop()) + "px";
+    	        var sLeft =  Math.max(0, (($(window).width() - w) / 2) + $(window).scrollLeft()) + "px";
+    	        var child;
+    	        child = window.open(url, "userPopup", "position=absolute,top="+sTop+", left="+sLeft+", height="+h+"px, width="+w+"px, fullscreen=no, resizeable=no"); 
+    	        
+    	    });
+			
+		});
+		
+		function setResult(obj) {
+			$("#userId").val(obj.userId);
+			$("#userNm").val(obj.userNm);
+		}
+	</script>
 </th:block>
 
 	<div layout:fragment="content">
@@ -48,7 +73,14 @@
 				<br/>
 				<h5>기타</h5>
 				<a href="/sample/etc1">로딩</a>&nbsp;/&nbsp;<a href="/sample/etc2">메일폼</a>&nbsp;/&nbsp;<a href="/sample/etc3">달력</a>
+				<br/>
+				<h5>팝업호출</h5>
+				<a href="#;" id="openPopup">사용자팝업 호출</a>
+				<br/>
+				사용자id&nbsp;<input type="text" id="userId" name="userId"/>&nbsp;&nbsp;사용자명&nbsp;<input type="text" id="userNm" name="userNm"/>&nbsp;
 			</div>
+			
+			
 		</div>
 	</div>
 </html>

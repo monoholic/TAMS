@@ -28,6 +28,7 @@ import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.service.CommonService;
+import kr.co.trito.tams.web.system.user.dto.UserMngDto;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -72,6 +73,39 @@ public class CommonController {
 		SearchCondition condition = new SearchCondition("0","0",params);
 		
 		List<DeptDto> list = commonService.selectDeptPopupList(condition);
+		condition.pageSetup(list.size());
+		
+		return responseService.success(condition, list);
+		
+	}
+	
+	/** 사용자 팝업 화면 */
+	@GetMapping("/popup/userPopup")
+	public ModelAndView userPopupView(HttpServletRequest request) {
+		
+		ModelAndView view = new ModelAndView();
+		view.setViewName("/content/common/popup/userPopup");
+		
+		return view;
+	}
+	
+	/** 부서팝업 조회 */
+	@GetMapping("/popup/userPopupList")
+	@ResponseBody
+	@ApiOperation(value = "Web API Common test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response>  userPopupList(
+			@ApiParam(value = "검색 조건(사용자명, 사용자ID)", required = false) @RequestParam(value="searchText",required = false) String searchText) {
+		
+		Map<String, Object> params = new HashMap<>();
+		if (!StringUtils.isEmpty(searchText))
+			params.put("searchText", searchText);
+//		
+		
+		SearchCondition condition = new SearchCondition("0","0",params);
+		
+		List<UserMngDto> list = commonService.selectUserPopupList(condition);
 		condition.pageSetup(list.size());
 		
 		return responseService.success(condition, list);

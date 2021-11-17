@@ -39,6 +39,30 @@
 	   	</if>
 		ORDER BY DEPT_CD
 	</select>
+
+	<!-- 사용자팝업 조회 -->
+	<select id="selectUserPopupList" resultType="kr.co.trito.tams.web.system.user.dto.UserMngDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		 SELECT  USER_ID       AS userId
+			     , USER_PW      AS userPw
+			     , DEPT_CD      AS deptCd
+			     , (SELECT B.DEPT_NM FROM TB_DEPT B WHERE B.DEPT_CD = A.DEPT_CD)          AS deptNm
+			     , USER_NM      AS userNm
+			     , EMAIL        AS email
+			     , TELNO        AS telno 
+			     , SEX          AS sex
+			     , USE_YN       AS useYn
+			     , REGR         AS regr
+			     , REGDT        AS regdt
+			     , UPDR         AS updr
+			     , UPDT         AS updt
+			     ,'' as chk
+			  FROM TB_USER A
+			 WHERE 1=1
+	   	<if test="params.searchText!=null">
+	   	  AND (USER_ID LIKE CONCAT('%', #{params.searchText}, '%') OR USER_NM LIKE CONCAT('%', #{params.searchText}, '%') )
+	   	</if>
+		ORDER BY DEPT_CD
+	</select>
 	
 	<!-- 첨부파일 목록 조회 -->
 	<select id="selectFileList" resultType="kr.co.trito.tams.comm.util.file.FileDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
