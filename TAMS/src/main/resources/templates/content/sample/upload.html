@@ -39,7 +39,7 @@
 			//////////////////////////////////////////////
 			$("#jsGrid").jsGrid({
 				
-	        	height: "650",
+	        	height: "350",
                 width: "100%",
                 data: fileGridData, 
                 autoload: false,
@@ -188,9 +188,71 @@
 				//$("#jsGrid").jsGrid().trigger("loadData");
 				searchFileList();
 			});
+			
+			
+			
+			
+			$("#btn_addexcel").on("click", function(e){
+				e.preventDefault();
+				$("#excelUp").click();
+			});
+			
+			$("#excelUp").on("change", function(e){
+				var obj = e.target? e.target:e.srcElement;
+				var addFiles = obj.files;
+				console.log("@@@@@@ "+addFiles[0].size);
+				
+				//첨부파일 추가
+				excelData.append("file", addFiles[0]);
+				
+				$("[name='excelNm']").val(addFiles[0].name);
+			});
+			
+			$(".btn_exupload").on("click", function(e){
+				var d = $.Deferred();
+				
+				let url = "/file/readExcel";
+				let reqType = 'POST';	
+				$.commRequestFile(url, reqType, excelData)
+					.then((res) => {
+						console.log('업로드 성공!!');
+						//console.log(JSON.stringify(res));
+						showUploadExcelData(res);
+					})
+					.catch((error) => {
+						console.log('업로드 실패!!');
+					});
+				
+				excelData.delete("file");
+				
+				return d.promise();
+			});
+			
+			
+			
+			//////////////////////////////////////////////////////////////////
+			$("#excelJsGrid").jsGrid({
+				
+	        	height: "350",
+                width: "100%",
+                data: excelItems, 
+                autoload: false,
+                loadonce: true,
+                updateOnResize: true, 
+	            fields: [
+	            	{ name: "uniqueId", type: "text"   , width: 100 ,align: "left"  , title: "Unique ID" },
+	            	{ name: "name"    , type: "text"   , width: 100 ,align: "left"  , title: "Name" },
+	                { name: "comment" , type: "text"   , width: 100 ,align: "left"  , title: "Comment" },
+	                /*,
+	                { name: "fileDownloadUri" , type: "text"    , width: 300 ,align: "left"  , title: "다운로드 Uri" } */
+	            ]
+	        });
+			//////////////////////////////////////////////////////////////////
+			
 		});	
 		
 		var fileData = new FormData();
+		var excelData = new FormData();
 		var tmpFiles = [];
 		function addFile(e) {
 			
@@ -254,7 +316,7 @@
 						"fileSize": item.fileSize,
 						"orgFileNm": item.orgFileNm,
 						"fileDownloadUri": item.fileDownloadUri,
-						"rfncKey1": 'Test01'
+						"rfncKey1": $("#rfnc_key").val()
 				}; 
 				
 				//fileGridData.push(f);
@@ -320,6 +382,26 @@
             return d.promise(); 
 		}
 		
+		//엑셀업로드 화면 표시용
+		var excelItems = [];
+		function showUploadExcelData(data) {
+			console.log("@@@@@@ [showUploadExcelData] "+data);
+			
+			excelItems.lengths = 0;
+			$.each(data, function(index, el){
+				var item = {};
+				item.uniqueId 	= el.uniqueId;
+				item.name 		= el.name;
+				item.comment 	= el.comment;
+				console.log(item);
+				excelItems.push(item);
+			});
+			
+			
+			$("#excelJsGrid").jsGrid().trigger("loadData");
+			
+		}
+		
 	</script> 
 </th:block>
 
@@ -341,6 +423,8 @@
 				</colgroup>
 				<tr>
 					<td>
+						<lable for="rfnc_key">참조키</lable>
+						<input type="text" name="rfnc_key" id="rfnc_key" value="Test01"/>
 						<input type="radio" name="upType" value="S" checked>Single
 						<input type="radio" name="upType" value="M">Multi
 						<a href="#;" id="btn_addfile" class="btn_srch">파일추가</a>
@@ -367,7 +451,7 @@
 				<col width="2%">
 				<col width="49%">
 			</colgroup>
-			<tr>
+			<tr height="300px">
 				<td valign="top">
 				
 					<table class="list_table">
@@ -392,6 +476,39 @@
 				<td valign="top">
 				    <!-- 파일 업로드 결과용  -->
 					<div id="jsGrid"></div>
+					
+				</td>
+			</tr>
+			<tr  height="300px">
+				<td valign="top">
+				
+					
+				<table style="width:100%;">
+				<colgroup>
+				<col width="49%">
+				<col width="2%">
+				<col width="49%">
+				</colgroup>
+				<tr>
+					<td valign="top">
+						<input type="file" name="excelUp" id="excelUp" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;">
+						<input type="text" name="excelNm" style="width:90%">
+						<a href="#;" id="btn_addexcel" class="btn_srch">엑셀추가</a>
+						<a href="#;" class="btn_exupload">엑셀업로드</a>
+					</td>
+					<td></td>
+					<td align="right">
+						<!-- <input type="text" id="searchText" name="searchText" value=""/>
+						<a href="#;" id="btn_search" class="btn_srch">Search</a> -->
+					</td>
+				</tr>
+			</table>
+					
+				</td>
+				<td></td>
+				<td valign="top">
+				    <!-- 엑셀 업로드 결과용  -->
+					<div id="excelJsGrid"></div>
 					
 				</td>
 			</tr>
