@@ -32,7 +32,7 @@ public class IndexController {
         return "/content/sample/jsgrid";
     }                
 
-    @GetMapping(value = "/ex_source")
+    @PostMapping(value = "/ex_source")
     public String source(){
         return "/content/sample/source";
     } 

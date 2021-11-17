@@ -53,13 +53,28 @@
 						  
 						  if( lvl == "1" && lvl == level ) {
 
-							var li_class = "";
-						  	if( index == 0 ) li_class = "class='first'";
-						  	else             li_class = "";
-						  		
-							$("#mymenu").append('<li id="'+menuId+'" '+li_class+'><a href="'+ url +'">'+ menuNm +'</a><div id="sub_'+menuId+'" ></div></li>');
-							
-						  }
+							  var li_class = "";
+								  if( index == 0 ) li_class = "class='first'";
+								  else             li_class = "";
+									
+							  $("#mymenu").append('<li id="'+menuId+'" '+li_class+'><a href="#;">'+ menuNm +'</a><div id="sub_'+menuId+'" ></div></li>');
+								  if (url != "#;") {
+									 	$("#mymenu").find("#"+menuId).click(function (){
+										var $form = $('<form></form>'); 
+										$form.attr('action', url); 
+										$form.attr('method', 'post'); 
+										$form.appendTo('body'); 
+										
+										var menuIdStr 	= $('<input type="hidden" value="'+menuId+'" name="menuId">'); 
+										var menuNmStr 	= $('<input type="hidden" value="'+menuNm+'" name="menuNm">'); 
+										var menuDescStr= $('<input type="hidden" value="'+menuDesc+'" name="menuDesc">'); 
+										
+										$form.append(menuIdStr).append(menuNmStr).append(menuDescStr);
+										
+										$form.submit();
+								   	  });
+							   	  }
+							  }
 						  
 						  if( lvl == "2" && lvl == level ) {
 
