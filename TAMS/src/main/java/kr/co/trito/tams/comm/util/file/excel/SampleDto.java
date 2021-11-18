@@ -4,12 +4,14 @@ import org.apache.poi.ss.usermodel.Row;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
-public class SampleDto {
+public class SampleDto extends ExcelDto {
 
 	/*
 	 * 	엑셀 업로드 샘플 DTO Class
@@ -19,11 +21,19 @@ public class SampleDto {
     private String name;
     private String comment;
 
-    protected SampleDto() {}
+//    protected SampleDto() {}
     
-    public static SampleDto row(Row row) {
-        return new SampleDto(row.getCell(0).getStringCellValue(), 
-        		row.getCell(1).getStringCellValue(), 
-        		row.getCell(2).getStringCellValue());
+    @Override
+    public  SampleDto row(Row row) {
+    	
+//        return new SampleDto(row.getCell(0).getStringCellValue(), 
+//        		row.getCell(1).getStringCellValue(), 
+//        		row.getCell(2).getStringCellValue());
+    	SampleDto dto = new SampleDto();
+    	dto.setUniqueId	(row.getCell(0).getStringCellValue());
+    	dto.setName		(row.getCell(1).getStringCellValue());
+    	dto.setComment	(row.getCell(2).getStringCellValue());
+    	return dto;
+    	
     }
 }

@@ -34,6 +34,8 @@
 		var fileGridData = [];
 		var saveFileData = [];
 		
+		
+		
 		$(function(){
 			
 			//////////////////////////////////////////////
@@ -200,56 +202,94 @@
 			$("#excelUp").on("change", function(e){
 				var obj = e.target? e.target:e.srcElement;
 				var addFiles = obj.files;
-				console.log("@@@@@@ "+addFiles[0].size);
-				
+				//console.log("@@@@@@ "+addFiles[0].size);
+				//console.log("@@@@@  "+$("#gbn").val());
 				//첨부파일 추가
 				excelData.append("file", addFiles[0]);
+				excelData.append("gubun", $("#gbn").val());
 				
 				$("[name='excelNm']").val(addFiles[0].name);
 			});
 			
 			$(".btn_exupload").on("click", function(e){
-				var d = $.Deferred();
-				
+				console.log(excelData);
+				//var d = $.Deferred();
 				let url = "/file/readExcel";
-				let reqType = 'POST';	
+				let reqType = "POST";	
 				$.commRequestFile(url, reqType, excelData)
 					.then((res) => {
-						console.log('업로드 성공!!');
-						//console.log(JSON.stringify(res));
-						showUploadExcelData(res);
+						console.log('엑셀 업로드 성공!!');
+						console.log(JSON.stringify(res));
+						showUploadExcelData($("#gbn").val(), res);
 					})
 					.catch((error) => {
-						console.log('업로드 실패!!');
+						console.log('엑셀 업로드 실패!!');
 					});
 				
+				excelData.delete("gubun");
 				excelData.delete("file");
+				$("[name='excelNm']").val("");
 				
-				return d.promise();
+				//return d.promise();
+			});
+			
+			$("#gbn").on("change", function(e){
+				
+				var gbn = $(this).val();
+				console.log("@@ "+gbn);
+				excelItems.length=0;
+				$("#excelJsGrid").jsGrid("reset");
+				$("#excelJsGrid").remove();
+				
+				if( gbn == "1" )      excelGridField = SampleDtoField;
+				else if( gbn == "2" ) excelGridField = InvestDtoField;
+				
+				//console.log("@@excelGridField :  "+excelGridField);
+				$("body").append("<div id='excelJsGrid'></div>");
+				$("#excelGridHd").jsGrid(getGridBody());
+				
 			});
 			
 			
 			
 			//////////////////////////////////////////////////////////////////
-			$("#excelJsGrid").jsGrid({
-				
-	        	height: "350",
-                width: "100%",
-                data: excelItems, 
-                autoload: false,
-                loadonce: true,
-                updateOnResize: true, 
-	            fields: [
-	            	{ name: "uniqueId", type: "text"   , width: 100 ,align: "left"  , title: "Unique ID" },
-	            	{ name: "name"    , type: "text"   , width: 100 ,align: "left"  , title: "Name" },
-	                { name: "comment" , type: "text"   , width: 100 ,align: "left"  , title: "Comment" },
-	                /*,
-	                { name: "fileDownloadUri" , type: "text"    , width: 300 ,align: "left"  , title: "다운로드 Uri" } */
-	            ]
-	        });
+			$("#excelJsGrid").jsGrid(getGridBody());
 			//////////////////////////////////////////////////////////////////
 			
 		});	
+		
+		function getGridBody() {
+			return {
+		        	height: "350",
+		            width: "100%",
+		            data: excelItems, 
+		            autoload: false,
+		            loadonce: false,
+		            updateOnResize: true, 
+		            fields: excelGridField
+		    	};
+		}
+		
+		var SampleDtoField = [
+							{ name: "uniqueId", type: "text"   , width: 100 ,align: "left"  , title: "Unique ID" },
+			        		{ name: "name"    , type: "text"   , width: 100 ,align: "left"  , title: "Name" },
+			          		{ name: "comment" , type: "text"   , width: 100 ,align: "left"  , title: "Comment" },
+			          		{ name: "regr" 	  , type: "text"   , width: 100 ,align: "left"  , title: "등록자" }
+			        	];
+		var InvestDtoField = [
+							{ name: "invNo"		, type: "text"   , width: 100 ,align: "left"  , title: "Inv No"	 },
+							{ name: "invDt"		, type: "text"   , width: 100 ,align: "left"  , title: "Inv Date"	 },
+							{ name: "invRegr"	, type: "text"   , width: 100 ,align: "left"  , title: "Inv Regr" },
+							{ name: "invTtl"	, type: "text"   , width: 100 ,align: "left"  , title: "Title"	 },
+							{ name: "invQty"	, type: "text"   , width: 100 ,align: "left"  , title: "Qty"	 },
+							{ name: "invAmt"	, type: "text"   , width: 100 ,align: "left"  , title: "Amount"	 },
+							{ name: "actgYear"	, type: "text"   , width: 100 ,align: "left"  , title: "Actg Year"},
+							{ name: "regr"		, type: "text"   , width: 100 ,align: "left"  , title: "등록자"	 },
+						];
+		var excelGridField = SampleDtoField;
+		
+		
+		 
 		
 		var fileData = new FormData();
 		var excelData = new FormData();
@@ -384,23 +424,41 @@
 		
 		//엑셀업로드 화면 표시용
 		var excelItems = [];
-		function showUploadExcelData(data) {
-			console.log("@@@@@@ [showUploadExcelData] "+data);
+		function showUploadExcelData(gbn, data) {
+			//console.log("@@@@@@ [showUploadExcelData] "+data);
 			
 			excelItems.lengths = 0;
 			$.each(data, function(index, el){
 				var item = {};
-				item.uniqueId 	= el.uniqueId;
-				item.name 		= el.name;
-				item.comment 	= el.comment;
+				
+				if( gbn == "1" ) {
+					item.uniqueId 	= el.uniqueId;
+					item.name 		= el.name;
+					item.comment 	= el.comment;
+					item.regr 	= el.regr;
+				} else
+				if( gbn == "2" ) {
+					item.invNo    	= el.invNo;    
+					item.invDt    	= el.invDt;    
+					item.invRegr  	= el.invRegr;  
+					item.invTtl   	= el.invTtl;   
+					item.invQty   	= el.invQty;   
+					item.invAmt   	= el.invAmt;   
+					item.actgYear 	= el.actgYear; 
+					item.regr 		= el.regr; 
+				}
 				console.log(item);
 				excelItems.push(item);
 			});
 			
-			
-			$("#excelJsGrid").jsGrid().trigger("loadData");
+			$("#excelGridHd").jsGrid(getGridBody()).trigger("loadData");
+			//$("#excelJsGrid").jsGrid().trigger("loadData");
 			
 		}
+		
+		
+		///////////////////////////////
+		//$("#excelJsGrid").jsGrid().trigger("render");
 		
 	</script> 
 </th:block>
@@ -491,6 +549,11 @@
 				</colgroup>
 				<tr>
 					<td valign="top">
+						<label for="gbn">구분</label>
+						<SELECT name="gbn" id="gbn" >
+							<OPTION VALUE="1" selected>1.SampleDto</OPTION>
+							<OPTION VALUE="2">2.InvestDto</OPTION>
+						</SELECT>
 						<input type="file" name="excelUp" id="excelUp" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;">
 						<input type="text" name="excelNm" style="width:90%">
 						<a href="#;" id="btn_addexcel" class="btn_srch">엑셀추가</a>
@@ -506,7 +569,7 @@
 					
 				</td>
 				<td></td>
-				<td valign="top">
+				<td valign="top" id="excelGridHd">
 				    <!-- 엑셀 업로드 결과용  -->
 					<div id="excelJsGrid"></div>
 					

@@ -16,6 +16,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,11 +31,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.thymeleaf.util.StringUtils;
 
 import kr.co.trito.tams.comm.util.file.excel.ExcelConstant;
+import kr.co.trito.tams.comm.util.file.excel.ExcelDto;
 import kr.co.trito.tams.comm.util.file.excel.ExcelReader;
+import kr.co.trito.tams.comm.util.file.excel.InvestDto;
 import kr.co.trito.tams.comm.util.file.excel.SampleDto;
 import kr.co.trito.tams.comm.util.res.GeneralResponse;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
+import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -94,8 +99,25 @@ public class FileController {
 	
 	@PostMapping("/readExcel")
 	@ResponseBody
-	public List<SampleDto> readExcel(@RequestParam("file") MultipartFile multipartFile) throws IOException, InvalidFormatException {
-		return excelReader.readFileToList(multipartFile, SampleDto::row);
+	public List<ExcelDto> readExcel(@RequestParam("file") MultipartFile multipartFile, @RequestParam(value="gubun", required=false) String gubun, @AuthenticationPrincipal UserDetails userDetail) throws IOException, InvalidFormatException {
+		
+		ExcelDto dto = null;
+		
+		UserInfo userDto = (UserInfo)userDetail;
+		String userId = userDto.getDto().getUserId();
+		log.error("@@ user id : "+userId);
+		
+		if( StringUtils.isEmpty(gubun) ) gubun = "1";
+		log.error("@@[readExcel] "+gubun);
+		if( "1".equals(gubun) ) {
+			dto = new SampleDto();
+		} else if("2".equals(gubun) ) {
+			dto = new InvestDto();
+		}
+		
+		dto.setRegr(userId);
+			
+		return excelReader.readFileToList(multipartFile, dto::row);
 	}	
 	
 	private FileDto upload(MultipartFile file) {
