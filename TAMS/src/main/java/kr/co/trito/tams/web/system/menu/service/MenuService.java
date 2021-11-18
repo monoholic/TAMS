@@ -17,8 +17,8 @@ public class MenuService {
 	@Autowired
 	MenuMapper mapper;
 	
-	public List<MenuDto> selectMenuList(String email){
-		return mapper.selectMenuList(email);
+	public List<MenuDto> selectMenuList(String role){
+		return mapper.selectMenuList(role);
 	}
 	
 	public int selectCountMenu(SearchCondition condtion) {

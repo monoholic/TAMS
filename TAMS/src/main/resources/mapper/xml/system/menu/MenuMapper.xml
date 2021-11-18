@@ -7,16 +7,22 @@
 	<select id="selectMenuList" resultType="kr.co.trito.tams.web.system.menu.dto.MenuDto" parameterType="String">
 		WITH RECURSIVE CTE AS ( 
 		    SELECT 
-		           MENU_ID, MENU_NM, UPP_MENU_ID, MENU_LVL , URL, MENU_DESC , USE_YN       
-		    FROM TB_COM_MENU  
-		    WHERE MENU_LVL = 1
-		      AND USE_YN = 'Y'
-		    UNION ALL 
+		           A.MENU_ID, A.MENU_NM, A.UPP_MENU_ID, A.MENU_LVL , A.URL, A.MENU_DESC , A.USE_YN, B.INQR_YN, B.UPD_YN, B.REG_YN, B.DEL_YN
+		    FROM TB_COM_MENU A, TB_COM_MENU_ROLE B
+		    WHERE A.MENU_LVL = 1
+		      AND A.USE_YN = 'Y'
+		      AND A.MENU_ID = B.MENU_ID
+		      AND B.ROLE_ID = #{role}
+		   	  AND B.MENU_YN = 'Y'
+		  	UNION 
 		    SELECT 
-		         B.MENU_ID, B.MENU_NM, B.UPP_MENU_ID, B.MENU_LVL , B.URL, B.MENU_DESC , B.USE_YN      
-		    FROM TB_COM_MENU B 
-		    INNER JOIN CTE C ON B.UPP_MENU_ID = C.MENU_ID 
-		    WHERE B.USE_YN = 'Y'
+		           A.MENU_ID, A.MENU_NM, A.UPP_MENU_ID, A.MENU_LVL , A.URL, A.MENU_DESC , A.USE_YN, B.INQR_YN, B.UPD_YN, B.REG_YN, B.DEL_YN 
+		    FROM TB_COM_MENU_ROLE B, TB_COM_MENU A
+		    INNER JOIN CTE C ON A.UPP_MENU_ID = C.MENU_ID 
+		    WHERE A.USE_YN = 'Y'
+		    AND B.MENU_ID = A.MENU_ID
+		    AND B.role_id = #{role}
+		    AND B.MENU_YN = 'Y'
 		    ) 
 		SELECT MENU_ID      AS menuId
 		     , MENU_NM      AS menuNm
@@ -25,6 +31,10 @@
 		     , URL          AS url 
 		     , MENU_DESC    AS menuDesc
 		     , USE_YN       AS useYn
+		     , INQR_YN      AS inqrYn
+		     , UPD_YN       AS updYn
+		     , REG_YN       AS regYn
+		     , DEL_YN       AS delYn
 		  FROM CTE 
 		ORDER BY MENU_ID
 	</select>

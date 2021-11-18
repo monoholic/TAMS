@@ -28,17 +28,17 @@ import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import kr.co.trito.tams.web.standard.invest.service.InvestService;
 
 @Controller
-@RequestMapping("/standard/imvest")
+@RequestMapping("/standard/invest")
 public class investController {
 	@Autowired
 	ResponseService responseService;
 	
 	@Autowired
-	InvestService imvestService;
+	InvestService investService;
 	
 	/* 공통코드 관리 화면 */
-	@PostMapping("/imvestMng")
-	public ModelAndView imvestMngView(HttpServletRequest request) {
+	@PostMapping("/investMng")
+	public ModelAndView investMngView(HttpServletRequest request) {
 	
 		ModelAndView view = new ModelAndView();
 		view.addObject("menuId", request.getParameter("menuId"));
@@ -46,18 +46,18 @@ public class investController {
 		view.addObject("menuDesc", request.getParameter("menuDesc"));
 		view.addObject("url", request.getParameter("url"));
 		
-		view.setViewName("/content/standard/imvest/imvestMng");
-		    
+		view.setViewName("/content/standard/invest/investMng");
+		
 		return view;
 	}
 	
 	/* 공통코드 관리 화면 : 조회 */
-	@GetMapping(value="/imvestMng/imvestList")
+	@GetMapping(value="/investMng/investList")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> imvestMngList(
+	public ResponseEntity<? extends Response> investMngList(
 				@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage",required = true) String currentPage,
 				@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
 				@ApiParam(value = "검색 조건(메뉴ID, 메뉴명)", required = false) @RequestParam(value = "searchText", required = false) String searchText,
@@ -88,10 +88,10 @@ public class investController {
 		params.put("sortOrder", sortOrder);
 		
 		SearchCondition condition = new SearchCondition(currentPage, numOfRows, params);
-		int total = imvestService.selectCountCode(condition);
+		int total = investService.selectCountCode(condition);
 		condition.pageSetup(total);
 		
-		List<CodeDto> list = imvestService.selectCodeList(condition);
+		List<CodeDto> list = investService.selectCodeList(condition);
 		return responseService.success(condition, list);
 	}
 

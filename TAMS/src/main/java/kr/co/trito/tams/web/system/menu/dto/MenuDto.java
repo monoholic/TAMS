@@ -1,8 +1,5 @@
 package kr.co.trito.tams.web.system.menu.dto;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -46,5 +43,13 @@ public class MenuDto {
 	private String upDt;
 	@ApiModelProperty(value="체크")
 	private String chk;
+	@ApiModelProperty(value="조회권한")
+	private String inqrYn;
+	@ApiModelProperty(value="수정권한")
+	private String updYn;
+	@ApiModelProperty(value="등록권한")
+	private String regYn;
+	@ApiModelProperty(value="삭제권한")
+	private String delYn;
 }
 

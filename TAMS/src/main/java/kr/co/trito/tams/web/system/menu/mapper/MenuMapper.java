@@ -9,7 +9,7 @@ import kr.co.trito.tams.web.system.menu.dto.MenuDto;
 
 @Mapper
 public interface MenuMapper {
-	public List<MenuDto> selectMenuList(String email);
+	public List<MenuDto> selectMenuList(String role);
 	
 	public int selectCountMenu(SearchCondition condtion);
 	
@@ -20,5 +20,5 @@ public interface MenuMapper {
 	public int menuMngUpdate(MenuDto dto);
 	
 	public int menuMngDelete(MenuDto dto);
-	
+
 }

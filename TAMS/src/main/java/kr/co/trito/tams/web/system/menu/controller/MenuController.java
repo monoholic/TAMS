@@ -49,7 +49,12 @@ public class MenuController {
 			@ApiParam(value = "유저권한", required = false) @RequestBody(required = false) String userRole) { 
 			
 		log.info("테스트" + userRole);
-		List<MenuDto> list = menuService.selectMenuList("");
+		
+		String role = userRole.substring(userRole.indexOf("=") + 1);
+		
+		log.info("테스트2" + role);
+		
+		List<MenuDto> list = menuService.selectMenuList(role);
 		return responseService.success(list);
 	}
 	
