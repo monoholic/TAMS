@@ -1,5 +1,6 @@
 package kr.co.trito.tams.web.system.menu.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,10 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,7 +25,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import jdk.internal.org.jline.utils.Log;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
@@ -46,15 +48,20 @@ public class MenuController {
 	@PostMapping("/menuList")
 	@ResponseBody
 	public ResponseEntity<? extends Response> menulist(
-			@ApiParam(value = "유저권한", required = false) @RequestBody(required = false) String userRole) { 
-			
-		log.info("테스트" + userRole);
+			@AuthenticationPrincipal UserDetails userDetail) { 
 		
-		String role = userRole.substring(userRole.indexOf("=") + 1);
-		
-		log.info("테스트2" + role);
-		
-		List<MenuDto> list = menuService.selectMenuList(role);
+		List<GrantedAuthority> auths = new ArrayList<>(userDetail.getAuthorities());
+	      log.error("@@@@@@@ : "+ auths.get(0).getAuthority());
+	      
+		/*
+		 * String role = userRole.substring(userRole.indexOf("=") + 1);
+		 * 
+		 * log.info("테스트2" + role);
+		 */
+	      
+		String roleId = auths.get(0).getAuthority();
+	      
+		List<MenuDto> list = menuService.selectMenuList(roleId);
 		return responseService.success(list);
 	}
 	

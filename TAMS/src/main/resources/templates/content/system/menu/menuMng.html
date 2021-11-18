@@ -362,7 +362,7 @@
     		$(".detail_table").find("#popupYn").val("");
     		$(".detail_table").find("#sortOdr").val("");
 	    }
-	    
+		
 	    let save_mode = "";
 	    function showDetailForm(item) {
 	    	
@@ -413,7 +413,13 @@
 	    	if (window.event.keyCode == 13) {
 	    		$("#jsGrid").jsGrid().trigger("loadData");
 	        }
-	    }  
+	    }
+	    
+		window.onload = function(){
+			
+		    getMyRole();
+			
+		}
 	    </script>	
 	</th:block>
 
@@ -421,6 +427,7 @@
 		<!-- contents_head -->
 		<div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div>
 		<h3><span th:text="${menuNm}"></span></h3>
+		<span th:text="${inqrYn}"></span>
 		<!-- //contents_head -->
 
 		<!-- search -->
@@ -437,7 +444,7 @@
 				<tr>
 					<td><label for="searchText" class="menu_label">메뉴 명</label></td>
 					<td><input id="searchText" type="text" style="width:100%; margin:10px;" onkeyup="enterkey()"></td>
-					<td class="search" colspan="3">
+					<td th:if="${session.inqrYn}=='Y'" class="search" colspan="3">
 						<a href="#;" class="btn_reset">Reset</a>
 						<a href="#;" class="btn_srch">Search</a>
 					</td>
@@ -449,9 +456,9 @@
 				<div class="result">Results : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
-					<a class="btn_add">등록</a>
-					<a class="btn_update">수정</a>
-					<a class="btn_del">삭제</a>
+					<a th:if="${session.regYn}=='Y'" class="btn_add">등록</a>
+					<a th:if="${session.updYn}=='Y'" class="btn_update">수정</a>
+					<a th:if="${session.delYn}=='Y'" class="btn_del">삭제</a>
 				</div>
 				<!-- list_button -->
 		</div>

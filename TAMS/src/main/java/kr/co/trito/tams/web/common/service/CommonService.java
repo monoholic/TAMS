@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import kr.co.trito.tams.comm.util.file.FileDto;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.common.dto.DeptDto;
+import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
 import kr.co.trito.tams.web.common.mapper.CommonMapper;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,13 @@ public class CommonService {
 	 * */
 	public int updateDwldCnt(FileDto dto){
 		return mapper.updateDwldCnt(dto);
+	}	
+	
+	/** 
+	 * 화면 권한 조회
+	 * */
+	public MenuRoleCheckDto selectMenuRoleCheck(MenuRoleCheckDto dto){
+		return mapper.selectMenuRoleCheck(dto);
 	}	
 	
 }

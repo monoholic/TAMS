@@ -1,14 +1,19 @@
 package kr.co.trito.tams.web.common.contoller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,17 +27,21 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import jdk.internal.org.jline.utils.Log;
 import kr.co.trito.tams.comm.util.file.FileDto;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.common.dto.DeptDto;
+import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
 import kr.co.trito.tams.web.common.service.CommonService;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Controller
+@Slf4j
 @RequestMapping("/common")
 public class CommonController {
 	
@@ -188,6 +197,38 @@ public class CommonController {
 		return code;
 		
 	} 	
+	
+	/** 화면 권한 여부 체크 */
+	@GetMapping("/menu/menuRoleCheck")
+	@ResponseBody
+	@ApiOperation(value = "Web API Common test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> menuRoleCheck(HttpServletRequest request,
+			@AuthenticationPrincipal UserDetails userDetail,
+			@ApiParam(value = "메뉴ID", required = false) @RequestParam(required = false) String menuId
+			){
+		
+		List<GrantedAuthority> auths = new ArrayList<>(userDetail.getAuthorities());
+	      log.error("@@@@@@@ : "+ auths.get(0).getAuthority());
+	      
+		MenuRoleCheckDto dto = new MenuRoleCheckDto();
+		
+		dto.setRoleId(auths.get(0).getAuthority());
+		dto.setMenuId(menuId);
+		
+		HttpSession session = request.getSession();
+		
+		MenuRoleCheckDto role = commonService.selectMenuRoleCheck(dto);
+		
+		session.setAttribute("inqrYn", role.getInqrYn());		
+		session.setAttribute("updYn", role.getUpdYn());
+		session.setAttribute("regYn", role.getRegYn());
+		session.setAttribute("delYn", role.getDelYn());
+		
+		return responseService.success(role);
+		
+	}
 	
 }
 

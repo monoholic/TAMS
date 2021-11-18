@@ -99,4 +99,19 @@
 		 WHERE FILE_ID = #{fileId}
 	</update>
 	
+	<!-- 화면 권한 여부 조회 -->
+	<select id="selectMenuRoleCheck" resultType="kr.co.trito.tams.web.common.dto.MenuRoleCheckDto" parameterType="kr.co.trito.tams.web.common.dto.MenuRoleCheckDto">
+		SELECT A.ROLE_ID
+			 , A.MENU_ID
+			 , A.INQR_YN
+			 , A.UPD_YN
+			 , A.REG_YN
+			 , A.DEL_YN
+		FROM TB_COM_MENU_ROLE A
+		WHERE 1 = 1
+		AND A.USE_YN = 'Y'
+		AND A.ROLE_ID = #{roleId}
+		AND A.MENU_ID = #{menuId}
+	</select>
+	
 </mapper>

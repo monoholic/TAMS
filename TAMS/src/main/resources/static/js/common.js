@@ -63,3 +63,21 @@ function showUploadExcelData(data, gridId) {
 	$(gridId).jsGrid(getGridBody()).trigger("loadData");
 
 }
+
+function getMyRole() { 
+	
+	let url = '/common/menu/menuRoleCheck';
+	let reqType = 'GET';				
+	let data = {
+		"menuId" : $("#menuId").val()
+	};
+	$.commRequest(url, reqType, data)
+		.then((res) => {
+			
+			console.log(res);
+			
+		})
+		.catch((error) => {
+			alert('메뉴조회 실패!!');
+		});								
+}

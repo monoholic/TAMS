@@ -12,6 +12,7 @@
 		    WHERE A.MENU_LVL = 1
 		      AND A.USE_YN = 'Y'
 		      AND A.MENU_ID = B.MENU_ID
+<!-- 		      AND B.ROLE_ID = 'ROLE_ADMIN' -->
 		      AND B.ROLE_ID = #{role}
 		   	  AND B.MENU_YN = 'Y'
 		  	UNION 
@@ -21,7 +22,8 @@
 		    INNER JOIN CTE C ON A.UPP_MENU_ID = C.MENU_ID 
 		    WHERE A.USE_YN = 'Y'
 		    AND B.MENU_ID = A.MENU_ID
-		    AND B.role_id = #{role}
+<!-- 		    AND B.ROLE_ID = 'ROLE_ADMIN' -->
+		    AND B.ROLE_ID = #{role}
 		    AND B.MENU_YN = 'Y'
 		    ) 
 		SELECT MENU_ID      AS menuId
