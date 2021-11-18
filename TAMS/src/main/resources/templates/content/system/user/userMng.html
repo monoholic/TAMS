@@ -581,6 +581,41 @@
 			$(obj).hide();
 		}
 	    
+		
+		$(function(){
+			
+			$("#excelDown").on("click", function(){
+				
+				//var d = $.Deferred();
+                
+                let url = "/system/user/usermng/userlistExcel";
+				
+				var $form = $('<form ></form>'); 
+				$form.attr('action', url); 
+				$form.attr('method', 'get'); 
+				$form.attr('target', '#excelDownTarget'); 
+				$form.appendTo('body'); 
+				var searchTextStr 	= $('<input type="hidden" value="'+$("#searchText").val()+'" name="searchText">'); 
+				$form.append(searchTextStr);
+				$form.submit();
+				
+				/* 
+				let reqType = 'GET';	
+				let data = {
+    				"searchText" : $("#searchText").val()
+    			}
+				$.commRequest(url, reqType, data)
+					.then((res) => {
+						console.log('사용자 목록 엑셀저장 성공!!');
+					})
+					.catch((error) => {
+						console.log('사용자 목록 엑셀저장 !!');
+					}); */
+                
+                //return d.promise();
+			});
+			
+		});
 	    </script>	
 	</th:block>
 
@@ -623,6 +658,7 @@
 					<a class="btn_add">등록</a>
 					<a class="btn_update">수정</a>
 					<a class="btn_del">삭제</a>
+					<a class="btn_download" id="excelDown">엑셀다운</a>
 				</div>
 				<!-- list_button -->
 		</div>
@@ -707,6 +743,8 @@
 				 
 	     	</div>
      	</div>
+     	
+     	<div id="excelDownTarget"></div>
 	
 	</div>
 	

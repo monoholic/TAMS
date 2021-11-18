@@ -16,6 +16,8 @@ public interface UserMngMapper {
 	
 	public List<UserMngDto> selectUserMngList(SearchCondition condtion);
 	
+	public List<UserMngDto> selectUserMngListExcel(SearchCondition condtion);
+	
 	public int userMngInsert(UserMngDto dto);
 	
 	public int userMngUpdate(UserMngDto dto);

@@ -1,14 +1,14 @@
 package kr.co.trito.tams.web.system.user.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,20 +21,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import kr.co.trito.tams.comm.util.file.excel.ExcelConstant;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
 import kr.co.trito.tams.web.system.user.service.UserMngService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/system/user")
+@Slf4j
 public class UserMngController {
 	@Autowired
 	UserMngService userService;
@@ -91,6 +96,62 @@ public class UserMngController {
 		return responseService.success(condition, list);
 	} 	
 	
+	/** 사용자 관리 화면 : 조회 - 엑셀다운 */
+	@GetMapping(value="/usermng/userlistExcel")
+	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ModelAndView userMngListExcel(
+			@ApiParam(value = "검색 조건(메뉴ID, 메뉴명)", required = false) @RequestParam(value = "searchText", required = false) String searchText
+			) { 
+		
+		
+		Map<String, Object> params = new HashMap<>();
+		if (!StringUtils.isEmpty(searchText))
+			params.put("searchText", searchText);
+		
+		
+		SearchCondition condition = new SearchCondition("0", "0", params);
+		int total = userService.selectCountUser(condition);
+		condition.pageSetup(total);
+		
+		List<UserMngDto> list = userService.selectUserMngListExcel(condition);
+		
+		return new ModelAndView("excelXlsxView",makeExcelData(list)) ;
+	} 	
+	
+	/** 엑셀 다운로드용 데이터 생성 */
+	private Map<String, Object> makeExcelData(List<UserMngDto> list) {
+		Map<String, Object> map = new HashMap<>();
+		map.put(ExcelConstant.FILE_NAME, "사용자목록");
+		map.put(ExcelConstant.HEAD, Arrays.asList("사용자ID", "사용자명", "부서코드", "부서명", "이메일", "전화번호", "성별", "사용여부", "등록자", "등록일", "수정자", "수정일"));
+		
+//		ObjectMapper objectMapper = new ObjectMapper();
+		List<List<String>> rows = new ArrayList<List<String>>();
+		for( UserMngDto user: list) {
+//			Map<String, String> m = objectMapper.convertValue(user, Map.class);
+//			List<String> l = new ArrayList<>(m.values());
+			List<String> l = new ArrayList<>();
+			l.add(user.getUserId());
+			l.add(user.getUserNm());
+			l.add(user.getDeptCd());
+			l.add(user.getDeptNm());
+			l.add(user.getEmail());
+			l.add(user.getTelno());
+			l.add(user.getSex());
+			l.add(user.getUseYn());
+			l.add(user.getRegr());
+			l.add("");
+			l.add(user.getUpdr());
+			l.add("");
+			rows.add(l);
+		}
+		
+		log.error("@@@@ "+ rows.toString());
+		
+		map.put(ExcelConstant.BODY, rows);
+		return map;
+	}	
 	
 	/** 사죵자 관리 화면 : 등록 */
 	@PostMapping(value="/usermng/userinsert")

@@ -29,6 +29,10 @@ public class UserMngService {
 	
 	public List<UserMngDto> selectUserMngList(SearchCondition condition){
 		return mapper.selectUserMngList(condition);
+	}
+	
+	public List<UserMngDto> selectUserMngListExcel(SearchCondition condition){
+		return mapper.selectUserMngListExcel(condition);
 	}	
 	
 	public int userMngInsert(UserMngDto dto) {

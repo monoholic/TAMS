@@ -2,8 +2,10 @@ package kr.co.trito.tams.comm.util.file;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,6 +18,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -103,6 +106,9 @@ public class FileController {
 		
 		ExcelDto dto = null;
 		
+		List<GrantedAuthority> auths = new ArrayList<>(userDetail.getAuthorities());
+		log.error("@@@@@@@ : "+auths.get(0).getAuthority());			
+		
 		UserInfo userDto = (UserInfo)userDetail;
 		String userId = userDto.getDto().getUserId();
 		log.error("@@ user id : "+userId);
@@ -172,6 +178,9 @@ public class FileController {
 						Arrays.asList("C", "c", "다")
 				));
 		return map;
+	}
+
+	private void add(Object object1) {
 	}	
 	
 	/* --------------------------  Excel Download Example -------------------------- */		

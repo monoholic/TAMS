@@ -217,7 +217,7 @@
 				$.commRequestFile(url, reqType, excelData)
 					.then((res) => {
 						console.log('엑셀 업로드 성공!!');
-						console.log(JSON.stringify(res));
+						//console.log(JSON.stringify(res));
 						showUploadExcelData(res, "#excelJsGrid");
 					})
 					.catch((error) => {
@@ -235,7 +235,7 @@
 				
 				var gbn = $(this).val();
 				console.log("@@ "+gbn);
-				excelItems.length=0;
+				//excelItems.length=0;
 				$("#excelJsGrid").jsGrid("reset");
 				$("#excelJsGrid").remove();
 				
@@ -243,8 +243,8 @@
 				else if( gbn == "2" ) excelGridField = InvestDtoField;
 				
 				//console.log("@@excelGridField :  "+excelGridField);
-				$("body").append("<div id='excelJsGrid'></div>");
-				$("#excelGridHd").jsGrid(getGridBody());
+				$("#excelGridHd").append("<div id='excelJsGrid'></div>");
+				//$("#excelGridHd").jsGrid(getGridBody());
 				
 			});
 			
@@ -272,7 +272,7 @@
 							{ name: "uniqueId", type: "text"   , width: 100 ,align: "left"  , title: "Unique ID" },
 			        		{ name: "name"    , type: "text"   , width: 100 ,align: "left"  , title: "Name" },
 			          		{ name: "comment" , type: "text"   , width: 100 ,align: "left"  , title: "Comment" },
-			          		{ name: "regr" 	  , type: "text"   , width: 100 ,align: "left"  , title: "등록자" }
+			          		//{ name: "regr" 	  , type: "text"   , width: 100 ,align: "left"  , title: "등록자" }
 			        	];
 		var InvestDtoField = [
 							{ name: "invNo"		, type: "text"   , width: 100 ,align: "left"  , title: "Inv No"	 },
@@ -282,7 +282,7 @@
 							{ name: "invQty"	, type: "text"   , width: 100 ,align: "left"  , title: "Qty"	 },
 							{ name: "invAmt"	, type: "text"   , width: 100 ,align: "left"  , title: "Amount"	 },
 							{ name: "actgYear"	, type: "text"   , width: 100 ,align: "left"  , title: "Actg Year"},
-							{ name: "regr"		, type: "text"   , width: 100 ,align: "left"  , title: "등록자"	 },
+							//{ name: "regr"		, type: "text"   , width: 100 ,align: "left"  , title: "등록자"	 },
 						];
 		var excelGridField = SampleDtoField;
 		
@@ -548,7 +548,7 @@
 				<td></td>
 				<td valign="top" id="excelGridHd">
 				    <!-- 엑셀 업로드 결과용  -->
-					<div id="excelJsGrid"></div>
+						<div id="excelJsGrid"></div>
 					
 				</td>
 			</tr>
