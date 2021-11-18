@@ -42,17 +42,8 @@
             let url = "/system/menurole/menuRoleMng/roleGroup";
 			let reqType = 'GET';	
 			let data = {}
-			$.commRequest(url, reqType, data)
-				.then((res) => {
-					var str = '';
-					$.each(res.data, function(i){
-						str += '<option value="' + res.data[i].codeId + '">' + res.data[i].codeNm + '</option>';
-					})
-					$("#searchType").append(str);
-				})
-				.catch((error) => {
-					console.log('조회 실패');
-				});
+
+			$.commRequestSelectbox(url, reqType, data, "#searchType");
 			
 	        $("#jsGrid").jsGrid({
 	        	height: "650",

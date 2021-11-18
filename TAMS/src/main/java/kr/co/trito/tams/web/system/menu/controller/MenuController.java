@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,15 +22,18 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import jdk.internal.org.jline.utils.Log;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.system.menu.dto.MenuDto;
 import kr.co.trito.tams.web.system.menu.service.MenuService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Controller
+@Slf4j
 @RequestMapping("/system/menu")
 public class MenuController {
 	@Autowired
@@ -41,8 +45,10 @@ public class MenuController {
 	/** 메뉴 - 상단 메뉴 조회 */
 	@PostMapping("/menuList")
 	@ResponseBody
-	public ResponseEntity<? extends Response> menulist(String str) { 
-		
+	public ResponseEntity<? extends Response> menulist(
+			@ApiParam(value = "유저권한", required = false) @RequestBody(required = false) String userRole) { 
+			
+		log.info("테스트" + userRole);
 		List<MenuDto> list = menuService.selectMenuList("");
 		return responseService.success(list);
 	}

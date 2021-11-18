@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-public class InvestDto extends ExcelDto {
+public class InvDto extends ExcelDto {
 
 	/*
 	 * 	엑셀 업로드 INVEST_MAST DTO Class
@@ -28,9 +28,9 @@ public class InvestDto extends ExcelDto {
 //    protected InvestDto() {}
     
     @Override
-    public  InvestDto row(Row row) {
+    public  InvDto row(Row row) {
     	
-    	InvestDto inv = new InvestDto();
+    	InvDto inv = new InvDto();
     	inv.setInvNo 	(row.getCell(0).getStringCellValue());
     	inv.setInvDt 	(row.getCell(1).getStringCellValue());
     	inv.setInvRegr 	(row.getCell(2).getStringCellValue());

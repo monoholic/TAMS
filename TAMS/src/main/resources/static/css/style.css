@@ -49,8 +49,7 @@ span.help_block{display:block;font-size:11px;color:#999;}
 .txt_counter{text-align:right;margin-bottom:5px}
 
 /* link */
-a.
-{position:relative;background:url(../images/common/ico_info.gif) no-repeat 0 2px;display:inline-block;width:12px;height:12px;margin-left:5px;}
+a.{position:relative;background:url(../images/common/ico_info.gif) no-repeat 0 2px;display:inline-block;width:12px;height:12px;margin-left:5px;}
 a.detail .tooltip{position:absolute;top:21px;left:-100%;display:none;font-size:11px;z-index:100;}
 a.detail:hover .tooltip{background:#fff;border:2px solid #ccc;display:block;padding:3px 5px 1px;white-space:nowrap;text-indent:0!important;color:#454545;}
 a.detail:hover .tooltip:after{content:'';position:absolute;bottom:100%;left:13px;margin-left:-6px;width:0;height:0;border-bottom:8px solid #ccc;border-right:8px solid transparent;border-left:8px solid transparent;}
@@ -438,3 +437,6 @@ hr.section{visibility:hidden;}
 .week .cal_wrap, .week.cal_wrap{width:280px!important;}
 .week .cal_table tr:hover{background:#d7eafc;cursor:pointer;}
 .cal_table th.wk{font-weight:bold;}
+input#userPw{
+	margin-bottom: 8px;
+}

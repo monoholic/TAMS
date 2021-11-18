@@ -18,7 +18,7 @@
 			$(function() {
 				
 				$("#pJsGrid").jsGrid({
-		        	height: "300",
+		        	height: "323",
 	                width: "100%",
 	                filtering: false,
 	                editing: false,
@@ -40,7 +40,7 @@
 	                pageButtonCount: 5,
 	                loadonce: true,
 	                updateOnResize: true, 
-	                rowClick: function(args) {
+/* 	                rowClick: function(args) {
 	                	
 	                	var target = args.event.target; 
 						if(target.type == "checkbox" ) {
@@ -57,7 +57,7 @@
 			  	 			}
 						});
 					 
-	                },	                	
+	                }, */	                	
 		            rowDoubleClick: function(args) {
 		            	//더블 클릭시 확인버튼 동일 기능
 		            	returnResult(args.itemIndex);
@@ -92,7 +92,7 @@
 	        		    
 	            	},
 	            	fields: [
-		            	{  name : "chk"
+/* 		            	{  name : "chk"
 		                	 , align: "center"
 		                	 , width: 20
 		                	 , title: ""
@@ -126,8 +126,8 @@
 			            	        }
 			    				   });
 						 	 } ,
-						 	 */
 		                	},
+						 	 */
 		            	{  name : "sel"
 		                	 , align: "center"
 		                	 , width: 60
@@ -192,17 +192,15 @@
 				
 				
 				//팝업창 닫기
-				$("#btn_close_pop").on("click",function(){ 
+				$("#btn_close_pop, #btn_close_pop2").on("click",function(){ 
 					//부모 페이지에 반드시 구현
 					closePopup($("#ModalPopup"));
-
 				});
 				
 				//선택된 항목 부모창에 전달
 				$(".btn_list_rd").on("click", function() {
 					returnResult();
 				});
-				
 				
 				$(".btn_srch").on("click",function (){ 
 		    	   $("#pJsGrid").jsGrid().trigger("loadData");
@@ -215,7 +213,6 @@
 	                	 $("#pJsGrid").jsGrid().trigger("loadData"); 
 	                }
 	            });
-				
 				
 	          	//리셋 버튼
 	    	    $(".btn_reset").click(function() {
@@ -324,7 +321,7 @@
 					<!-- button -->
 					<div class="pop_button">
 						<p>
-						<a href="#;" class="btn_list_rd">확인</a>
+						<a href="#;" class="btn_close_pop" id="btn_close_pop2">닫기</a>
 						</p>
 					</div>
 					<!-- //button -->

@@ -33,7 +33,7 @@ import org.thymeleaf.util.StringUtils;
 import kr.co.trito.tams.comm.util.file.excel.ExcelConstant;
 import kr.co.trito.tams.comm.util.file.excel.ExcelDto;
 import kr.co.trito.tams.comm.util.file.excel.ExcelReader;
-import kr.co.trito.tams.comm.util.file.excel.InvestDto;
+import kr.co.trito.tams.comm.util.file.excel.InvDto;
 import kr.co.trito.tams.comm.util.file.excel.SampleDto;
 import kr.co.trito.tams.comm.util.res.GeneralResponse;
 import kr.co.trito.tams.comm.util.res.Response;
@@ -112,7 +112,7 @@ public class FileController {
 		if( "1".equals(gubun) ) {
 			dto = new SampleDto();
 		} else if("2".equals(gubun) ) {
-			dto = new InvestDto();
+			dto = new InvDto();
 		}
 		
 		dto.setRegr(userId);
