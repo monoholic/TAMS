@@ -2,10 +2,10 @@ package kr.co.trito.tams.comm.util.file;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -96,8 +96,37 @@ public class FileController {
         return ResponseEntity.ok()
             	.contentType(MediaType.parseMediaType(contentType))
 //            	.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-            	.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + originFileName + "\"")
+            	.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + getFileNm(getBrowser(request), originFileName) + "\"")
             	.body(resource);		
+	}
+	
+	@PostMapping("/download")
+	@ResponseBody
+	public ResponseEntity<Resource> download2(@RequestParam(value="fileName") String fileName, @RequestParam(value="orgFileName") String orgFileName, HttpServletRequest request){
+		String contentType = null;
+		Resource resource = fileService.load(fileName); 
+		
+		try {
+			log.error("@@@@ "+resource.getFile().getAbsolutePath());
+			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+			
+			if( StringUtils.isEmpty(contentType) ) contentType = "application/octet-stream";
+			
+		} catch (Exception e) {
+			log.info("Could not determine file type.");
+			contentType = "application/octet-stream";
+		}
+		
+		String originFileName = "";
+		try{
+			originFileName = URLDecoder.decode(orgFileName, "UTF-8");
+		}catch(IOException ioe) {}
+		log.error("@@@@ [orgFileName] "+originFileName);
+		
+		return ResponseEntity.ok()
+				.contentType(MediaType.parseMediaType(contentType))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + getFileNm(getBrowser(request), originFileName) + "\"")
+				.body(resource);		
 	}
 	
 	@PostMapping("/readExcel")
@@ -180,9 +209,57 @@ public class FileController {
 		return map;
 	}
 
-	private void add(Object object1) {
-	}	
 	
 	/* --------------------------  Excel Download Example -------------------------- */		
+	
+	public String getBrowser(HttpServletRequest req) {
+		String userAgent = req.getHeader("User-Agent");
+		if (userAgent.indexOf("MSIE") > -1 
+				|| userAgent.indexOf("Trident") > -1  //IE11
+				|| userAgent.indexOf("Edge") > -1) {
+			return "MSIE";
+		} else if (userAgent.indexOf("Chrome") > -1) {
+			return "Chrome";
+		} else if (userAgent.indexOf("Opera") > -1) {
+			return "Opera";
+		} else if (userAgent.indexOf("Safari") > -1) {
+			return "Safari";
+		} else if (userAgent.indexOf("Firefox") > -1) {
+			return "Firefox";
+		} else {
+			return null;
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public String getFileNm(String browser, String fileNm) {
+		String reFileNm = null;
+		try {
+			if (browser.equals("MSIE") || browser.equals("Trident") || browser.equals("Edge")) {
+				reFileNm = URLEncoder.encode(fileNm, "UTF-8").replaceAll("\\+", "%20");
+			} else {
+				if (browser.equals("Chrome")) {
+					StringBuffer sb = new StringBuffer();
+					for (int i = 0; i < fileNm.length(); i++) {
+						char c = fileNm.charAt(i);
+						if (c > '~') {
+							sb.append(URLEncoder.encode(Character.toString(c), "UTF-8"));
+						} else {
+							sb.append(c);
+						}
+					}
+					reFileNm = sb.toString();
+				} else {
+					reFileNm = new String(fileNm.getBytes("UTF-8"), "ISO-8859-1");
+				}
+				if (browser.equals("Safari") || browser.equals("Firefox"))
+					reFileNm = URLDecoder.decode(reFileNm);
+			}
+		} catch (Exception e) {
+		}
+		return reFileNm;
+	}
+
+	
 	
 }
