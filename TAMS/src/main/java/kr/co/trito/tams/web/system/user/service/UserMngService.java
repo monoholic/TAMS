@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
+import kr.co.trito.tams.web.system.user.dto.UserMngExcelDto;
 import kr.co.trito.tams.web.system.user.mapper.UserMngMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +32,7 @@ public class UserMngService {
 		return mapper.selectUserMngList(condition);
 	}
 	
-	public List<UserMngDto> selectUserMngListExcel(SearchCondition condition){
+	public List<UserMngExcelDto> selectUserMngListExcel(SearchCondition condition){
 		return mapper.selectUserMngListExcel(condition);
 	}	
 	

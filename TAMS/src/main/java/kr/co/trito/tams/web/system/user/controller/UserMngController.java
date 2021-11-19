@@ -32,6 +32,7 @@ import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
+import kr.co.trito.tams.web.system.user.dto.UserMngExcelDto;
 import kr.co.trito.tams.web.system.user.service.UserMngService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,11 +53,13 @@ public class UserMngController {
 	
 	/** 사용자 관리 화면 */
 	@PostMapping("/usermng")
-	public ModelAndView userMngView(HttpServletRequest request) {
+	public ModelAndView userMngView(@RequestParam(value="menuId"  , required=true) String menuId
+			                      , @RequestParam(value="menuNm"  , required=true) String menuNm
+			                      , @RequestParam(value="menuDesc", required=true) String menuDesc) {
 		ModelAndView view = new ModelAndView();
-		view.addObject("menuId", request.getParameter("menuId"));
-		view.addObject("menuNm", request.getParameter("menuNm"));
-		view.addObject("menuDesc", request.getParameter("menuDesc"));
+		view.addObject("menuId"  , menuId);
+		view.addObject("menuNm"  , menuNm);
+		view.addObject("menuDesc", menuDesc);
 		view.setViewName("/content/system/user/userMng");
 		return view;
 	} 	
@@ -97,7 +100,7 @@ public class UserMngController {
 	} 	
 	
 	/** 사용자 관리 화면 : 조회 - 엑셀다운 */
-	@GetMapping(value="/usermng/userlistExcel")
+	@PostMapping(value="/usermng/userlistExcel")
 	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
@@ -115,40 +118,32 @@ public class UserMngController {
 		int total = userService.selectCountUser(condition);
 		condition.pageSetup(total);
 		
-		List<UserMngDto> list = userService.selectUserMngListExcel(condition);
+		List<UserMngExcelDto> list = userService.selectUserMngListExcel(condition);
 		
 		return new ModelAndView("excelXlsxView",makeExcelData(list)) ;
 	} 	
 	
 	/** 엑셀 다운로드용 데이터 생성 */
-	private Map<String, Object> makeExcelData(List<UserMngDto> list) {
+	private Map<String, Object> makeExcelData(List<UserMngExcelDto> list) {
 		Map<String, Object> map = new HashMap<>();
 		map.put(ExcelConstant.FILE_NAME, "사용자목록");
 		map.put(ExcelConstant.HEAD, Arrays.asList("사용자ID", "사용자명", "부서코드", "부서명", "이메일", "전화번호", "성별", "사용여부", "등록자", "등록일", "수정자", "수정일"));
 		
-//		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectMapper objectMapper = new ObjectMapper();
 		List<List<String>> rows = new ArrayList<List<String>>();
-		for( UserMngDto user: list) {
-//			Map<String, String> m = objectMapper.convertValue(user, Map.class);
-//			List<String> l = new ArrayList<>(m.values());
-			List<String> l = new ArrayList<>();
-			l.add(user.getUserId());
-			l.add(user.getUserNm());
-			l.add(user.getDeptCd());
-			l.add(user.getDeptNm());
-			l.add(user.getEmail());
-			l.add(user.getTelno());
-			l.add(user.getSex());
-			l.add(user.getUseYn());
-			l.add(user.getRegr());
-			l.add("");
-			l.add(user.getUpdr());
-			l.add("");
+		for( UserMngExcelDto user: list) {
+			Map<String, String> m = objectMapper.convertValue(user, Map.class);
+			List<String> l = new ArrayList<>(m.values());
+			/*
+			 * List<String> l = new ArrayList<>(); l.add(user.getUserId());
+			 * l.add(user.getUserNm()); l.add(user.getDeptCd()); l.add(user.getDeptNm());
+			 * l.add(user.getEmail()); l.add(user.getTelno()); l.add(user.getSex());
+			 * l.add(user.getUseYn()); l.add(user.getRegr()); l.add("");
+			 * l.add(user.getUpdr()); l.add("");
+			 */
 			rows.add(l);
 		}
-		
-		log.error("@@@@ "+ rows.toString());
-		
+		//log.error("@@@@ "+ rows.toString());
 		map.put(ExcelConstant.BODY, rows);
 		return map;
 	}	

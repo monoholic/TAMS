@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
+import kr.co.trito.tams.web.system.user.dto.UserMngExcelDto;
 
 @Mapper
 public interface UserMngMapper {
@@ -16,7 +17,7 @@ public interface UserMngMapper {
 	
 	public List<UserMngDto> selectUserMngList(SearchCondition condtion);
 	
-	public List<UserMngDto> selectUserMngListExcel(SearchCondition condtion);
+	public List<UserMngExcelDto> selectUserMngListExcel(SearchCondition condtion);
 	
 	public int userMngInsert(UserMngDto dto);
 	

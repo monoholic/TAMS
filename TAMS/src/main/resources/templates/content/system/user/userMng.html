@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html 	xmlns:th="http://www.thymeleaf.org"
+<html 	lang="ko" xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorator="layout/default">
 
@@ -586,33 +586,17 @@
 			
 			$("#excelDown").on("click", function(){
 				
-				//var d = $.Deferred();
-                
+		       	event.preventDefault();
                 let url = "/system/user/usermng/userlistExcel";
 				
-				var $form = $('<form ></form>'); 
-				$form.attr('action', url); 
-				$form.attr('method', 'get'); 
-				$form.attr('target', '#excelDownTarget'); 
-				$form.appendTo('body'); 
+				var $form = $('<form id="downForm"></form>'); 
+					$form.attr('action', url); 
+					$form.attr('method', 'post'); 
+					$form.attr('target', '_self'); 
 				var searchTextStr 	= $('<input type="hidden" value="'+$("#searchText").val()+'" name="searchText">'); 
-				$form.append(searchTextStr);
-				$form.submit();
-				
-				/* 
-				let reqType = 'GET';	
-				let data = {
-    				"searchText" : $("#searchText").val()
-    			}
-				$.commRequest(url, reqType, data)
-					.then((res) => {
-						console.log('사용자 목록 엑셀저장 성공!!');
-					})
-					.catch((error) => {
-						console.log('사용자 목록 엑셀저장 !!');
-					}); */
-                
-                //return d.promise();
+					$form.append(searchTextStr);
+					$form.appendTo('body'); 
+					$form.submit();
 			});
 			
 		});
@@ -640,8 +624,8 @@
 					<td><label for="searchText" class="menu_label">사용자 명</label></td>
 					<td><input id="searchText" type="text" style="width:100%; margin:10px;"></td>
 					<td class="search" colspan="3">
-						<a href="#;" class="btn_reset">Reset</a>
-						<a href="#;" class="btn_srch">Search</a>
+					<!-- [button search] -->
+					<header th:replace="layout/fragments/button_srch :: buttonSrchFragment"></header>
 					</td>
 				</tr>
 			</table>
@@ -649,18 +633,10 @@
 		<!-- //search -->
 		<div class="list_head">
 				<div class="result">Results : 0,000</div>
-				<!-- list_button -->
-				<div class="button">
-<!-- 				
-					<a class="btn_add">메뉴 등록</a>
-					<a class="btn_saveall">일괄 저장</a>
-					<a class="btn_del">메뉴 삭제</a> -->
-					<a class="btn_add">등록</a>
-					<a class="btn_update">수정</a>
-					<a class="btn_del">삭제</a>
-					<a class="btn_download" id="excelDown">엑셀다운</a>
-				</div>
-				<!-- list_button -->
+				
+				<!-- [button cud ] -->
+				<header th:replace="layout/fragments/button_cud :: buttonCudFragment"></header>
+				
 		</div>
 		<!-- list -->
 		<!-- //search -->
