@@ -17,13 +17,14 @@
 						$.commRequest(url, reqType, data)
 							.then((res) => {
 								
-								console.log(res);
+								//console.log(res);
 								
 								//1 level
 								makeMenu(res.data, "1");
 								
 								//2 level
 								makeMenu(res.data, "2");
+								
 								
 							})
 							.catch((error) => {
@@ -60,22 +61,11 @@
 									
 							  $("#mymenu").append('<li id="'+menuId+'" '+li_class+'><a id="m_'+menuId+'" href="#;">'+ menuNm +'</a><div id="sub_'+menuId+'" ></div></li>');
 								   if (url != "#;") {
-									 	//$("#mymenu").*/
 									 	$("#m_"+menuId).on("click",function (){
-											var $form = $('<form id="form_1"></form>'); 
-											$form.attr('action', url); 
-											$form.attr('method', 'post'); 
-											$form.appendTo('body'); 
-											
-											var menuIdStr 	= $('<input type="hidden" value="'+menuId+'" name="menuId">'); 
-											var menuNmStr 	= $('<input type="hidden" value="'+menuNm+'" name="menuNm">'); 
-											var menuDescStr= $('<input type="hidden" value="'+menuDesc+'" name="menuDesc">'); 
-											
-											$form.append(menuIdStr).append(menuNmStr).append(menuDescStr);
-											
-											$form.submit();
+									 		goPage(lvl , url, menuId, menuNm, menuDesc );
+									 		getMyRole(menuId);
 								   	  });
-							   	  } 
+							   	   } 
 							  }
 						  
 						  if( lvl == "2" && lvl == level ) {
@@ -84,24 +74,10 @@
 							  $("#mymenu").find("#sub_"+uppMenuId).attr("style","with:140px;"); 
 							  $("#mymenu").find("#sub_"+uppMenuId).append('<ul class="group"><li id="'+menuId+'"><a id="c_'+menuId+'" href="#">'+menuNm+'</a></li></ul>');
 							  //
-							  //$("#mymenu").find("#sub_"+uppMenuId).
 							  $("#c_"+menuId).on("click",function (){ 
 							  	
-							  	$("#form_2").remove();
-							  
-								 var $form = $('<form id="form_2"></form>'); 
-								 $form.attr('action', url); 
-								 $form.attr('method', 'post'); 
-								 $form.appendTo('body'); 
-								 
-								 var menuIdStr 	= $('<input type="hidden" value="'+menuId+'" name="menuId">'); 
-								 var menuNmStr 	= $('<input type="hidden" value="'+menuNm+'" name="menuNm">'); 
-								 var menuDescStr= $('<input type="hidden" value="'+menuDesc+'" name="menuDesc">'); 
-								 
-								 $form.append(menuIdStr).append(menuNmStr).append(menuDescStr);
-								 
-								 $form.submit();
-
+							 	  goPage(lvl , url, menuId, menuNm, menuDesc );
+								  getMyRole(menuId);
 							  
 							  });
 							  
@@ -110,9 +86,29 @@
 					});
 				}
 				
-			
-				getMyMenu();
 				
+				function goPage(lvl , url, menuId, menuNm, menuDesc ) {
+					
+					if( lvl == "2" ) $("#form_2").remove('2');
+					
+					var $form = $('<form ></form>'); 
+					console.log("here");
+					$form.attr("id", lvl);
+					$form.attr('action', url); 
+					$form.attr('method', 'post'); 
+					$form.appendTo('body'); 
+					 
+					var menuIdStr 	= $('<input type="hidden" value="'+menuId+'" name="menuId">'); 
+					var menuNmStr 	= $('<input type="hidden" value="'+menuNm+'" name="menuNm">'); 
+					var menuDescStr= $('<input type="hidden" value="'+menuDesc+'" name="menuDesc">'); 
+					 
+					$form.append(menuIdStr).append(menuNmStr).append(menuDescStr);
+					 
+					$form.submit();
+				}
+
+				//화면 load시 메뉴 조회
+				getMyMenu();				
 				
 				/////////////////////////////////////////////////////
 				$(function() {
@@ -132,10 +128,6 @@
 						 
 						 $form.submit();
 					});
-					
-/* 					$("#divLogout").mouseout(function(){
-						hideLogout();
-					}); */
 					
 				});
 				
@@ -165,12 +157,12 @@
 				<span sec:authentication="principal.dto.userNm"></span>|
 				<span sec:authentication="name" ></span>|
 				<span id="userRole" sec:authentication="principal.authorities[0].authority"></span>
-				<span><a href="#;" id="logout"><strong>logout</strong></a></span>
 				</strong>
 				</a>
+				<span><a href="#;" id="logout"><strong>logout</strong></a></span>
  				<span class="confidential">Confidential</span>
 			</div>
-			<input id="menuId" type="hidden" th:value="${menuId}">
+			<input id="currMenuId" type="hidden" th:value="${menuId}">
 			<!-- //function -->
 		<!-- //header -->
 		</header>

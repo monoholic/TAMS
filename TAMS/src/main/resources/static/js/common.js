@@ -64,20 +64,29 @@ function showUploadExcelData(data, gridId) {
 
 }
 
-function getMyRole() { 
+//화면 재조회시 화면 권한체크 
+$(document).ready(function(){
+	console.log("[ready] "+ $("#currMenuId").val());
+	getMyRole($("#currMenuId").val());
+	
+});
+
+//화면 권한체크
+function getMyRole(menuId) { 
+	
 	
 	let url = '/common/menu/menuRoleCheck';
 	let reqType = 'GET';				
 	let data = {
-		"menuId" : $("#menuId").val()
+		"menuId" : menuId
 	};
 	$.commRequest(url, reqType, data)
 		.then((res) => {
-			
-			console.log(res);
-			
+			console.log('메뉴 권한 조회 성공!!');
 		})
 		.catch((error) => {
-			alert('메뉴조회 실패!!');
+			//alert('메뉴조회 실패!!');
+			console.log('메뉴 권한 조회 실패!!');
 		});								
 }
+			

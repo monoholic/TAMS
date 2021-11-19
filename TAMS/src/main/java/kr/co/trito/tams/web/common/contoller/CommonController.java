@@ -220,11 +220,12 @@ public class CommonController {
 		HttpSession session = request.getSession();
 		
 		MenuRoleCheckDto role = commonService.selectMenuRoleCheck(dto);
-		
-		session.setAttribute("inqrYn", role.getInqrYn());		
-		session.setAttribute("updYn", role.getUpdYn());
-		session.setAttribute("regYn", role.getRegYn());
-		session.setAttribute("delYn", role.getDelYn());
+		log.error("@@@@ "+role);
+		session.setAttribute("MenuRoleCheck", role);		
+//		session.setAttribute("inqrYn", role.getInqrYn());		
+//		session.setAttribute("updYn", role.getUpdYn());
+//		session.setAttribute("regYn", role.getRegYn());
+//		session.setAttribute("delYn", role.getDelYn());
 		
 		return responseService.success(role);
 		
