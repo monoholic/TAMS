@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/popup2">
+<head>
+<meta charset="utf-8" />
+<title>투자정보 일괄 업로드</title>
+
+	<!-- css -->
+	<th:block layout:fragment="css">
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/jsgrid.css" />
+		<link rel="stylesheet" href="/css/theme.css" />
+	</th:block>
+
+	 <th:block layout:fragment="script">
+	 	<script src="/js/jsgrid/db.js"></script>
+	    <script src="/js/jsgrid/jsgrid.core.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.field.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>
+	 
+		<script>
+		
+		    var excelUpData = new FormData();
+		    
+			var InvestDtoField = [
+					{ name: "rownum"	, type: "number" , width:  30 ,align: "right" , title: "No."
+					 ,itemTemplate: function(value, item) {
+						 //console.log("###");
+		              return $("<span>").attr("id","row_"+item.poNo).text( getIndex(item)   );
+					 }
+					},
+					{ name: "invNo"		, type: "text"   , width: 100 ,align: "center", title: "투자번호"	},
+					{ name: "invTtl"	, type: "text"   , width: 150 ,align: "left"  , title: "투자명"		},
+					{ name: "poNo"		, type: "text"   , width: 100 ,align: "center", title: "PO번호" 		},
+					{ name: "mfgdNm"	, type: "text"   , width: 100 ,align: "left"  , title: "품명"	 	},
+					{ name: "qty"		, type: "number" , width: 100 ,align: "right" , title: "수량"	 	},
+					{ name: "invDt"		, type: "date"   , width: 100 ,align: "center", title: "투자일자"	},
+					{ name: "groupNm"	, type: "text"   , width: 100 ,align: "center", title: "사업부"		},
+					{ name: "deptNm"	, type: "text"   , width: 100 ,align: "center", title: "부서"		},
+					{ name: "invRegrNm"	, type: "text"   , width: 100 ,align: "center", title: "담당자"		},
+					{ name: "chkResult"	, type: "text"   , width: 150 ,align: "left"  , title: "유효성 검증" 
+					 ,itemTemplate : function(value,item) {
+						 return "<span class='red'>"+value+"</span>";
+					 }
+					},
+				];
+			
+			function getGridBody() {
+				return {
+			        	height: "580",
+			            width: "100%",
+			            data: excelItems, 
+			            autoload: false,
+			            loadonce: false,
+			            updateOnResize: true, 
+			           /*  rowClass:function(item,itemIndex){
+			            	console.log("@@@@ "+item.poNo);
+			            	$(".jsgrid-table").find("#row_"+item.poNo).text(itemIndex+1);
+			            	//return itemIndex;
+			            }, */
+			            fields: InvestDtoField
+			            ,onDataLoaded: rowCount()
+			    	};
+			}
+			
+			function getIndex(item) {
+				var idx= -1;
+				$.each(excelItems, function(index, el){
+					if( item.poNo == el.poNo) idx = index; 
+				});
+				//console.log(item.poNo+" >> idx : "+idx);
+				return idx+1;
+			}
+			
+			//파일 다운로드
+			function excelFormDownload() {
+				
+				event.preventDefault();
+				
+				var fileName = "upload_invest.xlsx";
+				var orgFileName = "투자정보업로드양식.xlsx";
+				
+				var downUrl = "/file/download";
+	        	var $form = $('<form></form>'); 
+				$form.attr('action', downUrl); 
+				$form.attr('target','#downTarget'); 
+				$form.attr('method','post'); 
+				$form.appendTo('body'); 
+				var str = $("<input name='fileName' value='"+fileName+"'/>");
+				var str2 = $("<input name='orgFileName' value='"+orgFileName+"'/>");
+				$form.append(str).append(str2);
+				$form.submit(); 		
+			}
+			
+			function excelUploadProcess() {
+				
+				let url = "/common/invest/readExcel";
+				let reqType = "POST";	
+				$.commRequestFile(url, reqType, excelUpData)
+					.then((res) => {
+						console.log('엑셀 업로드 성공!!');
+						console.log(res);
+						
+						showUploadExcelData(res, "#jsGrid");
+					})
+					.catch((error) => {
+						console.log('엑셀 업로드 실패!!');
+					});
+				
+				excelUpData.delete("file");
+				$("[name='excelNm']").val("");
+			
+			
+			}
+			
+			
+			function rowCount() {    
+			    var count = excelItems.length; 
+			    $("#uploadCnt").html(count);
+			}
+		
+			$(function() {
+				
+				//////////////////////////////////////////////////////////////////
+				$("#jsGrid").jsGrid(getGridBody());				
+				//////////////////////////////////////////////////////////////////
+			
+				$("#addFile").on("click", function(){
+					console.log("addFile");
+					$("#upFile").click();
+					
+				});
+				
+				$("#upFile").on("change", function(e){
+					var obj = e.target? e.target:e.srcElement;
+					var addFiles = obj.files;
+					excelUpData.append("file",addFiles[0]);
+					$("[name='excelNm']").val(addFiles[0].name);
+					
+					//파일선택후 엑셀업로드 처리한다.
+					excelUploadProcess()
+				});
+				
+				//팝업창 닫기
+				$("#btn_close_pop").on("click",function(){ 
+					window.close();
+				});
+				
+				
+				$("#btnSave").on("click",function (){ 
+		    	   //$("#jsGrid").jsGrid().trigger("loadData");
+		        });
+				
+				$(".btn_download").on("click", function(){
+					excelFormDownload();
+				});
+
+			});
+			
+		</script>
+	</th:block> 
+
+</head>
+<body >
+
+<div layout:fragment="content">
+
+	<!-- pop_alert -->
+	<div id="pop_wrap" >
+	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
+					<!-- head -->
+					<h3>투자정보 일괄 업로드
+						 <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a>
+					</h3>
+					<!-- //head -->
+					<!-- contents -->
+					<div id="contents">
+	
+						<!-- search -->
+						<div class="srch_wrap">
+							<!-- search_form -->
+							<div class="srch_form">
+								<table class="srch_table" >
+									<colgroup>
+											<col width="15%"/>
+											<col width="50%"/>
+											<col width="15%"/>
+									</colgroup>
+									<tr>
+										<th>업로드 건수 : <span id="uploadCnt" class="tr">0</span></th>
+										<td valign="top">
+											<table>
+												<tr>
+													<th>파일업로드&nbsp;&nbsp;</th> 
+													<td><input type="text" name="excelNm" id="excelNm" style="width:200px" readOnly > <input type="file" id="upFile" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;"></td>
+													<td>&nbsp;&nbsp;<a href="#;" id="addFile" class="btn_srch">찾아보기</a></td>
+												</tr>
+											</table>
+										</td>
+										<td align="right">
+											<!-- search_button -->
+												<a href="#;" class="btn_download">양식다운로드</a>
+												<a href="#;" class="btn_srch" id="btnSave">저  장</a>
+											<!-- //search_button -->
+										</td>
+									</tr>
+								</table>
+							 </div> 
+							<!-- //search_form -->
+							
+						</div>
+						<!-- //search -->
+
+						<!-- list 1 -->
+						<div id="jsGrid"></div>
+						<!-- //list 1 -->
+	
+					</div>
+					<!-- contents -->
+					<!-- button -->
+					<!-- <div class="pop_button">
+						<p>
+						<a href="#;" id="btn_close_pop" class="btn_list_rd">닫기</a>
+						</p>
+					</div> -->
+					<!-- //button -->
+	</div>
+	<div id="downTarget"></div>
+	<!-- //pop_alert -->
+</div>
+
+</body>
+</html>

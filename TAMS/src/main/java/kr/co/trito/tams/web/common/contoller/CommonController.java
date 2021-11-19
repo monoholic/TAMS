@@ -1,5 +1,6 @@
 package kr.co.trito.tams.web.common.contoller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +32,10 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import jdk.internal.org.jline.utils.Log;
 import kr.co.trito.tams.comm.util.file.FileDto;
+import kr.co.trito.tams.comm.util.file.excel.ExcelDto;
+import kr.co.trito.tams.comm.util.file.excel.ExcelReader;
+import kr.co.trito.tams.comm.util.file.excel.InvDto;
+import kr.co.trito.tams.comm.util.file.excel.SampleDto;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
@@ -36,6 +43,7 @@ import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
 import kr.co.trito.tams.web.common.service.CommonService;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
+import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,6 +59,9 @@ public class CommonController {
 	@Autowired
 	ResponseService responseService;		
 	
+	@Autowired
+	private ExcelReader excelReader;
+
 	
 	/** 부서팝업 화면 */
 	@GetMapping("/popup/deptPopup")
@@ -230,6 +241,79 @@ public class CommonController {
 		return responseService.success(role);
 		
 	}
+	
+	
+	/** 투자정보 일괄업로드 팝업 화면 */
+	@GetMapping("/popup/invUploadPopup")
+	public ModelAndView invUploadPopupView(HttpServletRequest request) {
+		
+		ModelAndView view = new ModelAndView();
+		view.setViewName("/content/common/popup/investUploadPopup");
+		    
+		return view;
+	}
+	
+	
+	@PostMapping("/invest/readExcel")
+	@ResponseBody
+	public List<InvDto> readExcel(@RequestParam("file") MultipartFile multipartFile) throws IOException, InvalidFormatException {
+		List<InvDto> result = null;
+		
+		InvDto dto = new InvDto();
+		
+		result = excelReader.readFileToList(multipartFile, dto::row);
+		
+		//첫번째 열 헤더 제거...??!!
+		result.remove(0);
+		
+		/** 유효성 검증 */
+		for(InvDto inv : result) {
+			
+			String chkResult = "";
+			
+			if( StringUtils.isEmpty(inv.getInvNo()) ) {
+				chkResult += "투자번호가 누락되었습니다";
+			}
+			if( StringUtils.isEmpty(inv.getInvTtl()) ) {
+				chkResult += "투자명이 누락되었습니다";
+			}
+			if( StringUtils.isEmpty(inv.getPoNo()) ) {
+				chkResult += "PO번호가 누락되었습니다";
+			}
+			if( StringUtils.isEmpty(inv.getMfgdNm()) ) {
+				chkResult += "품명이 누락되었습니다";
+			}
+			if( StringUtils.isEmpty(inv.getQty()) ) {
+				chkResult += "수량이 누락되었습니다";
+			} else {
+				//숫자값만 입력 가능...
+			}
+			if( StringUtils.isEmpty(inv.getInvDt()) ) {
+				chkResult += "투자일자가 누락되었습니다";
+			}
+			if( StringUtils.isEmpty(inv.getInvRegr()) ) {
+				chkResult += "담당자가 누락되었습니다";
+			} else {
+				// 담장자 id 로 정보 찾기...
+				Map<String,String> map = new HashMap<>();
+				map.put("userId", inv.getInvRegr());
+				Map<String,String> deptInfo = commonService.selectUserDeptInfo(map);
+				
+				inv.setGroupNm(deptInfo.get("upDeptNm"));
+				inv.setDeptNm(deptInfo.get("deptNm"));
+				inv.setInvRegrNm(deptInfo.get("userNm"));
+				
+			}
+			
+			//검증 결과 
+			inv.setChkResult(chkResult);
+			
+		}
+		
+		return result;
+	}	
+	
+	
 	
 }
 

@@ -114,4 +114,17 @@
 		  AND A.MENU_ID = #{menuId}
 	</select>
 	
+	<!-- 사용자 부서정보 조회 -->
+	<select id="selectUserDeptInfo" resultType="map" parameterType="map">
+		SELECT A.DEPT_NM deptNm
+		      ,B.DEPT_NM upDeptNm
+		      ,C.USER_NM userNm
+		  FROM TB_DEPT A
+		     , TB_DEPT B 
+		     , TB_USER C
+		 WHERE A.DEPT_CD     = C.dept_cd 
+		   AND A.UPP_DEPT_CD = B.DEPT_CD 
+		   AND C.USER_ID     = #{userId}
+	</select>
+	
 </mapper>

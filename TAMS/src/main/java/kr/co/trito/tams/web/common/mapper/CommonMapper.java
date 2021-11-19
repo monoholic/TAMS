@@ -1,6 +1,7 @@
 package kr.co.trito.tams.web.common.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -24,5 +25,7 @@ public interface CommonMapper {
 	public int updateDwldCnt(FileDto dto);
 	
 	public MenuRoleCheckDto selectMenuRoleCheck(MenuRoleCheckDto dto);
+	
+	public Map<String,String> selectUserDeptInfo(Map<String,String> map);
 	
 }

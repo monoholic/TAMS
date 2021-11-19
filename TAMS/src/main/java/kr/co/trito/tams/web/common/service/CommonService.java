@@ -1,6 +1,7 @@
 package kr.co.trito.tams.web.common.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,13 @@ public class CommonService {
 	 * */
 	public MenuRoleCheckDto selectMenuRoleCheck(MenuRoleCheckDto dto){
 		return mapper.selectMenuRoleCheck(dto);
+	}	
+	
+	/** 
+	 * 사용자 부서정보 조회 (사업부, 부서)
+	 * */
+	public Map<String,String> selectUserDeptInfo(Map<String,String> map){
+		return mapper.selectUserDeptInfo(map);
 	}	
 	
 }
