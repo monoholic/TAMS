@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.trito.tams.web.system.bbs.mapper.BbsMapper">
+	
+	<!-- 게시판 관리화면 관련 쿼리문 -->
+	<select id="selectBbsMngList" resultType="kr.co.trito.tams.web.system.bbs.dto.BbsDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		SELECT user_id
+		     , bbs_grp_id
+		     , bbs_dp
+		     , bbs_ttl
+		     , bbs_cn
+		     , view_cnt
+		     , del_yn
+		     , updr
+		     , up_dt
+		     , regr
+		     , reg_dt
+		     , bbs_id
+		FROM (
+				  SELECT user_id
+					   , bbs_grp_id
+					   , bbs_dp
+					   , bbs_ttl
+					   , bbs_cn
+					   , view_cnt
+					   , del_yn
+					   , updr
+					   , up_dt
+					   , regr
+					   , reg_dt
+					   , bbs_id
+					   , ROW_NUMBER() OVER(ORDER BY bbs_id) AS rn
+		     FROM TB_COM_BBS
+		     WHERE 1=1
+		     	<if test="params.searchText != null">
+					AND ( bbs_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
+					   OR bbs_ttl LIKE CONCAT('%', #{params.searchText}, '%'))
+			 	</if>
+			 	
+			 	<choose>
+			 		<when test="params.searchOption == 'bbs_grp_id'">
+			 			<if test="params.searchText != null">
+							AND bbs_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
+					 	</if>
+			 		</when>
+			 		
+			 		<when test="params.searchOption == 'bbs_ttl'" >
+			 			<if test="params.searchText != null">
+			 				AND bbs_ttl LIKE CONCAT('%', #{params.searchText}, '%')
+			 			</if>
+			 		</when>
+			 	</choose>
+			 	
+			 	<if test="params.delYnOption != null">
+					AND del_yn = #{params.delYnOption}
+		 		</if>
+		     ) AS a
+		WHERE rn BETWEEN #{start} AND #{end}
+		ORDER BY bbs_id
+	</select>
+	
+	<select id="selectCountBbsMng" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 
+   		SELECT count(*) cnt 
+		FROM TB_COM_BBS
+		WHERE 1=1
+		    <if test="params.searchText != null">
+				AND ( bbs_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
+				   OR bbs_ttl LIKE CONCAT('%', #{params.searchText}, '%'))
+		 	</if>
+		 	
+		 	<choose>
+		 		<when test="params.searchOption == 'bbs_grp_id'">
+		 			<if test="params.searchText != null">
+						AND bbs_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
+				 	</if>
+		 		</when>
+		 		
+		 		<when test="params.searchOption == 'bbs_ttl'" >
+		 			<if test="params.searchText != null">
+		 				AND bbs_ttl LIKE CONCAT('%', #{params.searchText}, '%')
+		 			</if>
+		 		</when>
+		 	</choose>
+		 	
+		 	<if test="params.delYnOption != null">
+				AND del_yn = #{params.delYnOption}
+	 		</if>
+   	</select>
+   	
+   	<select id="selectBbsCodeList" resultType="kr.co.trito.tams.web.standard.code.dto.CodeDto" parameterType="String">
+   		WITH RECURSIVE CTE AS ( 
+			SELECT A.code_id
+			     , A.code_nm				   
+		    FROM TB_COM_CODE A
+		    WHERE A.code_grp_id = (SELECT DISTINCT(code_grp_id)
+			                       FROM TB_COM_CODE B
+								   WHERE B.code_grp_id LIKE CONCAT('%', "BBS", '%')
+								     AND use_yn = 'Y')
+		      				AND
+		      			  1 &lt;= (SELECT COUNT(*) cnt
+									  FROM TB_COM_CODE_GRP C
+					                  WHERE C.code_grp_nm LIKE CONCAT('%', "게시", '%')
+					            		AND use_yn = 'Y')
+			    )
+		SELECT code_nm
+		FROM CTE;
+		<!--     &lt;=   ←   <=     -->
+   	</select>
+	
+	<insert id="bbsMngInsert" parameterType="kr.co.trito.tams.web.system.bbs.dto.BbsDto">
+		INSERT INTO TB_COM_BBS ( 
+		       user_id
+		     , bbs_grp_id
+		     , bbs_dp
+		     , bbs_ttl
+		     , bbs_cn
+		     , view_cnt
+		     , del_yn
+		     , regr
+			 , reg_dt
+		) VALUES (
+		       #{userId}
+		     , #{bbsGrpId}
+		     , #{bbsDp}
+		     , #{bbsTtl}
+		     , #{bbsCn}
+		     , 0
+		     , #{delYn}
+		     , #{regr}
+		     , current_timestamp()
+		)
+	</insert>
+	
+	<update id="bbsMngUpdate" parameterType="kr.co.trito.tams.web.system.bbs.dto.BbsDto">
+		UPDATE TB_COM_BBS         
+		   SET bbs_grp_id = #{bbsGrpId}
+		     , bbs_dp     = #{bbsDp}
+		     , bbs_ttl    = #{bbsTtl}
+		     , bbs_cn     = #{bbsCn}
+		     , del_yn     = #{delYn}
+		     , updr       = #{updr}
+			 , up_dt      = current_timestamp()
+		 WHERE bbs_id = #{bbsId}              
+	</update>
+	
+	<delete id="bbsMngDelete" parameterType="kr.co.trito.tams.web.system.bbs.dto.BbsDto">
+		DELETE FROM TB_COM_BBS
+        WHERE bbs_id = #{bbsId}
+	</delete>
+	
+	<!-- 게시판 관리화면 관련 쿼리문 -->
+	
+	<!-- 게시판 화면 관련 쿼리문-->
+	
+	<select id="selectBbsList" resultType="kr.co.trito.tams.web.system.bbs.dto.BbsDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		SELECT user_id
+		     , bbs_grp_id
+		     , bbs_dp
+		     , bbs_ttl
+		     , bbs_cn
+		     , view_cnt
+		     , del_yn
+		     , updr
+		     , up_dt
+		     , regr
+		     , reg_dt
+		     , bbs_id
+		FROM TB_COM_BBS
+		WHERE del_yn = 'N'
+	</select>
+	
+	<select id="selectCountBbs" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 
+   		SELECT count(*) cnt 
+		FROM TB_COM_BBS
+		WHERE del_yn = 'N'
+		    <if test="params.searchText != null">
+				AND ( bbs_ttl LIKE CONCAT('%', #{params.searchText}, '%'))
+		 	</if>
+		 	
+		 	<choose>
+		 		<when test="params.searchOption == 'bbs_ttl'" >
+		 			<if test="params.searchText != null">
+		 				AND bbs_ttl LIKE CONCAT('%', #{params.searchText}, '%')
+		 			</if>
+		 		</when>
+		 	</choose>
+		 	
+		 	<if test="params.delYnOption != null">
+				AND del_yn = #{params.delYnOption}
+	 		</if>
+   	</select>
+   	
+   	<update id="updateViewCnt" parameterType="kr.co.trito.tams.web.system.bbs.dto.BbsDto">
+   		UPDATE TB_COM_BBS         
+		   SET view_cnt = view_cnt + 1
+		 WHERE bbs_id = #{bbsId}
+   	</update>
+	
+	<!-- 게시판 화면 관련 쿼리문-->
+</mapper>

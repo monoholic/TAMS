@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>공통코드 그룹 관리</title>
+	    <title>게시판 관리</title>
 	</head>
         
 	<!-- css -->
@@ -30,17 +30,14 @@
 	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
 		
 	    <script>
-	    
-	    let numOfRows = 30;
+	    let numOfRows = 10;
 	    var status = true;
         var selectedItems = [];
 	 	var insertedItems = [];
 	 	var updatedItems = [];
-	 	var codeGrpMngList = [];
-	 	
-		 // 공통코드 그룹 출력                                                                                    
-		 $(document).ready(function(){                                                                    
-		 	let url = '/standard/code/codeGrpList';                                                      
+	    
+	 	$(document).ready(function(){                                                                    
+		 	let url = '/system/bbs/bbsMng/codeList';                                                      
 		 	let reqType = 'POST';                                                                        
 		 	let data = {                                                                                 
 		 		"email" : ""                                                                             
@@ -49,7 +46,7 @@
 		 		.then((res) => {                                                                         
 		 			$.each(res.data, function(i){                                                        
 		 				var codeGrpList = res.data[i];                                                  
-		 				$("#codeGrpId").append('<option value="">' + codeGrpList.codeGrpId+ '</option>');
+		 				$("#bbsGrpId").append('<option value="">' + codeGrpList.codeNm+ '</option>');
 		 			})
 		 		})
 		 		.catch((error) => {                                                                      
@@ -60,7 +57,7 @@
 	    $(function(){
 	    	
 	        $("#jsGrid").jsGrid({
-	        	height: "600",
+	        	height: "400",
                 width: "100%",
                 filtering: false,
                 editing: true,
@@ -87,14 +84,13 @@
 	            	
 					if(target instanceof HTMLTableCellElement) {
 						// detail form
-						/* alert(JSON.stringify(args)); */
 						showDetailForm(args.item);
 						
 					} else {
 					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
 					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
 					                .on("change", function () {
-						  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
+						  	 $(this).is(":checked") ? selectItem($(this).parent().next().text()) : unselectItem($(this).parent().next().text());
 						});
 					}
 	            }, 
@@ -108,22 +104,22 @@
 	                    
 	                    currentPage = filter.pageIndex; 
                			
-	                    let url = "/standard/code/codeMng/codeList";
+	                    let url = "/system/bbs/bbsMng/bbsMngList";
 						let reqType = 'GET';	
 						let data = {
             				"currentPage"  : filter.pageIndex,
             				"numOfRows"    : numOfRows,
             				"searchText"   : $("#searchText").val(),
             				"searchOption" : $("#searchOption option:selected").val(),
-            				"useYnOption"  : $("#useYnOption option:selected").val(),
+            				"useYnOption"  : $("#delYnOption option:selected").val(),
             				"sortField"    : filter.sortField,
             				"sortOrder"    : filter.sortOrder
             			}
 						$.commRequest(url, reqType, data)
 							.then((res) => {
-								codeGrpMngList = res.data;
 								$(".result").text("Results : " + res.condition.totalCount);
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
+
 							})
 							.catch((error) => {
 								console.log('메뉴조회 실패!!');
@@ -135,7 +131,7 @@
 	            updateItem: function(item) { 
             		// updatedItems.push(item);
                 	//$("#jsGrid").jsGrid("option", "pageIndex", $("#jsGrid").jsGrid("option", "pageIndex"));
-                	let url = "/standard/code/codeMng/codeUpdate";
+                	let url = "/system/bbs/bbsMng/bbsUpdate";
                 	let reqType = 'GET';
                 	$.commRequest(url, reqType, item)
                 		.then((res) => {
@@ -148,23 +144,10 @@
                 			console.log(error);
                 		})
                 },
-             	deleteItem: function(item) { 
-        			let url = "/standard/code/codeMng/codeDelete";
-        			let reqType = 'GET';
-        			$.commRequest(url, reqType, item)
-        				.then((res) => {
-        					console.log(res);
-        					
-        					$("#jsGrid").jsGrid("loadData");
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        				})
-        			
-            	},
+
              	insertItem: function(item) { 
              		//insertedItems.push(item);
-        			let url = "/standard/code/codeMng/codeInsert";
+        			let url = "/system/bbs/bbsMng/bbsInsert";
         			let reqType = 'GET';
         			
         			$.commRequest(url, reqType, item)
@@ -178,7 +161,7 @@
         		    
             },
 	            fields: [
-	            	{  	   name : "chk"
+	            	{  name : "chk"
 	                	 , align: "center"
 	                	 , width: 20
 	                	 , title: ""
@@ -189,7 +172,7 @@
 	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
 	                       .prop("checked", $.inArray(item.firstName, selectedItems) > -1)
 	                       .on("change", function () {
-	  					  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
+	  					  	 $(this).is(":checked") ? selectItem($(this).parent().next().text()) : unselectItem($(this).parent().next().text());
 	  					  	 });
 	            		   }
 	                	 , headerTemplate : function ()  { 
@@ -212,54 +195,40 @@
 		    				   });
 					 	 } ,
 	                },
-	                { name: "codeId", type: "number", align: "center", width: 50,  title: "공통코드 ID" },
-	                { name: "codeGrpId", type: "text", align: "center", width: 50,  title: "공통코드 그룹 ID" },
-	                { name: "codeNm", type: "text", align: "center", width: 50, readOnly:true , title: "공통코드명" },
-	                { name: "codeEngNm", type: "text", align: "center", width: 60, readOnly:true , title: "공통코드 영문명" },
-	                { name: "uppCodeId", type: "text", align: "center", width: 60, readOnly:true , title: "상위 공통코드 ID" },
-	                { name: "codeLvl", type: "text", align: "center", width: 20, readOnly:true , title: "코드 레벨" },
-	                { name: "codeDesc", type: "text", align: "center", width: 60, readOnly:true , title: "공통코드 설명" },
-	                { name: "sortOdr", type: "number", align: "center", width: 20, title: "정렬순서" },
-	                { name: "resv1", type: "text", align: "center", width: 30, title: "예비1" },
-	                { name: "resv2", type: "text", align: "center", width: 30, title: "예비2" },
-	                { name: "resv3", type: "text", align: "center", width: 30, title: "예비3" },
-	                { name: "useYn", type: "select", width: 40 ,align: "center"
+	                //{ name: "chk", type: "checkbox", width: 30, readOnly:false , title: "Sel<br><br>" },
+	                { name: "bbsId", type: "number", align: "center", width: 20,  title: "게시글 ID" },
+	                { name: "userId", type: "text", align: "center", width: 40, readOnly:true , title: "사용자 ID" },
+	                { name: "bbsGrpId", type: "text", align: "center", width: 40, readOnly:true , title: "게시글 그룹" },
+	                { name: "bbsDp", type: "text", align: "center", width: 20, readOnly:true , title: "레벨" },
+	                { name: "bbsTtl", type: "number", align: "center", width: 110, title: "게시글 제목" },
+	                { name: "viewCnt", type: "number", align: "center", width: 15, title: "조회수" },
+	                { name: "delYn", type: "select", width: 20 ,align: "center"
 	                	   , items: [
-			                    { Name: "사용",  Id: "Y"},
-			                    { Name: "미사용", Id: "N"},
+			                    { Name: "삭제",  Id: "Y"},
+			                    { Name: "미삭제", Id: "N"},
 			                  ],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1, title: "사용 여부" },
-	                { name: "updr", type: "text", align: "center", width: 40, title: "수정자" },
-	                { name: "upDt", type: "text", align: "center", width: 50, title: "수정일자" },
-	                { name: "regr", type: "text", align: "center", width: 40, title: "등록자" },
-	                { name: "regDt", type: "text", align: "center", width: 50, title: "등록일자" },
+	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "삭제 구분" },
+	                { name: "updr", type: "text", align: "center", width: 30, title: "수정자" },
+	                { name: "upDt", type: "text", align: "center", width: 40, title: "수정일자" },
+	                { name: "regr", type: "text", align: "center", width: 30, title: "등록자" },
+	                { name: "regDt", type: "text", align: "center", width: 40, title: "등록일자" },
 	            ]
-            	
 	        });
 	        
-	        // 여기 확인..
 		    var selectItem = function(item) {
-		    	
-/* 		    	$.each(item, function(i){
-	 				selectedItems.push(item[i]);                                                 
-	 			}) */
-	        	
 		    	if(!selectedItems.includes(item))
-			    	selectedItems.push(item);
-		    	
+			    selectedItems.push(item);
 			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
 	             $("#selectAllCheckbox").prop("checked", true);
 	         } else {
 	             $("#selectAllCheckbox").prop("checked", false);
 	         }
-			    console.log(selectedItems);
 			};
 		     
 		    var unselectItem = function(item) {
 			    selectedItems = $.grep(selectedItems, function(i) {
-			  		return i !== item;
+			    return i !== item;
 			    });
-			    
 			    if(selectedItems.length == 0) {
 			    	$('#selectAllCheckbox').attr('checked', false);
 			    }
@@ -268,7 +237,6 @@
 	         } else {
 	             $("#selectAllCheckbox").prop("checked", false);
 	         }
-			    console.log(selectedItems);
 		    };
 	        
 	        $("#pager").on("change", function() {
@@ -289,21 +257,19 @@
     	    	var items = [];
     	    	
     	    	// $("#jsGrid").jsGrid("deleteItem",delete_item);
-    	    	/* $.each(selectedItems, function(index,item){
+    	    	$.each(selectedItems, function(index,item){
     	    		items.push(item);
-    	    	}); */
+    	    	});
     	    	
     	    	//별도 호출
-    	    	let url = "/standard/code/codeMng/codeDelete";
-    			let reqType = 'POST';
+    	    	let url = "/system/bbs/bbsMng/bbsDelete";
+    			let reqType = 'GET';
     			dataType: 'json';
-    			/* let data={
-    				"items": selectedItems
-    			} */
+    			let data={
+    				"items": items.join(",")
+    			}
     			
-    			console.log("@@@"+ selectedItems);
-    			
-    			$.commRequest(url, reqType, JSON.stringify(selectedItems))
+    			$.commRequest(url, reqType, data)
     				.then((res) => {
     					console.log(res);
     					alert("삭제 되었습니다!");
@@ -327,22 +293,14 @@
             $('.save_btn').on('click', function (e) {
                 e.preventDefault();
                 
-                var insert_item = {};
-	                insert_item.codeId 	  = $(".detail_table").find("#codeId").val();
-	                insert_item.codeGrpId = $("#codeGrpId option:selected").text();
-		    		insert_item.codeNm 	  = $(".detail_table").find("#codeNm").val();
-		    		insert_item.codeEngNm = $(".detail_table").find("#codeEngNm").val();
-		    		insert_item.uppCodeId = $(".detail_table").find("#uppCodeId").val();
-		    		insert_item.codeLvl   = $(".detail_table").find("#codeLvl").val();
-		    		insert_item.codeDesc  = $(".detail_table").find("#codeDesc").val();
-		    		insert_item.sortOdr   = $(".detail_table").find("#sortOdr").val();
-		    		insert_item.resv1     = $(".detail_table").find("#resv1").val();
-		    		insert_item.resv2     = $(".detail_table").find("#resv2").val();
-		    		insert_item.resv3     = $(".detail_table").find("#resv3").val();
-		    		insert_item.useYn 	  = $(".detail_table").find("#useYn").val();
-		    		insert_item.regr      = $(".detail_table").find("#regr").val();
-		    		insert_item.regDt     = $(".detail_table").find("#regDt").val();
-				
+                var insert_item = {};    
+                	insert_item.bbsId    = $(".detail_table").find("#bbsId").val();
+		    		insert_item.bbsGrpId = $("#bbsGrpId option:selected").text();
+		    		insert_item.bbsDp    = $(".detail_table").find("#bbsDp").val();
+		    		insert_item.bbsTtl   = $(".detail_table").find("#bbsTtl").val();
+		    		insert_item.bbsCn    = $("textarea[id=bbsCn]").val();
+		    		insert_item.delYn    = $(".detail_table").find("#delYn").val();
+		    		
 		        var action = "";
 		        
 		    	if(save_mode == "insert") {
@@ -352,60 +310,18 @@
 		    		action = "updateItem";
 		    		//updatedItems.push(insert_item); --일괄
 		    	}
-    			
     			$("#jsGrid").jsGrid(action, insert_item);
-                
-	    		clearDetailForm();
+	    		
+    			clearDetailForm();
+	    		
                 $(this).parents("#detailForm").hide();
                 save_mode = "";
             });
 	     	
-          	//일괄저장
-    	    /* $(".btn_saveall").click(function() {
-    	    	
-    	    	if( insertedItems.length > 0 ) {
-        			let url = "/standard/codegrp/codegrpMng/codegrpinsert";
-        			let reqType = 'GET';
-        			let data = {
-        				"items": JSON.stringify(insertedItems)
-        			};
-        			$.commRequest(url, reqType, data)
-        				.then((res) => {
-        					console.log(res);
-        					alert("저장되었습니다!");
-        					$(".btn_srch").click();
-        					insertedItems = [];
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        					alert("오류가 발생했습니다 "+error);
-        				})
-    	    	}
-    	    	
-    	    	if( updatedItems.length > 0 ) {
-    	    		let url = "/system/menu/menumng/menuupdate";
-        			let reqType = 'GET';
-        			let data = {
-        				"items": JSON.stringify(updatedItems)
-        			};
-        			$.commRequest(url, reqType, data)
-        				.then((res) => {
-        					console.log(res);
-        					alert("저장되었습니다!");
-        					updatedItems = [];
-        					$(".btn_srch").click();
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        					alert("오류가 발생했습니다");
-        				})
-    	    	}
-    	    }); */
-			
     	  	//수정 버튼
     	    $(".btn_update").click(function() {
     	    	var items = $("#jsGrid").jsGrid("option", "data");
-    	    	var item = items.filter(arr => arr.codeId == selectedItems[0].codeId);
+    	    	var item = items.filter(arr => arr.bbsId == selectedItems[0]);
     	    	showDetailForm(item[0]);
     	    });
           	
@@ -413,11 +329,9 @@
     	    $(".btn_reset").click(function() {
     	    	$("#searchText").val("");
     	    	$("#searchOption option:eq(0)").prop("selected",true);
-    	    	$("#useYnOption option:eq(0)").prop("selected",true);
+    	    	$("#delYnOption option:eq(0)").prop("selected",true);
     	    });
 	     	
-          	// #codeGrpId option:eq("+ find_idx +")").prop("selected",true);
-          	
 	     	// 팝업창 닫기 버튼 처리
             $('.close_btn').on('click', function (e) {
                 e.preventDefault();
@@ -436,59 +350,42 @@
                 this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
                 return this;
             }
+	    	    
     	});
 	    
 	    function clearDetailForm() {
-    	    $(".detail_table").find("#codeId").val("");
-    		$(".detail_table").find("#codeNm").val("");
-   			$(".detail_table").find("#codeGrpId").val("");
-    		$(".detail_table").find("#codeNm").val("");
-    		$(".detail_table").find("#codeEngNm").val("");
-    		$(".detail_table").find("#uppCodeId").val("");
-    		$(".detail_table").find("#codeLvl").val("");
-    		$(".detail_table").find("#codeDesc").val("");
-    		$(".detail_table").find("#sortOdr").val("");
-    		$(".detail_table").find("#resv1").val("");
-    		$(".detail_table").find("#resv2").val("");
-    		$(".detail_table").find("#resv3").val("");
-    		$(".detail_table").find("#useYn").val("");
+	    	$(".detail_table").find("#bbsId").val("");
+	    	$(".detail_table").find("#bbsTtl").val("");
+	    	$("textarea[id=bbsCn]").val("");
+   		    $(".detail_table").find("#bbsDp").val("");
+   		 	$("#bbsGrpId option:eq(0)").prop("selected",true);
+   		 	$("#delYn option:eq(0)").prop("selected",true);
 	    }
 	    
 	    let save_mode = "";
 	    function showDetailForm(item) {
-	    		
 	    	if(selectedItems.length <= 1){
 		    	
-		    	let title = "공통코드 등록";
+		    	let title = "게시글 수정";
 		    	 var readOnly = false;
 		    	 
 		    	 if( item != null ) {
-		    		 title = "공통코드 수정";
+		    		 title = "게시글 수정";
 		    		 save_mode = "update";
-	 				 
+		    		 
 		    		 readOnly = false;
-	 				 
-		    		 $(".detail_table").find("#codeId").val(item.codeId);
-		    		 $(".detail_table").find("#codeId").attr("readOnly", true);      
 		    		 
-		    		 $("#codeGrpId option:contains("+item.codeGrpId+")").prop("selected", true);
-		    		 
-		     		 $(".detail_table").find("#codeNm").val(item.codeNm);
-		     		 $(".detail_table").find("#codeEngNm").val(item.codeEngNm);
-		     		 $(".detail_table").find("#uppCodeId").val(item.uppCodeId);
-		     		 $(".detail_table").find("#codeLvl").val(item.codeLvl);
-		     		 $(".detail_table").find("#codeDesc").val(item.codeDesc);
-		     		 $(".detail_table").find("#sortOdr").val(item.sortOdr);
-		     		 $(".detail_table").find("#resv1").val(item.resv1);
-		     		 $(".detail_table").find("#resv2").val(item.resv2);
-		     		 $(".detail_table").find("#resv3").val(item.resv3);
-		     		 $(".detail_table").find("#useYn").val(item.useYn);
+		    		 $(".detail_table").find("#bbsId").val(item.bbsId);
+		    		 $("#bbsGrpId option:contains("+item.bbsGrpId+")").prop("selected", true);
+		    		 $(".detail_table").find("#bbsDp").val(item.bbsDp);
+		    		 $(".detail_table").find("#bbsTtl").val(item.bbsTtl);
+		    		 $("textarea[id=bbsCn]").val(item.bbsCn);
+		    		 $(".detail_table").find("#delYn").val(item.delYn);
 
 		    	 } else {
 		    		 save_mode = "insert";
-		    		 $(".detail_table").find("#codeId").attr("readOnly", false);
 		    	 }
-		    	 
+		    		
 		    	 $(".list_head").find("#head_title").html(title);
 		    	
 		    	 //상세 팝업 호출
@@ -497,7 +394,7 @@
 	                 top	 : "10px",
 	                 left	 : "10px",
 	                 width	 : "650px",
-	                 height	 : "450px"
+	                 height	 : "700px"
 	             }).center().show();
 	    	}else{
 	    		alert("수정은 1개이상 되지 않습니다.");
@@ -527,15 +424,14 @@
 					<col width="15%"/>
 					<col width="20%"/>
 					<col width="15%"/>
+					<col width="15%"/>
 			</colgroup>
 				<tr>
 					<td>
 						<select id="searchOption" style="width:90%;">
-							<option selected value="">검색항목 선택</option>
-							<option value="code_id">공통코드 ID</option>
-							<option value="code_grp_id">공통코드 그룹 ID</option>
-							<option value="code_nm">공통코드명</option>
-							<option value="code_desc">공통코드 설명</option>
+							<option value="">검색항목 선택</option>
+							<option value="bbs_grp_id">게시글 그룹</option>
+							<option value="bbs_ttl">게시글 제목</option>
 						</select>
 					</td>	
 					<td>
@@ -543,10 +439,10 @@
 					</td>
 					
 					<td>
-						<select id="useYnOption" style="width:40%;">
-							<option selected value="">사용 여부</option>
-							<option value="Y">사용</option>
-							<option value="N">미사용</option>
+						<select id="delYnOption" style="width:40%;">
+							<option value="">삭제 구분</option>
+							<option value="Y">삭제</option>
+							<option value="N">미삭제</option>
 						</select>
 					</td>
 					
@@ -583,8 +479,7 @@
 	
 		<!-- detail popup -->
 		<div id="detailForm" class="list_head" style="display:none;">
-		  <div id="container">
-			  
+	  		<div id="container">
 		        <!-- list_head -->
 				<div class="list_head">
 					<h6><span id="head_title" ></span></h6>
@@ -596,64 +491,100 @@
 					<!-- list_button -->
 				</div>
 				<!-- //list_head -->
+				
+				
 				<!-- detail_table -->
-					<table class="detail_table ">
-						<colgroup>
-							<col style="width:25%" />
-							<col style="width:25%" />
-							<col style="width:25%" />
-							<col style="width:25%" />
-						<col />
-						<tr>
-							<th>공통코드 ID</th>
-							<td><input type="text" style="width:100%" id="codeId" /></td>
-							<th>공통코드 그룹 ID</th>
-							<td>
-								<select id="codeGrpId" style="width:100%;">
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<th>공통코드명</th>
-							<td><input type="text" style="width:100%" id="codeNm" /></td>
-							<th>공통코드 영문명</th>
-							<td><input type="text" style="width:100%" id="codeEngNm" /></td>
-						</tr>
-						<tr>
-							<th>상위 공통코드 ID</th>
-							<td><input type="text" style="width:100%" id="uppCodeId" /></td>
-							<th>공통코드 설명</th>
-							<td><input type="text" style="width:100%" id="codeDesc" /></td>
-						</tr>
-						<tr>
-							<th>코드 레벨</th>
-							<td><input type="number" style="width:97%" id="codeLvl" /></td>
-							<th>정렬 순서</th>
-							<td><input type="number" style="width:97%" id="sortOdr" /></td>
-						</tr>
-						<tr>
-							<th>예비1</th>
-							<td><input type="text" style="width:100%" id="resv1" /></td>
-							<th>예비2</th>
-							<td><input type="text" style="width:100%" id="resv2" /></td>
-						</tr>
-						<tr>
-							<th>예비3</th>
-							<td><input type="text" style="width:100%" id="resv3" /></td>
-							<th>사용 여부</th>
-							<td colspan="3">
-								<select id="useYn">
-									<option value="Y">사용</option>
-									<option value="N">미사용</option>
-								</select>
-							</td>
-						</tr>
-					</table>
+				<table class="detail_table form_s">
+					<colgroup>
+						<col style="width:10%"/>
+						<col style="width:22%"/>
+						<col style="width:10%"/>
+						<col style="width:15%"/>
+						<col style="width:10%"/>
+						<col style="width:15%"/>
+					</colgroup>
+					 					
+					<tr>
+						<th style="text-align:center;">제목</th>
+						<td colspan="5">
+							<input id="bbsId" type="hidden">
+							<input id="bbsTtl" style="width:100%" type="text" >
+						</td>
+					</tr>
+					
+					<tr>
+						<th style="text-align:center;">게시글<br>그룹</th>
+						<!-- <td><input id="bbsGrpId" style="width:100%;" type="text"></td> -->
+						<td>
+							<select id="bbsGrpId" style="width:100%">
+								<option selected value="">검색항목 선택</option>
+							</select>
+						</td>
+						
+						<th style="text-align:center;">게시글<br>레벨</th>
+						<td><input id="bbsDp" type="number" style="width:97%"></td>
+						
+						<th style="text-align:center;">삭제 구분</th>
+						<td>
+							<select id="delYn" style="width:100%">
+								<option selected value="">삭제 구분</option>
+								<option value="Y">삭제</option>
+								<option value="N">미삭제</option>
+							</select>
+						</td>	
+					</tr>
+					
+				</table>
 				<!-- //detail_table -->
-				 
-	     	</div>
-     	</div>
-	
+
+				<!-- Edit Area-->
+				<textarea id="bbsCn" style="width: 100%; height: 300px; resize:none;"></textarea>
+				<!-- //Edit Area-->
+				
+				<!--
+					<h4>이미지 <span class="focus">(10MB까지 첨부 가능합니다)</span></h4>
+					<div class="attach_check">
+						<label><input type="checkbox" value=""></label>
+						<a class="btn_list_sm_rd">파일찾기</a>
+						<a class="btn_list_sm">삭제</a>
+						<div class="file_size">(712.79KB/10MB)</div> 전체용량 적용 가능시
+					</div>
+				
+					<div class="attach_file">
+						<ul>
+							<li>
+								<label><input type="checkbox" value=""><a href="#"><img src="../images/common/ico_f_img.gif">첨부파일이름</a></label>
+								<div class="file_size">1,301.5KB</div>
+							</li>
+						</ul>
+					</div>
+					// 이미지 attach_file-->
+					
+				<!-- 첨부파일 attach_file -->
+				<h4>첨부파일 <span class="focus">(10MB까지 첨부 가능합니다)</span></h4>
+				<div class="attach_check">
+					<label><input type="checkbox" value=""></label>
+						<a class="btn_list_sm_rd">파일찾기</a>
+						<a class="btn_list_sm">아래</a>
+						<a class="btn_list_sm">위</a>
+						<a class="btn_list_sm">삭제</a>
+					<div class="file_size">(712.79KB/10MB)</div><!-- 전체용량 적용 가능시 -->
+				</div>
+				<div class="attach_file">
+					<ul>
+						<li><label><input type="checkbox" value=""><a href="#"><img src="../images/common/ico_f_ppt.gif">첨부파일이름.ppt</a></label>
+							<div class="file_size">1,301.5KB</div>
+						</li>
+						<li><label><input type="checkbox" value=""><a href="#"><img src="../images/common/ico_f_xls.gif">첨부파일이름.xls</a></label>
+							<div class="file_size">901.5KB</div>
+						</li>
+						<li><label><input type="checkbox" value=""><a href="#"><img src="../images/common/ico_f_doc.gif">첨부파일이름.doc</a></label>
+							<div class="file_size">5301.15KB</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		
 	</div>
-	
 </html>
