@@ -152,4 +152,24 @@
                    </foreach>
 	</insert>
 	
+	
+	<!-- 공통코드(트리) 조회 -->
+	<select id="selectCodeTree" resultType="kr.co.trito.tams.web.common.dto.CodeTreeDto" parameterType="map">
+		WITH RECURSIVE CTE (CODE_ID, CODE_NM, CODE_LVL, UPP_CODE_ID, SORT_ODR) AS
+		(
+			SELECT T1.CODE_ID, T1.CODE_NM, T1.CODE_LVL, IFNULL(T1.UPP_CODE_ID,'#') UPP_CODE_ID, T1.SORT_ODR 
+			  FROM TB_COM_CODE T1
+			 WHERE T1.UPP_CODE_ID IS NULL
+			   AND T1.CODE_GRP_ID = #{codeGrpId}
+			UNION ALL
+			SELECT T2.CODE_ID, T2.CODE_NM, T2.CODE_LVL, T2.UPP_CODE_ID, T2.SORT_ODR 
+			  FROM TB_COM_CODE T2
+			 INNER JOIN CTE ON T2.UPP_CODE_ID = CTE.CODE_ID
+		)
+		SELECT CTE.CODE_ID AS id, CTE.CODE_NM AS text, CTE.CODE_LVL AS depth, CTE.UPP_CODE_ID AS parent 
+		  FROM CTE
+		ORDER BY CTE.CODE_ID, CTE.SORT_ODR
+	</select>
+	
+	
 </mapper>

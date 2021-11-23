@@ -30,15 +30,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import jdk.internal.org.jline.utils.Log;
 import kr.co.trito.tams.comm.util.file.FileDto;
-import kr.co.trito.tams.comm.util.file.excel.ExcelDto;
 import kr.co.trito.tams.comm.util.file.excel.ExcelReader;
 import kr.co.trito.tams.comm.util.file.excel.InvDto;
-import kr.co.trito.tams.comm.util.file.excel.SampleDto;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.common.dto.CodeTreeDto;
 import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
 import kr.co.trito.tams.web.common.service.CommonService;
@@ -342,6 +340,37 @@ public class CommonController {
 		return code;
 	}
 	
+	
+	
+	/** 공통코드(트리) 팝업 화면 */
+	@GetMapping("/popup/commCodePopup")
+	public ModelAndView commCodePopupView(HttpServletRequest request) {
+		
+		ModelAndView view = new ModelAndView();
+		view.setViewName("/content/common/popup/commCodePopup");
+		    
+		return view;
+	}
+	
+	
+	/** 공통코드(트리) 조회 */
+	@GetMapping("/popup/codeTreeList")
+	@ResponseBody
+	@ApiOperation(value = "Web API Common test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response>  commCodeTreePopupList(
+			@ApiParam(value = "검색 조건(코드그룹)", required = false) @RequestParam(value="codeGrpId",required = false) String codeGrpId) {
+		
+		Map<String, String> params = new HashMap<>();
+		if (!StringUtils.isEmpty(codeGrpId))
+			params.put("codeGrpId", codeGrpId);
+		
+		List<CodeTreeDto> list = commonService.selectCodeTree(params);
+		
+		return responseService.success(list);
+		
+	}
 	
 }
 

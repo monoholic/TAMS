@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import kr.co.trito.tams.comm.util.file.FileDto;
 import kr.co.trito.tams.comm.util.file.excel.InvDto;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.common.dto.CodeTreeDto;
 import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
 import kr.co.trito.tams.web.common.mapper.CommonMapper;
@@ -92,6 +93,13 @@ public class CommonService {
 	 * */
 	public int savePoInfo(List<InvDto> invs){
 		return mapper.savePoInfo(invs);
+	}	
+	
+	/** 
+	 * 공통코드(트리) 조회
+	 * */
+	public List<CodeTreeDto> selectCodeTree(Map<String,String> map){
+		return mapper.selectCodeTree(map);
 	}	
 	
 }

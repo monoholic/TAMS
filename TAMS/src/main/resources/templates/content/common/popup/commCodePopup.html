@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/popup2">
+<head>
+<meta charset="utf-8" />
+<title>공통팝업</title>
+
+	<!-- css -->
+	<th:block layout:fragment="css">
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/theme.css" />
+		
+		<link rel="stylesheet" href="/js/jstree/themes/default/style.min.css" />
+	</th:block>
+
+	 <th:block layout:fragment="script">
+	    
+	    <script src="/js/jstree/jstree.min.js"></script>
+	 
+		<script>
+		
+		 	var treeData = [];
+		 	
+			$(function() {
+				
+		          	getCodeList(); 
+					
+					/* $('#jstree').on("changed.jstree", function (e, data) {
+						  //console.log(data); 
+					}); */
+					
+					$('#jstree').on("dblclick.jstree", function (event) {
+						var node 	= $(event.target).closest("li");
+			            var id 		= node[0].id; //id of the selected node
+			            var obj 	= $("#"+id+"_anchor");
+						var text 	= obj.text();
+			            var item = {};
+			            item.codeCd = id;
+			            item.codeNm = text;
+						//
+						returnResult(item);
+			            
+						  
+					});
+					
+					
+					
+					//팝업창 닫기
+					$("#btn_close_pop").on("click",function(){ 
+						window.close();
+					});
+					
+					
+					$(".btn_srch").on("click",function (){ 
+			    	   //$("#jsGrid").jsGrid().trigger("loadData");
+			        });
+					
+					// userNm로 가지는 곳에서 키를 누를 경우
+		            $("#codeGrpNm").keydown(function(key) {
+		                //키의 코드가 13번일 경우 (13번은 엔터키)
+		                if (key.keyCode == 13) {
+		                	 //$("#jsGrid").jsGrid().trigger("loadData"); 
+		                }
+		            });
+					
+					
+		          	//리셋 버튼
+		    	    $(".btn_srch").click(function() {
+		    	    	$('#jstree').jstree().destroy();
+		    	    	getCodeList();
+		    	    });
+		          	
+		          	
+
+		  });
+		
+		function getTree() {
+			
+          	$('#jstree').jstree({ 'core' : {
+			    "data": treeData,
+          	    "check_callback" : true,
+                "plugins" : ["contextmenu"]
+				}
+			}); 
+			
+		}
+			
+		//공통코드(트리) 조회
+		function getCodeList() {
+			
+			treeData.length=0;
+			
+			let url = "/common/popup/codeTreeList";
+			let reqType = 'GET';	
+			let data = {
+				"codeGrpId" : 'AS_CLASS'
+			};
+			 
+			$.commRequest(url, reqType, data)
+				.then((res) => {
+					console.log('공통코드 조회 성공!!');
+					treeData = res.data;	
+					//$('#jstree').trigger("load_all.jstree");
+					getTree();
+				})
+				.catch((error) => {
+					console.log('공통코드 조회 실패!!');
+				});
+			
+		}
+		
+ 
+		   function returnResult(item) {
+				opener.setResult2(item);
+				window.close();
+		   }
+			
+		  
+		</script>
+	</th:block> 
+
+</head>
+<body >
+
+<div layout:fragment="content">
+
+	<!-- pop_alert -->
+	<div id="pop_wrap" >
+	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
+					<!-- head -->
+					<h3>자산유형 선택
+						 <!-- <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a> -->
+					</h3>
+					<!-- //head -->
+					<!-- contents -->
+					<div id="contents" style="height:380px;">
+	
+						<!-- search -->
+						<div class="srch_wrap">
+							<!-- search_form -->
+							<div class="srch_form">
+								<table class="srch_table">
+									<colgroup>
+											<col width="15%"/>
+											<col width="40%"/>
+											<col width="15%"/>
+											<col width=""/>
+									</colgroup>
+									<tr>
+										<th>&nbsp;</th>
+										<td>&nbsp;</td>
+									</tr>
+								</table>
+								<!-- search_button -->
+								<div class="button">
+									<a href="#;" class="btn_srch">새로고침</a>
+								</div>
+								<!-- //search_button -->
+							</div>
+							<!-- //search_form -->
+						</div>
+						<!-- //search -->
+
+						<!-- list 1 -->
+						<div class="box_form" style="overflow:auto;height:270px;">
+							<div id="jstree"></div>
+						</div>
+						<!-- //list 1 -->
+	
+					</div>
+					<!-- contents -->
+					<!-- button -->
+					<div class="pop_button">
+						<p>
+						<p>
+						<a href="#;" id="btn_close_pop" class="btn_list_rd">닫기</a>
+						</p>
+					</div>
+					<!-- //button -->
+	</div>
+	<!-- //pop_alert -->
+</div>
+
+</body>
+</html>

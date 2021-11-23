@@ -28,14 +28,6 @@
     	        args.resizable = "no";
     	        
     	        openPopup(popId, url, args);
-    	        /* 
-    	        var w = 650;
-    	        var h = 416;
-    	        var sTop  = Math.max(0, (($(window).height() - h) / 2) + $(window).scrollTop()) + "px";
-    	        var sLeft = Math.max(0, (($(window).width() - w) / 2) + $(window).scrollLeft()) + "px";
-    	        var child;
-    	        child = window.open(url, "userPopup", "position=absolute,top="+sTop+", left="+sLeft+", height="+h+"px, width="+w+"px, fullscreen=no, resizeable=no"); 
-    	         */
     	    });
 			
 			//투장정보 일괄 업로드 팝업 호출 
@@ -50,14 +42,20 @@
     	        args.resizable = "no";
     	        
     	        openPopup(popId, url, args);
-    	        /* 
-    	        var w = 650;
-    	        var h = 416;
-    	        var sTop  = Math.max(0, (($(window).height() - h) / 2) + $(window).scrollTop()) + "px";
-    	        var sLeft = Math.max(0, (($(window).width() - w) / 2) + $(window).scrollLeft()) + "px";
-    	        var child;
-    	        child = window.open(url, "userPopup", "position=absolute,top="+sTop+", left="+sLeft+", height="+h+"px, width="+w+"px, fullscreen=no, resizeable=no"); 
-    	         */
+    	    });
+			
+			//공통코드팝업(트리) 호출 
+    	    $("#openCommCodePopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/commCodePopup";
+    	        var popId = "commCodePopup";
+    	        var args = {};
+    	        args.width = 500;
+    	        args.height = 450;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        openPopup(popId, url, args);
     	    });
 			
 		});
@@ -91,6 +89,12 @@
 		function setResult(obj) {
 			$("#userId").val(obj.userId);
 			$("#userNm").val(obj.userNm);
+		}
+		
+		//팝업에서 받은 결과 처리
+		function setResult2(obj) {
+			$("#codeCd").val(obj.codeCd);
+			$("#codeNm").val(obj.codeNm);
 		}
 	</script>
 </th:block>
@@ -135,7 +139,11 @@
 				사용자id&nbsp;<input type="text" id="userId" name="userId"/>&nbsp;&nbsp;사용자명&nbsp;<input type="text" id="userNm" name="userNm"/>&nbsp;
 				<h5>투자정보 일괄 업로드 호출</h5>
 				<a href="#;" id="openInvPopup">투자정보 일괄 업로드 호출</a>
+				<br/><br/><br/>
+				<h5>공통코드팝업(트리)</h5>
+				<a href="#;" id="openCommCodePopup">공통코드팝업(트리) 호출</a>
 				<br/>
+				코드 &nbsp;<input type="text" id="codeCd" name="codeCd"/>&nbsp;&nbsp;코드명&nbsp;<input type="text" id="codeNm" name="codeNm"/>&nbsp;
 			</div>
 			
 			
