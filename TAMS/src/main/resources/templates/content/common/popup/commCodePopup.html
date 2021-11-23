@@ -80,9 +80,25 @@
 			
           	$('#jstree').jstree({ 'core' : {
 			    "data": treeData,
-          	    "check_callback" : true,
-                "plugins" : ["contextmenu"]
-				}
+			    "check_callback" : true,
+				},
+          	    "plugins": ["contextmenu","ui","types","wholerow"],
+				'contextmenu' : { "items" : { "confirm" : { 
+												"separator_before" : false
+											  , "separator_after" : true
+											  , "label" : "선택"
+											  , "action" : function(obj){
+												             var item = $("#jstree").jstree('get_selected', true);
+												             var result = {};
+												             result.codeCd = item[0].id;
+												             result.codeNm = item[0].text;
+												             //console.log(result);
+												             returnResult(result);
+											             } 
+				                             }
+				                            } 
+			                         }
+
 			}); 
 			
 		}
