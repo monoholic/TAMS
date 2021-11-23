@@ -87,10 +87,17 @@
 	</select>
 	
 	
-	<insert id="saveFileInfo" parameterType="kr.co.trito.tams.comm.util.file.FileDto">
-		INSERT INTO TB_COM_FILE(FILE_ID, RFNC_KEY1, FILE_NM, ORG_FILE_NM, FILE_SIZE, SORT_ODR, FILE_DOWNLOAD_URI, DWLD_CNT, USE_YN, REGR, UPDR)
-		                 VALUES( nextval(tams.sq_fileid), #{rfncKey1}, #{fileNm}, #{orgFileNm}, #{fileSize}, #{sortOdr}, #{fileDownloadUri}, #{dwldCnt}, #{useYn}, #{regr}, #{updr})
+	<insert id="saveFileInfo" parameterType="kr.co.trito.tams.comm.util.file.FileDto" useGeneratedKeys="true" keyProperty="fileId">
+		INSERT INTO TB_COM_FILE(RFNC_KEY1, FILE_NM, ORG_FILE_NM, FILE_SIZE, SORT_ODR, FILE_DOWNLOAD_URI, DWLD_CNT, USE_YN, REGR, UPDR)
+		                 VALUES( #{rfncKey1}, #{fileNm}, #{orgFileNm}, #{fileSize}, #{sortOdr}, #{fileDownloadUri}, #{dwldCnt}, #{useYn}, #{regr}, #{updr})
 	</insert>
+	
+	<update id="deleteFile" parameterType="kr.co.trito.tams.comm.util.file.FileDto">
+		UPDATE TB_COM_FILE 
+		   SET USE_YN   = 'N'
+		     , UPDR     = #{updr}
+		 WHERE FILE_ID = #{fileId}
+	</update>
 	
 	<update id="updateDwldCnt" parameterType="kr.co.trito.tams.comm.util.file.FileDto">
 		UPDATE TB_COM_FILE 
@@ -126,5 +133,23 @@
 		   AND A.UPP_DEPT_CD = B.DEPT_CD 
 		   AND C.USER_ID     = #{userId}
 	</select>
+	
+	<!-- TB_PO 정보등록 -->
+	<insert id="saveInvestInfo" parameterType="kr.co.trito.tams.comm.util.file.excel.InvDto">
+		INSERT INTO TB_INV_MAS(INV_NO, INV_DT, INV_REQR, INV_TTL, INV_QTY, INV_AMT, ACTG_YEAR, REGR)
+                VALUES
+                (#{invNo}, #{invDt}, #{invReqr}, #{invTtl}, 0, 0, '-', #{regr})
+                ON DUPLICATE KEY
+                UPDATE INV_DT =  #{invDt}, INV_REQR = #{invReqr}, INV_TTL = #{invTtl}, REGR = #{regr}
+	</insert>
+	
+	<!-- TB_PO 정보등록 -->
+	<insert id="savePoInfo" parameterType="java.util.List">
+		INSERT INTO TB_PO(PO_NO, INV_NO, MFGD_NM, QTY, REGR)
+                   VALUES
+                   <foreach collection="list" item="inv" separator=" , ">
+                   ('${inv.poNo}', '${inv.invNo}', '${inv.mfgdNm}', '${inv.qty}', '${inv.regr}')
+                   </foreach>
+	</insert>
 	
 </mapper>

@@ -89,4 +89,24 @@ function getMyRole(menuId) {
 			console.log('메뉴 권한 조회 실패!!');
 		});								
 }
-			
+
+
+//천단위 콤마 펑션(value 문자타입)
+function addComma(value){
+ 	value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return value; 
+}
+
+//천단위 콤마 제거 펑션
+function removeComma(value){
+	value = value.replace(/[^\d]+/g, "");
+    return value; 
+}			
+
+//파일 사이즈 표시
+function bytesToSize(bytes) {
+   var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+   if (bytes == 0) return '0 Byte';
+   var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+   return addComma(Math.round(bytes / Math.pow(1024, i), 2)+"") + ' ' + sizes[i];
+};

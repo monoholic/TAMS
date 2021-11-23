@@ -38,14 +38,14 @@
 					 }
 					},
 					{ name: "invNo"		, type: "text"   , width: 100 ,align: "center", title: "투자번호"	},
-					{ name: "invTtl"	, type: "text"   , width: 150 ,align: "left"  , title: "투자명"		},
-					{ name: "poNo"		, type: "text"   , width: 100 ,align: "center", title: "PO번호" 		},
+					{ name: "invTtl"	, type: "text"   , width: 150 ,align: "left"  , title: "투자명"	},
+					{ name: "poNo"		, type: "text"   , width: 100 ,align: "center", title: "PO번호" 	},
 					{ name: "mfgdNm"	, type: "text"   , width: 100 ,align: "left"  , title: "품명"	 	},
 					{ name: "qty"		, type: "number" , width: 100 ,align: "right" , title: "수량"	 	},
 					{ name: "invDt"		, type: "date"   , width: 100 ,align: "center", title: "투자일자"	},
-					{ name: "groupNm"	, type: "text"   , width: 100 ,align: "center", title: "사업부"		},
+					{ name: "groupNm"	, type: "text"   , width: 100 ,align: "center", title: "사업부"	},
 					{ name: "deptNm"	, type: "text"   , width: 100 ,align: "center", title: "부서"		},
-					{ name: "invRegrNm"	, type: "text"   , width: 100 ,align: "center", title: "담당자"		},
+					{ name: "invReqrNm"	, type: "text"   , width: 100 ,align: "center", title: "담당자"	},
 					{ name: "chkResult"	, type: "text"   , width: 150 ,align: "left"  , title: "유효성 검증" 
 					 ,itemTemplate : function(value,item) {
 						 return "<span class='red'>"+value+"</span>";
@@ -109,6 +109,9 @@
 						console.log('엑셀 업로드 성공!!');
 						console.log(res);
 						
+						bak.length = 0;
+						$.each(res, function(index,element){ bak.push(element); });
+						
 						showUploadExcelData(res, "#jsGrid");
 					})
 					.catch((error) => {
@@ -126,6 +129,9 @@
 			    var count = excelItems.length; 
 			    $("#uploadCnt").html(count);
 			}
+			
+			
+			var bak = []; 
 		
 			$(function() {
 				
@@ -134,6 +140,9 @@
 				//////////////////////////////////////////////////////////////////
 			
 				$("#addFile").on("click", function(){
+					
+					excelItems.length = 0;
+					
 					console.log("addFile");
 					$("#upFile").click();
 					
@@ -154,16 +163,46 @@
 					window.close();
 				});
 				
-				
+				//업로드된 엑셀 데이터 db에 저장한다...
 				$("#btnSave").on("click",function (){ 
-		    	   //$("#jsGrid").jsGrid().trigger("loadData");
+					
+					let url = "/common/invest/saveExcel";
+					let reqType = "POST";
+					$.commRequest(url, reqType, JSON.stringify(excelItems))
+						.then((res) => {
+							console.log('저장 성공!!');
+						})
+						.catch((error) => {
+							console.log('저장 실패!!');
+						});
+					
 		        });
 				
 				$(".btn_download").on("click", function(){
 					excelFormDownload();
 				});
+				
+				
+				$("#errChk").on("change", function(){
+					var tmp = [];
+					if( $(this).is(":checked") ) { 
+						tmp = excelItems.filter(chkFlag);
+						excelItems.length = 0;
+						$.each(tmp, function(index,element){ excelItems.push(element); });
+					} else {
+						excelItems.length = 0;
+						$.each(bak, function(index,element){ excelItems.push(element); });
+					}
+					
+					$("#jsGrid").jsGrid(getGridBody());		
+				});
+				
 
 			});
+			
+			function chkFlag(item) {
+				return item.chkFlag == "Y";
+			}
 			
 		</script>
 	</th:block> 
@@ -202,6 +241,7 @@
 													<th>파일업로드&nbsp;&nbsp;</th> 
 													<td><input type="text" name="excelNm" id="excelNm" style="width:200px" readOnly > <input type="file" id="upFile" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;"></td>
 													<td>&nbsp;&nbsp;<a href="#;" id="addFile" class="btn_srch">찾아보기</a></td>
+													<td>&nbsp;&nbsp;<input type="checkbox" id="errChk" >&nbsp;오류건만보기</td>
 												</tr>
 											</table>
 										</td>

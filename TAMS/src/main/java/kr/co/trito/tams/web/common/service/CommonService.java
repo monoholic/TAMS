@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.file.FileDto;
+import kr.co.trito.tams.comm.util.file.excel.InvDto;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
@@ -52,6 +53,13 @@ public class CommonService {
 	}
 	
 	/** 
+	 * 파일정보 삭제
+	 * */
+	public int deleteFiles(FileDto dto){
+		return mapper.deleteFile(dto);
+	}
+	
+	/** 
 	 * 다운로드 횟수 업데이트
 	 * */
 	public int updateDwldCnt(FileDto dto){
@@ -70,6 +78,20 @@ public class CommonService {
 	 * */
 	public Map<String,String> selectUserDeptInfo(Map<String,String> map){
 		return mapper.selectUserDeptInfo(map);
+	}	
+	
+	/** 
+	 * TB_INV_MAS 정보 등록
+	 * */
+	public int saveInvestInfo(InvDto invs){
+		return mapper.saveInvestInfo(invs);
+	}
+	
+	/** 
+	 * TB_PO 정보 등록
+	 * */
+	public int savePoInfo(List<InvDto> invs){
+		return mapper.savePoInfo(invs);
 	}	
 	
 }

@@ -287,16 +287,19 @@ public class CommonController {
 				chkResult += "수량이 누락되었습니다";
 			} else {
 				//숫자값만 입력 가능...
+				if( !StringUtils.isNumeric(inv.getQty()) ) {
+					chkResult += "숫자만 입력 가능합니다.";
+				}
 			}
 			if( StringUtils.isEmpty(inv.getInvDt()) ) {
 				chkResult += "투자일자가 누락되었습니다";
 			}
-			if( StringUtils.isEmpty(inv.getInvRegr()) ) {
+			if( StringUtils.isEmpty(inv.getInvReqr()) ) {
 				chkResult += "담당자가 누락되었습니다";
 			} else {
 				// 담장자 id 로 정보 찾기...
 				Map<String,String> map = new HashMap<>();
-				map.put("userId", inv.getInvRegr());
+				map.put("userId", inv.getInvReqr());
 				Map<String,String> deptInfo = commonService.selectUserDeptInfo(map);
 				
 				inv.setGroupNm(deptInfo.get("upDeptNm"));
@@ -307,12 +310,37 @@ public class CommonController {
 			
 			//검증 결과 
 			inv.setChkResult(chkResult);
-			
+			if( !StringUtils.isEmpty(chkResult) ) inv.setChkFlag("Y");
 		}
 		
 		return result;
 	}	
 	
+	
+	@PostMapping("/invest/saveExcel")
+	@ResponseBody
+	public String saveExcel(@RequestBody List<InvDto> datas, @AuthenticationPrincipal UserDetails userDetail) throws IOException, InvalidFormatException {
+		
+		String code = "202";
+		
+		UserInfo userInfo = (UserInfo)userDetail;
+	    String userId = userInfo.getDto().getUserId();         
+		
+	    int cnt = 0;
+		for(InvDto inv : datas) {
+			inv.setRegr(userId);
+			inv.setUpdr(userId);
+			log.error("@@@ "+inv);
+			if( commonService.saveInvestInfo(inv) > 0 ) cnt++;
+		}
+		
+		cnt = 0;
+		cnt = commonService.savePoInfo(datas);
+		
+		if(cnt > 0) code = "200";
+		
+		return code;
+	}
 	
 	
 }

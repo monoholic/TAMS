@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html 	lang="ko" xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/default">
+
+	<head>
+	    <title>게시판</title>
+	</head>
+        
+	<!-- css -->
+	<th:block layout:fragment="css">
+		
+		<link rel="stylesheet" href="/css/style.css" />
+	
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/jsgrid.css" />
+		<link rel="stylesheet" href="/css/theme.css" />
+			
+	</th:block>
+	
+	<th:block layout:fragment="script">
+	
+    	<!-- include summernote css/js -->
+		<link href="/js/summernote/summernote-lite.css" rel="stylesheet">
+		<script src="/js/summernote/summernote-lite.js"></script>
+		<script src="/js/summernote/lang/summernote-ko-KR.min.js"></script>
+
+		<script src="/js/jsgrid/db.js"></script>
+		<script src="/js/jsgrid/jsgrid.core.js"></script>
+		<script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
+		<script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
+		<script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
+		<script src="/js/jsgrid/jsgrid.field.js"></script>
+		<script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
+		<script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
+		<script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
+		<script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
+		<script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
+		
+			
+
+    	
+	    <script>
+	        
+	    	var save_mode = "INS";
+	        
+		    var attachData = new FormData();
+		    var fileItems  = [];
+		    var deleteItems  = [];
+		    
+		    var addCnt = 0;
+		    
+		    var rowIdx = 0;
+			var attachGridField = [
+					{ name: "chk"	, type: "checkbox" , width: 30  , title: "선택"
+					 ,itemTemplate: function(value, item) { 
+						 return '<input type="checkbox" name="add_file" value="'+item.name+'" gbn="'+item.gbn+'" id="'+item.id+'" >';
+					 }	
+					},
+					{ name: "name"	, type: "text"     , width: 200 , align: "left", title: "파일명"
+					 ,itemTemplate: function(value, item) {
+						 return '<span style="cursor:hand;" onclick="fileDownload(\''+item.gbn+'\',\''+item.realName+'\',\''+item.name+'\')">'+item.name+'</span>';
+					 }
+					},
+					{ name: "size"	, type: "number"   , width: 100 , align: "right" , title: "파일사이즈"
+					 ,itemTemplate: function(value, item) {
+						 return '<span>'+ bytesToSize(item.size) +'</span>';
+					 }
+					},
+				];
+			
+			function getGridBody() {
+				return {
+			        	height: "150",
+			            width: "100%",
+			            data: fileItems, 
+			            autoload: false,
+			            loadonce: false,
+			            updateOnResize: true, 
+			            /* rowClick:function(args) { 
+			            	fileDownload(args.item);
+			            }, */
+			            fields: attachGridField
+			            ,onDataLoaded: rowCount()
+			    	};
+			}
+			
+			function fileDownload(gbn, realName, name) { console.log(gbn);
+				 if( gbn == "undefined" && confirm("다운로드 하시겠습니까?") ) {
+       		      
+		            	//파일 다운로드
+		            	var $form = $('<form></form>'); 
+						$form.attr('action', "/file/download"); 
+						$form.attr('target','_blank'); 
+						$form.attr('method','post'); 
+						$form.appendTo('body'); 
+						
+						var str1 = '<input type="text" name="fileName" value="'+realName+'">';
+						var str2 = '<input type="text" name="orgFileName" value="'+name+'">';
+						
+						$form.append(str1).append(str2);
+						$form.submit(); 		 			 
+						
+						return false;
+						 
+	            }
+			}
+			
+			function getIndex(item) {
+				var idx= -1;
+				$.each(fileItems, function(index, el){
+					if( item == el) idx = index; 
+				});
+				//console.log(item.poNo+" >> idx : "+idx);
+				return idx;
+			}
+			
+			function rowCount() {    
+			    var count = fileItems.length; 
+			    var totalSize = 0;
+			    
+			    $.each(fileItems, function(index, el){
+			    	totalSize += el.size;
+			    });
+			    console.log(totalSize);
+			    $("#totalSize").val(bytesToSize(totalSize));
+			}
+			
+			function addFile(gbn) {
+				
+				var addFiles;
+				var obj;
+				
+				if( gbn == "undefined" || gbn != null ) {
+					addFiles = $("#upFile")[0].files;
+				} else {
+					obj = event.target? event.target:evnet.srcElement;
+					addFiles = obj.files;
+				}
+				
+				console.log(gbn+" :: "+addFiles.length);
+				
+				//화면 표시용
+				var html = "";
+				
+				$.each(addFiles, function(index, item){
+					//console.log(index,item);
+					var fileval = item.name.replace(/^C:\\fakepath\\/i, '');
+					console.log(fileval);
+					
+					//첨부파일 추가
+					attachData.append("files", item);
+					addCnt++;
+					
+					//그리드 표시용
+					item.gbn = "NEW";
+					fileItems.push(item); 
+				});
+				
+				reloadFileGrid();
+			}
+			
+			function reloadFileGrid() {
+				
+				//신규 추가 파일에 id값 세팅(삭제시 필요)
+				var len = fileItems.length;
+				for(var i=0; i<len; i++) {
+					if( fileItems[i].id == null || fileItems[i].id == "undefined" || fileItems[i].id == "" ) {
+						fileItems[i].id = i;
+					}   
+				}
+				
+				$("#fileGrid").jsGrid(getGridBody());			
+				$("#fileGrid").jsGrid().trigger("reload");
+			}
+			
+			//폼 리셋 - 저장후...
+			function setFormClear() {
+				
+				$("#bbsTtl").val("");
+				$("#bbsCn").val("");
+				$('#summernote').summernote('code', "");
+				//$("#bbsId").val("");
+				
+				fileItems.length=0;
+			    deleteItems.length=0;
+			    
+				attachData.delete("files");
+				attachData.delete("delFiles");
+				attachData.delete("bbsId");
+				attachData.delete("bbsTtl");
+				attachData.delete("bbsCn");
+				
+				reloadFileGrid();
+			}
+			
+			$(function(){
+				
+				//
+				//bootstrap 으로 인한 메인로고 이미지 위치 보정
+		        //$("#main_logo").css("top", "0px");
+				
+				//////////////////////////////////////////////////////////////////
+				$("#fileGrid").jsGrid(getGridBody());				
+				//////////////////////////////////////////////////////////////////
+
+				$("#addFile").on("click", function(){
+					
+					$("#upFile").click();
+					
+					//return false;
+				});
+				
+				$("#upFile").on("change", function(){
+					addFile();
+				});
+				
+				//추가파일 삭제
+				$("#delFile").on("click", function(){
+					var chks = $("[name='add_file']");
+					$.each(chks, function(index, item){
+						var tmpDel = [];
+						if( $(item).is(":checked") ) {
+							var del = item.id;
+							
+							if( $(item).attr("gbn") != "NEW" ){ 
+							tmpDel 
+								  =  fileItems.filter( function(n,i) {
+									    return n.id == del;
+								    });	
+							} 
+							fileItems 
+							  =  fileItems.filter( function(n,i) {
+								    return n.id != del;
+							    });
+						}
+						
+						if(tmpDel.length > 0) {
+							$.each(tmpDel, function(index, el){ deleteItems.push(el); }); 
+						}
+						
+					});
+					
+					console.log("@@ fileItems "+fileItems.length);
+					console.log("@@ deleteItems  "+deleteItems.length);
+					
+					//추가 파일
+					if( addCnt > 0  ) {
+						attachData.delete("files");
+						attachData.append("files", fileItems);
+					}
+					
+					//기존파일 -삭제건
+					attachData.delete("delFiles");
+					attachData.append("delFiles", JSON.stringify(deleteItems));
+					
+					reloadFileGrid();
+					
+				});
+				
+				//저장
+				$(".save_btn").on("click", function(){
+					
+					attachData.append("bbsTtl", $("#bbsTtl").val());
+					var markupStr = $('#summernote').summernote('code');
+					//attachData.append("bbsCn", $("#bbsCn").val());
+					attachData.append("bbsCn", markupStr);
+					attachData.append("bbsId", $("#bbsId").val());
+					
+					let url = "";
+					if( save_mode == "INS") 
+						url = "/system/bbs/bbsInsert";
+					else if(save_mode == "MOD")
+						url = "/system/bbs/bbsUpdate";
+						
+					let reqType = 'POST';	
+					
+					var files = attachData.getAll("files");
+//console.log(url + " @@@@ save :: "+files.length);					
+					//if( files.length > 0 ) {
+						$.commRequestFile(url, reqType, attachData)
+							.then((res) => {
+								console.log('게시판 저장 성공!!');
+								//setGridData(res.data.data);
+								setFormClear();
+							})
+							.catch((error) => {
+								console.log('게시판 저장 실패!!');
+							});
+					
+					attachData.delete("files");
+					attachData.delete("delFiles");
+					attachData.delete("bbsId");
+					attachData.delete("bbsTtl");
+					attachData.delete("bbsCn");
+					
+				});
+				
+				//조회
+				$(".search_btn").on("click", function(){
+					
+					let url = "/system/bbs/bbsView ";
+					let reqType = 'POST';	
+					/* let data = {
+						"searchText": $("#searchText").val()
+					} */
+					$.commRequestFile(url, reqType, $("#searchText").val())
+						.then((res) => {
+							console.log('게시판 조회 성공!!');
+							//setGridData(res.data.data);
+							console.log(res);
+							var bbsInfo = res.data.bbsInfo;
+							
+							$("#bbsTtl").val(bbsInfo.bbsTtl);
+							$('#summernote').summernote('code',bbsInfo.bbsCn);
+							//$("#bbsCn").val(bbsInfo.bbsCn);
+							$("#bbsId").val(bbsInfo.bbsId);
+							
+							var bbsFiles = res.data.files;
+							
+							fileItems.length = 0
+							deleteItems.length = 0;
+							attachData.delete("files");
+							attachData.delete("bbsTtl");
+							attachData.delete("bbsCn");
+							
+							$.each(bbsFiles, function(index, el) {
+								var f = {};
+								f.name = el.orgFileNm;
+								f.realName = el.fileNm;
+								f.size = el.fileSize;
+								f.id   = el.fileId;
+								if( el.fileId == "undefined" || el.fileId == null ) f.id = index;
+								
+								fileItems.push(f);
+							});
+							
+							reloadFileGrid();
+							
+							save_mode = "MOD";
+							
+						})
+						.catch((error) => {
+							console.log('게시판 조회 실패!!');
+						});
+					
+				 
+		 
+				});
+				
+				//web editor 설정
+				$("#summernote").summernote({
+		            placeholder: '내용을 작성하세요',
+		            height: 400,
+		            maxHeight: 400,
+		            lang:"ko-KR",
+		            toolbar: [
+		    		    ['style', ['style']],
+		    		    ['font', ['bold', 'italic', 'underline', 'clear']],
+		    		    ['fontname', ['fontname']],
+		    		    ['color', ['color']],
+		    		    ['para', ['ul', 'ol', 'paragraph']],
+		    		    ['height', ['height']],
+		    		    ['table', ['table']],
+		    		    ['insert', ['link', 'hr']],
+		    		    //['insert', ['link', 'picture', 'hr']],
+		    		    ['view', ['fullscreen', 'codeview']],
+		    		    ['help', ['help']]
+		    		  ]
+		        });
+				
+				
+			var dropZone = $("#dragFile");
+	            //Drag기능 
+	            dropZone.on('dragenter', function(e) {
+	                e.stopPropagation();
+	                e.preventDefault();
+	                // 드롭다운 영역 css
+	                dropZone.css('background-color', '#E3F2FC');
+	            });
+	            dropZone.on('dragleave', function(e) {
+	                e.stopPropagation();
+	                e.preventDefault();
+	                // 드롭다운 영역 css
+	                dropZone.css('background-color', '#FFFFFF');
+	            });
+	            dropZone.on('dragover', function(e) {
+	                e.stopPropagation();
+	                e.preventDefault();
+	                // 드롭다운 영역 css
+	                dropZone.css('background-color', '#E3F2FC');
+	            });
+	            dropZone.on('drop', function(e) {  
+					e.preventDefault();
+					// 드롭다운 영역 css
+                    dropZone.css('background-color', '#FFFFFF');
+					
+					$("#upFile").prop("files", e.originalEvent.dataTransfer.files);
+					addFile("Drop");
+				});
+	            
+		});
+		 
+	    </script>	
+	</th:block>
+		
+	
+	<div layout:fragment="content">
+		
+		<!-- detail popup -->
+		  <div id="container">
+			    
+			    <div></div>
+		        <!-- list_head -->
+				<div class="list_head">
+					<h6><span id="head_title" >게시판 등록/조회 테스트</span></h6>
+					<!-- list_button -->
+					<div class="button">
+						<label for="searchText">게시판ID</label>
+						<input type="text" name="searchText" id="searchText">
+						<a class="btn_list search_btn">조회</a>
+						<a class="btn_list save_btn">저장</a>
+						<a class="btn_list close_btn">닫기</a>
+					</div>
+					<!-- list_button -->
+				</div>
+				<!-- //list_head -->
+				<!-- detail_table -->
+					<table class="detail_table ">
+						<colgroup>
+						<col style="width:20%" />
+						<col style="width:80%" />
+						</colgroup>
+						<tr>
+							<th>제목</th>
+							<td><input type="text" id="bbsTtl" /><input type="hidden" id="bbsId" /></td>
+						</tr>
+						<tr>
+							<th>내용</th>
+							<td><div id="summernote" class="bbsCn" ></div></td>
+						</tr>
+						<tr>
+							<th>첨부</th>
+							<td> 
+								
+								<table>
+									<tr>
+										<td width="35%">
+											<input type="file" id="upFile" style="display:none;">
+											<a id="addFile" class="btn_srch">파일찾기</a>
+											<a id="delFile" class="btn_list">파일삭제</a>
+											&nbsp;&nbsp;
+											<label for="totalSize" >총 파일크기</label> :
+											<input type="text" name="totalSize" id="totalSize" readonly>
+										</td>
+										<td>
+											<div id="dragFile" class="box_form" style="cursor:pointer;text-align:center;" >파일을 여기에 끌어다 놓으세요.</div>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="2">
+										<div id="fileGrid"></div>
+										</td>
+									</tr>
+								</table>
+							
+							</td>
+						</tr>
+					</table>
+				<!-- //detail_table -->
+				 
+	     	</div>
+     	</div>
+     	
+	
+	
+	
+</html>

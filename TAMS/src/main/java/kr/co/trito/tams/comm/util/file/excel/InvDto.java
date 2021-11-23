@@ -9,12 +9,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
+@ToString
 @ApiModel("투자정보 엑셀업로드용 Dto")
 public class InvDto extends ExcelDto {
 
@@ -34,7 +36,7 @@ public class InvDto extends ExcelDto {
 	@ApiModelProperty(value="투자 일자")
     private String invDt;
 	@ApiModelProperty(value="투자 담당자")
-    private String invRegr;
+    private String invReqr;
 	@ApiModelProperty(value="투자 담당자명")
 	private String invRegrNm;
 	@ApiModelProperty(value="사업부")
@@ -43,6 +45,8 @@ public class InvDto extends ExcelDto {
 	private String deptNm;
 	@ApiModelProperty(value="유효성 검증")
 	private String chkResult;
+	@ApiModelProperty(value="유효성 상태")
+	private String chkFlag;
 
 	//@ApiModelProperty(value="회계연도")
 	//private String actgYear;
@@ -60,7 +64,7 @@ public class InvDto extends ExcelDto {
     	inv.setMfgdNm	(row.getCell(3).getStringCellValue());
     	inv.setQty	 	(row.getCell(4).getStringCellValue());
     	inv.setInvDt 	(row.getCell(5).getStringCellValue());
-    	inv.setInvRegr 	(row.getCell(8).getStringCellValue());
+    	inv.setInvReqr 	(row.getCell(8).getStringCellValue());
     	inv.setInvRegrNm(row.getCell(9).getStringCellValue());
     	
         return inv;

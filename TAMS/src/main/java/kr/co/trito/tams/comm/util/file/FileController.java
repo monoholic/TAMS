@@ -68,10 +68,8 @@ public class FileController {
 		return responseService.success(new GeneralResponse<>(list));
 	}
 	
-//	@GetMapping("/download/{fileName:.+}")
 	@PostMapping("/download/{fileName:.+}/{orgFileName:.+}")
 	@ResponseBody
-//	public ResponseEntity<Resource> download(@PathVariable(value="fileName") String fileName, HttpServletRequest request){
 	public ResponseEntity<Resource> download(@PathVariable(value="fileName") String fileName, @PathVariable(value="orgFileName") String orgFileName, HttpServletRequest request){
 		String contentType = null;
 		Resource resource = fileService.load(fileName); 
@@ -95,7 +93,6 @@ public class FileController {
 		
         return ResponseEntity.ok()
             	.contentType(MediaType.parseMediaType(contentType))
-//            	.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
             	.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + getFileNm(getBrowser(request), originFileName) + "\"")
             	.body(resource);		
 	}
@@ -155,7 +152,7 @@ public class FileController {
 		return excelReader.readFileToList(multipartFile, dto::row);
 	}	
 	
-	private FileDto upload(MultipartFile file) {
+	public FileDto upload(MultipartFile file) {
 		String orgFileName = org.springframework.util.StringUtils.cleanPath(file.getOriginalFilename());
 		String saveName = fileService.store(file);
 		
