@@ -8,6 +8,7 @@
 		WITH RECURSIVE CTE AS ( 
 		    SELECT 
 		           A.MENU_ID, A.MENU_NM, A.UPP_MENU_ID, A.MENU_LVL , A.URL, A.MENU_DESC , A.USE_YN, B.INQR_YN, B.UPD_YN, B.REG_YN, B.DEL_YN
+		          ,A.POPUP_YN
 		    FROM TB_COM_MENU A, TB_COM_MENU_ROLE B
 		    WHERE A.MENU_LVL = 1
 		      AND A.USE_YN = 'Y'
@@ -18,6 +19,7 @@
 		  	UNION 
 		    SELECT 
 		           A.MENU_ID, A.MENU_NM, A.UPP_MENU_ID, A.MENU_LVL , A.URL, A.MENU_DESC , A.USE_YN, B.INQR_YN, B.UPD_YN, B.REG_YN, B.DEL_YN 
+		          ,A.POPUP_YN
 		    FROM TB_COM_MENU_ROLE B, TB_COM_MENU A
 		    INNER JOIN CTE C ON A.UPP_MENU_ID = C.MENU_ID 
 		    WHERE A.USE_YN = 'Y'
@@ -32,6 +34,7 @@
 		     , MENU_LVL     AS lvl
 		     , URL          AS url 
 		     , MENU_DESC    AS menuDesc
+		     , POPUP_YN     AS popupYn
 		     , USE_YN       AS useYn
 		     , INQR_YN      AS inqrYn
 		     , UPD_YN       AS updYn
