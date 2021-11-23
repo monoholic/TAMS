@@ -17,14 +17,15 @@
 	 <th:block layout:fragment="script">
 	    
 	    <script src="/js/jstree/jstree.min.js"></script>
-	 
+	    
+	 	
 		<script>
 		
 		 	var treeData = [];
 		 	
-			$(function() {
+		 	$(function() {
 				
-		          	getCodeList(); 
+				  	getCodeList(); 
 					
 					/* $('#jstree').on("changed.jstree", function (e, data) {
 						  //console.log(data); 
@@ -94,7 +95,7 @@
 			let url = "/common/popup/codeTreeList";
 			let reqType = 'GET';	
 			let data = {
-				"codeGrpId" : 'AS_CLASS'
+				"codeGrpId" : $("#codeGrpId").text()
 			};
 			 
 			$.commRequest(url, reqType, data)
@@ -125,6 +126,8 @@
 
 <div layout:fragment="content">
 
+	<span id="codeGrpId" th:text="${param.codeGrpId}" style="display:none;"></span>
+	 	 
 	<!-- pop_alert -->
 	<div id="pop_wrap" >
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->

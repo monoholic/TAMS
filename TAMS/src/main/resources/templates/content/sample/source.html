@@ -47,9 +47,10 @@
 			//공통코드팝업(트리) 호출 
     	    $("#openCommCodePopup").on("click", function() { 
     	        // 팝업 호출 url
-    	        var url = "/common/popup/commCodePopup";
+    	        var url = "/common/popup/commCodePopup?codeGrpId=AS_CLASS";
     	        var popId = "commCodePopup";
-    	        var args = {};
+    	        var args = {
+    	        };
     	        args.width = 500;
     	        args.height = 450;
     	        args.fullscreen = "no";
