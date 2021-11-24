@@ -109,7 +109,7 @@
 		<!--     &lt;=   ←   <=     -->
    	</select>
 	
-	<insert id="bbsMngInsert" parameterType="kr.co.trito.tams.web.system.bbs.dto.BbsDto">
+	<insert id="bbsMngInsert" parameterType="kr.co.trito.tams.web.system.bbs.dto.BbsDto" useGeneratedKeys="true" keyProperty="bbsId">
 		INSERT INTO TB_COM_BBS ( 
 		       user_id
 		     , bbs_grp_id
@@ -117,7 +117,6 @@
 		     , bbs_ttl
 		     , bbs_cn
 		     , view_cnt
-		     , del_yn
 		     , regr
 			 , reg_dt
 		) VALUES (
@@ -126,8 +125,7 @@
 		     , #{bbsDp}
 		     , #{bbsTtl}
 		     , #{bbsCn}
-		     , 0
-		     , #{delYn}
+		     , #{viewCnt}
 		     , #{regr}
 		     , current_timestamp()
 		)
@@ -136,10 +134,8 @@
 	<update id="bbsMngUpdate" parameterType="kr.co.trito.tams.web.system.bbs.dto.BbsDto">
 		UPDATE TB_COM_BBS         
 		   SET bbs_grp_id = #{bbsGrpId}
-		     , bbs_dp     = #{bbsDp}
 		     , bbs_ttl    = #{bbsTtl}
 		     , bbs_cn     = #{bbsCn}
-		     , del_yn     = #{delYn}
 		     , updr       = #{updr}
 			 , up_dt      = current_timestamp()
 		 WHERE bbs_id = #{bbsId}              
@@ -150,10 +146,30 @@
         WHERE bbs_id = #{bbsId}
 	</delete>
 	
+	<select id="selectBbsInfo" resultType="kr.co.trito.tams.web.system.bbs.dto.BbsDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+  	     SELECT BBS_ID
+		      , USER_ID
+		      , BBS_GRP_ID
+		      , BBS_DP
+		      , BBS_TTL
+		      , BBS_CN
+		      , VIEW_CNT
+		      , DEL_YN
+		      , UPDR
+		      , UP_DT
+		      , REGR
+		      , REG_DT
+		   FROM TB_COM_BBS A
+	      WHERE 1=1
+		    AND BBS_ID = #{params.searchText}
+	</select>
 	<!-- 게시판 관리화면 관련 쿼리문 -->
 	
-	<!-- 게시판 화면 관련 쿼리문-->
 	
+	
+	
+	
+	<!-- 게시판 화면 관련 쿼리문-->
 	<select id="selectBbsList" resultType="kr.co.trito.tams.web.system.bbs.dto.BbsDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
 		SELECT user_id
 		     , bbs_grp_id
@@ -167,8 +183,40 @@
 		     , regr
 		     , reg_dt
 		     , bbs_id
-		FROM TB_COM_BBS
-		WHERE del_yn = 'N'
+		FROM (
+				  SELECT user_id
+					   , bbs_grp_id
+					   , bbs_dp
+					   , bbs_ttl
+					   , bbs_cn
+					   , view_cnt
+					   , del_yn
+					   , updr
+					   , up_dt
+					   , regr
+					   , reg_dt
+					   , bbs_id
+					   , ROW_NUMBER() OVER(ORDER BY bbs_id) AS rn
+		     FROM TB_COM_BBS
+		     WHERE del_yn = 'N'
+		     	<if test="params.searchText != null">
+					AND ( bbs_ttl LIKE CONCAT('%', #{params.searchText}, '%'))
+			 	</if>
+			 	
+			 	<choose>
+			 		<when test="params.searchOption == 'bbs_ttl'" >
+			 			<if test="params.searchText != null">
+			 				AND bbs_ttl LIKE CONCAT('%', #{params.searchText}, '%')
+			 			</if>
+			 		</when>
+			 	</choose>
+			 	
+			 	<if test="params.delYnOption != null">
+					AND del_yn = #{params.delYnOption}
+		 		</if>
+		     ) AS a
+		WHERE rn BETWEEN #{start} AND #{end}
+		ORDER BY bbs_id
 	</select>
 	
 	<select id="selectCountBbs" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 

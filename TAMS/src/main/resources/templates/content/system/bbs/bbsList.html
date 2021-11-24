@@ -155,38 +155,14 @@
     	});
 	    
 	    function showDetailBbs(item) {
-	    	
-	    	/* let url = "";
-			let reqType = 'POST';
-			dataType: 'json';
-			
-			$.commRequest(url, reqType, JSON.stringify(item))
-				.then((res) => {
-					console.log(res);
-					alert("삭제 되었습니다!");
-					$('.btn_srch').click();
-				})
-				.catch((error) => {
-					alert("오류가 발생했습니다");
-					console.log(error);
-				}) */
-				
 	    	var $form = $('<form id="form"></form>'); 
 			$form.attr('action', "/system/bbs/detailBbs"); 
 			$form.attr('method', 'post'); 
 			$form.appendTo('body');
 			
 			var bbsIdStr = $('<input type="hidden" value="'+item.bbsId+'" name="bbsId">');
-			var userIdStr = $('<input type="hidden" value="'+item.userId+'" name="userId">');
-			var bbsGrpIdStr = $('<input type="hidden" value="'+item.bbsGrpId+'" name="bbsGrpId">');
-			var bbsDpStr = $('<input type="hidden" value="'+item.bbsDp+'" name="bbsDp">');
-			var bbsTtlStr = $('<input type="hidden" value="'+item.bbsTtl+'" name="bbsTtl">');
-			var bbsCnStr = $('<input type="hidden" value="'+item.bbsCn+'" name="bbsCn">');
-			var viewCntStr = $('<input type="hidden" value="'+item.viewCnt+'" name="viewCnt">');
-			var delYnStr = $('<input type="hidden" value="'+item.delYn+'" name="delYn">');
-			var regDtStr = $('<input type="hidden" value="'+item.regDt+'" name="regDt">');
 			
-			$form.append(bbsIdStr).append(userIdStr).append(bbsGrpIdStr).append(bbsDpStr).append(bbsTtlStr).append(bbsCnStr).append(delYnStr).append(viewCntStr).append(regDtStr);
+			$form.append(bbsIdStr);
 			
 			$form.submit();
 	    }

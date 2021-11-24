@@ -14,6 +14,8 @@ public interface BbsMapper {
 	
 	public List<BbsDto> selectBbsList(SearchCondition condition);
 	
+	public BbsDto selectBbsInfo(SearchCondition condtion);
+	
 	public int selectCountBbsMng(SearchCondition condition);
 	
 	public int selectCountBbs(SearchCondition condition);

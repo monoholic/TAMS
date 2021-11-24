@@ -170,6 +170,8 @@
         			$.commRequest(url, reqType, item)
         				.then((res) => {
         					console.log(res);
+        					
+        					$("#jsGrid").jsGrid("loadData");
         				})
         				.catch((error) => {
         					console.log(error);

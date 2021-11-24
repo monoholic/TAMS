@@ -16,6 +16,11 @@
 	</th:block>
 	
 	<th:block layout:fragment="script">
+		<!-- include summernote css/js -->
+		<link href="/js/summernote/summernote-lite.css" rel="stylesheet">
+		<script src="/js/summernote/summernote-lite.js"></script>
+		<script src="/js/summernote/lang/summernote-ko-KR.min.js"></script>
+		
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="/js/jsgrid/db.js"></script>
 	    <script src="/js/jsgrid/jsgrid.core.js"></script>
@@ -35,25 +40,93 @@
         var selectedItems = [];
 	 	var insertedItems = [];
 	 	var updatedItems = [];
-	    
-	 	$(document).ready(function(){                                                                    
-		 	let url = '/system/bbs/bbsMng/codeList';                                                      
-		 	let reqType = 'POST';                                                                        
-		 	let data = {                                                                                 
-		 		"email" : ""                                                                             
-		 	};                                                                                           
-		 	$.commRequest(url, reqType, JSON.stringify(data))                                            
-		 		.then((res) => {                                                                         
-		 			$.each(res.data, function(i){                                                        
-		 				var codeGrpList = res.data[i];                                                  
-		 				$("#bbsGrpId").append('<option value="">' + codeGrpList.codeNm+ '</option>');
-		 			})
-		 		})
-		 		.catch((error) => {                                                                      
-		 			alert('메뉴조회 실패!!');                                                                  
-		 		});
-		 });
 	 	
+	 	var attachData = new FormData();
+	 	
+	    var fileItems  = [];
+	    var deleteItems  = [];
+	    
+	    var addCnt = 0;
+	    var rowIdx = 0;
+	    
+	 	var attachGridField = [
+			{ name: "chk"	, type: "checkbox" , width: 30  , title: "선택"
+			 ,itemTemplate: function(value, item) {
+				 return '<input type="checkbox" name="add_file" value="'+item.name+'" gbn="'+item.gbn+'" id="'+item.id+'" >';
+			 }	
+			},
+			{ name: "name"	, type: "text"     , width: 200 , align: "left", title: "파일명"
+			 ,itemTemplate: function(value, item) {
+				 return '<span style="cursor:hand;" onclick="fileDownload(\''+item.gbn+'\',\''+item.realName+'\',\''+item.name+'\')">'+item.name+'</span>';
+			 }
+			},
+			{ name: "size"	, type: "number"   , width: 100 , align: "center" , title: "파일사이즈"
+			 ,itemTemplate: function(value, item) {
+				 return '<span>'+ bytesToSize(item.size) +'</span>';
+			 }
+			}
+		];
+	 	
+	 	function rowCount() {    
+		    var count = fileItems.length; 
+		    var totalSize = 0;
+		    
+		    $.each(fileItems, function(index, el){
+		    	totalSize += el.size;
+		    });
+		    
+		    $("#totalSize").val(bytesToSize(totalSize));
+		}
+	 	
+	 	function getGridBody() {
+			return {
+		        	height: "100",
+		            width: "100%",
+		            data: fileItems, 
+		            autoload: false,
+		            loadonce: false,
+		            updateOnResize: true, 
+		            /* rowClick:function(args) { 
+		            	fileDownload(args.item);
+		            }, */
+		            fields: attachGridField
+		            ,onDataLoaded: rowCount()
+		    	};
+		}
+	 	
+	 	function addFile(gbn) {
+	 		
+	 		alert(gbn);
+	 		
+			var addFiles;
+			var obj;
+			
+			if( gbn != null ) {
+				addFiles = $("#upFile")[0].files;
+			} else {
+				obj = e.target? e.target:e.srcElement;
+				addFiles = obj.files;
+			}
+			
+			//화면 표시용
+			var html = "";
+			
+			$.each(addFiles, function(index, item){
+				//console.log(index,item);
+				var fileval = item.name.replace(/^C:\\fakepath\\/i, '');
+				
+				//첨부파일 추가
+				attachData.append("files", item);
+				addCnt++;
+				
+				//그리드 표시용
+				item.gbn = "NEW";
+				fileItems.push(item); 
+			});
+			
+			reloadFileGrid();
+		}
+		
 	    $(function(){
 	    	
 	        $("#jsGrid").jsGrid({
@@ -128,37 +201,6 @@
 	                    return d.promise();
 	                },
 
-	            updateItem: function(item) { 
-            		// updatedItems.push(item);
-                	//$("#jsGrid").jsGrid("option", "pageIndex", $("#jsGrid").jsGrid("option", "pageIndex"));
-                	let url = "/system/bbs/bbsMng/bbsUpdate";
-                	let reqType = 'GET';
-                	$.commRequest(url, reqType, item)
-                		.then((res) => {
-                			console.log(res);
-                			
-                			alert("수정이 완료되었습니다.");
-                			$("#jsGrid").jsGrid("loadData");
-                		})
-                		.catch((error) => {
-                			console.log(error);
-                		})
-                },
-
-             	insertItem: function(item) { 
-             		//insertedItems.push(item);
-        			let url = "/system/bbs/bbsMng/bbsInsert";
-        			let reqType = 'GET';
-        			
-        			$.commRequest(url, reqType, item)
-        				.then((res) => {
-        					console.log(res);
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        				})
-            	}
-        		    
             },
 	            fields: [
 	            	{  name : "chk"
@@ -273,6 +315,8 @@
     				.then((res) => {
     					console.log(res);
     					alert("삭제 되었습니다!");
+    					
+    					unselectItem();
     					$('.btn_srch').click();
     				})
     				.catch((error) => {
@@ -293,26 +337,40 @@
             $('.save_btn').on('click', function (e) {
                 e.preventDefault();
                 
-                var insert_item = {};    
-                	insert_item.bbsId    = $(".detail_table").find("#bbsId").val();
-		    		insert_item.bbsGrpId = $("#bbsGrpId option:selected").text();
-		    		insert_item.bbsDp    = $(".detail_table").find("#bbsDp").val();
-		    		insert_item.bbsTtl   = $(".detail_table").find("#bbsTtl").val();
-		    		insert_item.bbsCn    = $("textarea[id=bbsCn]").val();
-		    		insert_item.delYn    = $(".detail_table").find("#delYn").val();
-		    		
-		        var action = "";
+                attachData.append("bbsTtl", $("#bbsTtl").val());
+                attachData.append("bbsGrpId", $("#bbsGrpId option:selected").text());
+				var markupStr = $('#summernote').summernote('code');
+				attachData.append("bbsCn", markupStr);
+				attachData.append("bbsId", $("#bbsId").val());
+				
+				var files = attachData.getAll("files");
+				
+				let reqType = 'POST';
 		        
 		    	if(save_mode == "insert") {
-		    		action = "insertItem";
-		    		//insertedItems.push(insert_item); --일괄
+		    		url = "/system/bbs/bbsMng/bbsInsert";
 		    	}else if(save_mode == "update") {
-		    		action = "updateItem";
-		    		//updatedItems.push(insert_item); --일괄
+		    		url = "/system/bbs/bbsMng/bbsUpdate";
 		    	}
-    			$("#jsGrid").jsGrid(action, insert_item);
-	    		
-    			clearDetailForm();
+		    	
+		    	$.commRequestFile(url, reqType, attachData)
+					.then((res) => {
+						console.log('게시판 저장 성공!!');
+						
+            			$("#jsGrid").jsGrid("loadData");
+						setFormClear();
+						unselectItem(selectedItems);
+					})
+					.catch((error) => {
+						console.log('게시판 저장 실패!!');
+					});
+		    	
+    			attachData.delete("files");
+				attachData.delete("delFiles");
+				attachData.delete("bbsId");
+				attachData.delete("bbsTtl");
+				attachData.delete("bbsGrpId");
+				attachData.delete("bbsCn");
 	    		
                 $(this).parents("#detailForm").hide();
                 save_mode = "";
@@ -335,13 +393,13 @@
 	     	// 팝업창 닫기 버튼 처리
             $('.close_btn').on('click', function (e) {
                 e.preventDefault();
-                clearDetailForm();
+                setFormClear();
                 $(this).parents("#detailForm").hide();
                 selectedItems = [];
             });
 	     	
             //drag 활성화
-	     	$("#detailForm").draggable();
+	     	/* $("#detailForm").draggable(); */
             
             //팝업 가운데로 띄우기
             jQuery.fn.center = function () {
@@ -350,23 +408,131 @@
                 this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
                 return this;
             }
-	    	    
+            
+          	//web editor 설정
+			$("#summernote").summernote({
+	            placeholder: '내용을 작성하세요',
+	            height: 150,
+	            maxHeight: 300,
+	            lang:"ko-KR",
+	            toolbar: [
+	    		    ['style', ['style']],
+	    		    ['font', ['bold', 'italic', 'underline', 'clear']],
+	    		    ['fontname', ['fontname']],
+	    		    ['color', ['color']],
+	    		    ['para', ['ul', 'ol', 'paragraph']],
+	    		    ['height', ['height']],
+	    		    ['table', ['table']],
+	    		    ['insert', ['link', 'hr']],
+	    		    // ['insert', ['link', 'picture', 'hr']],
+	    		    // ['view', ['fullscreen', 'codeview']],
+	    		    ['help', ['help']]
+	    		]
+	        });
+
+			$(document).ready(function(){                                                                    
+			 	let url = '/system/bbs/bbsMng/codeList';                                                      
+			 	let reqType = 'POST';                                                                        
+			 	let data = {                                                                                 
+			 		"email" : ""                                                                             
+			 	};                                                                                           
+			 	$.commRequest(url, reqType, JSON.stringify(data))                                            
+			 		.then((res) => {                                                                         
+			 			$.each(res.data, function(i){                                                        
+			 				var codeGrpList = res.data[i];                                                  
+			 				$("#bbsGrpId").append('<option value="">' + codeGrpList.codeNm+ '</option>');
+			 			})
+			 		})
+			 		.catch((error) => {                                                                      
+			 			alert('메뉴조회 실패!!');                                                                  
+			 		});
+			});
+			
+			$("#addFile").on("click", function(){
+				
+				$("#upFile").click();
+			});
+			
+			$("#upFile").on("change", function(){
+				addFile();
+			});
+			
+			//추가파일 삭제
+			$("#delFile").on("click", function(){
+				var chks = $("[name='add_file']");
+				$.each(chks, function(index, item){
+					var tmpDel = [];
+					if( $(item).is(":checked") ) {
+						var del = item.id;
+						
+						if( $(item).attr("gbn") != "NEW" ){ 
+						tmpDel 
+							  =  fileItems.filter( function(n,i) {
+								    return n.id == del;
+							    });	
+						} 
+						fileItems 
+						  =  fileItems.filter( function(n,i) {
+							    return n.id != del;
+						    });
+					}
+					
+					if(tmpDel.length > 0) {
+						$.each(tmpDel, function(index, el){ deleteItems.push(el); }); 
+					}
+					
+				});
+				
+				//추가 파일
+				if( addCnt > 0  ) {
+					attachData.delete("files");
+					attachData.append("files", fileItems);
+				}
+				
+				//기존파일 -삭제건
+				attachData.delete("delFiles");
+				attachData.append("delFiles", JSON.stringify(deleteItems));
+				
+				reloadFileGrid();
+				
+			});
+			
+			var dropZone = $("#dragFile");
+	        //Drag기능 
+	        dropZone.on('dragenter', function(e) {
+	            e.stopPropagation();
+	            e.preventDefault();
+	            // 드롭다운 영역 css
+	            dropZone.css('background-color', '#E3F2FC');
+	        });
+	        dropZone.on('dragleave', function(e) {
+	            e.stopPropagation();
+	            e.preventDefault();
+	            // 드롭다운 영역 css
+	            dropZone.css('background-color', '#FFFFFF');
+	        });
+	        dropZone.on('dragover', function(e) {
+	            e.stopPropagation();
+	            e.preventDefault();
+	            // 드롭다운 영역 css
+	            dropZone.css('background-color', '#E3F2FC');
+	        });
+	        dropZone.on('drop', function(e) {  
+				e.preventDefault();
+				// 드롭다운 영역 css
+	            dropZone.css('background-color', '#FFFFFF');
+				
+				$("#upFile").prop("files", e.originalEvent.dataTransfer.files);
+				addFile("Drop");
+			});
     	});
-	    
-	    function clearDetailForm() {
-	    	$(".detail_table").find("#bbsId").val("");
-	    	$(".detail_table").find("#bbsTtl").val("");
-	    	$("textarea[id=bbsCn]").val("");
-   		    $(".detail_table").find("#bbsDp").val("");
-   		 	$("#bbsGrpId option:eq(0)").prop("selected",true);
-   		 	$("#delYn option:eq(0)").prop("selected",true);
-	    }
 	    
 	    let save_mode = "";
 	    function showDetailForm(item) {
 	    	if(selectedItems.length <= 1){
-		    	
-		    	let title = "게시글 수정";
+	    		$("#fileGrid").jsGrid(getGridBody());
+	    		
+		    	let title = "게시글 등록";
 		    	 var readOnly = false;
 		    	 
 		    	 if( item != null ) {
@@ -377,25 +543,56 @@
 		    		 
 		    		 $(".detail_table").find("#bbsId").val(item.bbsId);
 		    		 $("#bbsGrpId option:contains("+item.bbsGrpId+")").prop("selected", true);
-		    		 $(".detail_table").find("#bbsDp").val(item.bbsDp);
 		    		 $(".detail_table").find("#bbsTtl").val(item.bbsTtl);
-		    		 $("textarea[id=bbsCn]").val(item.bbsCn);
-		    		 $(".detail_table").find("#delYn").val(item.delYn);
+		    		 $('#summernote').summernote('code',item.bbsCn);
+		    		 
+		    		 let url = "/system/bbs/bbsMng/bbsView";
+						let reqType = 'POST';	
+						$.commRequestFile(url, reqType, item.bbsId)
+							.then((res) => {
+								console.log(res);
+								var bbsInfo = res.data.bbsInfo;
+								
+								var bbsFiles = res.data.files;
+								
+								fileItems.length = 0
+								deleteItems.length = 0;
+								attachData.delete("files");
+								attachData.delete("bbsTtl");
+								attachData.delete("bbsCn");
+								
+								$.each(bbsFiles, function(index, el) {
+									var f = {};
+									f.name = el.orgFileNm;
+									f.realName = el.fileNm;
+									f.size = el.fileSize;
+									f.id   = el.fileId;
+									if( el.fileId == "undefined" || el.fileId == null ) f.id = index;
+									
+									fileItems.push(f);
+								});
+								
+								reloadFileGrid();
+							})
+							.catch((error) => {
+								console.log('게시판 조회 실패!!');
+							});
 
 		    	 } else {
 		    		 save_mode = "insert";
 		    	 }
 		    		
 		    	 $(".list_head").find("#head_title").html(title);
-		    	
 		    	 //상세 팝업 호출
 		    	 $('#detailForm').css({
+		    		 
 	                 position: 'absolute',
 	                 top	 : "10px",
 	                 left	 : "10px",
-	                 width	 : "650px",
+	                 width	 : "700px",
 	                 height	 : "700px"
 	             }).center().show();
+		    	 
 	    	}else{
 	    		alert("수정은 1개이상 되지 않습니다.");
 	    	}
@@ -406,6 +603,73 @@
 	    		$("#jsGrid").jsGrid().trigger("loadData");
 	        }
 	    }
+	    
+	    function addFile(gbn) {
+			
+			var addFiles;
+			var obj;
+			
+			if( gbn == "undefined" || gbn != null ) {
+				addFiles = $("#upFile")[0].files;
+			} else {
+				obj = event.target? event.target:evnet.srcElement;
+				addFiles = obj.files;
+			}
+			
+			//화면 표시용
+			var html = "";
+			
+			$.each(addFiles, function(index, item){
+				//console.log(index,item);
+				var fileval = item.name.replace(/^C:\\fakepath\\/i, '');
+				
+				//첨부파일 추가
+				attachData.append("files", item);
+				addCnt++;
+				
+				//그리드 표시용
+				item.gbn = "NEW";
+				fileItems.push(item); 
+			});
+			
+			reloadFileGrid();
+		}
+	    
+	    function reloadFileGrid() {
+			
+			//신규 추가 파일에 id값 세팅(삭제시 필요)
+			var len = fileItems.length;
+			for(var i=0; i<len; i++) {
+				if( fileItems[i].id == null || fileItems[i].id == "undefined" || fileItems[i].id == "" ) {
+					fileItems[i].id = i;
+				}   
+			}
+			
+			$("#fileGrid").jsGrid(getGridBody());
+			$("#fileGrid").jsGrid().trigger("reload");
+		}
+	    
+	  	//폼 리셋 - 저장후...
+		function setFormClear() {
+			
+			$("#bbsGrpId option:eq(0)").prop("selected",true);
+			$("#bbsTtl").val("");
+			$("#bbsCn").val("");
+			$('#summernote').summernote('code', "");
+			$("#bbsId").val("");
+			
+			fileItems.length=0;
+		    deleteItems.length=0;
+		    
+			attachData.delete("files");
+			attachData.delete("delFiles");
+			attachData.delete("bbsId");
+			attachData.delete("bbsTtl");
+			attachData.delete("bbsCn");
+			
+			reloadFileGrid();
+		}
+	    
 	    </script>	
 	</th:block>
 
@@ -474,6 +738,7 @@
 
 		<!-- list -->
 		<div id="jsGrid"></div>
+		
 		<input type="hidden" id="curr_Idx"/>
 		<!-- //list -->
 	
@@ -492,18 +757,23 @@
 				</div>
 				<!-- //list_head -->
 				
-				
-				<!-- detail_table -->
 				<table class="detail_table form_s">
 					<colgroup>
-						<col style="width:10%"/>
-						<col style="width:22%"/>
-						<col style="width:10%"/>
 						<col style="width:15%"/>
-						<col style="width:10%"/>
+						<col style="width:85%"/>
 						<col style="width:15%"/>
+						<col style="width:85%"/>
 					</colgroup>
-					 					
+					
+					<tr>
+						<th style="text-align:center;">게시글 그룹</th>
+						<td>
+							<select id="bbsGrpId" style="width:100%">
+								<option selected value="">검색항목 선택</option>
+							</select>
+						</td>
+					</tr>
+									
 					<tr>
 						<th style="text-align:center;">제목</th>
 						<td colspan="5">
@@ -511,80 +781,40 @@
 							<input id="bbsTtl" style="width:100%" type="text" >
 						</td>
 					</tr>
-					
 					<tr>
-						<th style="text-align:center;">게시글<br>그룹</th>
-						<!-- <td><input id="bbsGrpId" style="width:100%;" type="text"></td> -->
+						<th style="text-align:center;">게시글 내용</th>
 						<td>
-							<select id="bbsGrpId" style="width:100%">
-								<option selected value="">검색항목 선택</option>
-							</select>
+							<textarea id="summernote" class="bbsCn" ></textarea>
 						</td>
-						
-						<th style="text-align:center;">게시글<br>레벨</th>
-						<td><input id="bbsDp" type="number" style="width:97%"></td>
-						
-						<th style="text-align:center;">삭제 구분</th>
-						<td>
-							<select id="delYn" style="width:100%">
-								<option selected value="">삭제 구분</option>
-								<option value="Y">삭제</option>
-								<option value="N">미삭제</option>
-							</select>
-						</td>	
 					</tr>
-					
+					<tr>
+						<th style="text-align:center;">첨부파일</th>
+						<td>
+							<table>
+								<tr>
+									<td width="30%">
+										<input type="file" id="upFile" style="display:none;">
+											<a id="addFile" class="btn_file_srch">파일찾기</a>
+											<a id="delFile" class="btn_list">파일삭제</a><br>
+											<label for="totalSize" >총 파일크기</label> :
+										<input type="text" name="totalSize" id="totalSize" readonly style="width:50px;">
+									</td>
+									<td>
+										<div id="dragFile" class="box_form" style="cursor:pointer;text-align:center;" >파일을 여기에 끌어다 놓으세요.</div>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<div id="fileGrid"></div>
+									</td>
+								</tr>
+							</table>							
+						</td>
+					</tr>
 				</table>
-				<!-- //detail_table -->
-
-				<!-- Edit Area-->
-				<textarea id="bbsCn" style="width: 100%; height: 300px; resize:none;"></textarea>
-				<!-- //Edit Area-->
+				<!-- detail_table -->
 				
-				<!--
-					<h4>이미지 <span class="focus">(10MB까지 첨부 가능합니다)</span></h4>
-					<div class="attach_check">
-						<label><input type="checkbox" value=""></label>
-						<a class="btn_list_sm_rd">파일찾기</a>
-						<a class="btn_list_sm">삭제</a>
-						<div class="file_size">(712.79KB/10MB)</div> 전체용량 적용 가능시
-					</div>
-				
-					<div class="attach_file">
-						<ul>
-							<li>
-								<label><input type="checkbox" value=""><a href="#"><img src="../images/common/ico_f_img.gif">첨부파일이름</a></label>
-								<div class="file_size">1,301.5KB</div>
-							</li>
-						</ul>
-					</div>
-					// 이미지 attach_file-->
-					
-				<!-- 첨부파일 attach_file -->
-				<h4>첨부파일 <span class="focus">(10MB까지 첨부 가능합니다)</span></h4>
-				<div class="attach_check">
-					<label><input type="checkbox" value=""></label>
-						<a class="btn_list_sm_rd">파일찾기</a>
-						<a class="btn_list_sm">아래</a>
-						<a class="btn_list_sm">위</a>
-						<a class="btn_list_sm">삭제</a>
-					<div class="file_size">(712.79KB/10MB)</div><!-- 전체용량 적용 가능시 -->
-				</div>
-				<div class="attach_file">
-					<ul>
-						<li><label><input type="checkbox" value=""><a href="#"><img src="../images/common/ico_f_ppt.gif">첨부파일이름.ppt</a></label>
-							<div class="file_size">1,301.5KB</div>
-						</li>
-						<li><label><input type="checkbox" value=""><a href="#"><img src="../images/common/ico_f_xls.gif">첨부파일이름.xls</a></label>
-							<div class="file_size">901.5KB</div>
-						</li>
-						<li><label><input type="checkbox" value=""><a href="#"><img src="../images/common/ico_f_doc.gif">첨부파일이름.doc</a></label>
-							<div class="file_size">5301.15KB</div>
-						</li>
-					</ul>
-				</div>
 			</div>
 		</div>
-		
 	</div>
 </html>

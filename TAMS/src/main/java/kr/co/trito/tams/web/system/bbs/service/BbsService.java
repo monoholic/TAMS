@@ -26,6 +26,10 @@ public class BbsService {
 		return mapper.selectBbsList(condition);
 	}
 	
+	public BbsDto selectbbsInfo(SearchCondition condition){
+		return mapper.selectBbsInfo(condition);
+	}
+	
 	public int selectCountBbsMng(SearchCondition condition) {
 		return mapper.selectCountBbsMng(condition);
 	}

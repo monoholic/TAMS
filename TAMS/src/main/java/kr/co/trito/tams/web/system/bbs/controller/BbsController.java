@@ -1,14 +1,20 @@
 package kr.co.trito.tams.web.system.bbs.controller;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,25 +22,40 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import kr.co.trito.tams.comm.util.file.FileController;
+import kr.co.trito.tams.comm.util.file.FileDto;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.common.service.CommonService;
 import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import kr.co.trito.tams.web.standard.codegrp.dto.CodegrpDto;
 import kr.co.trito.tams.web.system.bbs.dto.BbsDto;
 import kr.co.trito.tams.web.system.bbs.service.BbsService;
+import kr.co.trito.tams.web.user.dto.UserInfo;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@RequiredArgsConstructor
 @Controller
+@Slf4j
 @RequestMapping("/system/bbs")
 public class BbsController {
 	@Autowired
 	ResponseService responseService;
+	
+	@Autowired
+	FileController fileController;
+	
+	@Autowired
+	private CommonService commonService;
 	
 	@Autowired
 	BbsService bbsService;
@@ -75,21 +96,21 @@ public class BbsController {
 		
 		ModelAndView view = new ModelAndView();
 
-		view.addObject("bbsId", request.getParameter("bbsId"));
-		view.addObject("userId", request.getParameter("userId"));
-		view.addObject("bbsGrpId", request.getParameter("bbsGrpId"));
-		view.addObject("bbsDp", request.getParameter("bbsDp"));
-		view.addObject("bbsTtl", request.getParameter("bbsTtl"));
-		view.addObject("bbsCn", request.getParameter("bbsCn"));
-		view.addObject("viewCnt", request.getParameter("viewCnt"));
-		view.addObject("delYn", request.getParameter("delYn"));
-		view.addObject("regDt", request.getParameter("regDt"));
-		
 		BbsDto dto = new BbsDto();
-		
 		String bbsId = request.getParameter("bbsId");
 		dto.setBbsId(bbsId);
 		bbsService.updateViewCnt(dto);
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("searchText", bbsId);
+		
+		SearchCondition condition = new SearchCondition("0","0", params);
+		dto = bbsService.selectbbsInfo(condition);
+		
+		List<FileDto> files = commonService.selectFileList(condition);
+		
+		view.addObject("files", files);
+		view.addObject("bbsDto", dto);
 		
 		view.setViewName("/content/system/bbs/detailBbs");
 		return view;
@@ -149,65 +170,127 @@ public class BbsController {
 	}
 	
 	/* 게시판 관리 화면 : 등록 */  
-	@GetMapping(value="/bbsMng/bbsInsert")
+	@PostMapping(value="/bbsMng/bbsInsert")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String bbsMngInsert(
-			@ApiParam(value = "게시글 그룹", required = true) @RequestParam(value = "bbsGrpId", required = true) String bbsGrpId,
-			@ApiParam(value = "게시글 레벨", required = true) @RequestParam(value = "bbsDp", required = true) String bbsDp,
+			@ApiParam(value = "파일정보", required = true)  MultipartFile[] files,
 			@ApiParam(value = "게시글 제목", required = true) @RequestParam(value = "bbsTtl", required = true) String bbsTtl,
+			@ApiParam(value = "게시글 그룹", required = true) @RequestParam(value = "bbsGrpId", required = true) String bbsGrpId,
 			@ApiParam(value = "게시글 내용", required = true) @RequestParam(value = "bbsCn", required = true) String bbsCn,
-			@ApiParam(value = "삭제 구분", required = true) @RequestParam(value = "delYn", required = true) String delYn
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
 			) { 
 		
 		String code = "202";
 		
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
+		
 		BbsDto dto = new BbsDto();
 		
-		dto.setUserId("SuperMan");  //임시
-		dto.setBbsGrpId(bbsGrpId);
-		dto.setBbsDp(bbsDp);
 		dto.setBbsTtl(bbsTtl);
 		dto.setBbsCn(bbsCn);
-		dto.setDelYn(delYn);
+		dto.setBbsDp("1");
+		dto.setBbsGrpId(bbsGrpId);
+		dto.setUserId(userId);
 		dto.setViewCnt("0");
-		dto.setRegr("system"); 		//임시
+		dto.setRegr(userId);
 		 
 		int cnt = bbsService.bbsMngInsert(dto);  
 		
-		if( cnt > 0 )
-			code = "200";
+		List<FileDto> list = Arrays.asList(files)
+				.stream()
+				.map(file -> fileController.upload(file))
+				.collect(Collectors.toList());
+		
+		for(FileDto f : list) {
+	    	  
+	    	  f.setRfncKey1(String.valueOf(dto.getBbsId()));
+	    	  f.setUseYn("Y");
+	    	  
+	    	  log.error(f.toString());
+	    	  
+	    	  commonService.saveFiles(f);
+	      }
+		
+		if( cnt > 0 ) code = "200";
 		
 		return code;
 	}
 	
 	/* 공통코드 관리 화면 : 수정 */
-	@GetMapping(value="/bbsMng/bbsUpdate")
+	@PostMapping(value="/bbsMng/bbsUpdate")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr Update", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String bbsMngUpdate( 
+	public String bbsMngUpdate(
+			@ApiParam(value = "파일정보", required = false) @RequestParam(value="files", required=false)MultipartFile[] files,
+			@ApiParam(value = "삭제파일정보", required = false) @RequestParam(value="delFiles", required=false)String delFiles,
 			@ApiParam(value = "게시판 ID", required = true) @RequestParam(value = "bbsId", required = true) String bbsId,
-			@ApiParam(value = "게시판 그룹", required = true) @RequestParam(value = "bbsGrpId", required = true) String bbsGrpId,
-			@ApiParam(value = "게시판 레벨", required = true) @RequestParam(value = "bbsDp", required = true) String bbsDp,
 			@ApiParam(value = "게시판 제목", required = true) @RequestParam(value = "bbsTtl", required = true) String bbsTtl,
+			@ApiParam(value = "게시판 그룹", required = true) @RequestParam(value = "bbsGrpId", required = true) String bbsGrpId,
 			@ApiParam(value = "게시판 내용", required = true) @RequestParam(value = "bbsCn", required = true) String bbsCn,
-			@ApiParam(value = "삭제 구분", required = true) @RequestParam(value = "delYn", required = true) String delYn
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
 			) { 
 		String code = "202";
 		
-		BbsDto dto = new BbsDto();
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId(); 
 		
+		BbsDto dto = new BbsDto();
 		dto.setBbsId(bbsId);
-		dto.setBbsGrpId(bbsGrpId);
-		dto.setBbsDp(bbsDp);
 		dto.setBbsTtl(bbsTtl);
 		dto.setBbsCn(bbsCn);
-		dto.setDelYn(delYn);
-		dto.setUpdr("system"); 		//임시
+		dto.setBbsGrpId(bbsGrpId);
+		dto.setUpdr(userId);
+		
+		if( files != null && files.length > 0 ) {
+		      
+		      //첨부파일 업로드
+		      List<FileDto> list = Arrays.asList(files)
+						.stream()
+						.map(file -> fileController.upload(file))
+						.collect(Collectors.toList());
+		      
+		      //첨부파일 정보 저장
+		      for( FileDto f : list) {
+		    	  
+		    	  f.setRfncKey1(String.valueOf(bbsId));
+		    	  f.setUseYn("Y");
+		    	  
+		    	  log.error(f.toString());
+		    	  commonService.saveFiles(f);
+		      }
+		      
+	      }
+		
+		  //파일 삭제처리 - use_yn = 'N'
+		if( delFiles != null && !"".equals(delFiles) ) {
+		  
+		    List<LinkedHashMap>  array = null;
+		    try {
+		  	  JSONParser parser = new JSONParser(delFiles);
+		  	  array = (List<LinkedHashMap> )parser.parse();
+		    
+		      for(int i=0;i<array.size();i++){
+		    	  LinkedHashMap map = array.get(i);
+		    	  log.error(map.get("id").toString());
+		    	  
+		    	  FileDto dFile = new FileDto();
+		    	  dFile.setFileId(Long.parseLong(map.get("id").toString()));
+		    	  
+  	  	  	      commonService.deleteFiles(dFile);
+	
+		      }
+
+		    } catch (Exception e) {
+		  	  e.printStackTrace();
+		    }
+
+	      }  
 			
 		int cnt = bbsService.bbsMngUpdate(dto);
 		if( cnt > 0) code = "200";
@@ -286,5 +369,26 @@ public class BbsController {
 	    
 		List<BbsDto> list = bbsService.selectBbsList(condition);
 		return responseService.success(condition, list);
+	}
+	
+	/** 게시판 조회 */
+	@PostMapping("/bbsMng/bbsView")
+	public ResponseEntity<? extends Response> bbsView(@ApiParam(value = "검색 조건(게시판ID)", required = true) @RequestBody(required = true) String searchText) {
+		
+		Map<String, Object> params = new HashMap<>();
+		Map<String, Object> result = new HashMap<>();
+		
+		if (!StringUtils.isEmpty(searchText))
+			params.put("searchText", searchText);
+		
+		SearchCondition condition = new SearchCondition("0", "0", params);
+		BbsDto bbsInfo = bbsService.selectbbsInfo(condition);
+		
+		List<FileDto> files = commonService.selectFileList(condition);
+		
+		result.put("bbsInfo", bbsInfo);
+		result.put("files", files);
+		
+		return responseService.success(result);
 	}
 }
