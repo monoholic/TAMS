@@ -138,10 +138,6 @@ public class MenuRoleController {
 			  itemCnt++;
 		  }
 		  
-		  log.info("그룹아이디" + items.get(0).getGroupId() + "/" + grpId);
-		  
-		  log.info("테스트시작" + items.size());
-		  
 		  if( cnt > 0) code = "200";
 	      
 	      return code;

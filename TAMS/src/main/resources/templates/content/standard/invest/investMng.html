@@ -52,7 +52,7 @@
                 editing: false,
                 inserting: true,
                 sorting: true,
-                paging: false,
+                paging: true,
                 sorter: "number",
                 pageIndex:pageIdx,
                 pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
@@ -69,6 +69,24 @@
                 loadonce: true,
                 updateOnResize: true, 
 	            pagerContainerClass: "paginate",
+	            rowClick: function(args) {
+	            	var target = args.event.target;
+	            	
+					if(target instanceof HTMLTableCellElement) {
+						//detail form
+						console.log(args.item);
+						showDetailForm(args.item);
+					} else {
+						
+					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
+					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
+					                .on("change", function () {
+						  	 $(this).is(":checked") ? selectItem($(this).parent().next().text()) : unselectItem($(this).parent().next().text());
+						});
+						
+					}
+
+	            }, 
 	            deleteConfirm: function(item) {
 	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
 	            },
@@ -78,12 +96,15 @@
 	                    
 	                    currentPage = filter.pageIndex; 
                
-	                    let url = "/system/menurole/menuRoleMng/menuRoleMngList";
+	                    let url = "/standard/invest/investMng/investMngList";
 						let reqType = 'GET';	
 						let data = {
             				"currentPage": filter.pageIndex,
             				"numOfRows"  : numOfRows,
             				"searchType" : $("#searchType").val(),
+            				"searchText"  : $("#searchTxt").val(),
+            				"searchType2": $("#searchType2").val(),
+            				"searchText2" : $("#searchTxt2").val(),
             				"sortField"  : filter.sortField,
             				"sortOrder"  : filter.sortOrder
             			}
@@ -99,11 +120,11 @@
 	                    
 	                    return d.promise();
 	            },
-             	insertItem: function(items) {
+             	insertItem: function(data) {
              		
-        		    let url = "/system/menurole/menuRoleMng/menuRoleSave";
+        		    let url = "/standard/invest/investMng/investMngSave";
         		    let reqType = 'POST';
-        		    $.commRequest(url, reqType, JSON.stringify(items))
+        		    $.commRequest(url, reqType, JSON.stringify(data))
         		    	.then((res) => {
         		    		console.log(res);
         		    		$("#jsGrid").jsGrid().trigger("loadData");
@@ -147,91 +168,260 @@
 		    				   });
 					 	 } ,
 	                	}
-	            	,{ name: "menuId", type: "text", align: "left", title: "투자번호", editing: false, visible: false }
-	                ,{ name: "menuNm", type: "text", width: 100 , align: "left"  , title: "투자명", editing: false }
-	                ,{ name: "menuNm", type: "text", width: 100 , align: "left"  , title: "PO번호", editing: false }
-	                ,{ name: "menuNm", type: "text", width: 100 , align: "left"  , title: "품명", editing: false }
-	                ,{ name: "menuNm", type: "text", width: 100 , align: "left"  , title: "수량", editing: false }
-	                ,{ name: "menuNm", type: "text", width: 100 , align: "left"  , title: "투자일자", editing: false }
-	                ,{ name: "menuNm", type: "text", width: 100 , align: "left"  , title: "사업부", editing: false }
-	                ,{ name: "menuNm", type: "text", width: 100 , align: "left"  , title: "부서", editing: false }
-	                ,{ name: "menuNm", type: "text", width: 100 , align: "left"  , title: "담당자", editing: false }
-	                ,{ name: "menuNm", type: "text", width: 100 , align: "left"  , title: "자산등록", editing: false }
-	                ,{ name: "menuNm", type: "text", width: 100 , align: "left"  , title: "등록일자", editing: false }
+	            	,{ name: "invNo", type: "text", width: 70 , align: "left"  , title: "투자번호", editing: false }
+	                ,{ name: "invTtl", type: "text", width: 100 , align: "left"  , title: "투자명", editing: false }
+	                ,{ name: "invQty", type: "text", align: "left", title: "투자수량", editing: false, visible: false }
+	                ,{ name: "invAmt", type: "text", align: "left", title: "투자금액", editing: false, visible: false }
+	                ,{ name: "actgYear", type: "text", width: 70 , align: "left"  , title: "회계연도", editing: false }
+	                ,{ name: "poNo", type: "text", width: 100 , align: "left"  , title: "PO번호", editing: false }
+	                ,{ name: "mfgdNm", type: "text", width: 100 , align: "left"  , title: "품명", editing: false }
+	                ,{ name: "qty", type: "text", width: 50 , align: "left"  , title: "수량", editing: false }
+	                ,{ name: "invDt", type: "text", width: 100 , align: "left"  , title: "투자일자", editing: false }
+	                ,{ name: "deptNm", type: "text", width: 100 , align: "left"  , title: "부서", editing: false }
+	                ,{ name: "userNm", type: "text", width: 100 , align: "left"  , title: "담당자", editing: false }
+	                ,{ name: "poAsetYn", type: "text", width: 100 , align: "left"  , title: "자산등록", editing: false }
+	                ,{ name: "regDt", type: "text", width: 100 , align: "left"  , title: "등록일자", editing: false }
 	            ]
 	        });
 	        
 		    var selectItem = function(item) {
+		    	
+		    	if(!selectedItems.includes(item)){
+			    	selectedItems.push(item);
+		    	}
 		    	
 			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
 	             $("#selectAllCheckbox").prop("checked", true);
 	            } else {
 	                $("#selectAllCheckbox").prop("checked", false);
 	            }
-		        var find_idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.menuNm == item.menuNm);
-		        
-		        //change()를 붙여줘야 event가 실행됨.
-   		        $(".menuCheckbox" + find_idx).prop("checked", true).change();
-		        $(".inqrCheckbox" + find_idx).prop("checked", true).change();
-		        $(".regCheckbox" + find_idx).prop("checked", true).change();
-		        $(".updCheckbox" + find_idx).prop("checked", true).change();
-		        $(".delCheckbox" + find_idx).prop("checked", true).change();
 			};
 		     
 		    var unselectItem = function(item) {
+		    	
+			    selectedItems = $.grep(selectedItems, function(i) {
+			    return i !== item;
+			    });
 			    
+			    if(selectedItems.length == 0) {
+			    	$('#selectAllCheckbox').attr('checked', false);
+			    }
 			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
 	             	$("#selectAllCheckbox").prop("checked", true);
+		        } else {
+		            $("#selectAllCheckbox").prop("checked", false);
 		        }
-		        var find_idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.menuNm == item.menuNm);
-		       
-		        //change()를 붙여줘야 event가 실행됨.
-   		        $(".menuCheckbox" + find_idx).prop("checked", false).change();
-		        $(".inqrCheckbox" + find_idx).prop("checked", false).change();
-		        $(".regCheckbox" + find_idx).prop("checked", false).change();
-		        $(".updCheckbox" + find_idx).prop("checked", false).change();
-		        $(".delCheckbox" + find_idx).prop("checked", false).change();
-			  
 		    };
-		    
-    	    // 검색 버튼
-	        $(".btn_srch").on("click",function (e){
-	        	
-	           if($("#searchType").val() != 'none'){
-	    	   	   $("#jsGrid").jsGrid().trigger("loadData");
-	           }else{
-	        	   alert("검색항목을 선택해주세요.");
-	           }
+	        
+	        $("#pager").on("change", function() {
+	            var page = parseInt($(this).val(), 10);
+	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
+	        });
+
+    	    $(".btn_add").click(function() {
+    	    	//$("#jsGrid").jsGrid("option", "inserting", "true");
+    	    	showDetailForm();
+    	    });
+	        
+    	    $(".btn_del").click(function() {
+    	    	
+    	    	var arr_item = [];
+    	    	var items = [];
+    	    	
+    	    	//$("#jsGrid").jsGrid("deleteItem",delete_item);
+    	    	$.each(selectedItems, function(index,item){
+    	    		items.push(item);
+    	    	});
+    	    	
+    	    	//별도 호출
+    	    	let url = "/system/menu/menuMng/menuDelete";
+    			let reqType = 'GET';
+    			dataType: 'json';
+    			let data={
+    				"items": items.join(",")
+    			}
+    			$.commRequest(url, reqType, data)
+    				.then((res) => {
+    					console.log(res);
+    					alert("삭제 되었습니다!");
+    					$('.btn_srch').click();
+    				})
+    				.catch((error) => {
+    					alert("오류가 발생했습니다");
+    					console.log(error);
+    				})
+    	    	
+    	    	
+    	    });
+    	    
+	        $(".btn_srch").on("click",function (){
+	    	   $("#jsGrid").jsGrid().trigger("loadData");
 	        });
 	        
-	     	// 저장 버튼
-            $('.btn_save').on('click', function (e) {
+	     	// 팝업창 저장 버튼 처리
+            $('.save_btn').on('click', function (e) {
                 e.preventDefault();
                 
-                if($("#searchType").val() != 'none'){
-                	
-					var insert_item = $("#jsGrid").jsGrid("option", "data");
-					
-					if(insert_item[0].groupId == "none" || insert_item[0].groupId == null){
-						
-						insert_item[0].groupId = $("#searchType").val();
-						
-					}
-						
-	    			$("#jsGrid").jsGrid("insertItem", insert_item);
-	    			
-                }else{
-                	alert("권한그룹을 선택해주세요.");
-                }
-
+                var insert_item = [];
+                var sub_item = {};
+	                sub_item.invNo 		=   $(".detail_table").find("#invNo").val();
+		    		sub_item.invTtl     =   $(".detail_table").find("#invTtl").val();
+		    		sub_item.invQty     =   $(".detail_table").find("#invQty").val();
+		    		sub_item.invAmt     =   $(".detail_table").find("#invAmt").val();
+		    		sub_item.actgYear 	=   $(".detail_table").find("#actgYear").val();
+		    		sub_item.poNo		=   $(".detail_table").find("#poNo").val();
+		    		sub_item.mfgdNm	 	=   $(".detail_table").find("#codeNm").val();
+		    		sub_item.qty	 	=   $(".detail_table").find("#qty").val();
+		    		sub_item.invDt	 	=   $(".detail_table").find("#invDt").val().replaceAll("-", "");
+		    		sub_item.deptNm	 	=   $(".detail_table").find("#deptNm").val();
+		    		sub_item.invRegr	=   $(".detail_table").find("#invRegr").val();
+		    		sub_item.poAsetYn	=   $(".detail_table").find("#poAsetYn").val();
+		    		sub_item.regDt	 	=   $(".detail_table").find("#regDt").val();
+		    	
+		    		insert_item.push(sub_item);
+		    		
+		        var action = "";
+		    	if(save_mode == "insert") {
+		    		action = "insertItem";
+		    		//insertedItems.push(insert_item); --일괄
+		    	}else if(save_mode == "update") {
+		    		action = "updateItem";
+		    		//updatedItems.push(insert_item); --일괄
+		    	}
+    			
+		    	console.log(insert_item);
+    			$("#jsGrid").jsGrid(action, insert_item);
+                
+	    		clearDetailForm();
+                $(this).parents("#detailForm").hide();
+                save_mode = "";
             });
 
-          	// 리셋 버튼
+          	//수정 버튼
+    	    $(".btn_update").click(function() {
+    	    	var items = $("#jsGrid").jsGrid("option", "data");
+    	    	var item = items.filter(arr => arr.menuId == selectedItems[0]);
+    	    	showDetailForm(item[0]);
+    	    });
+          	
+          	//리셋 버튼
     	    $(".btn_reset").click(function() {
     	    	$("#searchType option:eq(0)").prop("selected", true);
+    	    	$("#searchTxt").val("");
+    	    	$("#searchType2 option:eq(0)").prop("selected", true);
+    	    	$("#searchTxt2").val("");
     	    });
 	     	
+	     	// 팝업창 닫기 버튼 처리
+            $('.close_btn').on('click', function (e) {
+                e.preventDefault();
+                clearDetailForm();
+                $(this).parents("#detailForm").hide();
+                selectedItems = [];
+            });
+	     	
+            //drag 활성화
+	     	$("#detailForm").draggable();
+            
+            //팝업 가운데로 띄우기
+            jQuery.fn.center = function () {
+                this.css("position","absolute");
+                this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
+                this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
+                return this;
+            }
+	    	
+			// 사용자 팝업 호출 
+    	    $("#openUserPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/userPopup";
+    	        var popId = "userPopup";
+    	        var args = {};
+    	        args.width = 650;
+    	        args.height = 416;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        openPopup(popId, url, args);
+    	    });
+            
+			//공통코드팝업(트리) 호출 
+    	    $("#openCommCodePopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/commCodePopup?codeGrpId=AS_CLASS";
+    	        var popId = "commCodePopup";
+    	        var args = {
+    	        };
+    	        args.width = 500;
+    	        args.height = 450;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        openPopup(popId, url, args);
+    	    });
+			
     	});
+	    
+	    function clearDetailForm() {
+	    	 $(".detail_table").find("#invNo").val("");
+	   		 $(".detail_table").find("#invTtl").val("");
+			 $(".detail_table").find("#invQty").val("");
+			 $(".detail_table").find("#invAmt").val("");
+			 $(".detail_table").find("#actgYear").val("");
+			 $(".detail_table").find("#poNo").val("");
+			 $(".detail_table").find("#codeNm").val("");
+			 $(".detail_table").find("#qty").val("");
+			 $(".detail_table").find("#invDt").val("");
+			 $(".detail_table").find("#deptNm").val("");
+	 		 $(".detail_table").find("#userNm").val("");
+	 		 $(".detail_table").find("#userId").val("");
+	 		 $(".detail_table").find("#poAsetYn").val("");
+	 		 $(".detail_table").find("#regDt").val("");
+	    }
+		
+	    let save_mode = "";
+	    function showDetailForm(item) {
+		    	
+		    	let title = "메뉴 등록";
+		    	 var readOnly = false;
+		    	 
+		    	 if( item != null ) {
+		    		 title = "메뉴 수정";
+		    		 save_mode = "update";
+		    		 
+		    		 readOnly = false;
+		    		 $(".detail_table").find("#invNo").val(item.invNo);
+		    		 $(".detail_table").find("#invNo").attr("readOnly", true);
+		    		 
+		    		 $(".detail_table").find("#invTtl").val(item.invTtl);
+		    		 $(".detail_table").find("#invQty").val(item.invQty);
+		    		 $(".detail_table").find("#invAmt").val(item.invAmt);
+		    		 $(".detail_table").find("#actgYear").val(item.actgYear);
+		    		 $(".detail_table").find("#poNo").val(item.poNo);
+		    		 $(".detail_table").find("#codeNm").val(item.mfgdNm);
+		    		 $(".detail_table").find("#qty").val(item.qty);
+		    		 $(".detail_table").find("#invDt").val(item.invDt);
+		    		 $(".detail_table").find("#deptNm").val(item.deptNm);
+		     		 $(".detail_table").find("#userNm").val(item.userNm);
+		     		 $(".detail_table").find("#poAsetYn").val(item.poAsetYn);
+		     		 $(".detail_table").find("#regDt").val(item.regDt);
+		    	 } else {
+		    		 save_mode = "insert";
+		    		 $(".detail_table").find("#invNo").attr("readOnly", false);
+		    		 
+		    	 }
+		    		 
+		    	 $(".list_head").find("#head_title").html(title);
+		    	
+		    	 //상세 팝업 호출
+		    	 $('#detailForm').css({
+	                 position: 'absolute',
+	                 top	 : "10px",
+	                 left	 : "10px",
+	                 width	 : "450px",
+	                 height	 : "450px"
+	             }).center().show();
+	    }
 	    
 	    
 	    function checkBoxClass(className, colNm, value, item){
@@ -252,7 +442,56 @@
 		       	   alert("검색항목을 선택해주세요.");
 		        }
 	        }
-	    }   
+	    }
+	    
+		//팝업호출 공통함수
+		function openPopup(popId, url, args) {
+			
+	        var options;
+			
+			var width 	= args.width;
+	        var height 	= args.height;
+	        var fullscreen = args.fullscreen;
+	        if( fullscreen == null || fullscreen == "" ) fullscreen = "no";
+	        var resizeable = args.resizeable;
+	        if( resizeable == null || resizeable == "" ) full = "no";
+	        
+	        var sTop  = Math.max(0, (($(window).height() - height) / 2) + $(window).scrollTop()) + "px";
+	        var sLeft = Math.max(0, (($(window).width() - width) / 2) + $(window).scrollLeft()) + "px";
+	        
+	        options = "";
+	        options += "position=absolute";
+	        options += ",top="+sTop+", left="+sLeft+", height="+height+"px, width="+width+"px";
+	        options += ",fullscreen="+fullscreen+", resizeable="+resizeable;
+	        
+	        var child;
+	        child = window.open(url, popId, options);
+	        
+		}
+		
+		//팝업에서 받은 결과 처리
+		function setResult(obj) {
+			$("#userId").val(obj.userId);
+			$("#userNm").val(obj.userNm);
+		}
+		
+		//팝업에서 받은 결과 처리
+		function setResult2(obj) {
+			$("#codeCd").val(obj.codeCd);
+			$("#codeNm").val(obj.codeNm);
+		}
+		
+		//선택 버튼클릭시 
+		function selectItem(obj) {
+			console.log(obj);
+			opener.setResult(obj); //부모창에 구현
+			window.close();
+		}
+	
+		function returnResult(item) {
+			opener.setResult(item);
+			window.close();
+		}
 	    </script>	
 	</th:block>
 
@@ -277,12 +516,24 @@
 					<td>
 						<select id="searchType" onkeyup="enterkey()">
 							<option value="none">검색항목 선택</option>
+							<option value="inv_no">투자번호</option>
+							<option value="inv_ttl">투자명</option>
+							<option value="po_no">PO번호</option>
+							<option value="mfgd_nm">품명</option>
+							<option value="dept_nm">부서</option>
+							<option value="inv_regr">담당자</option>
 						</select>
 					</td>
 					<td><input id="searchTxt" type="text" placeholder="검색어를 입력하세요."></input></td>
 					<td>
 						<select id="searchType2" onkeyup="enterkey()">
 							<option value="none">검색항목 선택</option>
+							<option value="inv_no">투자번호</option>
+							<option value="inv_ttl">투자명</option>
+							<option value="po_no">PO번호</option>
+							<option value="mfgd_nm">품명</option>
+							<option value="dept_nm">부서</option>
+							<option value="inv_regr">담당자</option>
 						</select>
 					</td>
 					<td><input id="searchTxt2" type="text" placeholder="검색어를 입력하세요."></input></td>
@@ -299,7 +550,7 @@
 				<!-- list_button -->
 				<div class="button">
 					<a class="btn_save">일괄 업로드</a>
-					<a class="btn_save">등록</a>
+					<a class="btn_add">등록</a>
 					<a class="btn_save">삭제</a>
 				</div>
 				<!-- list_button -->
@@ -310,7 +561,78 @@
 		<!-- list -->
 		<div id="jsGrid"></div>
 		<!-- //list -->
-	
+		
+		<!-- detail popup -->
+		<div id="detailForm" class="list_head" style="display:none;">
+		  <div id="container">
+		        <!-- list_head -->
+				<div class="list_head">
+					<h6><span id="head_title" ></span></h6>
+					<!-- list_button -->
+						<div class="button">
+							<a class="btn_list save_btn">저장</a>
+							<a class="btn_list close_btn">삭제</a>
+							<a class="btn_list close_btn">닫기</a>
+						</div>
+					<!-- list_button -->
+				</div>
+				<!-- //list_head -->
+				<!-- detail_table -->
+					<table class="detail_table">
+						<tr>
+							<th>투자번호</th>
+							<td><input type="text" id="invNo"/></td>
+						</tr>
+						<tr>
+							<th>투자명</th>
+							<td><input type="text" id="invTtl" /></td>
+						</tr>
+						<tr>
+							<th>투자수량</th>
+							<td><input type="text" id="invQty" /></td>
+						</tr>
+						<tr>
+							<th>투자금액</th>
+							<td><input type="text" id="invAmt" /></td>
+						</tr>
+						<tr>
+							<th>회계년도</th>
+							<td><input type="text" id="actgYear" /></td>
+						</tr>
+						<tr>
+							<th>PO번호</th>
+							<td><input type="text" id="poNo" /></td>
+						</tr>
+						<tr>
+							<th>품명</th>
+							<td>
+							<div class="form_wrap_ico_invest">
+									<input type="text" id="codeNm" name="codeNm"/>&nbsp;&nbsp;<input type="hidden" id="codeCd" name="codeCd"/>&nbsp;
+									<a href="#" id="openCommCodePopup" ><img title="품명검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+							</div>
+							</td>
+						</tr>
+						<tr>
+							<th>PO수량</th>
+							<td><input type="text" id="qty" /></td>
+						</tr>
+						<tr>
+							<th>투자일자</th>
+							<td><input type="date" id="invDt" /></td>
+						</tr>
+						<tr>
+							<th>담당자</th>
+							<td>
+							<div class="form_wrap_ico_invest">
+									<input type="text" id="userNm" name="userNm"/>&nbsp;&nbsp;<input type="hidden" id="userId" name="userId"/>&nbsp;
+									<a href="#" id="openUserPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+							</div>
+							</td>
+						</tr>
+					</table>
+				<!-- //detail_table -->
+	     	</div>
+     	</div>
 				 
 </div>
 </html>

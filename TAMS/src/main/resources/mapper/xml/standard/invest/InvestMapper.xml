@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.trito.tams.web.standard.invest.mapper.InvestMapper">
+	
+	<select id="selectCountInvest" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		SELECT COUNT(*)
+		FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
+		WHERE 1 = 1
+		AND A.inv_no = B.inv_no
+		AND D.use_yn = 'Y'
+		AND D.dept_cd = E.dept_cd
+		<if test="params.searchType != 'none'">
+		AND ${params.searchType} LIKE CONCAT('%', #{params.searchText}, '%')
+		</if>
+		<if test="params.searchType2 != 'none'">
+		AND ${params.searchType2} LIKE CONCAT('%', #{params.searchText2}, '%')
+		</if>	
+	</select>
+	
+	<select id="selectInvestMngList" resultType="kr.co.trito.tams.web.standard.invest.dto.InvestDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		SELECT a.inv_no 	as invNo
+			 , a.inv_ttl 	as invTtl
+			 , IFNULL(a.inv_qty, 0) as invQty
+	 		 , IFNULL(a.inv_amt, 0) as invAmt
+			 , a.actg_year  as actgYear
+			 , a.po_no 		as poNo
+			 , a.mfgd_nm 	as mfgdNm
+			 , a.qty 		as qty
+			 , a.inv_dt 	as invDt
+			 , a.dept_nm 	as deptNm
+			 , a.inv_reqr 	as invRegr
+			 , a.user_nm 	as userNm
+			 , (SELECT CASE 
+			   	   	   WHEN COUNT(*) >= 1 THEN 'Y'
+			   	   	   ELSE 'N' END
+			 	FROM TB_PO_ASET
+			 	WHERE po_no = a.po_no
+			   ) 			as poAsetYn
+			 , a.reg_dt 	as regDt
+		FROM (
+				SELECT ROW_NUMBER() OVER(ORDER BY CAST(a.inv_no AS int)) as rn
+				  	 , a.inv_no
+					 , a.inv_ttl
+					 , a.inv_qty
+					 , a.inv_amt
+					 , a.actg_year
+					 , b.po_no
+					 , b.mfgd_nm
+					 , b.qty
+					 , a.inv_dt
+					 , e.dept_nm
+					 , a.inv_reqr
+			 		 , d.user_nm
+					 , a.reg_dt
+				FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
+				WHERE 1 = 1
+				AND A.inv_no = B.inv_no
+				AND D.use_yn = 'Y'
+				AND A.inv_reqr = D.user_id
+				AND D.dept_cd = E.dept_cd
+			) AS a
+		WHERE rn BETWEEN #{start} AND #{end}
+		<if test="params.searchType != 'none'">
+		AND ${params.searchType} LIKE CONCAT('%', #{params.searchText}, '%')
+		</if>
+		<if test="params.searchType2 != 'none'">
+		AND ${params.searchType2} LIKE CONCAT('%', #{params.searchText2}, '%')
+		</if>
+		<if test="params.sortField != null">
+			ORDER BY ${params.sortField} ${params.sortOrder}
+		</if>
+	</select>
+	
+	<!-- TB_PO 정보등록 -->
+	<insert id="saveInvestInfo" parameterType="kr.co.trito.tams.web.standard.invest.dto.InvestDto">
+		INSERT INTO TB_INV_MAS(INV_NO, INV_TTL, INV_QTY, INV_AMT, ACTG_YEAR, PO_NO, MFGD_NM, QTY, INV_DT, INV_REGR, REG_DT, REGR)
+                VALUES
+                (#{invNo}, #{invTtl}, #{invQty}, #{invAmt}, #{actgYear}, #{poNo}, #{mfgdNm}, #{qty}, #{invDt}, #{invDt}, #{invRegr}, now(), #{regr})
+                ON DUPLICATE KEY
+                UPDATE INV_DT = #{invDt}, INV_REQR = #{invRegr}, INV_TTL = #{invTtl}, REGR = #{regr}
+	</insert>
+	
+	<!-- TB_PO 정보등록 -->
+	<insert id="savePoInfo" parameterType="java.util.List">
+		INSERT INTO TB_PO(PO_NO, INV_NO, MFGD_NM, QTY, REGR)
+                VALUES 
+                <foreach collection="list" item="invs" separator=" , ">
+                (#{invs.poNo}, #{invs.invNo}, #{invs.mfgdNm}, #{invs.qty}, #{invs.regr})
+                </foreach>
+	</insert>
+
+</mapper>

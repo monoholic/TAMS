@@ -440,3 +440,8 @@ hr.section{visibility:hidden;}
 input#userPw{
 	margin-bottom: 8px;
 }
+.form_wrap_ico_invest{
+	position: relative;
+    padding-right: 21px;
+    height: 22px;
+}
