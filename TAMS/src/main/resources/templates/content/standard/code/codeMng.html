@@ -140,6 +140,7 @@
                 	$.commRequest(url, reqType, item)
                 		.then((res) => {
                 			console.log(res);
+                			unselectItem(item);
                 			
                 			alert("수정이 완료되었습니다.");
                 			$("#jsGrid").jsGrid("loadData");
@@ -154,6 +155,7 @@
         			$.commRequest(url, reqType, item)
         				.then((res) => {
         					console.log(res);
+        					unselectItem(item);
         					
         					$("#jsGrid").jsGrid("loadData");
         				})
@@ -254,7 +256,6 @@
 	         } else {
 	             $("#selectAllCheckbox").prop("checked", false);
 	         }
-			    console.log(selectedItems);
 			};
 		     
 		    var unselectItem = function(item) {
@@ -270,7 +271,6 @@
 	         } else {
 	             $("#selectAllCheckbox").prop("checked", false);
 	         }
-			    console.log(selectedItems);
 		    };
 	        
 	        $("#pager").on("change", function() {
@@ -278,7 +278,6 @@
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
 	        });
 
-	        
 	        ////////////////////////////////////////////////////////////////////
     	    $(".btn_add").click(function() {
     	    	//$("#jsGrid").jsGrid("option", "inserting", "true");
@@ -327,83 +326,44 @@
 	        
 	     	// 팝업창 저장 버튼 처리
             $('.save_btn').on('click', function (e) {
-                e.preventDefault();
                 
-                var insert_item = {};
-	                insert_item.codeId 	  = $(".detail_table").find("#codeId").val();
-	                insert_item.codeGrpId = $("#codeGrpId option:selected").text();
-		    		insert_item.codeNm 	  = $(".detail_table").find("#codeNm").val();
-		    		insert_item.codeEngNm = $(".detail_table").find("#codeEngNm").val();
-		    		insert_item.uppCodeId = $(".detail_table").find("#uppCodeId").val();
-		    		insert_item.codeLvl   = $(".detail_table").find("#codeLvl").val();
-		    		insert_item.codeDesc  = $(".detail_table").find("#codeDesc").val();
-		    		insert_item.sortOdr   = $(".detail_table").find("#sortOdr").val();
-		    		insert_item.resv1     = $(".detail_table").find("#resv1").val();
-		    		insert_item.resv2     = $(".detail_table").find("#resv2").val();
-		    		insert_item.resv3     = $(".detail_table").find("#resv3").val();
-		    		insert_item.useYn 	  = $(".detail_table").find("#useYn").val();
-		    		insert_item.regr      = $(".detail_table").find("#regr").val();
-		    		insert_item.regDt     = $(".detail_table").find("#regDt").val();
-				
-		        var action = "";
-		        
-		    	if(save_mode == "insert") {
-		    		action = "insertItem";
-		    		//insertedItems.push(insert_item); --일괄
-		    	}else if(save_mode == "update") {
-		    		action = "updateItem";
-		    		//updatedItems.push(insert_item); --일괄
-		    	}
-    			
-    			$("#jsGrid").jsGrid(action, insert_item);
-                
-	    		clearDetailForm();
-                $(this).parents("#detailForm").hide();
-                save_mode = "";
+            	if (validationCheck() == '202') {
+	            	e.preventDefault();
+	                
+	                var insert_item = {};
+		                insert_item.codeId 	  = $(".detail_table").find("#codeId").val();
+		                insert_item.codeGrpId = $("#codeGrpId option:selected").text();
+			    		insert_item.codeNm 	  = $(".detail_table").find("#codeNm").val();
+			    		insert_item.codeEngNm = $(".detail_table").find("#codeEngNm").val();
+			    		insert_item.uppCodeId = $(".detail_table").find("#uppCodeId").val();
+			    		insert_item.codeLvl   = $(".detail_table").find("#codeLvl").val();
+			    		insert_item.codeDesc  = $(".detail_table").find("#codeDesc").val();
+			    		insert_item.sortOdr   = $(".detail_table").find("#sortOdr").val();
+			    		insert_item.resv1     = $(".detail_table").find("#resv1").val();
+			    		insert_item.resv2     = $(".detail_table").find("#resv2").val();
+			    		insert_item.resv3     = $(".detail_table").find("#resv3").val();
+			    		insert_item.useYn 	  = $(".detail_table").find("#useYn").val();
+			    		insert_item.regr      = $(".detail_table").find("#regr").val();
+			    		insert_item.regDt     = $(".detail_table").find("#regDt").val();
+					
+			        var action = "";
+			        
+			    	if(save_mode == "insert") {
+			    		action = "insertItem";
+			    		//insertedItems.push(insert_item); --일괄
+			    	}else if(save_mode == "update") {
+			    		action = "updateItem";
+			    		//updatedItems.push(insert_item); --일괄
+			    	}
+	    			
+	    			$("#jsGrid").jsGrid(action, insert_item);
+	                
+		    		clearDetailForm();
+	                $(this).parents("#detailForm").hide();
+	                save_mode = "";
+	          	}
             });
 	     	
-          	//일괄저장
-    	    /* $(".btn_saveall").click(function() {
-    	    	
-    	    	if( insertedItems.length > 0 ) {
-        			let url = "/standard/codegrp/codegrpMng/codegrpinsert";
-        			let reqType = 'GET';
-        			let data = {
-        				"items": JSON.stringify(insertedItems)
-        			};
-        			$.commRequest(url, reqType, data)
-        				.then((res) => {
-        					console.log(res);
-        					alert("저장되었습니다!");
-        					$(".btn_srch").click();
-        					insertedItems = [];
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        					alert("오류가 발생했습니다 "+error);
-        				})
-    	    	}
-    	    	
-    	    	if( updatedItems.length > 0 ) {
-    	    		let url = "/system/menu/menumng/menuupdate";
-        			let reqType = 'GET';
-        			let data = {
-        				"items": JSON.stringify(updatedItems)
-        			};
-        			$.commRequest(url, reqType, data)
-        				.then((res) => {
-        					console.log(res);
-        					alert("저장되었습니다!");
-        					updatedItems = [];
-        					$(".btn_srch").click();
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        					alert("오류가 발생했습니다");
-        				})
-    	    	}
-    	    }); */
-			
     	  	//수정 버튼
     	    $(".btn_update").click(function() {
     	    	var items = $("#jsGrid").jsGrid("option", "data");
@@ -438,6 +398,15 @@
                 this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
                 return this;
             }
+            
+         	// 정렬 순서 유효성 검사
+            $("#codeLvl").on("input", function() {
+        		$(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+        	});
+        	
+            $("#sortOdr").on("input", function() {
+        		$(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+        	}); 
     	});
 	    
 	    function clearDetailForm() {
@@ -453,7 +422,6 @@
     		$(".detail_table").find("#resv1").val("");
     		$(".detail_table").find("#resv2").val("");
     		$(".detail_table").find("#resv3").val("");
-    		$(".detail_table").find("#useYn").val("");
 	    }
 	    
 	    let save_mode = "";
@@ -471,10 +439,11 @@
 		    		 readOnly = false;
 	 				 
 		    		 $(".detail_table").find("#codeId").val(item.codeId);
-		    		 $(".detail_table").find("#codeId").attr("readOnly", true);      
+		    		 $(".detail_table").find("#codeId").attr("readOnly", true);    
 		    		 
 		    		 $("#codeGrpId option:contains("+item.codeGrpId+")").prop("selected", true);
-		    		 
+		    		 $("#codeGrpId option").not(":selected").attr("disabled", true);
+
 		     		 $(".detail_table").find("#codeNm").val(item.codeNm);
 		     		 $(".detail_table").find("#codeEngNm").val(item.codeEngNm);
 		     		 $(".detail_table").find("#uppCodeId").val(item.uppCodeId);
@@ -489,6 +458,7 @@
 		    	 } else {
 		    		 save_mode = "insert";
 		    		 $(".detail_table").find("#codeId").attr("readOnly", false);
+		    		 $("#codeGrpId option").not(":selected").attr("disabled", false);
 		    	 }
 		    	 
 		    	 $(".list_head").find("#head_title").html(title);
@@ -510,6 +480,31 @@
 	    	if (window.event.keyCode == 13) {
 	    		$("#jsGrid").jsGrid().trigger("loadData");
 	        }
+	    }
+	    
+	 	// 유효성 검사
+	    function validationCheck() {
+	    	let code = '202';
+			
+			if($("#codeId").val() == "") {
+				alert("공통코드 ID를 입력해 주세요.");
+				$("#codeId").focus();
+				code = '200';
+			}else if($("#codeNm").val() == "") {
+				alert("공통코드명을 입력해 주세요.");
+				$("#codeNm").focus();
+				code = '200';
+			}else if($("#codeLvl").val() == "") {
+				alert("정렬 순서를 입력해 주세요.");
+				$("#codeLvl").focus();
+				code = '200';
+			}else if($("#sortOdr").val() == "") {
+				alert("정렬 순서를 입력해 주세요.");
+				$("#sortOdr").focus();
+				code = '200';
+			}
+			
+			return code;
 	    }
 	    </script>	
 	</th:block>
@@ -629,9 +624,9 @@
 						</tr>
 						<tr>
 							<th>코드 레벨</th>
-							<td><input type="number" style="width:97%" id="codeLvl" /></td>
+							<td><input type="text" style="width:100%" id="codeLvl"/></td>
 							<th>정렬 순서</th>
-							<td><input type="number" style="width:97%" id="sortOdr" /></td>
+							<td><input type="text" style="width:100%" id="sortOdr" /></td>
 						</tr>
 						<tr>
 							<th>예비1</th>

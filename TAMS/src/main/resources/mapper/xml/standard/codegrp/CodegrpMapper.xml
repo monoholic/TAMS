@@ -61,43 +61,6 @@
 		) As a
 		WHERE rn BETWEEN #{start} AND #{end}
 		ORDER BY a.sort_odr
-		
-		<!-- SELECT code_grp_id
-	   			 , code_grp_nm
-	   			 , code_grp_eng_nm
-	   			 , code_grp_desc
-	   			 , sort_odr
-	   			 , use_yn
-	   			 , updr
-	   			 , up_dt
-	   			 , regr
-	   			 , reg_dt
-	   			 , ROW_NUMBER() OVER(ORDER BY CAST(code_grp_id AS int)) AS rn
-			FROM tb_com_code_grp
-			WHERE 1=1
-				<if test="params.searchText != null">
-					AND ( code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')		
-				       OR code_grp_nm LIKE CONCAT('%', #{params.searchText}, '%'))
-			 	</if>
-			 	
-			 	<choose>
-			 		<when test="params.searchOption == 'code_grp_id'">
-			 			<if test="params.searchText != null">
-							AND code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
-					 	</if>
-			 		</when>
-			 		
-			 		<when test="params.searchOption == 'code_grp_nm'" >
-			 			<if test="params.searchText != null">
-			 				AND code_grp_nm LIKE CONCAT('%', #{params.searchText}, '%')
-			 			</if>
-			 		</when>
-			 	</choose>
-			 	
-				<if test="params.useYnOption != null">
-					AND use_yn = #{params.useYnOption}
-		 		</if>
-		ORDER BY sort_odr -->
    	</select>
    	
    	<select id="selectCountCodegrp" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
@@ -154,5 +117,4 @@
 		FROM tb_com_code_grp 
         WHERE code_grp_id = #{codeGrpId}
 	</delete>
-   	
 </mapper>

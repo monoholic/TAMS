@@ -7,8 +7,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.util.SystemOutLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +29,7 @@ import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.standard.codegrp.dto.CodegrpDto;
 import kr.co.trito.tams.web.standard.codegrp.service.CodegrpService;
+import kr.co.trito.tams.web.user.dto.UserInfo;
 
 @Controller
 @RequestMapping("/standard/codegrp")
@@ -106,7 +110,8 @@ public class CodegrpController {
 			@ApiParam(value = "공통코드 영문명", required = true) @RequestParam(value = "codeGrpEngNm", required = true) String codeGrpEngNm,
 			@ApiParam(value = "공통코드 그룹 설명", required = true) @RequestParam(value = "codeGrpDesc", required = true) String codeGrpDesc,
 			@ApiParam(value = "정렬순서", required = true) @RequestParam(value = "sortOdr", required = true) String sortOdr,
-			@ApiParam(value = "사용여부", required = true) @RequestParam(value = "useYn", required = true) String useYn
+			@ApiParam(value = "사용여부", required = true) @RequestParam(value = "useYn", required = true) String useYn,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
 			) { 
 		
 		String code = "202";
@@ -116,14 +121,16 @@ public class CodegrpController {
 		if (StringUtils.isNotEmpty(codeGrpId)) dto.setCodeGrpId(codeGrpId);
 	    if (StringUtils.isNotEmpty(codeGrpNm)) dto.setCodeGrpNm(codeGrpNm);
 	    
+	    UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
+	    
 	    dto.setCodeGrpId(codeGrpId);
 	    dto.setCodeGrpNm(codeGrpNm);
 	    dto.setCodeGrpEngNm(codeGrpEngNm);
 	    dto.setCodeGrpDesc(codeGrpDesc);
 	    dto.setSortOdr(sortOdr);
 	    dto.setUseYn(useYn);
-	    
-	    dto.setRegr("system"); //임시
+	    dto.setRegr(userId);
 	    
 	    int cnt = codegrpService.codegrpMngInsert(dto);
 	    if( cnt > 0) code = "200";
@@ -143,14 +150,18 @@ public class CodegrpController {
 			@ApiParam(value = "공통코드 영문명", required = false) @RequestParam(value = "codeGrpEngNm", required = true) String codeGrpEngNm,
 			@ApiParam(value = "공통코드 그룹 설명", required = false) @RequestParam(value = "codeGrpDesc", required = true) String codeGrpDesc,
 			@ApiParam(value = "정렬순서", required = false) @RequestParam(value = "sortOdr", required = true) String sortOdr,
-			@ApiParam(value = "사용구분", required = false) @RequestParam(value = "useYn", required = true) String useYn
+			@ApiParam(value = "사용구분", required = false) @RequestParam(value = "useYn", required = true) String useYn,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
 			) { 
 		
 		String code = "202";
 		
-		CodegrpDto dto = new CodegrpDto();
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
 		
-		// System.out.println(StringUtils.isNotEmpty(codeGrpId));
+		System.out.println(userId);
+		
+		CodegrpDto dto = new CodegrpDto();
 		
 		if (StringUtils.isNotEmpty(codeGrpId)) 
 			dto.setCodeGrpId(codeGrpId);
@@ -158,16 +169,13 @@ public class CodegrpController {
 		if (StringUtils.isNotEmpty(codeGrpNm)) 
 			dto.setCodeGrpEngNm(codeGrpNm);
 		
-		// System.out.println("@@@@" + codeGrpId);
-		
 		dto.setCodeGrpId(codeGrpId);
 		dto.setCodeGrpNm(codeGrpNm);
 		dto.setCodeGrpEngNm(codeGrpEngNm);
 		dto.setCodeGrpDesc(codeGrpDesc);
 		dto.setSortOdr(sortOdr);
 		dto.setUseYn(useYn);
-		
-		dto.setUpdr("system"); //임시
+		dto.setUpdr(userId);
 		
 		int cnt = codegrpService.codegrpMngUpdate(dto);
 		if( cnt > 0) code = "200";

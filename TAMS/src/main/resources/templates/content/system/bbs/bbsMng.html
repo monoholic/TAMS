@@ -335,45 +335,48 @@
 	        
 	     	// 팝업창 저장 버튼 처리
             $('.save_btn').on('click', function (e) {
-                e.preventDefault();
-                
-                attachData.append("bbsTtl", $("#bbsTtl").val());
-                attachData.append("bbsGrpId", $("#bbsGrpId option:selected").text());
-				var markupStr = $('#summernote').summernote('code');
-				attachData.append("bbsCn", markupStr);
-				attachData.append("bbsId", $("#bbsId").val());
-				
-				var files = attachData.getAll("files");
-				
-				let reqType = 'POST';
-		        
-		    	if(save_mode == "insert") {
-		    		url = "/system/bbs/bbsMng/bbsInsert";
-		    	}else if(save_mode == "update") {
-		    		url = "/system/bbs/bbsMng/bbsUpdate";
-		    	}
-		    	
-		    	$.commRequestFile(url, reqType, attachData)
-					.then((res) => {
-						console.log('게시판 저장 성공!!');
-						
-            			$("#jsGrid").jsGrid("loadData");
-						setFormClear();
-						unselectItem(selectedItems);
-					})
-					.catch((error) => {
-						console.log('게시판 저장 실패!!');
-					});
-		    	
-    			attachData.delete("files");
-				attachData.delete("delFiles");
-				attachData.delete("bbsId");
-				attachData.delete("bbsTtl");
-				attachData.delete("bbsGrpId");
-				attachData.delete("bbsCn");
-	    		
-                $(this).parents("#detailForm").hide();
-                save_mode = "";
+            	
+            	if (validationCheck() == '202') {
+	                e.preventDefault();
+	                
+	                attachData.append("bbsTtl", $("#bbsTtl").val());
+	                attachData.append("bbsGrpId", $("#bbsGrpId option:selected").text());
+					var markupStr = $('#summernote').summernote('code');
+					attachData.append("bbsCn", markupStr);
+					attachData.append("bbsId", $("#bbsId").val());
+					
+					var files = attachData.getAll("files");
+					
+					let reqType = 'POST';
+			        
+			    	if(save_mode == "insert") {
+			    		url = "/system/bbs/bbsMng/bbsInsert";
+			    	}else if(save_mode == "update") {
+			    		url = "/system/bbs/bbsMng/bbsUpdate";
+			    	}
+			    	
+			    	$.commRequestFile(url, reqType, attachData)
+						.then((res) => {
+							console.log('게시판 저장 성공!!');
+							
+	            			$("#jsGrid").jsGrid("loadData");
+							setFormClear();
+							unselectItem(selectedItems);
+						})
+						.catch((error) => {
+							console.log('게시판 저장 실패!!');
+						});
+			    	
+	    			attachData.delete("files");
+					attachData.delete("delFiles");
+					attachData.delete("bbsId");
+					attachData.delete("bbsTtl");
+					attachData.delete("bbsGrpId");
+					attachData.delete("bbsCn");
+		    		
+	                $(this).parents("#detailForm").hide();
+	                save_mode = "";
+            	}
             });
 	     	
     	  	//수정 버튼
@@ -669,6 +672,23 @@
 			
 			reloadFileGrid();
 		}
+	  	
+		// 유효성 검사
+		function validationCheck() {
+	    	let code = '202';
+			
+			if($("#bbsTtl").val() == "") {
+				alert("제목을 입력해 주세요.");
+				$("#bbsTtl").focus();
+				code = '200';
+			}else if($("#summernote").val() == "") {
+				alert("내용을 입력해 주세요.");
+				$("#summernote").focus();
+				code = '200';
+			}
+			
+			return code;
+	    }
 	    
 	    </script>	
 	</th:block>
@@ -777,7 +797,6 @@
 					<tr>
 						<th style="text-align:center;">제목</th>
 						<td colspan="5">
-							<input id="bbsId" type="hidden">
 							<input id="bbsTtl" style="width:100%" type="text" >
 						</td>
 					</tr>

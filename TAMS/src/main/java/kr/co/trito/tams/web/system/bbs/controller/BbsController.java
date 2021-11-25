@@ -200,20 +200,21 @@ public class BbsController {
 		 
 		int cnt = bbsService.bbsMngInsert(dto);  
 		
-		List<FileDto> list = Arrays.asList(files)
-				.stream()
-				.map(file -> fileController.upload(file))
-				.collect(Collectors.toList());
-		
-		for(FileDto f : list) {
-	    	  
-	    	  f.setRfncKey1(String.valueOf(dto.getBbsId()));
-	    	  f.setUseYn("Y");
-	    	  
-	    	  log.error(f.toString());
-	    	  
-	    	  commonService.saveFiles(f);
-	      }
+		if(files != null) {
+			List<FileDto> list = Arrays.asList(files)
+					.stream()
+					.map(file -> fileController.upload(file))
+					.collect(Collectors.toList());
+			
+			for(FileDto f : list) {
+		    	 f.setRfncKey1(String.valueOf(dto.getBbsId()));
+		    	 f.setUseYn("Y");
+		    	  
+		    	 log.error(f.toString());
+		    	  
+		    	 commonService.saveFiles(f);
+		    }
+		}
 		
 		if( cnt > 0 ) code = "200";
 		

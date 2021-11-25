@@ -11,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +33,7 @@ import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import kr.co.trito.tams.web.standard.code.service.CodeService;
 import kr.co.trito.tams.web.standard.codegrp.dto.CodegrpDto;
 import kr.co.trito.tams.web.system.menu.dto.MenuDto;
+import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -128,12 +131,14 @@ public class CodeController {
 			@ApiParam(value = "예비1", required = true) @RequestParam(value = "resv1", required = true) String resv1,
 			@ApiParam(value = "예비2", required = true) @RequestParam(value = "resv2", required = true) String resv2,
 			@ApiParam(value = "예비3", required = true) @RequestParam(value = "resv3", required = true) String resv3,
-			@ApiParam(value = "사용 여부", required = true) @RequestParam(value = "useYn", required = true) String useYn
-			// 배열로도 받을 수 있자나..!!
-			// @ApiParam(value = "공통코드 관리 배열", required = false) @RequestParam(value = "item", required = false) List<CodeDto> item 
+			@ApiParam(value = "사용 여부", required = true) @RequestParam(value = "useYn", required = true) String useYn,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
 			) { 
 		
 		String code = "202";
+		
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
 		
 		CodeDto dto = new CodeDto();
 		
@@ -155,8 +160,7 @@ public class CodeController {
 	    dto.setResv2(resv2);
 	    dto.setResv3(resv3);
 	    dto.setUseYn(useYn);
-	    
-		dto.setRegr("system"); //임시
+		dto.setRegr(userId);
 		 
 		int cnt = codeService.codeMngInsert(dto); 
 		
@@ -184,10 +188,14 @@ public class CodeController {
 			@ApiParam(value = "예비1", required = true) @RequestParam(value = "resv1", required = true) String resv1,
 			@ApiParam(value = "예비2", required = true) @RequestParam(value = "resv2", required = true) String resv2,
 			@ApiParam(value = "예비3", required = true) @RequestParam(value = "resv3", required = true) String resv3,
-			@ApiParam(value = "사용 여부", required = true) @RequestParam(value = "useYn", required = true) String useYn
+			@ApiParam(value = "사용 여부", required = true) @RequestParam(value = "useYn", required = true) String useYn,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
 			) { 
 		
 		String code = "202";
+		
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
 		
 		CodeDto dto = new CodeDto();
 		
@@ -209,8 +217,7 @@ public class CodeController {
 	    dto.setResv2(resv2);
 	    dto.setResv3(resv3);
 	    dto.setUseYn(useYn);
-		
-		dto.setUpdr("system"); //임시
+		dto.setUpdr(userId);
 		
 		int cnt = codeService.codeMngUpdate(dto);
 		if( cnt > 0) code = "200";
@@ -231,18 +238,10 @@ public class CodeController {
 		String code = "202";
 		
 		int cnt = 0;
-		CodeDto dto = new CodeDto();
-		
-		/*
-		 * for(String item : items) { dto.setCodeId(items.get(0)); }
-		 */
 		
 		for(CodeDto item : items) {
-			
 			if( codeService.codeMngDelete(item) > 0 ) 
 				cnt++;
-			
-			
 		}
 		
 		if(cnt > 0) code = "200";

@@ -147,6 +147,8 @@
         			let url = "/standard/codegrp/codegrpMng/codegrpInsert";
         			let reqType = 'GET';
         			
+        			console.log(item);
+        			
         			$.commRequest(url, reqType, item)
         				.then((res) => {
         					console.log(res);
@@ -291,75 +293,36 @@
 	        
 	     	// 팝업창 저장 버튼 처리
             $('.save_btn').on('click', function (e) {
-                e.preventDefault();
                 
-                var insert_item = {};
-	                insert_item.codeGrpId 	= $(".detail_table").find("#codeGrpId").val().toUpperCase();
-		    		insert_item.codeGrpNm 	= $(".detail_table").find("#codeGrpNm").val();
-		    		insert_item.codeGrpEngNm = $(".detail_table").find("#codeGrpEngNm").val();
-		    		insert_item.codeGrpDesc = $(".detail_table").find("#codeGrpDesc").val();
-		    		insert_item.sortOdr 	= $(".detail_table").find("#sortOdr").val();
-		    		insert_item.useYn 		= $(".detail_table").find("#useYn").val();
-				
-		        var action = "";
-		        
-		    	if(save_mode == "insert") {
-		    		action = "insertItem";
-		    		//insertedItems.push(insert_item); --일괄
-		    	}else if(save_mode == "update") {
-		    		action = "updateItem";
-		    		//updatedItems.push(insert_item); --일괄
-		    	}
-    			
-    			$("#jsGrid").jsGrid(action, insert_item);
-                
-	    		clearDetailForm();
-                $(this).parents("#detailForm").hide();
-                save_mode = "";
+            	if (validationCheck() == '202') {
+	            	e.preventDefault();
+	            	
+	                var insert_item = {};
+		                insert_item.codeGrpId 	= $(".detail_table").find("#codeGrpId").val().toUpperCase();
+			    		insert_item.codeGrpNm 	= $(".detail_table").find("#codeGrpNm").val();
+			    		insert_item.codeGrpEngNm = $(".detail_table").find("#codeGrpEngNm").val();
+			    		insert_item.codeGrpDesc = $(".detail_table").find("#codeGrpDesc").val();
+			    		insert_item.sortOdr 	= $(".detail_table").find("#sortOdr").val();
+			    		insert_item.useYn 		= $(".detail_table").find("#useYn").val();
+			    		
+			        var action = "";
+			        
+			    	if(save_mode == "insert") {
+			    		action = "insertItem";
+			    		//insertedItems.push(insert_item); --일괄
+			    	}else if(save_mode == "update") {
+			    		action = "updateItem";
+			    		//updatedItems.push(insert_item); --일괄
+			    	}
+	    			
+	    			$("#jsGrid").jsGrid(action, insert_item);
+	                
+		    		clearDetailForm();
+	                $(this).parents("#detailForm").hide();
+	                save_mode = "";
+            	}
             });
 	     	
-          	//일괄저장
-    	    /* $(".btn_saveall").click(function() {
-    	    	
-    	    	if( insertedItems.length > 0 ) {
-        			let url = "/standard/codegrp/codegrpMng/codegrpinsert";
-        			let reqType = 'GET';
-        			let data = {
-        				"items": JSON.stringify(insertedItems)
-        			};
-        			$.commRequest(url, reqType, data)
-        				.then((res) => {
-        					console.log(res);
-        					alert("저장되었습니다!");
-        					$(".btn_srch").click();
-        					insertedItems = [];
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        					alert("오류가 발생했습니다 "+error);
-        				})
-    	    	}
-    	    	
-    	    	if( updatedItems.length > 0 ) {
-    	    		let url = "/system/menu/menumng/menuupdate";
-        			let reqType = 'GET';
-        			let data = {
-        				"items": JSON.stringify(updatedItems)
-        			};
-        			$.commRequest(url, reqType, data)
-        				.then((res) => {
-        					console.log(res);
-        					alert("저장되었습니다!");
-        					updatedItems = [];
-        					$(".btn_srch").click();
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        					alert("오류가 발생했습니다");
-        				})
-    	    	}
-    	    }); */
-			
     	  	//수정 버튼
     	    $(".btn_update").click(function() {
     	    	var items = $("#jsGrid").jsGrid("option", "data");
@@ -390,7 +353,11 @@
                 this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
                 return this;
             }
-	    	    
+            
+            // 정렬 순서 유효성 검사
+            $("#sortOdr").on("input", function() {
+        		$(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+        	});
     	});
 	    
 	    function clearDetailForm() {
@@ -399,14 +366,12 @@
     		$(".detail_table").find("#codeGrpEngNm").val("");
     		$(".detail_table").find("#codeGrpDesc").val("");
     		$(".detail_table").find("#sortOdr").val("");
-    		$(".detail_table").find("#useYn").val("");
 	    }
 	    
 	    let save_mode = "";
 	    function showDetailForm(item) {
-	    		
+	    	
 	    	if(selectedItems.length <= 1){
-		    	
 		    	let title = "공통 그룹코드 등록";
 		    	 var readOnly = false;
 		    	 
@@ -448,6 +413,28 @@
 	    		$("#jsGrid").jsGrid().trigger("loadData");
 	        }
 	    }
+	    
+	    // 유효성 검사
+	    function validationCheck() {
+	    	let code = '202';
+			
+			if($("#codeGrpId").val() == "") {
+				alert("공통 그룹 코드 ID를 입력해 주세요.");
+				$("#codeGrpId").focus();
+				code = '200';
+			}else if($("#codeGrpNm").val() == "") {
+				alert("공통 그룹 코드명을 입력해 주세요.");
+				$("#codeGrpNm").focus();
+				code = '200';
+			}else if($("#sortOdr").val() == "") {
+				alert("정렬 순서를 입력해 주세요.");
+				$("#sortOdr").focus();
+				code = '200';
+			}
+			
+			return code;
+	    }
+	    
 	    </script>	
 	</th:block>
 
@@ -560,7 +547,7 @@
 						</tr>
 						<tr>
 							<th>정렬 순서</th>
-							<td><input type="number" style="width:100%" id="sortOdr" /></td>
+							<td><input type="text" style="width:100%" id="sortOdr" /></td>
 						</tr>
 						<tr>
 							<th>사용 여부</th>

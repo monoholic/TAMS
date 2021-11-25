@@ -138,8 +138,7 @@
 	
 	<update id="codeMngUpdate" parameterType="kr.co.trito.tams.web.standard.code.dto.CodeDto">
 		UPDATE tb_com_code         
-		   SET code_grp_id = #{codeGrpId}
-		     , code_nm     = #{codeNm}
+		   SET code_nm     = #{codeNm}
 		     , code_eng_nm = #{codeEngNm}
 		     , upp_code_id = #{uppCodeId}
 		     , code_lvl    = #{codeLvl}
@@ -151,7 +150,7 @@
 			 , use_yn      = #{useYn}
 			 , updr        = #{updr}
 			 , up_dt       = current_timestamp()
-		WHERE code_id = #{codeId}              
+		WHERE code_id = #{codeId} AND code_grp_id = #{codeGrpId}         
 	</update>                       
 	
 	<delete id="codeMngDelete" parameterType="kr.co.trito.tams.web.standard.code.dto.CodeDto">
