@@ -63,7 +63,7 @@ public class CommonController {
 	
 	/** 부서팝업 화면 */
 	@GetMapping("/popup/deptPopup")
-	public ModelAndView deptPopupView(HttpServletRequest request) {
+	public ModelAndView deptPopupView1(HttpServletRequest request) {
 		
 		ModelAndView view = new ModelAndView();
 //		view.addObject("menuId", request.getParameter("menuId"));
@@ -86,7 +86,6 @@ public class CommonController {
 		Map<String, Object> params = new HashMap<>();
 		if (!StringUtils.isEmpty(searchText))
 		params.put("searchText", searchText);
-//		
 		
 		SearchCondition condition = new SearchCondition("0","0",params);
 		
@@ -94,7 +93,34 @@ public class CommonController {
 		condition.pageSetup(list.size());
 		
 		return responseService.success(condition, list);
+	}
+	
+	/** 부서팝업 화면 */
+	@GetMapping("/popup/deptPopup2")
+	public ModelAndView deptPopupView2(HttpServletRequest request) {
 		
+		ModelAndView view = new ModelAndView();
+//		view.addObject("menuId", request.getParameter("menuId"));
+//		view.addObject("menuNm", request.getParameter("menuNm"));
+//		view.addObject("menuDesc", request.getParameter("menuDesc"));
+		view.setViewName("/content/common/popup/deptTreeList");
+		    
+		return view;
+	}
+	
+	/** 공통코드(트리) 조회 */
+	@GetMapping("/popup/deptTreeList")
+	@ResponseBody
+	@ApiOperation(value = "Web API Common test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response>  deptTreePopupList() {
+		
+		Map<String, String> params = new HashMap<>();
+		
+		List<CodeTreeDto> list = commonService.selectDeptTree(params);
+		
+		return responseService.success(list);
 	}
 	
 	/** 사용자 팝업 화면 */

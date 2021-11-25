@@ -55,12 +55,12 @@
 				 return '<input type="checkbox" name="add_file" value="'+item.name+'" gbn="'+item.gbn+'" id="'+item.id+'" >';
 			 }	
 			},
-			{ name: "name"	, type: "text"     , width: 200 , align: "left", title: "파일명"
+			{ name: "name" , type: "text" , width: 200 , align: "left", title: "파일명"
 			 ,itemTemplate: function(value, item) {
 				 return '<span style="cursor:hand;" onclick="fileDownload(\''+item.gbn+'\',\''+item.realName+'\',\''+item.name+'\')">'+item.name+'</span>';
 			 }
 			},
-			{ name: "size"	, type: "number"   , width: 100 , align: "center" , title: "파일사이즈"
+			{ name: "size" , type: "number"   , width: 100 , align: "center" , title: "파일사이즈"
 			 ,itemTemplate: function(value, item) {
 				 return '<span>'+ bytesToSize(item.size) +'</span>';
 			 }

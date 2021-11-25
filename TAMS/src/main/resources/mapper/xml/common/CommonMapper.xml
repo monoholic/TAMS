@@ -39,6 +39,23 @@
 	   	</if>
 		ORDER BY DEPT_CD
 	</select>
+	
+	<!-- 부서 팝업(트리) 조회 -->
+	<select id="selectDeptTree" resultType="kr.co.trito.tams.web.common.dto.CodeTreeDto" parameterType="map">
+		WITH RECURSIVE CTE (dept_cd, dept_nm, upp_dept_cd, sort_odr) AS
+		(
+			SELECT T1.dept_cd, T1.dept_nm, IFNULL(T1.upp_dept_cd,'#') upp_dept_cd, T1.sort_odr
+			  FROM TB_DEPT T1
+   			 WHERE upp_dept_cd IS NULL
+			UNION ALL
+			SELECT T2.dept_cd, T2.dept_nm, T2.upp_dept_cd, T2.sort_odr
+			  FROM TB_DEPT T2
+			 INNER JOIN CTE ON T2.upp_dept_cd = CTE.dept_cd
+		)
+		SELECT CTE.dept_cd AS id, CTE.dept_nm AS text, CTE.sort_odr AS depth, CTE.upp_dept_cd AS parent 
+		  FROM CTE
+		ORDER BY CTE.dept_cd, CTE.sort_odr;
+	</select>
 
 	<!-- 사용자팝업 조회 -->
 	<select id="selectUserPopupList" resultType="kr.co.trito.tams.web.system.user.dto.UserMngDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
@@ -170,6 +187,5 @@
 		  FROM CTE
 		ORDER BY CTE.CODE_ID, CTE.SORT_ODR
 	</select>
-	
 	
 </mapper>

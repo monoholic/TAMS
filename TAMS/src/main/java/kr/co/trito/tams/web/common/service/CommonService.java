@@ -31,6 +31,13 @@ public class CommonService {
 	}
 	
 	/** 
+	 * 부서팝업(트리) 조회
+	 * */
+	public List<CodeTreeDto> selectDeptTree(Map<String,String> map){
+		return mapper.selectDeptTree(map);
+	}	
+	
+	/** 
 	 * 사용자팝업 조회 
 	 * */
 	public List<UserMngDto> selectUserPopupList(SearchCondition condition){
@@ -101,5 +108,4 @@ public class CommonService {
 	public List<CodeTreeDto> selectCodeTree(Map<String,String> map){
 		return mapper.selectCodeTree(map);
 	}	
-	
 }

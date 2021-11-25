@@ -59,6 +59,21 @@
     	        openPopup(popId, url, args);
     	    });
 			
+    	    //공통코드팝업(트리) 호출 
+    	    $("#openDeptPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/deptPopup2";
+    	        var popId = "DeptPopup";
+    	        var args = {
+    	        };
+    	        args.width = 500;
+    	        args.height = 450;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        openPopup(popId, url, args);
+    	    });
+			
 		});
 		
 		//팝업호출 공통함수
@@ -96,6 +111,11 @@
 		function setResult2(obj) {
 			$("#codeCd").val(obj.codeCd);
 			$("#codeNm").val(obj.codeNm);
+		}
+		
+		function setResult3(obj) {
+			$("#deptCd").val(obj.deptCd);
+			$("#deptNm").val(obj.deptNm);
 		}
 	</script>
 </th:block>
@@ -145,6 +165,11 @@
 				<a href="#;" id="openCommCodePopup">공통코드팝업(트리) 호출</a>
 				<br/>
 				코드 &nbsp;<input type="text" id="codeCd" name="codeCd"/>&nbsp;&nbsp;코드명&nbsp;<input type="text" id="codeNm" name="codeNm"/>&nbsp;
+				<br/><br/><br/>
+				<h5>부서팝업(트리)</h5>
+				<a href="#;" id="openDeptPopup">부서팝업(트리) 호출</a>
+				<br/>
+				코드 &nbsp;<input type="text" id="deptCd" name="deptCd"/>&nbsp;&nbsp;코드명&nbsp;<input type="text" id="deptNm" name="deptNm"/>&nbsp;
 			</div>
 			
 		</div>

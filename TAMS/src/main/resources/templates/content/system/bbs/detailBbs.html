@@ -378,9 +378,6 @@
                 $(this).parents("#detailForm").hide();
             });
 	     	
-            //drag 활성화
-	     	/* $("#detailForm").draggable(); */
-            
             //팝업 가운데로 띄우기
             jQuery.fn.center = function () {
                 this.css("position","absolute");
@@ -410,6 +407,9 @@
 	    		  ]
 	        });
             $('#summernote').summernote('focus');
+            
+            //drag 활성화
+	     	/* $("#detailForm").draggable(); */
     	});
 	    
 	    function reloadFileGrid() {

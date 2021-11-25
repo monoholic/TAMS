@@ -18,6 +18,8 @@ public interface CommonMapper {
 	
 	public List<DeptDto> selectDeptPopupList(SearchCondition condtion);
 	
+	public List<CodeTreeDto> selectDeptTree(Map<String,String> map);
+	
 	public List<UserMngDto> selectUserPopupList(SearchCondition condtion);
 	
 	public List<FileDto> selectFileList(SearchCondition condtion);
@@ -37,5 +39,4 @@ public interface CommonMapper {
 	public int savePoInfo(List<InvDto> invs);
 	
 	public List<CodeTreeDto> selectCodeTree(Map<String,String> map);
-	
 }
