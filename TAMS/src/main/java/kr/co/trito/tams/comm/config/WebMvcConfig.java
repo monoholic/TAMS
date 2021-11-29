@@ -1,15 +1,18 @@
 package kr.co.trito.tams.comm.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
 
+import kr.co.trito.tams.comm.interceptor.MenuRoleInterceptor;
 //import kr.co.trito.tams.comm.interceptor.CertificationInterceptor;
 import kr.co.trito.tams.comm.util.file.excel.view.ExcelXlsView;
 import kr.co.trito.tams.comm.util.file.excel.view.ExcelXlsxStreamingView;
@@ -74,4 +77,19 @@ public class WebMvcConfig  implements WebMvcConfigurer{
        registry.addResourceHandler("/webjars/**") 
          .addResourceLocations("classpath:/META-INF/resources/webjars/");       
     }  
+    
+    /*
+     * Menu Role Check Interceptor 설정
+     * */
+    @Autowired
+    MenuRoleInterceptor menuRoleInterceptor;
+    
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(menuRoleInterceptor)
+        		.addPathPatterns("/**/*")        
+        		.excludePathPatterns("/user/login")
+                ;
+    }
+    
 }
