@@ -11,7 +11,7 @@
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="/css/theme.css" />
 		
-		<link rel="stylesheet" href="/js/jstree/themes/default/style.min.css" />
+		<link rel="stylesheet" href="/css/jstree/themes/default/style.min.css" />
 	</th:block>
 
 	 <th:block layout:fragment="script">
@@ -31,49 +31,28 @@
 						  //console.log(data); 
 					}); */
 					
+					//항목 더블클릭시
 					$('#jstree').on("dblclick.jstree", function (event) {
-						var node 	= $(event.target).closest("li");
-			            var id 		= node[0].id; //id of the selected node
-			            var obj 	= $("#"+id+"_anchor");
-						var text 	= obj.text();
-			            var item = {};
-			            item.codeCd = id;
-			            item.codeNm = text;
-						//
-						returnResult(item);
-			            
-						  
+						 returnResult();  
 					});
-					
-					
 					
 					//팝업창 닫기
 					$("#btn_close_pop").on("click",function(){ 
 						window.close();
 					});
 					
-					
 					$(".btn_srch").on("click",function (){ 
-			    	   //$("#jsGrid").jsGrid().trigger("loadData");
+						$('#jstree').jstree().destroy();
+		    	    	getCodeList();
 			        });
 					
-					// userNm로 가지는 곳에서 키를 누를 경우
-		            $("#codeGrpNm").keydown(function(key) {
-		                //키의 코드가 13번일 경우 (13번은 엔터키)
-		                if (key.keyCode == 13) {
-		                	 //$("#jsGrid").jsGrid().trigger("loadData"); 
-		                }
-		            });
+					$("#tree_open").on("click",function (){ 
+						$('#jstree').jstree("open_all");
+			        });
+					$("#tree_close").on("click",function (){ 
+						$('#jstree').jstree("close_all");
+			        });
 					
-					
-		          	//리셋 버튼
-		    	    $(".btn_srch").click(function() {
-		    	    	$('#jstree').jstree().destroy();
-		    	    	getCodeList();
-		    	    });
-		          	
-		          	
-
 		  });
 		
 		function getTree() {
@@ -82,22 +61,24 @@
 			    "data": treeData,
 			    "check_callback" : true,
 				},
-          	    "plugins": ["contextmenu","ui","types","wholerow"],
-				'contextmenu' : { "items" : { "confirm" : { 
-												"separator_before" : false
-											  , "separator_after" : true
-											  , "label" : "선택"
-											  , "action" : function(obj){
-												             var item = $("#jstree").jstree('get_selected', true);
-												             var result = {};
-												             result.codeCd = item[0].id;
-												             result.codeNm = item[0].text;
-												             //console.log(result);
-												             returnResult(result);
-											             } 
+          	    "plugins": ["contextmenu","themes","ui","types","wholerow"],
+				"contextmenu" : { "items" : 
+											{ "confirm" : { 
+															"separator_before" : false
+														  , "separator_after" : false
+														  , "label" : "선택"
+														  , "icon" : "/images/common/confirm.png"
+														  , "action" : function(obj){
+												             returnResult();
+											              } 
 				                             }
-				                            } 
-			                         }
+				                 } 
+			    }
+				//,"themes": {"theme":"default","dots":true, "icons":true}
+				/* ,"types" : {
+					'default' : { 'icon' : 'folder' },
+					'file' : { 'valid_children' : [], 'icon' : 'file' }
+				}, */
 
 			}); 
 			
@@ -128,9 +109,15 @@
 		}
 		
  
-		   function returnResult(item) {
-				opener.setResult2(item);
-				window.close();
+		   function returnResult() {
+			   
+			   var item = $("#jstree").jstree('get_selected', true);
+	           var result = {};
+	           result.codeCd = item[0].id;
+	           result.codeNm = item[0].text;
+			   
+			   opener.setResult2(result);
+			   window.close();
 		   }
 			
 		  
@@ -173,6 +160,9 @@
 								</table>
 								<!-- search_button -->
 								<div class="button">
+									<img id="tree_open" src="/images/common/plus.png" style="padding-top:4px;cursor:pointer;" title="펼치기">
+									<img id="tree_close" src="/images/common/minus.png" style="padding-top:4px;cursor:pointer;" title="접기">
+									&nbsp;&nbsp;
 									<a href="#;" class="btn_srch">새로고침</a>
 								</div>
 								<!-- //search_button -->
