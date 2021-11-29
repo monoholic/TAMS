@@ -17,12 +17,19 @@
 		
 		<!-- google chart : https://www.gstatic.com/charts/loader.js -->
 		<script src="/js/chart/googlechart.js"></script>
+		<script src="/js/chart/echarts.min.js"></script>
 		
 		<script>
 		
 		  var chartData1 = [];
 		  var chartData2 = [];
+		  
+		  var colData = [];
+		  var valData = [];
+		  
 		  getChartData();
+		  
+		  
 		
 		  // Load the Visualization API and the corechart package.
 	      google.charts.load('current', {'packages':['corechart']});
@@ -60,8 +67,8 @@
 	                       };
 
 	        // Instantiate and draw our chart, passing in some options.
-	        var chart = new google.visualization.PieChart(document.getElementById('chart1'));
-	        chart.draw(data, options);
+	        //var chart = new google.visualization.PieChart(document.getElementById('chart1'));
+	        //chart.draw(data, options);
 	        
 	        var percent = 0;
             var handler = setInterval(function(){
@@ -147,9 +154,12 @@
 							chartData1.push(tmp);
 						}); */
 						var cols = ['asset_gbn','asset_amt'];
-						setData2Array(chartData1, res.data.chart1, cols);
+						//setData2Array(chartData1, res.data.chart1, cols);
 						//console.log(chartData1);
-						google.charts.setOnLoadCallback(drawChart);
+						//google.charts.setOnLoadCallback(drawChart);
+						
+						setData2Array2(chartData1, res.data.chart1, cols);
+						myChart.setOption(option);
 						
 						/* $.each(res.data.chart2, function(index, el){
 							var tmp = [];
@@ -170,7 +180,6 @@
 	      }
 	      
 	      function setData2Array(dataArr, list, colArr) {
-	    	  
 	    	  $.each( list, function(index, element) {
 	    			var tmp = [];  
 	    			$.each(colArr, function(idx, el) {
@@ -178,9 +187,24 @@
 	    			});  
 	    			dataArr.push(tmp);
 	    	  });
-	    	  
+	    	  ///////////////////////////////////////////
 	      }
 	      
+	      function setData2Array2(dataArr, list, colArr) {
+	    	  //colData.length = 0;
+	    	  valData.length = 0;
+	    	  $.each( list, function(index, element) {
+	    		  var tmp = {};
+	    		  tmp.name = element.asset_gbn;
+	    		  tmp.value = element.asset_amt;
+    				//colData.push(element.asset_gbn);	
+	    		  valData.push(tmp);
+	    	  });
+	    	  //console.log(colData);
+	    	  console.log(valData);
+	    	  ///////////////////////////////////////////
+	    	  
+	      }
 	      
 	    
 		</script>
@@ -197,6 +221,56 @@
 			<!-- <canvas class="chart1"></canvas> -->
 			<div id="chart1" style="width: 390px; height: 500px;"></div>
 		</div>
+
+	<script>
+     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    var myChart = echarts.init(document.getElementById('chart1'));
+    // 차트 속성과 데이터를 지정합니다.
+      var option = {
+          title: {
+          	text: '유형별 자산현황'
+          },
+          tooltip: {},
+          legend: {
+        	top: 'bottom',
+          	//data: colData
+          },
+          toolbox: {
+       	    show: true,
+       	    feature: {
+       	      mark: { show: true },
+       	      dataView: { show: true, readOnly: false },
+       	      restore: { show: true },
+       	      saveAsImage: { show: true }
+       	    }
+       	  },
+          /*
+           xAxis: {
+          	data: colData
+          	//data: ["shirt","cardign","chiffon shirt","pants","heels","socks"]
+          }, 
+          yAxis: {},
+          */
+          series: [{
+              name: '자산액',
+              type: 'pie',
+             /*  radius: [50, 250],
+              center: ['50%', '50%'],
+              roseType: 'area',
+              itemStyle: {
+                  borderRadius: 8
+                }, */
+              data: valData
+              //data: [5, 20, 36, 10, 10, 20]
+          }]
+      };
+
+      // 위에서 설정한 속성을 차트에 반영합니다.
+      //myChart.setOption(option);
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+	</script>
+	
 		<!-- //Quarterly Trend -->
 		<!-- Trend by Item -->
 		<div class="box1" style="height:570px;">
@@ -246,4 +320,6 @@
 		</div>
 		<!--  //Notice -->
 	</div>
+	
+
 </html>
