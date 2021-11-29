@@ -39,4 +39,7 @@ public interface CommonMapper {
 	public int savePoInfo(List<InvDto> invs);
 	
 	public List<CodeTreeDto> selectCodeTree(Map<String,String> map);
+	
+	public List<Map<String,String>> selectChart1();
+	public List<Map<String,String>> selectChart2();
 }

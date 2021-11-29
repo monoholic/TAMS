@@ -378,6 +378,27 @@ public class CommonController {
 		return view;
 	}
 	
+
+	
+	/** 챠트 조회 */
+	@GetMapping("/chartData")
+	@ResponseBody
+	@ApiOperation(value = "Web API Chart test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response>  getChartData() {
+		
+		Map<String, Object> rst = new HashMap<String, Object>();
+		
+		List<Map<String,String>> chart1 = commonService.selectChartData("chart1");
+		rst.put("chart1", chart1);
+		
+		List<Map<String,String>> chart2 = commonService.selectChartData("chart2");
+		rst.put("chart2", chart2);
+		
+		return responseService.success(rst);
+		
+	}
 	
 	/** 공통코드(트리) 조회 */
 	@GetMapping("/popup/codeTreeList")
@@ -397,6 +418,17 @@ public class CommonController {
 		return responseService.success(list);
 		
 	}
+	
+	/** 달력 팝업 화면 */
+	@GetMapping("/popup/calendarPopup")
+	public ModelAndView calendarPopupView(HttpServletRequest request) {
+		
+		ModelAndView view = new ModelAndView();
+		view.setViewName("/content/common/popup/calendarPopup");
+		
+		return view;
+	}
+	
 	
 }
 

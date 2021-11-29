@@ -108,4 +108,18 @@ public class CommonService {
 	public List<CodeTreeDto> selectCodeTree(Map<String,String> map){
 		return mapper.selectCodeTree(map);
 	}	
+	
+	
+	/** 
+	 * 챠트샘플 조회
+	 * */
+	public List<Map<String,String>> selectChartData(String gbn){
+		List<Map<String,String>> result = null;
+		if( "chart1".equals(gbn) ) {
+			result = mapper.selectChart1();
+		} else {
+			result = mapper.selectChart2();
+		}
+		return result;
+	}	
 }

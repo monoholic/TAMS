@@ -187,5 +187,80 @@
 		  FROM CTE
 		ORDER BY CTE.CODE_ID, CTE.SORT_ODR
 	</select>
+
+	
+	<!-- 챠트샘플1 -->
+	<select id="selectChart1" resultType="map" parameterType="map">
+		SELECT '설비자산' as asset_gbn 
+		       ,300       as asset_amt
+		FROM DUAL       
+		UNION ALL       
+		SELECT 'IT자산' as asset_gbn 
+		       ,10     as asset_amt
+		FROM DUAL       
+		UNION ALL       
+		SELECT 'OA자산' as asset_gbn 
+		       ,10     as asset_amt       
+		FROM DUAL
+		UNION ALL       
+		SELECT '방송자산' as asset_gbn 
+		       ,10      as asset_amt       
+		FROM DUAL
+		UNION ALL       
+		SELECT '보안장비' as asset_gbn 
+		       ,2       as asset_amt       
+		FROM DUAL
+		UNION ALL       
+		SELECT '총무자산' as asset_gbn 
+		       ,20      as asset_amt       
+		FROM DUAL
+		UNION ALL       
+		SELECT '일반비품' as asset_gbn 
+		       ,10      as asset_amt       
+		FROM DUAL
+		UNION ALL       
+		SELECT '기타' as asset_gbn 
+		       ,5    as asset_amt       
+		FROM DUAL
+		UNION ALL       
+		SELECT '건축물' as asset_gbn 
+		       ,1000  as asset_amt       
+		FROM DUAL
+		UNION ALL       
+		SELECT '구축물' as asset_gbn 
+		       ,300   as asset_amt       
+		FROM DUAL
+		UNION ALL       
+		SELECT '토지' as asset_gbn 
+		       ,1500 as asset_amt       
+		FROM DUAL
+		UNION ALL       
+		SELECT '소프트웨어' as asset_gbn 
+		       ,20       as asset_amt       
+		FROM DUAL
+	</select>
+	
+	<!-- 챠트샘플2 -->
+	<select id="selectChart2" resultType="map" parameterType="map">
+		SELECT '정상' as asset_status 
+		       ,85   as asset_qty
+		FROM DUAL       
+		UNION ALL       
+		SELECT '유휴' as asset_status 
+		       ,10   as asset_qty
+		FROM DUAL       
+		UNION ALL       
+		SELECT '재사용' as asset_status 
+		       ,1     as asset_qty       
+		FROM DUAL
+		UNION ALL       
+		SELECT '매각' as asset_status 
+		       ,2    as asset_qty       
+		FROM DUAL
+		UNION ALL       
+		SELECT '폐기' as asset_status 
+		       ,2    as asset_qty       
+		FROM DUAL
+	</select>
 	
 </mapper>
