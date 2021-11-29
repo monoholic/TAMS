@@ -4,11 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -215,4 +218,21 @@ public class SampleController {
 	public String etc3() {
 		return "/sample/18-달력";
 	}
+	
+	
+	/** 챠트샘플 화면 */
+	@PostMapping("/chart")
+	public ModelAndView chartView(HttpServletRequest request) {
+		
+		ModelAndView view = new ModelAndView();
+		
+		view.addObject("menuId", request.getParameter("menuId"));
+		view.addObject("menuNm", request.getParameter("menuNm"));
+		view.addObject("menuDesc", request.getParameter("menuDesc"));
+		
+		view.setViewName("/content/sample/chart");
+		
+		return view;
+	}
+	
 }

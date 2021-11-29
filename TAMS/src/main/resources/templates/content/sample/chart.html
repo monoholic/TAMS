@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/default">
+
+<head>
+    <title>Sample Page</title>
+</head>
+ 
+<!-- css -->
+<th:block layout:fragment="css">
+	<link rel="stylesheet" href="css/style.css" />
+</th:block>
+
+<th:block layout:fragment="script">
+	<script src="/js/chart/googlechart.js"></script>
+	<script>
+	google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawVisualization);
+
+    function drawVisualization() {
+      // Some raw data (not necessarily accurate)
+      var data = google.visualization.arrayToDataTable([
+        ['Month', 'Bolivia', 'Ecuador', 'Madagascar', 'Papua New Guinea', 'Rwanda', 'Average'],
+        ['2004/05',  165,      938,         522,             998,           450,      614.6],
+        ['2005/06',  135,      1120,        599,             1268,          288,      682],
+        ['2006/07',  157,      1167,        587,             807,           397,      623],
+        ['2007/08',  139,      1110,        615,             968,           215,      609.4],
+        ['2008/09',  136,      691,         629,             1026,          366,      569.6]
+      ]);
+
+      var options = {
+        title : 'Monthly Coffee Production by Country',
+        width:'100%', height:600,
+        vAxis: {title: 'Cups'},
+        hAxis: {title: 'Month'},
+        seriesType: 'bars',
+        series: {5: {type: 'line'}}
+      };
+
+      var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+    }
+	</script>
+</th:block>
+
+	<div layout:fragment="content">
+		<!-- contents_head -->
+		<div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div>
+		<h3><span th:text="${menuNm}"></span></h3>
+		<span th:text="${inqrYn}"></span>
+		<!-- //contents_head -->
+		
+		<!-- search -->
+		<div class="srch_wrap single">
+			<BR/>
+		</div>
+		<!-- //search -->
+
+		<!-- list -->
+		<div id="chart_div" ></div>
+		<!-- //list -->
+	</div>
+</html>
