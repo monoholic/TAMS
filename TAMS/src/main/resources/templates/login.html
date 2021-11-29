@@ -9,6 +9,13 @@
 		
 	<th:block layout:fragment="script">	
 		<script>
+		
+			if( opener != null ) {
+				console.log('부모창있음!!');
+				opener.top.location.href="/user/login";
+				self.close();
+			}
+			
 			$(function(){
 				//div 가운데로
 	             $.fn.center = function () { 
