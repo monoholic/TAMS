@@ -130,3 +130,46 @@ $.datepicker.setDefaults({
         yearSuffix: '년',	//
         showButtonPanel: true,	// 오늘로 가는 버튼과 달력 닫기 버튼 보기 옵션
 });
+
+
+/**********************************************************/		
+/* 팝업호출 공통함수                                           */
+/* popId : 팝업창 ID */		
+/* url   : url     */		
+/* args  : 팝업창 속성 (width, height, fullscreen, resizable) */		
+/* param : 팝업창 호출시 param값( id:'' , value:'') */		
+/**********************************************************/		
+function openPopup(popId, url, args, param) {
+	
+    var options;
+	
+	var width 	= args.width;
+    var height 	= args.height;
+    var fullscreen = args.fullscreen;
+    if( fullscreen == null || fullscreen == "" ) fullscreen = "no";
+    var resizable = args.resizable;
+    if( resizable == null || resizable == "" ) full = "no";
+    
+    var sTop  = Math.max(0, (($(window).height() - height) / 2) + $(window).scrollTop()) + "px";
+    var sLeft = Math.max(0, (($(window).width() - width) / 2) + $(window).scrollLeft()) + "px";
+    
+    options = "";
+    options += "position=absolute";
+    options += ",top="+sTop+", left="+sLeft+", height="+height+"px, width="+width+"px";
+    options += ",fullscreen="+fullscreen+", resizable="+resizable;
+    
+    var child;
+    child = window.open("", popId, options);
+    
+    $form = $("<form></form>");
+    $form.attr("action", url);
+    $form.attr("target", popId);
+    $form.appendTo("body");
+    if( param != null && param != "" ) {
+    	var str = '<input name="'+param.id+'" value="'+param.value+'">';
+    	$form.append(str);
+    }
+    $form.submit();	        
+    $form.empty();
+}
+

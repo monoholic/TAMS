@@ -78,42 +78,26 @@
     	        openPopup(popId, url, args);
     	    });
 			
+			//달력팝업 호출 
+    	    $("#openApprovalPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/approval/approvalPopup";
+    	        var popId = "approvalPopup";
+    	        var args = {};
+    	        args.width = 1100;
+    	        args.height = 800;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        var param = {};
+    	        param.id = 'asset_no';
+    	        param.value = 'A2021010001'	//자산번호
+   	        
+    	        openPopup(popId, url, args, param);
+    	    });
+			
 		});
 		
-		//팝업호출 공통함수
-		function openPopup(popId, url, args, param) {
-			
-	        var options;
-			
-			var width 	= args.width;
-	        var height 	= args.height;
-	        var fullscreen = args.fullscreen;
-	        if( fullscreen == null || fullscreen == "" ) fullscreen = "no";
-	        var resizeable = args.resizeable;
-	        if( resizeable == null || resizeable == "" ) full = "no";
-	        
-	        var sTop  = Math.max(0, (($(window).height() - height) / 2) + $(window).scrollTop()) + "px";
-	        var sLeft = Math.max(0, (($(window).width() - width) / 2) + $(window).scrollLeft()) + "px";
-	        
-	        options = "";
-	        options += "position=absolute";
-	        options += ",top="+sTop+", left="+sLeft+", height="+height+"px, width="+width+"px";
-	        options += ",fullscreen="+fullscreen+", resizeable="+resizeable;
-	        
-	        var child;
-	        child = window.open("", popId, options);
-	        
-	        $form = $("<form></form>");
-	        $form.attr("action", url);
-	        $form.attr("target", popId);
-	        $form.appendTo("body");
-	        if( param != null && param != "" ) {
-	        	var str = '<input name="'+param.id+'" value="'+param.value+'">';
-	        	$form.append(str);
-	        }
-	        $form.submit();	        
-	        $form.empty();
-		}
 		
 		//팝업에서 받은 결과 처리
 		function setResult(obj) {
@@ -187,6 +171,9 @@
 				<h5>달력팝업</h5>
 				<a href="#;" id="openCalendarPopup">달력팝업 호출</a>
 				선택한 날짜 &nbsp;<input type="text" id="selDate" name="selDate"/> 
+				<br/><br/><br/>
+				<h5>결재팝업</h5>
+				<a href="#;" id="openApprovalPopup">결재팝업 호출</a>
 			</div>
 			
 		</div>

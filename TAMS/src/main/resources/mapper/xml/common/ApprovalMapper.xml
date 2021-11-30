@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.trito.tams.web.common.mapper.ApprovalMapper">
+
+	<insert id="insertAppv" parameterType="kr.co.trito.tams.web.common.dto.AppvDto" useGeneratedKeys="true" keyProperty="appvId">
+		INSERT INTO TB_COM_APPV(APPV_USER_ID, APPV_TYPE, APPV_TTL, APPV_CN, APPV_STUS, APPV_STEP, REGR)
+		                 VALUES(#{appvUserId}, #{appvType}, #{appvTtl}, #{appvCn}, #{appvStus}, #{appvStep}, #{regr})
+	</insert>
+	
+	<insert id="insertAppvLine" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="appvId">
+		INSERT INTO TB_COM_APPV_LINE(APPV_ID, APPVR, APPV_DIV, APPV_ORD, APPV_STUS, REGR)
+		                    VALUES
+							<foreach collection="list" item="line" separator=" , ">
+		                     ('${line.appvId}', '${line.appvr}', '${line.appvDiv}', '${line.appvOrd}', '${line.appvStus}', '${line.regr}')
+		                    </foreach>
+	</insert>
+	
+</mapper>

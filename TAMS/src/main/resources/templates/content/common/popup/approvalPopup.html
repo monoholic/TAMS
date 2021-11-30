@@ -1,0 +1,448 @@
+﻿<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+        layout:decorator="layout/popup2">
+<head>
+<meta charset="utf-8" />
+<title>결재상신</title>
+
+	<!-- css -->
+	<th:block layout:fragment="css">
+	 	<!-- include summernote css/js -->
+		<link href="/css/summernote/summernote-lite.css" rel="stylesheet">
+		
+		<style type="text/css">
+			ol {
+			    display: block;
+			    list-style-type: decimal;
+			    margin-top: 0;
+			    margin-bottom: 0;
+			    margin-left: 0;
+			    margin-right: 0;
+			    padding-left: 40px;
+			}
+			ol .selecting { background: #FECA40; }
+			ol .selected { background: #F39814; color: #ffffff; }
+			
+			.apprList {
+			 		overflow:auto;
+			 		width:100%;
+			 		height:60px;
+			 		list-style-type:decimal;
+			}
+			
+		</style>
+	</th:block>
+
+	 <th:block layout:fragment="script">
+	 	<!-- include summernote css/js -->
+		<script src="/js/summernote/summernote-lite.js"></script>
+		<script src="/js/summernote/lang/summernote-ko-KR.min.js"></script>
+		
+		<script>
+		
+		var apprCnt  = 0;
+		var arrAppr  = [];
+		
+		var agreeCnt = 0;
+		var arrAgree = [];
+		
+		var notiCnt  = 0;
+		var arrNoti  = [];
+		
+		var apprGbn  = "appr";
+		
+		var selectedObj;
+			
+		$(function() {
+			//$("#divAppr").selectable();
+			
+			//저장(임시)
+			$("#btnSave").on("click", function(){
+				
+				saveApproval('');
+				
+			});
+			
+			//상신
+			$("#btnApproval").on("click", function(){
+				
+				saveApproval('F');
+				
+			});
+			
+			//결재자 추가
+			$("#btnAdd").on("click", function(){
+				
+				// 팝업 호출 url
+    	        var url = "/common/popup/userPopup";
+    	        var popId = "userPopup";
+    	        var args = {};
+    	        args.width = 650;
+    	        args.height = 416;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        openPopup(popId, url, args);
+				
+			});
+			
+			//결재자 이동(위)
+			$("#btnUp").on("click", function(){
+				setMoveAppr("UP");
+			});
+			
+			//결재자 이동(아래)
+			$("#btnDown").on("click", function(){
+				setMoveAppr("DOWN");
+			});
+			
+			//결재상신 내용 : web editor 설정
+			$("#apprContent").summernote({
+	            placeholder: '내용을 작성하세요',
+	            height: 300,
+	            minHeight: 300,
+	            maxHeight: 300,
+	            lang:"ko-KR",
+	            toolbar: [
+	    		    ['style', ['style']],
+	    		    ['font', ['bold', 'italic', 'underline', 'clear']],
+	    		    ['fontname', ['fontname']],
+	    		    ['color', ['color']],
+	    		    ['para', ['ul', 'ol', 'paragraph']],
+	    		    ['height', ['height']],
+	    		    ['table', ['table']],
+	    		    ['insert', ['link', 'hr']],
+	    		    //['insert', ['link', 'picture', 'hr']],
+	    		    ['view', ['fullscreen', 'codeview']],
+	    		    ['help', ['help']]
+	    		  ]
+	        });
+			
+			//결재자 구분(결재자, 함의자, 통보자)
+			$("input[name='appr_gbn']").on("change", function(){
+				if( $(this).is(":checked") ) {
+					apprGbn = $(this).val();
+				}
+				//console.log("@@@ "+apprGbn);
+			});
+			
+			
+			
+		});
+		
+		//결재 저장/상신
+		function saveApproval(status) {
+			
+			var list = $("li");
+			
+			arrAppr.length = 0;
+			arrAgree.elngth = 0;
+			arrNoti.length = 0;
+			
+			$.each(list, function(index, element){
+					var gbn =  $(element).attr('gbn'); 
+					if( gbn == 'appr')  arrAppr.push($(element).attr('value'));
+					if( gbn == 'agree') arrAgree.push($(element).attr('value'));
+					if( gbn == 'noti')  arrNoti.push($(element).attr('value'));
+			});
+			
+			var apprContent = $('#apprContent').summernote('code'); //<p><br></p> 
+			
+			//상신일 경우 필수 항목 체크
+			if( status == "F" ) {
+				
+				var apprCnt = arrAppr.length;
+				if( apprCnt == 0 ) {
+					alert("결재자가 누락 되었습니다.");
+					return false;
+				}
+				
+				if( apprContent == "<p><br></p>" ) {
+					alert("본문 내용을 작성해주세요.");
+					return false;
+				}
+				
+				if( !confirm("상신 하시겠습니까?") ) {
+					return false;
+				}
+				
+			}
+			
+			//console.log(arrAppr);
+			//console.log(arrAgree);
+			//console.log(arrNoti);
+			//console.log(apprContent);
+			
+			let url = "/approval/saveApproval";
+			let reqType = 'POST';	
+			let data = {
+				"assetNo"     : $("#asset_no").text(),						
+				"appr"        : arrAppr,
+				"agree"       : arrAgree,
+				"noti"        : arrNoti,
+				"appvTtl"     : $("#appvTtl").val(),
+				"appvType"    : "RE",  //등록의뢰
+				"apprContent" : apprContent,
+				"status"      : status
+			};
+			//console.log(data);
+			$.commRequest(url, reqType, JSON.stringify(data))
+				.then((res) => {
+					console.log('결재상신 성공!!');
+					
+				})
+				.catch((error) => {
+					console.log('결재상신 실패!!');
+				});
+			
+			
+		}
+
+		//결재자 위치 이동
+		function setMoveAppr(upDown) {
+			var olObj;
+			var gbn = $(selectedObj).attr('gbn');
+			if( gbn == "appr"  ) olObj = $("#divAppr");
+			if( gbn == "agree" ) olObj = $("#divAgree");
+			if( gbn == "noti"  ) olObj = $("#divNoti");
+			if( upDown == "UP" ) {
+				$(selectedObj).prev().before($(selectedObj));
+			} else 
+			if( upDown == "DOWN" ) {
+				$(selectedObj).next().after($(selectedObj));
+			}  
+		}
+		
+		
+		//팝업에서 받은 결과 처리
+		function setResult(obj) {
+			
+			var flag = true;
+			
+			//결재자 중복 체크
+			if( obj.userId == $("#apprId").text() ) { 
+				alert('상신자는 선택할 수 없습니다.');
+				flag = false;
+			}
+			
+			if( flag ) {
+				var list = $("li");
+				$.each(list, function(index, element){
+					if( flag && obj.userId == $(element).attr('value') ) {
+						alert('이미 선택한 결재자 입니다.');
+						flag = false;
+					}	
+				});
+			}
+			
+			if( !flag) return false;
+			
+			var objDel = $("<img src='/images/common/ico_pop_error.png' style='width:14px;height:14px;cursor:pointer;' onclick='removeUser(this,\""+apprGbn+"\");'/>"); //삭제용
+			var objSp  = $("<span style='width:1Opx;'>&nbsp;&nbsp;</span>");  //공백용
+			
+			var divAppr  = $("#divAppr");
+			var divAgree = $("#divAgree");
+			var divNoti  = $("#divNoti");
+			
+			var ojbGr = $('<li value="'+obj.userId+'" gbn="'+apprGbn+'" onclick="selList(this,\''+apprGbn+'\');">'+obj.userNm+'</li>');
+			    
+			if( apprGbn == "appr" ) { //결재자
+				
+				divAppr.append(ojbGr);
+				ojbGr.append(objSp);
+				ojbGr.append(objDel);
+				
+				apprCnt++;
+				
+			} else
+			if( apprGbn == "agree" ) { //합의자
+				 
+				divAgree.append(ojbGr);
+				ojbGr.append(objSp);
+				ojbGr.append(objDel);
+				
+				agreeCnt++;
+				
+			} else
+			if( apprGbn == "noti" ) { //통보자
+				
+				divNoti.append(ojbGr);
+				ojbGr.append(objSp);
+				ojbGr.append(objDel);
+				
+				notiCnt++;
+				
+			}
+			
+			/////////////////////////
+			setCount();		
+	
+		}
+		
+		//결재자 선택시 배경 표시
+		function selList(obj, gbn) {
+			selectedObj = obj;
+			var list = $("li");
+			$.each(list, function(index, element){
+					$(element).css('background', '#FFFFFF');
+			});
+			$(obj).css('background', '#E6F8E0');
+		}
+		
+		//결재자 삭제
+		function removeUser(obj, gbn) {
+			$(obj).parent().remove();
+			
+			if( gbn == "appr" ) {
+				apprCnt--;
+			} else
+			if( gbn == "agree" ) {
+				agreeCnt--;
+			} else
+			if( gbn == "noti" ) {
+				notiCnt--;
+			}
+			
+			setCount();
+		}
+		
+		//결재자 숫자 표시
+		function setCount() {
+			/////////////////////////
+			$("#appr_cnt").text(apprCnt);
+			$("#agree_cnt").text(agreeCnt);
+			$("#noti_cnt").text(notiCnt);
+		}
+		   
+		</script>
+	</th:block> 
+
+</head>
+<body >
+
+<div layout:fragment="content">
+	<span id="asset_no" th:text='${param.asset_no}' style="display:none;"></span>
+	<!-- pop_alert -->
+	<div id="pop_wrap" >
+	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
+					<!-- head -->
+					<h3><span id="popTitle"></span>&nbsp;결재상신
+						 <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a>
+					</h3>
+					<!-- //head -->
+					<!-- contents -->
+					<div id="contents">
+	
+						<!-- search -->
+						<!-- <div class="srch_wrap"> -->
+							<!-- search_form -->
+							<div class="srch_form">
+							    <table class="srch_table" style="width:100%;">
+									<colgroup>
+											<col width="40%"/>
+											<col width="50%"/>
+											<col width="10%"/>
+									</colgroup>
+									<tr>
+										<th colspan="2">&nbsp;</th>
+										<td style="text-align:right;" >
+											<!-- search_button -->
+												<a href="#;" class="btn_srch" id="btnSave">저  장</a>
+												<a href="#;" class="btn_srch" id="btnApproval">결재</a>
+											<!-- //search_button -->
+										</td>
+									</tr>
+								</table>
+							 </div>
+							<!-- //search_form -->							
+						<!-- </div> -->
+						<!-- //search -->
+						<p class="space10">
+						<!-- list 1 -->
+						<table class="srch_table" style="width:100%;" >
+							<colgroup>
+									<col width="10%"/>
+									<col width="30%"/>
+									<col width="35%"/>
+									<col width="25%"/>
+							</colgroup>
+							<tr>
+								<th >결재자 지정</th>
+								<th align="left">
+									<input type="radio" name="appr_gbn" value="appr" checked>&nbsp;결재자&nbsp;[<span id="appr_cnt">0</span>]&nbsp;&nbsp;
+									<input type="radio" name="appr_gbn" value="agree" >&nbsp;합의자&nbsp;[<span id="agree_cnt">0</span>]&nbsp;&nbsp;
+									<input type="radio" name="appr_gbn" value="noti" >&nbsp;통보자&nbsp;[<span id="noti_cnt">0</span>]&nbsp;&nbsp;
+								</th>
+								<td>
+									<a href="#;" class="btn_srch" id="btnAdd">결재자 추가</a>
+								</td>
+								<td style="text-align:right;" >
+									<!-- search_button -->
+										<a href="#;" id="btnUp" title="위로">▲</a>
+										<a href="#;" id="btnDown" title="아래로">▼</a>
+									<!-- //search_button -->
+								</td>
+							</tr>
+						</table>
+						
+						
+						<table class="detail_table" style="width:100%;" >
+							<colgroup>
+									<col width="10%"/>
+									<col />
+							</colgroup>
+							<tr>
+								<th style="text-align:center">기&nbsp;&nbsp;안</th>
+								<td>
+									<span sec:authentication="principal.dto.userNm"></span><span id="apprId" sec:authentication="principal.dto.userId" style="display:none;"></span>
+								</td>
+							</tr>
+							<tr>
+								<th style="text-align:center">결&nbsp;&nbsp;재</th>
+								<td style="padding-left:5px;">
+									<div class="apprList">
+									<ol id="divAppr"  ></ol>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th style="text-align:center">합&nbsp;&nbsp;의</th>
+								<td style="padding-left:5px;">
+									<div class="apprList">
+									<ol id="divAgree" ></ol>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th style="text-align:center">통&nbsp;&nbsp;보</th>
+								<td style="padding-left:5px;">
+									<div class="apprList">
+									<ol id="divNoti" ></ol>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th>제목</th>
+								<td>
+									<input type="text" name="appvTtl" id="appvTtl" style="width:80%;"/>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<div id="apprContent"></div>
+								</td>
+							</tr>
+						</table>
+					 
+						<!-- //list 1 -->
+	
+					</div>
+
+	</div>
+
+
+</div>
+
+</body>
+</html>
