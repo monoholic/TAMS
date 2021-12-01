@@ -302,8 +302,6 @@
     				"items": selectedItems
     			} */
     			
-    			console.log("@@@"+ selectedItems);
-    			
     			$.commRequest(url, reqType, JSON.stringify(selectedItems))
     				.then((res) => {
     					console.log(res);

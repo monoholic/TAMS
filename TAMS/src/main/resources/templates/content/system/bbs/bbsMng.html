@@ -416,7 +416,8 @@
 			$("#summernote").summernote({
 	            placeholder: '내용을 작성하세요',
 	            height: 150,
-	            maxHeight: 300,
+	            maxHeight: 170,
+	            minHeight: 170,
 	            lang:"ko-KR",
 	            toolbar: [
 	    		    ['style', ['style']],
@@ -811,11 +812,11 @@
 						<td>
 							<table>
 								<tr>
-									<td width="30%">
+									<td width="55%">
 										<input type="file" id="upFile" style="display:none;">
 											<a id="addFile" class="btn_file_srch">파일찾기</a>
-											<a id="delFile" class="btn_list">파일삭제</a><br>
-											<label for="totalSize" >총 파일크기</label> :
+											<a id="delFile" class="btn_list">파일삭제</a>
+											&nbsp;<label for="totalSize" >총 파일크기</label> :
 										<input type="text" name="totalSize" id="totalSize" readonly style="width:50px;">
 									</td>
 									<td>

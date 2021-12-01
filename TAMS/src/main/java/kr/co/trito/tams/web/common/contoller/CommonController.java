@@ -36,11 +36,13 @@ import kr.co.trito.tams.comm.util.file.excel.InvDto;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.common.dto.AsetMasDto;
 import kr.co.trito.tams.web.common.dto.CodeTreeDto;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
 import kr.co.trito.tams.web.common.service.CommonService;
+import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
 import kr.co.trito.tams.web.user.dto.UserInfo;
@@ -98,7 +100,7 @@ public class CommonController {
 	}
 	
 	/** 부서팝업 화면 */
-	@GetMapping("/popup/deptPopup2")
+	@GetMapping("/popup/deptTreePopup")
 	public ModelAndView deptPopupView2(HttpServletRequest request) {
 		
 		ModelAndView view = new ModelAndView();
@@ -115,12 +117,18 @@ public class CommonController {
 	@ResponseBody
 	@ApiOperation(value = "Web API Common test", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response>  deptTreePopupList() {
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response>  deptTreePopupList(
+        @ApiParam(value = "조회 페이지 번호", required = false) @RequestParam(value = "param",required = false) String param) {
 		
-		Map<String, String> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		
-		List<CodeTreeDto> list = commonService.selectDeptTree(params);
+		if (!StringUtils.isEmpty(param))
+			params.put("param", param);
+		
+		SearchCondition condition = new SearchCondition("0","0", params);
+		
+		List<CodeTreeDto> list = commonService.selectDeptTree(condition);
 		
 		return responseService.success(list);
 	}
@@ -520,5 +528,96 @@ public class CommonController {
 		return view;
 	}
 	
+	/** 자산 선택(팝업-공통) 화면 */
+	@GetMapping("/popup/asetMasPopup")
+	public ModelAndView asetMasPopupView(HttpServletRequest request) {
+		
+		ModelAndView view = new ModelAndView();
+		view.setViewName("/content/common/popup/asetMasPopup");
+		    
+		return view;
+	}
+	
+	/** 자산 선택(팝업-공통) : 조회 */
+	@GetMapping(value="/popup/asetMasPopupList")
+	@ResponseBody
+	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> asetMasPopupList(
+				@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage",required = true) String currentPage,
+				@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
+				@ApiParam(value = "검색 조건(메뉴ID, 메뉴명)", required = false) @RequestParam(value = "searchText", required = false) String searchText,
+				@ApiParam(value = "시작일", required = false) @RequestParam(value = "fromDate", required = false) String fromDate,
+				@ApiParam(value = "종료일", required = false) @RequestParam(value = "toDate", required = false) String toDate,
+				@ApiParam(value = "자산유형1", required = false) @RequestParam(value = "asetType1", required = false) String asetType1,
+				@ApiParam(value = "자산유형2", required = false) @RequestParam(value = "asetType2", required = false) String asetType2,
+				@ApiParam(value = "자산유형3", required = false) @RequestParam(value = "asetType3", required = false) String asetType3,
+				@ApiParam(value = "사업부 코드", required = false) @RequestParam(value = "deptCd1", required = false) String deptCd1,
+				@ApiParam(value = "부서 코드", required = false) @RequestParam(value = "deptCd2", required = false) String deptCd2,
+				@ApiParam(value = "담당자", required = false) @RequestParam(value = "chrgr", required = false) String chrgr,
+				@ApiParam(value = "정렬 필드", required = false) @RequestParam(value = "sortField", required = false) String sortField,
+				@ApiParam(value = "정렬 타입", required = false) @RequestParam(value = "sortOrder", required = false) String sortOrder
+                              ) { 
+
+		if (StringUtils.isEmpty(currentPage) || StringUtils.isEmpty(numOfRows))
+		throw new IllegalArgumentException("Request parameter error.");
+		
+		Map<String, Object> params = new HashMap<>();
+		
+		if (!StringUtils.isEmpty(searchText))
+		params.put("searchText", searchText);
+		
+		
+		if (!StringUtils.isEmpty(fromDate))
+		params.put("fromDate", fromDate);
+		
+		if (!StringUtils.isEmpty(toDate))
+		params.put("toDate", toDate);
+		
+		
+		if (!StringUtils.isEmpty(asetType1))
+		params.put("asetType1", asetType1);
+		
+		if (!StringUtils.isEmpty(asetType2))
+		params.put("asetType2", asetType2);
+		
+		if (!StringUtils.isEmpty(asetType3))
+		params.put("asetType3", asetType3);
+
+		
+		if (!StringUtils.isEmpty(deptCd1))
+		params.put("deptCd1", deptCd1);
+		
+		if (!StringUtils.isEmpty(deptCd2))
+		params.put("deptCd2", deptCd2);
+		
+		
+		if (!StringUtils.isEmpty(chrgr))
+		params.put("chrgr", chrgr);
+		
+		
+		if (!StringUtils.isEmpty(sortField))
+		params.put("sortField", sortField);
+		
+		if (!StringUtils.isEmpty(sortOrder))
+		params.put("sortOrder", sortOrder);
+		
+		SearchCondition condition = new SearchCondition(currentPage, numOfRows, params);
+		int total = commonService.selectCountAsetMas(condition);
+		condition.pageSetup(total);
+		
+		List<AsetMasDto> list = commonService.selectAsetMasList(condition);
+		return responseService.success(condition, list);
+	}
+	
+	/** 자산 선택(팝업-공통) : 1레벨 조회 */
+	@PostMapping("/popup/asetType")
+	@ResponseBody
+	public ResponseEntity<? extends Response> asetTypeList(String str) { 
+		
+		List<CodeDto> list = commonService.selectAsetType("");
+		return responseService.success(list);
+	}
 }
 

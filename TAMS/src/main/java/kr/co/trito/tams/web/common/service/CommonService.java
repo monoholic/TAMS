@@ -9,11 +9,13 @@ import org.springframework.stereotype.Service;
 import kr.co.trito.tams.comm.util.file.FileDto;
 import kr.co.trito.tams.comm.util.file.excel.InvDto;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.common.dto.AsetMasDto;
 import kr.co.trito.tams.web.common.dto.CodeTreeDto;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
 import kr.co.trito.tams.web.common.mapper.CommonMapper;
+import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
 import lombok.RequiredArgsConstructor;
 
@@ -34,9 +36,9 @@ public class CommonService {
 	/** 
 	 * 부서팝업(트리) 조회
 	 * */
-	public List<CodeTreeDto> selectDeptTree(Map<String,String> map){
-		return mapper.selectDeptTree(map);
-	}	
+	public List<CodeTreeDto> selectDeptTree(SearchCondition condtion){
+		return mapper.selectDeptTree(condtion);
+	}
 	
 	/** 
 	 * 사용자팝업 조회 
@@ -135,4 +137,25 @@ public class CommonService {
 		}
 		return result;
 	}	
+	
+	/** 
+	 * 자산선택(팝업-공통) 조회
+	 * */
+	public List<AsetMasDto> selectAsetMasList(SearchCondition condition){
+		return mapper.selectAsetMasList(condition);
+	}
+	
+	/** 
+	 * 자산선택(팝업-공통) 조회
+	 * */
+	public int selectCountAsetMas(SearchCondition condition) {
+		return mapper.selectCountAsetMas(condition);
+	}
+	
+	/** 
+	 * 자산선택(팝업-공통) 자산유형 조회
+	 * */
+	public List<CodeDto> selectAsetType(String email){
+		return mapper.selectAsetType(email);
+	}
 }

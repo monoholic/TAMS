@@ -36,8 +36,8 @@
 		            var item = {};
 		            item.deptCd = id;
 		            item.deptNm = text;
-					//
-					returnResult(item);
+					
+					returnResult(item)
 				});
 						
 				//팝업창 닫기
@@ -85,7 +85,7 @@
 						             result.deptNm = item[0].text;
 						             //console.log(result);
 						             returnResult(result);
-	           						} 
+	           					} 
                        		}
                         } 
                     }
@@ -100,7 +100,7 @@
 				let url = "/common/popup/deptTreeList";
 				let reqType = 'GET';	
 				let data = {
-					"codeGrpId" : $("#codeGrpId").text()
+					"param" : $("#bizDept").text()
 				};
 				 
 				$.commRequest(url, reqType, data)
@@ -126,12 +126,14 @@
 <body >
 
 <div layout:fragment="content">
-
+	
+	<span id="bizDept" th:text="${param.bizDept}" style="display:none;"></span>
+	
 	<!-- pop_alert -->
 	<div id="pop_wrap" >
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
 					<!-- head -->
-					<h3>자산유형 선택
+					<h3>부서 선택
 						 <!-- <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a> -->
 					</h3>
 					<!-- //head -->
@@ -147,7 +149,6 @@
 											<col width="15%"/>
 											<col width="40%"/>
 											<col width="15%"/>
-											<col width=""/>
 									</colgroup>
 									<tr>
 										<th>&nbsp;</th>

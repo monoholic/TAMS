@@ -96,6 +96,21 @@
     	        openPopup(popId, url, args, param);
     	    });
 			
+    		// 자산선택(팝업-공통) 호출
+    	    $("#openAsetMasPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/asetMasPopup";
+    	        var popId = "AsetMasPopup";
+    	        var args = {
+    	        };
+    	        args.width = 1300;
+    	        args.height = 800;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        openPopup(popId, url, args);
+    	    });
+			
 		});
 		
 		
@@ -112,8 +127,30 @@
 		}
 		
 		//팝업에서 받은 결과 처리
+		function setResult3(obj) {
+			$("#deptCd").val(obj.deptCd);
+			$("#deptNm").val(obj.deptNm);
+		}
+		
+		//팝업에서 받은 결과 처리
 		function setReturnDate(dateStr) {
 			$("#selDate").val(dateStr);
+		}
+		
+		function selectAsetList(obj) {
+			console.log("데이터 전달 확인"+JSON.stringify(obj));
+			$("#asetNo").val(obj[0].asetNo);
+			$("#asetNm").val(obj[0].asetNm);
+			$("#asetType1").val(obj[0].asetType1);
+			$("#asetType2").val(obj[0].asetType2);
+			$("#asetType3").val(obj[0].asetType3);
+			$("#mftco").val(obj[0].mftco);
+			$("#model").val(obj[0].model);
+			$("#sn").val(obj[0].sn);
+			$("#bizDeptCd").val(obj[0].bizDeptCd);
+			$("#deptCd1").val(obj[0].deptCd);
+			$("#chrgr").val(obj[0].chrgr);
+			$("#asetStus").val(obj[0].asetStus);
 		}
 		
 	  $( function() {
@@ -174,6 +211,25 @@
 				<br/><br/><br/>
 				<h5>결재팝업</h5>
 				<a href="#;" id="openApprovalPopup">결재팝업 호출</a>
+				<br/><br/><br/>
+				<h5>자산 선택(팝업-공통)</h5>
+				<a href="#;" id="openAsetMasPopup">자산 선택(팝업-공통)</a>
+				<br/>
+				자산번호 &nbsp;<input type="text" id="asetNo" style="width:60px;"/>&nbsp;&nbsp;
+				자산명 &nbsp;<input type="text" id="asetNm" style="width:60px;"/>&nbsp;&nbsp;
+				<br/><br/>
+				공통코드(자산유형1) &nbsp;<input type="text" id="asetType1" style="width:60px;"/>&nbsp;&nbsp;
+				공통코드(자산유형2) &nbsp;<input type="text" id="asetType2" style="width:60px;"/>&nbsp;&nbsp;
+				공통코드(자산유형3) &nbsp;<input type="text" id="asetType3" style="width:60px;"/>&nbsp;&nbsp;
+				<br/><br/>
+				제조사 &nbsp;<input type="text" id="mftco" style="width:60px;"/>&nbsp;&nbsp;
+				모델 &nbsp;<input type="text" id="model" style="width:60px;"/>&nbsp;&nbsp;
+				제품번호 &nbsp;<input type="text" id="sn" style="width:60px;"/>&nbsp;&nbsp;
+				<br/><br/>
+				사업부 &nbsp;<input type="text" id="bizDeptCd" style="width:60px;"/>&nbsp;&nbsp;
+				부서코드 &nbsp;<input type="text" id="deptCd1" style="width:60px;"/>&nbsp;&nbsp;
+				담당자 &nbsp;<input type="text" id="chrgr" style="width:60px;"/>&nbsp;&nbsp;
+				공통코드(자산상태) &nbsp;<input type="text" id="asetStus" style="width:60px;"/>&nbsp;&nbsp;
 			</div>
 			
 		</div>

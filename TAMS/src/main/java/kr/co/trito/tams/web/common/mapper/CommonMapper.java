@@ -8,10 +8,12 @@ import org.apache.ibatis.annotations.Mapper;
 import kr.co.trito.tams.comm.util.file.FileDto;
 import kr.co.trito.tams.comm.util.file.excel.InvDto;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.common.dto.AsetMasDto;
 import kr.co.trito.tams.web.common.dto.CodeTreeDto;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
+import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
 
 @Mapper
@@ -19,7 +21,7 @@ public interface CommonMapper {
 	
 	public List<DeptDto> selectDeptPopupList(SearchCondition condtion);
 	
-	public List<CodeTreeDto> selectDeptTree(Map<String,String> map);
+	public List<CodeTreeDto> selectDeptTree(SearchCondition condtion);
 	
 	public List<UserMngDto> selectUserPopupList(SearchCondition condtion);
 	
@@ -47,4 +49,10 @@ public interface CommonMapper {
 	
 	public List<Map<String,String>> selectChart1();
 	public List<Map<String,String>> selectChart2();
+	
+	public List<AsetMasDto> selectAsetMasList(SearchCondition condition);
+	
+	public int selectCountAsetMas(SearchCondition condition);
+	
+	public List<CodeDto> selectAsetType(String email);
 }

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/popup2">
+
+	<head>
+	    <title>자산 선택(팝업-공통)</title>
+	</head>
+        
+	<!-- css -->
+	<th:block layout:fragment="css">
+	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/jsgrid.css" />
+		<link rel="stylesheet" href="/css/theme.css" />
+		
+	</th:block>
+	
+	<th:block layout:fragment="script">
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="/js/jsgrid/db.js"></script>
+	    <script src="/js/jsgrid/jsgrid.core.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.field.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
+		
+	    <script>
+	    
+	    // 공통코드(자산유형 1레벨 출력)
+	    let numOfRows = 10;
+	    var status = true;
+        var selectedItems = [];
+	 	var insertedItems = [];
+	 	var updatedItems = [];
+	 	
+	 	var asetType = [];
+	 	
+	    $(function(){
+	        $("#jsGrid").jsGrid({
+	        	height: "400",
+                width: "100%",
+                filtering: false,
+                editing: true,
+                inserting: true,
+                sorting: true,
+                paging: true,
+                sorter: "number",
+                pageIndex:1,
+                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
+                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
+                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
+                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
+                pagerFormat: "{first} {prev} {pages} {next} {last}",
+                pagerContainer:null,
+                pageLoading: true,
+                pager: "#pager",
+                autoload: status,
+                pageSize: numOfRows,
+                pageButtonCount: 5,
+                loadonce: true,
+                updateOnResize: true, 
+	            rowClick: function(args) {
+	            	var target = args.event.target;
+	            	
+					if(target instanceof HTMLTableCellElement) {
+						// detail form
+						/* alert(JSON.stringify(args)); */
+						// showDetailForm(args.item);
+						
+					} else {
+					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
+					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
+					                .on("change", function () {
+						  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
+						});
+					}
+	            }, 
+	            pagerContainerClass: "paginate",
+	            deleteConfirm: function(item) {
+	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
+	            },
+	            controller:  {
+	                loadData: function(filter) {
+	                    var d = $.Deferred();
+	                    
+	                    currentPage = filter.pageIndex;
+	                    
+	                    
+	                    let url = "/common/popup/asetMasPopupList";
+						let reqType = 'GET';	
+						let data = {
+            				"currentPage"  : filter.pageIndex,
+            				"numOfRows"    : numOfRows,
+            				"searchText"   : $("#asetNo").val(),
+            			    "fromDate"     : $("#fromDate").val(),
+        				    "toDate"       : $("#toDate").val(),
+        				    "asetType1"	   : $("#asetType1").val(),
+        				    "asetType2"	   : $("#asetType2").val(),
+        				    "asetType3"	   : $("#asetType3").val(),
+        				    "deptCd1"	   : $("#deptCd1").val(),
+        				    "deptCd2"	   : $("#deptCd2").val(),
+        				    "chrgr"		   : $("#chrgr").val(),
+            				"sortField"    : filter.sortField,
+            				"sortOrder"    : filter.sortOrder
+            			}
+						$.commRequest(url, reqType, data)
+							.then((res) => {
+								$(".result").text("Results : " + res.condition.totalCount);
+								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
+
+							})
+							.catch((error) => {
+								console.log('메뉴조회 실패!!');
+							});						
+	                    
+	                    return d.promise();
+	                },
+            },
+	            fields: [
+	            	{  name : "chk"
+	                	 , align: "center"
+	                	 , width: 30
+	                	 , title: ""
+	                	 , editing: false
+	                	 , sorting: false
+	                	 , filtering: false
+	                	 , itemTemplate: function(value, item) {
+	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
+	                       .prop("checked", $.inArray(item.firstName, selectedItems) > -1)
+	                       .on("change", function () {
+	  					  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
+	  					  	 });
+	            		   }
+	                	 , headerTemplate : function ()  { 
+						  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
+		                     .on("change", function (item) {
+		             	    	selectedItems = [];
+		            	    	if(this.checked) { // check select status
+		            	            $('.singleCheckbox').each(function() { 
+		            	                $(this).prop("checked", true).change();
+		            	            });			         
+		            	        }else {
+		            	            $('.singleCheckbox').each(function() { 
+		            	            	$(this).prop("checked", false).change();
+		            	            });  
+		            	            selectedItems = [];
+		            	        }
+		    				   });
+					 	 } ,
+	                },
+	                { name: "asetNo"	, type: "text"   , width: 100 ,align: "center", title: "자산번호"	},
+					{ name: "asetType1"	, type: "text"   , width: 150 ,align: "center", title: "자산유형1"	},
+					{ name: "asetType2"	, type: "text"   , width: 150 ,align: "center", title: "자산유형2"	},
+					{ name: "asetType3"	, type: "text"   , width: 150 ,align: "center", title: "자산유형3"	},
+					{ name: "mftco"		, type: "text"   , width: 100 ,align: "center", title: "메이커" 	},
+					{ name: "model"		, type: "text"   , width: 100 ,align: "center", title: "모델"	 	},
+					{ name: "sn"		, type: "number" , width: 100 ,align: "center", title: "S/N" 	},
+					{ name: "bizDeptCd"	, type: "date"   , width: 100 ,align: "center", title: "사업부"	},
+					{ name: "deptCd"	, type: "text"   , width: 100 ,align: "center", title: "부서"		},
+					{ name: "chrgr"		, type: "text"   , width: 100 ,align: "center", title: "담당자"	},
+					{ name: "asetStus"	, type: "text"   , width: 100 ,align: "center", title: "자산상태"	},
+	            ]
+	        });
+	        
+		    var selectItem = function(item) {
+		    	if(!selectedItems.includes(item)){
+			    	selectedItems.push(item);
+		    	}
+			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+	             $("#selectAllCheckbox").prop("checked", true);
+	         } else {
+	             $("#selectAllCheckbox").prop("checked", false);
+	         }
+			};
+		     
+		    var unselectItem = function(item) {
+			    selectedItems = $.grep(selectedItems, function(i) {
+			    return i !== item;
+			    });
+			    if(selectedItems.length == 0) {
+			    	$('#selectAllCheckbox').attr('checked', false);
+			    }
+			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+	             $("#selectAllCheckbox").prop("checked", true);
+	         } else {
+	             $("#selectAllCheckbox").prop("checked", false);
+	         }
+	        
+		    };
+    	    $(".btn_srch").on("click",function (){
+    	    	if (validationCheck() == '202') {
+	    	   		$("#jsGrid").jsGrid().trigger("loadData");
+    	    	}
+	        });
+	        
+    	    //팝업창 닫기
+			$("#btn_close_pop").on("click",function(){ 
+				window.close();
+			});
+	        
+          	//리셋 버튼
+    	    $(".btn_reset").click(function() {
+    	    	$("#asetNo").val("");
+    	    	$("#fromDate").val("");
+    	    	$("#toDate").val("");
+    	    	$("#asetType1").val("");
+    	    	$("#asetType2").val("");
+    	    	$("#asetType3").val("");
+    	    	$("#deptCd1").val("");
+    	    	$("#deptNm1").val("");
+    	    	$("#deptCd2").val("");
+    	    	$("#deptNm2").val("");
+    	    	$("#chrgr").val("");
+    	    });
+          	
+    	    asetTypeList();
+    	    
+    		// 자산 유형 선택 2레벨 그리기
+    	    $('#asetType1').on('change', function() {
+    	    	var asetType1 = event.srcElement.value;
+    	    	
+    	    	makeAsetCombo("#asetType2", getAsetType(asetType1))
+    	    	makeAsetCombo("#asetType3", "")
+    	    	$("#asetType2").prepend('<option value="">' + "선택" + '</option>');
+    	    	$('#asetType2 option:contains("선택")').prop('selected', true);
+    	    	
+    	    	$("#jsGrid").jsGrid().trigger("loadData");
+    	    });
+    		
+    	 	// 자산 유형 선택 3레벨 그리기
+    	    $('#asetType2').on('change', function() {
+    	    	var asetType2 = event.srcElement.value;
+    	    	
+    	    	makeAsetCombo("#asetType3", getAsetType(asetType2))
+    	    	$("#asetType3").prepend('<option value="">' + "선택" + '</option>');
+    	    	$('#asetType3 option:contains("선택")').prop('selected', true);
+    	    	
+    	    	$("#jsGrid").jsGrid().trigger("loadData");
+    	    });
+    	 	
+    	 	// 자산 유형 3레벨 선택시 조회
+    	    $('#asetType3').on('change', function() {
+    	    	$("#jsGrid").jsGrid().trigger("loadData");
+    	    });
+			
+    	    $('#asetType3').on('change', function() {
+    	    	$("#jsGrid").jsGrid().trigger("loadData");
+    	    });
+    	    
+    	    $('#asetType3').on('change', function() {
+    	    	$("#jsGrid").jsGrid().trigger("loadData");
+    	    });
+    	 	
+    	  	//공통코드팝업(트리) 호출 
+     	    $("#openDeptPopup1").on("click", function() { 
+     	    // 팝업 호출 url
+    	        var url = "/common/popup/deptTreePopup";
+    	        var popId = "DeptPopup";
+    	        var args = {
+    	        };
+    	        args.width = 500;
+    	        args.height = 450;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        var param = {};
+    	        param.id    = "bizDept";
+    	        param.value = "BIZ_DEPT";
+    	        
+    	        openPopup(popId, url, args, param);
+     	    });
+    	  	
+     	    $("#openDeptPopup2").on("click", function() { 
+        	    // 팝업 호출 url
+       	        var url = "/common/popup/deptTreePopup";
+       	        var popId = "DeptPopup";
+       	        var args = {
+       	        };
+       	        args.width = 500;
+       	        args.height = 450;
+       	        args.fullscreen = "no";
+       	        args.resizable = "no";
+       	        
+       	     	var param = {};
+ 	        	param.id    = "dept";
+ 	        	param.value = "DEPT";
+       	        
+       	        openPopup(popId, url, args, param);
+        	});
+     	    
+     	    $("#btn_sel").on("click",function() {
+     		    //console.log(selectedItems);
+     		  	returnResult(selectedItems);
+     		  	
+			});
+    	});
+	 	
+	 	//팝업호출 공통함수
+		function openPopup(popId, url, args, param) {
+			
+	        var options;
+			
+			var width 	= args.width;
+	        var height 	= args.height;
+	        var fullscreen = args.fullscreen;
+	        if( fullscreen == null || fullscreen == "" ) fullscreen = "no";
+	        var resizeable = args.resizeable;
+	        if( resizeable == null || resizeable == "" ) full = "no";
+	        
+	        var sTop  = Math.max(0, (($(window).height() - height) / 2) + $(window).scrollTop()) + "px";
+	        var sLeft = Math.max(0, (($(window).width() - width) / 2) + $(window).scrollLeft()) + "px";
+	        
+	        options = "";
+	        options += "position=absolute";
+	        options += ",top="+sTop+", left="+sLeft+", height="+height+"px, width="+width+"px";
+	        options += ",fullscreen="+fullscreen+", resizeable="+resizeable;
+	        
+	        var child;
+	        child = window.open("", popId, options);
+	        
+	        $form = $("<form></form>");
+	        $form.attr("action", url);
+	        $form.attr("target", popId);
+	        $form.appendTo("body");
+	        if( param != null && param != "" ) {
+	        	var str = '<input name="'+param.id+'" value="'+param.value+'">';
+	        	$form.append(str);
+	        }
+	        
+	        $form.submit();	        
+	        $form.empty();
+		}
+	 	
+		function setResult3(obj) {
+			console.log(JSON.stringify(obj));
+			if(obj.deptCd.length <= 6) {
+				$("#deptCd1").val(obj.deptCd);
+				$("#deptNm1").val(obj.deptNm);
+				$("#jsGrid").jsGrid().trigger("loadData");
+			}
+			else{
+				$("#deptCd2").val(obj.deptCd);
+				$("#deptNm2").val(obj.deptNm);
+				$("#jsGrid").jsGrid().trigger("loadData");
+			}
+		}
+		
+	 	// 자산 유형 부모 요소 찾아서 return
+	 	function getAsetType(asetType1) {
+	 		return asetType.filter( function(el) {
+	 			return el.uppCodeId == asetType1;
+	 		});
+	 	}
+	 	
+	 	// 자산 유형 옵션 그리기
+	 	function makeAsetCombo(objNm, arr) {
+	 		$(objNm).empty();
+	 		
+	 		$.each(arr, function(i, e) {
+	 			$(objNm).append('<option value="'+ e.codeId+'">' + e.codeNm+ '</option>');
+	 		});
+	 	}
+	 	
+	    // asetType 리스트 출력
+	    function asetTypeList(){                                                                    
+		 	let url = '/common/popup/asetType';                                                      
+		 	let reqType = 'POST';                                                                        
+		 	let data = {                                                                                 
+		 		"email" : ""                                                                             
+		 	};                                                                                           
+		 	$.commRequest(url, reqType, JSON.stringify(data))                                            
+		 		.then((res) => {
+		 			$.each(res.data, function(index, el){                                                        
+		 				asetType.push(el);
+		 				
+		 				if(el.codeLvl == '1') {
+			 				$("#asetType1").append('<option value="'+ el.codeId+'">' + el.codeNm+ '</option>');
+		 				}
+		 			})
+		 		})
+		 		.catch((error) => {                                                                      
+		 			alert('메뉴조회 실패!!');                                                                  
+		 		});
+		 };
+		 
+		function enterkey() {
+	    	if (window.event.keyCode == 13) {
+	    		if (validationCheck() == '202') {
+	    			$("#jsGrid").jsGrid().trigger("loadData");
+	    		}
+	        }
+	    }
+		 
+		// 유효성 검사
+	    function validationCheck() {
+	    	let code = '202';
+			
+	    	var fromDate = $("#fromDate").val().replaceAll("-", "");
+	    	var toDate = $("#toDate").val().replaceAll("-", "");
+	    	
+			if(fromDate > toDate) {
+				alert("날짜를 다시 선택해 주세요");
+				$("#toDate").focus();
+				code = '200';
+			}
+			return code;
+	    }
+		
+	    function returnResult(item) {
+			opener.selectAsetList(item);
+			window.close();
+	    }
+	    </script>	
+	</th:block>
+
+	<div layout:fragment="content">
+
+	<!-- pop_alert -->
+	<div id="pop_wrap" >
+	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
+			<!-- head -->
+			<h3>자산 선택(팝업-공통)
+				 <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a>
+			</h3>
+			<!-- //head -->
+			<!-- contents -->
+			<div id="contents">
+				<div class="srch_wrap">
+					<!-- search_form -->
+					<div class="srch_wrap single">
+						<table class="srch_table">
+							<colgroup>
+								<col style="width:15%"/>
+								<col style="width:15%"/>
+								<col style="width:15%"/>
+								<col style="width:15%"/>
+								<col style="width:15%"/>
+								<col style="width:15%"/>
+								<col style="width:15%"/>
+							</colgroup>
+							<tr>
+							<th style="text-align:center;">자산번호</th>
+								<td><input type="text" id="asetNo" onkeyup="enterkey()" style="width:100%;"></td>
+								<th style="text-align:center;">등록일자</th>
+								<td><input type="date" id="fromDate"></td>
+								<td><input type="date" id="toDate"></td>
+							</tr>
+							<tr>
+								<th style="text-align:center;">자산유형1</th>
+								<td>
+									<select id="asetType1" style="width:100%;">
+										<option value="">선택</option>
+									</select>
+								</td>
+								<th style="text-align:center;">자산유형2</th>
+								<td>
+									<select id="asetType2" style="width:100%;">
+									</select>
+								</td>
+								<th style="text-align:center;">자산유형3</th>
+								<td>
+									<select id="asetType3" style="width:100%;">
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th style="text-align:center;">사업부</th>
+								<td>
+									<input type="hidden" id="deptCd1"/>
+									<input type="text" id="deptNm1" style="width:80%;" readonly/>
+									<a href="#" id="openDeptPopup1" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+								</td>
+								<th style="text-align:center;">부서</th>
+								<td>
+									<input type="hidden" id="deptCd2"/>
+									<input type="text" id="deptNm2" style="width:80%;" readonly/>
+									<a href="#" id="openDeptPopup2" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+								</td>
+								<th style="text-align:center;">담당자</th>
+								<td><input type="text" id="chrgr" onkeyup="enterkey()" style="width:100%;"></td>
+							</tr>
+							<tr>
+								<td class="search" colspan="7">
+									<a href="#;" class="btn_reset">Reset</a>
+									<a href="#;" class="btn_srch">Search</a>
+								</td>
+							</tr>
+						</table>
+					 </div>
+				</div>
+					<div class="list_head">
+						<div class="result">Results : 0,000</div>
+						<div class="button">
+							<a class="btn_sel" id="btn_sel">선택</a>
+						</div>
+						<!-- list_button -->
+					</div>
+					<div id="jsGrid"></div>
+			</div>
+		</div>
+	</div>
+	
+</html>
