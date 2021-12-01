@@ -10,6 +10,7 @@ import kr.co.trito.tams.comm.util.file.FileDto;
 import kr.co.trito.tams.comm.util.file.excel.InvDto;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.common.dto.CodeTreeDto;
+import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
 import kr.co.trito.tams.web.common.mapper.CommonMapper;
@@ -44,7 +45,19 @@ public class CommonService {
 		return mapper.selectUserPopupList(condition);
 	}
 	
+	/** 
+	 * 사용자필터팝업 조회 
+	 * */
+	public List<UserMngDto> selectUserFilterPopupList(SearchCondition condition){
+		return mapper.selectUserFilterPopupList(condition);
+	}	
 	
+	/** 
+	 * 공통) 필터 데이터 조회
+	 * */
+	public List<ComCodeDto> commSelectBox(String codeGrpId){
+		return mapper.commSelectBox(codeGrpId);
+	}	
 	
 	/** 
 	 * 첨부파일 정보 조회 

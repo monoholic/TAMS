@@ -24,15 +24,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import kr.co.trito.tams.comm.util.file.excel.InvDto;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.standard.code.dto.CodeDto;
+import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
 import kr.co.trito.tams.web.standard.invest.service.InvestService;
-import kr.co.trito.tams.web.system.menu.dto.MenuDto;
-import kr.co.trito.tams.web.system.menurole.dto.MenuRoleDto;
 import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,7 +43,7 @@ public class investController {
 	@Autowired
 	InvestService investService;
 	
-	/* 공통코드 관리 화면 */
+	/** 투자정보관리 화면 */
 	@PostMapping("/investMng")
 	public ModelAndView investMngView(HttpServletRequest request) {
 	
@@ -61,7 +58,7 @@ public class investController {
 		return view;
 	}
 	
-	/* 공통코드 관리 화면 : 조회 */
+	/** 투자정보관리 화면 : 조회 */
 	@GetMapping(value="/investMng/investMngList")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
@@ -117,7 +114,7 @@ public class investController {
 		return responseService.success(condition, list);
 	}
 
-	/** 메뉴권한관리 화면 : 저장 */
+	/** 투자정보관리 화면 : 저장 */
 	   @PostMapping(value="/investMng/investMngSave")
 	   @ResponseBody
 	   @ApiOperation(value = "Web API Menu Mgr Save", notes = "Web API Test")
@@ -137,36 +134,35 @@ public class investController {
 		   for(InvestDto inv : data) {
 		 	  inv.setRegr(userId);
 		 	  inv.setUpdr(userId);
-		 	  log.error("@@@ " + inv.toString());
-		 	  if(investService.saveInvestInfo(inv) > 0) cnt++;
+		 	  log.error("@@@ "+ inv.toString());
+		 	  if(investService.saveInvestInfo(inv) > 0 && investService.savePoInfo(inv) > 0) cnt++;
 		   }
 			 
-		   cnt = investService.savePoInfo(data);
 		   if(cnt > 0) code = "200";
 	       
 	       return code;
 	} 
 	
 	/** 메뉴관리 화면 : 삭제 */
-	@GetMapping(value="/investMng/investMngDelete")
+	@PostMapping(value="/investMng/investMngDelete")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr Delete", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String investMngDelete( 
-			@ApiParam(value = "메뉴ID", required = true) @RequestParam(value = "items", required = true) List<String> items
+			@ApiParam(value = "Row값", required = false) @RequestBody(required = false) List<InvestDto> items
 			) { 
 		
 		String code = "202";
 		
 		int cnt = 0;
 		
-		/*
-		 * for(String menuId : items) { System.out.println("@@@@@@@@@@ "+menuId);
-		 * MenuDto dto = new MenuDto(); dto.setMenuId(menuId); if(
-		 * menuroleService.menuMngDelete(dto) > 0 ) cnt++; }
-		 */
-		
+		for (InvestDto poNo : items) {
+			System.out.println("@@@@DELETE " + poNo);
+			if (investService.deletePoInfo(poNo) > 0)
+				cnt++;
+		}
+		 
 		if( cnt > 0) code = "200";
 		
 		return code;

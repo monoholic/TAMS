@@ -28,9 +28,10 @@
 			 , a.po_no 		as poNo
 			 , a.mfgd_nm 	as mfgdNm
 			 , a.qty 		as qty
-			 , a.inv_dt 	as invDt
+			 , a.po_amt		as poAmt
+			 , date_format(a.inv_dt, '%Y-%m-%d') as invDt
 			 , a.dept_nm 	as deptNm
-			 , a.inv_reqr 	as invRegr
+			 , a.inv_reqr 	as invReqr
 			 , a.user_nm 	as userNm
 			 , (SELECT CASE 
 			   	   	   WHEN COUNT(*) >= 1 THEN 'Y'
@@ -49,6 +50,7 @@
 					 , b.po_no
 					 , b.mfgd_nm
 					 , b.qty
+					 , b.po_amt
 					 , a.inv_dt
 					 , e.dept_nm
 					 , a.inv_reqr
@@ -68,27 +70,38 @@
 		<if test="params.searchType2 != 'none'">
 		AND ${params.searchType2} LIKE CONCAT('%', #{params.searchText2}, '%')
 		</if>
-		<if test="params.sortField != null">
+		<choose> 
+		<when test="params.sortField != null">
 			ORDER BY ${params.sortField} ${params.sortOrder}
-		</if>
+		</when>
+		<otherwise>
+			ORDER BY poNo asc
+		</otherwise>
+		</choose>
 	</select>
 	
 	<!-- TB_PO 정보등록 -->
 	<insert id="saveInvestInfo" parameterType="kr.co.trito.tams.web.standard.invest.dto.InvestDto">
-		INSERT INTO TB_INV_MAS(INV_NO, INV_TTL, INV_QTY, INV_AMT, ACTG_YEAR, PO_NO, MFGD_NM, QTY, INV_DT, INV_REGR, REG_DT, REGR)
+		INSERT INTO TB_INV_MAS(INV_NO, INV_TTL, INV_QTY, INV_AMT, ACTG_YEAR, INV_DT, INV_REQR, REG_DT, REGR)
                 VALUES
-                (#{invNo}, #{invTtl}, #{invQty}, #{invAmt}, #{actgYear}, #{poNo}, #{mfgdNm}, #{qty}, #{invDt}, #{invDt}, #{invRegr}, now(), #{regr})
+                (#{invNo}, #{invTtl}, CAST(#{invQty} as int), CAST(#{invAmt} as int), #{actgYear}, #{invDt}, #{regr}, now(), #{regr})
                 ON DUPLICATE KEY
-                UPDATE INV_DT = #{invDt}, INV_REQR = #{invRegr}, INV_TTL = #{invTtl}, REGR = #{regr}
+                UPDATE INV_DT = #{invDt}, INV_QTY = CAST(#{invQty} as int), INV_AMT = CAST(#{invAmt} as int), INV_REQR = #{regr}, INV_TTL = #{invTtl}, UPDR = #{updr}, UP_DT = now()
 	</insert>
 	
 	<!-- TB_PO 정보등록 -->
-	<insert id="savePoInfo" parameterType="java.util.List">
-		INSERT INTO TB_PO(PO_NO, INV_NO, MFGD_NM, QTY, REGR)
+	<insert id="savePoInfo" parameterType="kr.co.trito.tams.web.standard.invest.dto.InvestDto">
+		INSERT INTO TB_PO(PO_NO, INV_NO, PO_CHRGR, MFGD_NM, QTY, PO_AMT, REGR)
                 VALUES 
-                <foreach collection="list" item="invs" separator=" , ">
-                (#{invs.poNo}, #{invs.invNo}, #{invs.mfgdNm}, #{invs.qty}, #{invs.regr})
-                </foreach>
+                (#{poNo}, #{invNo}, #{regr}, #{mfgdNm}, CAST(#{qty} as int), CAST(#{poAmt} as int), #{regr})
+                ON DUPLICATE KEY
+                UPDATE PO_CHRGR = #{regr}, MFGD_NM = #{mfgdNm}, QTY = CAST(#{qty} as int), PO_AMT = CAST(#{poAmt} as int), UPDR = #{regr}, UP_DT = now()
 	</insert>
+
+	<!-- TB_PO 정보등록 -->
+	<delete id="deletePoInfo" parameterType="kr.co.trito.tams.web.standard.invest.dto.InvestDto">
+		DELETE FROM TB_PO
+        WHERE  PO_NO = #{poNo}
+	</delete>
 
 </mapper>

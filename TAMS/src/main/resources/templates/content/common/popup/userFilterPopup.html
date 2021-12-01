@@ -1,0 +1,353 @@
+﻿<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/popup2">
+<head>
+<meta charset="utf-8" />
+<title>사용자팝업</title>
+
+	<!-- css -->
+	<th:block layout:fragment="css">
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/jsgrid.css" />
+		<link rel="stylesheet" href="/css/theme.css" />
+	</th:block>
+
+	 <th:block layout:fragment="script">
+	 	<script src="/js/jsgrid/db.js"></script>
+	    <script src="/js/jsgrid/jsgrid.core.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.field.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>
+	 
+		<script>
+		
+		 	var popSelectedItems = [];
+		 	
+			$(function() {
+				
+	            let url = "/common/comm/selectBox";
+				let reqType = 'GET';	
+
+				$.commRequestSelectbox(url, reqType, "#searchType", "USER_POPUP");
+				$.commRequestSelectbox(url, reqType, "#searchType2", "USER_POPUP");
+				
+				$("#jsGrid").jsGrid({
+		        	height: "300",
+	                width: "100%",
+	                filtering: false,
+	                editing: false,
+	                inserting: false,
+	                sorting: true,
+	                paging: false,
+	                sorter: "number",
+	                pageIndex:1,
+	                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
+	                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
+	                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
+	                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
+	                pagerFormat: "{first} {prev} {pages} {next} {last}",
+	                pagerContainer:null,
+	                pageLoading: true,
+	                pager: "#pager",
+	                autoload: true,
+	                pageSize: 20,
+	                pageButtonCount: 5,
+	                loadonce: true,
+	                updateOnResize: true, 
+	                rowClick: function(args) {
+	                	/*
+	                	var target = args.event.target; 
+						if(target.type == "checkbox" ) {
+							chkOne(args.itemIndex);
+						}
+						
+	                	$("<input>").attr("type", "checkbox").attr("class","popSingleCheckbox")
+		                .prop("checked", $.inArray(args.item.firstName, popSelectedItems) > -1)
+		                .on("change", function () {
+		                	if( $(this).is(":checked") ) { console.log($(this));
+			  	 				popSelectItem($(this).parent().next().text())
+			  	 			} else {
+			  	 				popUnselectItem($(this).parent().next().text());
+			  	 			}
+						});
+	                	*/					 
+	                },	                	
+		            rowDoubleClick: function(args) {
+		            	//더블 클릭시 확인버튼 동일 기능
+		            	returnResult(args.item);
+		            }, 
+		            pagerContainerClass: "paginate",
+		            deleteConfirm: function(item) {
+		                return "\""+item.userNm+"("+userId+")"+"\""+ "을 삭제 하시겠습니까?";
+		            },
+		            controller:  {
+		                loadData: function(filter) { 
+		                    var d = $.Deferred();
+		           
+		                    let url = "/common/popup/userFilterPopupList";
+							let reqType = 'GET';	
+							let data = {
+	            				"searchType" : $("#searchType").val(),
+	            				"searchText" : $("#searchTxt").val(),
+	            				"searchType2" : $("#searchType2").val(),
+	            				"searchText2" : $("#searchTxt2").val()
+	            			};
+							 
+							$.commRequest(url, reqType, data)
+								.then((res) => {
+									$(".result").text("Results : " + res.condition.totalCount);
+									d.resolve({data : res.data, itemsCount: res.condition.totalCount});
+								})
+								.catch((error) => {
+									console.log('사용자 조회 실패!!');
+								});
+		                    
+		                    return d.promise();
+		                },
+	        		    
+	            	},
+	            	fields: [
+	            		/*
+		            	{  name : "chk"
+		                	 , align: "center"
+		                	 , width: 20
+		                	 , title: ""
+		                	 , editing: false
+		                	 , sorting: false
+		                	 , filtering: false
+		                	 , itemTemplate: function(value, item) {
+		                       return $("<input>").attr("type", "checkbox").attr("class","popSingleCheckbox")
+		                       .prop("checked", $.inArray(item.firstName, popSelectedItems) > -1)
+		                       .on("change", function () {
+		  					  	 $(this).is(":checked") ? popSelectItem($(this).parent().next().text()) : popUnselectItem($(this).parent().next().text());
+		  					  	 });
+		            		   }
+		            	     /* 팝업 (단일선택) 헤더 체크 숨김처리
+		                	 , headerTemplate : function ()  { 
+							  	 return  $("<input>").attr("type", "checkbox").attr("id","popSelectAllCheckbox")
+			                     .on("change", function (item) {
+			             	    	selectedItems = [];
+			            	    	if(this.checked) { // check select status
+			            	            $('.popSingleCheckbox').each(function() { 
+			            	                this.checked = true;   
+			            	                popSelectItem($(this).parent().next().text());           
+			            	            });			         
+			            	        }else {
+			            	        	
+			            	            $('.popSingleCheckbox').each(function() { 
+			            	                this.checked = false;      
+			            	                popUnselectItem(item);
+			            	            });  
+			            	            popSelectedItems = [];
+			            	        }
+			    				   });
+						 	 } ,
+						 	 * /
+		                	},
+		                	*/
+						{ name: "rownum"	, type: "number" , width:  30 ,align: "right" , title: "No."
+								 ,itemTemplate: function(value, item) {
+					              return $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.userId == item.userId) + 1;
+								 }
+						},
+		                { name: "userId", type: "text", width: 80, align: "center", readOnly:true , title: "사용자ID" },
+		                { name: "userNm", type: "text", width: 130 ,align: "left"  , title: "사용자명" },
+		                { name: "deptCd", type: "text", width: 80 ,align: "left"  , title: "부서코드" },
+		                { name: "deptNm", type: "text", width: 80 ,align: "left"  , title: "부서명" },
+		                { name: "email", type: "text", width: 80 ,align: "left"  , title: "사용자 이메일" },
+		                { name: "telno", type: "text", width: 80 ,align: "left"  , title: "전화번호" },
+		            	{  name : "sel"
+		                	 , align: "center"
+		                	 , width: 60
+		                	 , title: "선택"
+		                	 , editing: false
+		                	 , sorting: false
+		                	 , filtering: false
+		                	 , itemTemplate: function(value, item) {
+		                       return $("<input>").attr("type", "button").attr("class","btn_list_rd").attr("value","선택")
+		                       .on("click", function () {
+		  					  	 	selectItem(item);
+		  					  	 });
+		            		   }
+		                },
+		                /*,
+		                { name: "sortOdr", type: "number", width: 100 ,align: "center"  , title: "정렬순서" },
+		                { name: "useYn", type: "select", width: 40 ,align: "center"
+		                	   , items: [
+				                    { Name: "사용",  Id: "Y"},
+				                    { Name: "미사용", Id: "N"},
+				                  ],
+		                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "사용여부" }
+		                */
+		            ]
+		        });
+				 
+			
+				
+				 var popSelectItem = function(item) {
+				    	if(!popSelectedItems.includes(item))
+				    		popSelectedItems.push(item);
+					    if($(".popSingleCheckbox").length == $(".popSingleCheckbox:checked").length) {
+			             $("#popSelectAllCheckbox").prop("checked", true);
+			         } else {
+			             $("#popSelectAllCheckbox").prop("checked", false);
+			         }
+					};
+				     
+				    var popUnselectItem = function(item) {
+				    	
+				    	popSelectedItems = $.grep(popSelectedItems, function(i) {
+					    return i !== item;
+					    });
+					    
+					    /*  
+					    if(popSelectedItems.length == 0) {
+					    	$('#popSelectAllCheckbox').attr('checked', false);
+					    }
+					    if($(".popSingleCheckbox").length == $(".popSingleCheckbox:checked").length) {
+			             	$("#popSelectAllCheckbox").prop("checked", true);
+				        } else {
+				            $("#popSelectAllCheckbox").prop("checked", false);
+				        } 
+					    */
+					    
+				    };
+				
+				
+				//팝업창 닫기
+				$("#btn_close_pop").on("click",function(){ 
+					window.close();
+				});
+				
+				
+				$(".btn_srch").on("click",function (){ 
+		    	   $("#jsGrid").jsGrid().trigger("loadData");
+		        });
+				
+				// userNm로 가지는 곳에서 키를 누를 경우
+	            $("#userNm").keydown(function(key) {
+	                //키의 코드가 13번일 경우 (13번은 엔터키)
+	                if (key.keyCode == 13) {
+	                	 $("#jsGrid").jsGrid().trigger("loadData"); 
+	                }
+	            });
+				
+				
+	          	//리셋 버튼
+	    	    $(".btn_reset").click(function() {
+	    	    	$("#searchType option:eq(0)").prop("selected", true);
+	    	    	$("#searchTxt").val("");
+	    	    	$("#searchType2 option:eq(0)").prop("selected", true);
+	    	    	$("#searchTxt2").val("");
+	    	    });
+
+
+			});
+			
+		  //선택 버튼클릭시 
+		  function selectItem(obj) {
+			 console.log(obj);
+			  opener.setResult4(obj); //부모창에 구현
+			  window.close();
+		  }
+			
+		   function returnResult(item) {
+				opener.setResult(item);
+				window.close();
+		   }
+			
+		   function chkOne(idx) {
+			   $(".popSingleCheckbox").each(function(index, el){ 
+				   if( idx != index ) {
+					  $(el).prop("checked", false);
+					  //console.log(el);
+				   }
+			   });
+		   }
+
+		</script>
+	</th:block> 
+
+</head>
+<body >
+
+<div layout:fragment="content">
+
+	<!-- pop_alert -->
+	<div id="pop_wrap" >
+	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
+					<!-- head -->
+					<h3>사용자 선택
+						 <!-- <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a> -->
+					</h3>
+					<!-- //head -->
+					<!-- contents -->
+					<div id="contents">
+	
+						<!-- search -->
+						<div class="srch_wrap">
+							<!-- search_form -->
+							<div class="srch_form">
+								<table class="srch_table">
+									<colgroup>
+											<col width="15%"/>
+											<col width="40%"/>
+											<col width="15%"/>
+											<col width=""/>
+									</colgroup>
+									<tr>
+										<td>
+											<select id="searchType" onkeyup="enterkey()">
+												<option value="none">검색항목 선택</option>
+											</select>
+										</td>
+										<td>
+											<input type="text" id="searchTxt"/>
+										</td>
+										<td>
+											<select id="searchType2" onkeyup="enterkey()">
+												<option value="none">검색항목 선택</option>
+											</select>
+										</td>
+										<td>
+											<input type="text" id="searchTxt2"/>
+										</td>
+									</tr>
+								</table>
+								<!-- search_button -->
+								<div class="button">
+									<a href="#;" class="btn_reset">Reset</a>
+									<a href="#;" class="btn_srch">Search</a>
+								</div>
+								<!-- //search_button -->
+							</div>
+							<!-- //search_form -->
+						</div>
+						<!-- //search -->
+
+						<!-- list 1 -->
+						<div id="jsGrid"></div>
+						<!-- //list 1 -->
+	
+					</div>
+					<!-- contents -->
+					<!-- button -->
+					<div class="pop_button">
+						<p>
+						<a href="#;" id="btn_close_pop" class="btn_list_rd">닫기</a>
+						</p>
+					</div>
+					<!-- //button -->
+	</div>
+	<!-- //pop_alert -->
+</div>
+
+</body>
+</html>

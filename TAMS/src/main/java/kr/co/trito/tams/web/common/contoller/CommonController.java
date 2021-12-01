@@ -37,9 +37,11 @@ import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.common.dto.CodeTreeDto;
+import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
 import kr.co.trito.tams.web.common.service.CommonService;
+import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
 import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.RequiredArgsConstructor;
@@ -156,6 +158,64 @@ public class CommonController {
 		
 	}
 	
+	/** 사용자 팝업 화면 */
+	@GetMapping("/popup/userFilterPopup")
+	public ModelAndView userFilterPopupView(HttpServletRequest request) {
+		
+		ModelAndView view = new ModelAndView();
+		view.setViewName("/content/common/popup/userFilterPopup");
+		
+		return view;
+	}
+	
+	/** 메뉴권한관리 화면 : 공통 셀렉트박스 */
+	@GetMapping(value="/comm/selectBox")
+	@ResponseBody
+	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> commSelectBox(
+			@ApiParam(value = "코드그룹ID", required = false) @RequestParam(value="codeGrpId",required = false) String codeGrpId) { 
+
+		List<ComCodeDto> list = commonService.commSelectBox(codeGrpId);
+		
+		return responseService.success(list);
+	}
+	
+	/** 부서팝업 조회 */
+	@GetMapping("/popup/userFilterPopupList")
+	@ResponseBody
+	@ApiOperation(value = "Web API Common test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response>  userFilterPopupList(
+			@ApiParam(value = "검색 조건(사용자ID, 사용자명, 부서코드, 부서명, 이메일, 전화번호)", required = false) @RequestParam(value="searchType",required = false) String searchType,
+			@ApiParam(value = "검색 키워드", required = false) @RequestParam(value="searchText",required = false) String searchText,
+			@ApiParam(value = "검색 조건(사용자ID, 사용자명, 부서코드, 부서명, 이메일, 전화번호)", required = false) @RequestParam(value="searchType2",required = false) String searchType2,
+			@ApiParam(value = "검색 키워드", required = false) @RequestParam(value="searchText2",required = false) String searchText2
+			) {
+		
+		Map<String, Object> params = new HashMap<>();
+		if (!StringUtils.isEmpty(searchType))
+			params.put("searchType", searchType);
+		
+		if (!StringUtils.isEmpty(searchText))
+			params.put("searchText", searchText);
+		
+		if (!StringUtils.isEmpty(searchType2))
+			params.put("searchType2", searchType2);
+			
+		if (!StringUtils.isEmpty(searchText2))
+			params.put("searchText2", searchText2);
+//		
+		SearchCondition condition = new SearchCondition("0","0",params);
+		
+		List<UserMngDto> list = commonService.selectUserPopupList(condition);
+		condition.pageSetup(list.size());
+		
+		return responseService.success(condition, list);
+		
+	}		
 	
 	/** 첨부파일 목록 조회 */
 	@GetMapping("/file/selectFileList")
@@ -280,10 +340,10 @@ public class CommonController {
 	
 	@PostMapping("/invest/readExcel")
 	@ResponseBody
-	public List<InvDto> readExcel(@RequestParam("file") MultipartFile multipartFile) throws IOException, InvalidFormatException {
-		List<InvDto> result = null;
+	public List<InvestDto> readExcel(@RequestParam("file") MultipartFile multipartFile) throws IOException, InvalidFormatException {
+		List<InvestDto> result = null;
 		
-		InvDto dto = new InvDto();
+		InvestDto dto = new InvestDto();
 		
 		result = excelReader.readFileToList(multipartFile, dto::row);
 		
@@ -291,7 +351,7 @@ public class CommonController {
 		result.remove(0);
 		
 		/** 유효성 검증 */
-		for(InvDto inv : result) {
+		for(InvestDto inv : result) {
 			
 			String chkResult = "";
 			
@@ -300,6 +360,25 @@ public class CommonController {
 			}
 			if( StringUtils.isEmpty(inv.getInvTtl()) ) {
 				chkResult += "투자명이 누락되었습니다";
+			}
+			if( StringUtils.isEmpty(inv.getInvQty()) ) {
+				chkResult += "투자수량이 누락되었습니다";
+			} else {
+				//숫자값만 입력 가능...
+				if( !StringUtils.isNumeric(inv.getInvQty()) ) {
+					chkResult += "숫자만 입력 가능합니다.";
+				}
+			}
+			if( StringUtils.isEmpty(inv.getInvAmt()) ) {
+				chkResult += "투자금액이 누락되었습니다";
+			} else {
+				//숫자값만 입력 가능...
+				if( !StringUtils.isNumeric(inv.getInvAmt()) ) {
+					chkResult += "숫자만 입력 가능합니다.";
+				}
+			}
+			if( StringUtils.isEmpty(inv.getActgYear()) ) {
+				chkResult += "회계연도가 누락되었습니다";
 			}
 			if( StringUtils.isEmpty(inv.getPoNo()) ) {
 				chkResult += "PO번호가 누락되었습니다";
@@ -315,21 +394,33 @@ public class CommonController {
 					chkResult += "숫자만 입력 가능합니다.";
 				}
 			}
+			if( StringUtils.isEmpty(inv.getPoAmt()) ) {
+				chkResult += "PO금액이 누락되었습니다";
+			} else {
+				//숫자값만 입력 가능...
+				if( !StringUtils.isNumeric(inv.getPoAmt()) ) {
+					chkResult += "숫자만 입력 가능합니다.";
+				}
+			}
 			if( StringUtils.isEmpty(inv.getInvDt()) ) {
 				chkResult += "투자일자가 누락되었습니다";
+			}
+			if( StringUtils.isEmpty(inv.getDeptNm()) ) {
+				chkResult += "부서가 누락되었습니다";
 			}
 			if( StringUtils.isEmpty(inv.getInvReqr()) ) {
 				chkResult += "담당자가 누락되었습니다";
 			} else {
 				// 담장자 id 로 정보 찾기...
-				Map<String,String> map = new HashMap<>();
-				map.put("userId", inv.getInvReqr());
-				Map<String,String> deptInfo = commonService.selectUserDeptInfo(map);
 				
-				inv.setGroupNm(deptInfo.get("upDeptNm"));
-				inv.setDeptNm(deptInfo.get("deptNm"));
-				inv.setInvRegrNm(deptInfo.get("userNm"));
-				
+				  Map<String,String> map = new HashMap<>(); 
+				  map.put("userId", inv.getInvReqr()); 
+				  Map<String,String> deptInfo = commonService.selectUserDeptInfo(map);
+				  
+				  //inv.set(deptInfo.get("upDeptNm"));
+				  inv.setDeptNm(deptInfo.get("deptNm"));
+				  inv.setInvReqr(deptInfo.get("userNm"));
+				 
 			}
 			
 			//검증 결과 
@@ -338,7 +429,7 @@ public class CommonController {
 		}
 		
 		return result;
-	}	
+	}
 	
 	
 	@PostMapping("/invest/saveExcel")

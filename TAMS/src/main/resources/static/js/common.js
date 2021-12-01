@@ -34,8 +34,10 @@
 	});
   };
 
-  $.commRequestSelectbox = function(url, reqType, data, selectboxId) {
-
+  $.commRequestSelectbox = function(url, reqType, selectboxId, codeGrpId) {
+		let data = {
+			"codeGrpId" : codeGrpId
+		}
 		$.commRequest(url, reqType, data)
 			.then((res) => {
 				var str = '';

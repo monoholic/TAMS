@@ -39,11 +39,11 @@
 	    
 	    $(function(){
 	    	
-/*             let url = "/system/menurole/menuRoleMng/roleGroup";
+            let url = "/common/comm/selectBox";
 			let reqType = 'GET';	
-			let data = {}
 
-			$.commRequestSelectbox(url, reqType, data, "#searchType"); */
+			$.commRequestSelectbox(url, reqType, "#searchType", "INV_MAS_MNG");
+			$.commRequestSelectbox(url, reqType, "#searchType2", "INV_MAS_MNG");
 			
 	        $("#jsGrid").jsGrid({
 	        	height: "650",
@@ -74,18 +74,8 @@
 	            	
 					if(target instanceof HTMLTableCellElement) {
 						//detail form
-						console.log(args.item);
 						showDetailForm(args.item);
-					} else {
-						
-					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
-					                .on("change", function () {
-						  	 $(this).is(":checked") ? selectItem($(this).parent().next().text()) : unselectItem($(this).parent().next().text());
-						});
-						
 					}
-
 	            }, 
 	            deleteConfirm: function(item) {
 	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
@@ -132,6 +122,19 @@
         		    	.catch((error) => {
         		    		console.log(error);
         		    	})
+            	},
+             	deleteItem: function(data) {
+             		
+        		    let url = "/standard/invest/investMng/investMngDelete";
+        		    let reqType = 'POST';
+        		    $.commRequest(url, reqType, JSON.stringify(data))
+        		    	.then((res) => {
+        		    		console.log(res);
+        		    		$("#jsGrid").jsGrid().trigger("loadData");
+        		    	})
+        		    	.catch((error) => {
+        		    		console.log(error);
+        		    	})
             	    }
             	},
 	            fields: [{ name : "chk"
@@ -167,20 +170,22 @@
 		            	        }
 		    				   });
 					 	 } ,
-	                	}
-	            	,{ name: "invNo", type: "text", width: 70 , align: "left"  , title: "투자번호", editing: false }
-	                ,{ name: "invTtl", type: "text", width: 100 , align: "left"  , title: "투자명", editing: false }
-	                ,{ name: "invQty", type: "text", align: "left", title: "투자수량", editing: false, visible: false }
-	                ,{ name: "invAmt", type: "text", align: "left", title: "투자금액", editing: false, visible: false }
-	                ,{ name: "actgYear", type: "text", width: 70 , align: "left"  , title: "회계연도", editing: false }
-	                ,{ name: "poNo", type: "text", width: 100 , align: "left"  , title: "PO번호", editing: false }
-	                ,{ name: "mfgdNm", type: "text", width: 100 , align: "left"  , title: "품명", editing: false }
-	                ,{ name: "qty", type: "text", width: 50 , align: "left"  , title: "수량", editing: false }
-	                ,{ name: "invDt", type: "text", width: 100 , align: "left"  , title: "투자일자", editing: false }
-	                ,{ name: "deptNm", type: "text", width: 100 , align: "left"  , title: "부서", editing: false }
-	                ,{ name: "userNm", type: "text", width: 100 , align: "left"  , title: "담당자", editing: false }
-	                ,{ name: "poAsetYn", type: "text", width: 100 , align: "left"  , title: "자산등록", editing: false }
-	                ,{ name: "regDt", type: "text", width: 100 , align: "left"  , title: "등록일자", editing: false }
+	                	},
+	            	{ name: "invNo"   , type: "text", width: 70 , align: "left"  , title: "투자번호" },
+	                { name: "invTtl"  , type: "text", width: 100, align: "left"  , title: "투자명"  },
+	                { name: "invQty"  , type: "text", width: 55 , align: "left"  , title: "투자수량" },
+	                { name: "invAmt"  , type: "text", width: 55 , align: "left"  , title: "투자금액" },
+	                { name: "actgYear", type: "text", width: 70 , align: "left"  , title: "회계연도" },
+	                { name: "poNo"	   , type: "text", width: 100, align: "left" , title: "PO번호"  },
+	                { name: "mfgdNm"  , type: "text", width: 100, align: "left"  , title: "품명" 	   },
+	                { name: "qty"	   , type: "text", width: 30 , align: "left" , title: "수량"    },
+	                { name: "poAmt"   , type: "text", width: 100, align: "left"  , title: "PO금액"  },
+	                { name: "invDt"   , type: "text", width: 100, align: "left"  , title: "투자일자" },
+	                { name: "deptNm"  , type: "text", width: 100, align: "left"  , title: "부서" 	   },
+	                { name: "userNm"  , type: "text", width: 100, align: "left"  , title: "담당자"   },
+	                { name: "invReqr" , type: "text", width: 100, align: "left"  , title: "담당자",  visible: false },
+	                { name: "poAsetYn", type: "text", width: 100, align: "left"  , title: "자산등록"  },
+	                { name: "regDt"   , type: "text", width: 100, align: "left"  , title: "등록일자"  },
 	            ]
 	        });
 	        
@@ -233,14 +238,11 @@
     	    		items.push(item);
     	    	});
     	    	
-    	    	//별도 호출
-    	    	let url = "/system/menu/menuMng/menuDelete";
-    			let reqType = 'GET';
+     	    	//별도 호출
+    	    	let url = "/standard/invest/investMng/investMngDelete";
+    			let reqType = 'POST';
     			dataType: 'json';
-    			let data={
-    				"items": items.join(",")
-    			}
-    			$.commRequest(url, reqType, data)
+    			$.commRequest(url, reqType, JSON.stringify(items))
     				.then((res) => {
     					console.log(res);
     					alert("삭제 되었습니다!");
@@ -249,7 +251,7 @@
     				.catch((error) => {
     					alert("오류가 발생했습니다");
     					console.log(error);
-    				})
+    				}) 
     	    	
     	    	
     	    });
@@ -262,39 +264,34 @@
             $('.save_btn').on('click', function (e) {
                 e.preventDefault();
                 
-                var insert_item = [];
-                var sub_item = {};
-	                sub_item.invNo 		=   $(".detail_table").find("#invNo").val();
-		    		sub_item.invTtl     =   $(".detail_table").find("#invTtl").val();
-		    		sub_item.invQty     =   $(".detail_table").find("#invQty").val();
-		    		sub_item.invAmt     =   $(".detail_table").find("#invAmt").val();
-		    		sub_item.actgYear 	=   $(".detail_table").find("#actgYear").val();
-		    		sub_item.poNo		=   $(".detail_table").find("#poNo").val();
-		    		sub_item.mfgdNm	 	=   $(".detail_table").find("#codeNm").val();
-		    		sub_item.qty	 	=   $(".detail_table").find("#qty").val();
-		    		sub_item.invDt	 	=   $(".detail_table").find("#invDt").val().replaceAll("-", "");
-		    		sub_item.deptNm	 	=   $(".detail_table").find("#deptNm").val();
-		    		sub_item.invRegr	=   $(".detail_table").find("#invRegr").val();
-		    		sub_item.poAsetYn	=   $(".detail_table").find("#poAsetYn").val();
-		    		sub_item.regDt	 	=   $(".detail_table").find("#regDt").val();
-		    	
-		    		insert_item.push(sub_item);
-		    		
-		        var action = "";
-		    	if(save_mode == "insert") {
-		    		action = "insertItem";
-		    		//insertedItems.push(insert_item); --일괄
-		    	}else if(save_mode == "update") {
-		    		action = "updateItem";
-		    		//updatedItems.push(insert_item); --일괄
-		    	}
-    			
-		    	console.log(insert_item);
-    			$("#jsGrid").jsGrid(action, insert_item);
-                
-	    		clearDetailForm();
-                $(this).parents("#detailForm").hide();
-                save_mode = "";
+                if(validationCheck() != '200'){
+	                var insert_item = [];
+	                var sub_item = {};
+		                sub_item.invNo 		=   $(".detail_table").find("#invNo").val();
+			    		sub_item.invTtl     =   $(".detail_table").find("#invTtl").val();
+			    		sub_item.invQty     =   $(".detail_table").find("#invQty").val();
+			    		sub_item.invAmt     =   $(".detail_table").find("#invAmt").val();
+			    		sub_item.actgYear 	=   $(".detail_table").find("#actgYear").val();
+			    		sub_item.poNo		=   $(".detail_table").find("#poNo").val();
+			    		sub_item.mfgdNm	 	=   $(".detail_table").find("#codeNm").val();
+			    		sub_item.qty	 	=   $(".detail_table").find("#qty").val();
+			    		sub_item.poAmt	 	=   $(".detail_table").find("#poAmt").val();
+			    		sub_item.invDt	 	=   $(".detail_table").find("#invDt").val().replaceAll("-", "");
+			    		sub_item.deptNm	 	=   $(".detail_table").find("#deptNm").val();
+			    		sub_item.invReqr	=   $(".detail_table").find("#userId").val();
+			    		sub_item.poAsetYn	=   $(".detail_table").find("#poAsetYn").val();
+			    		sub_item.regDt	 	=   $(".detail_table").find("#regDt").val();
+			    	
+			    		insert_item.push(sub_item);
+			    		
+			        var action = "insertItem";
+			        
+	    			$("#jsGrid").jsGrid(action, insert_item);
+	                
+		    		clearDetailForm();
+	                $(this).parents("#detailForm").hide();
+	                save_mode = "";
+                }
             });
 
           	//수정 버튼
@@ -317,7 +314,6 @@
                 e.preventDefault();
                 clearDetailForm();
                 $(this).parents("#detailForm").hide();
-                selectedItems = [];
             });
 	     	
             //drag 활성화
@@ -360,6 +356,39 @@
     	        openPopup(popId, url, args);
     	    });
 			
+			//투장정보 일괄 업로드 팝업 호출 
+    	    $("#openInvPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/invUploadPopup";
+    	        var popId = "invUpPopup";
+    	        var args = {};
+    	        args.width = 1200;
+    	        args.height = 710;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        openPopup(popId, url, args);
+    	    });
+			
+    	    $("#invQty").on("input", function() {
+                $(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+            });
+    	    
+    	    $("#invAmt").on("input", function() {
+                $(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+            });
+    	    
+    	    $("#poNo").on("input", function() {
+                $(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+            });
+    	    
+    	    $("#qty").on("input", function() {
+                $(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+            });
+    	    
+    	    $("#poAmt").on("input", function() {
+                $(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+            });
     	});
 	    
 	    function clearDetailForm() {
@@ -371,6 +400,7 @@
 			 $(".detail_table").find("#poNo").val("");
 			 $(".detail_table").find("#codeNm").val("");
 			 $(".detail_table").find("#qty").val("");
+			 $(".detail_table").find("#poAmt").val("");
 			 $(".detail_table").find("#invDt").val("");
 			 $(".detail_table").find("#deptNm").val("");
 	 		 $(".detail_table").find("#userNm").val("");
@@ -400,6 +430,7 @@
 		    		 $(".detail_table").find("#poNo").val(item.poNo);
 		    		 $(".detail_table").find("#codeNm").val(item.mfgdNm);
 		    		 $(".detail_table").find("#qty").val(item.qty);
+		    		 $(".detail_table").find("#poAmt").val(item.poAmt);
 		    		 $(".detail_table").find("#invDt").val(item.invDt);
 		    		 $(".detail_table").find("#deptNm").val(item.deptNm);
 		     		 $(".detail_table").find("#userNm").val(item.userNm);
@@ -492,6 +523,44 @@
 			opener.setResult(item);
 			window.close();
 		}
+		
+		function validationCheck(){
+			let code = "200";
+			
+	    	if($(".detail_table").find("#invNo").val() == ''){
+	    		alert("투자번호를 입력해주세요.");
+	    		$(".detail_table").find("#invNo").focus();
+	    	}else if($(".detail_table").find("#invTtl").val() == ''){
+	    		alert("투자명을 입력해주세요.");
+	    		$(".detail_table").find("#invTtl").focus();
+	    	}else if($(".detail_table").find("#invQty").val() == ''){
+	    		alert("투자수량을 입력해주세요.");
+	    		$(".detail_table").find("#invQty").focus();
+	    	}else if($(".detail_table").find("#invAmt").val() == ''){
+	    		alert("투자금액을 입력해주세요.");
+	    		$(".detail_table").find("#invAmt").focus();
+	    	}else if($(".detail_table").find("#actgYear").val() == ''){
+	    		alert("회계연도를 입력해주세요.");
+	    		$(".detail_table").find("#actgYear").focus();
+	    	}else if($(".detail_table").find("#poNo").val() == ''){
+	    		alert("PO번호를 입력해주세요.");
+	    		$(".detail_table").find("#poNo").focus();
+	    	}else if($(".detail_table").find("#poAmt").val() == ''){
+	    		alert("PO금액을 입력해주세요.");
+	    		$(".detail_table").find("#poAmt").focus();
+	    	}else if($(".detail_table").find("#invDt").val() == ''){
+	    		alert("투자일자를 입력해주세요.");
+	    		$(".detail_table").find("#invDt").focus();
+	    	}else if($(".detail_table").find("#userNm").val() == ''){
+	    		alert("담당자를 입력해주세요.");
+	    		$(".detail_table").find("#userNm").focus();
+	    	}else{
+	    		code = "202";
+	    	}
+	    	
+	    	return code;
+		}
+		
 	    </script>	
 	</th:block>
 
@@ -516,24 +585,12 @@
 					<td>
 						<select id="searchType" onkeyup="enterkey()">
 							<option value="none">검색항목 선택</option>
-							<option value="inv_no">투자번호</option>
-							<option value="inv_ttl">투자명</option>
-							<option value="po_no">PO번호</option>
-							<option value="mfgd_nm">품명</option>
-							<option value="dept_nm">부서</option>
-							<option value="inv_regr">담당자</option>
 						</select>
 					</td>
 					<td><input id="searchTxt" type="text" placeholder="검색어를 입력하세요."></input></td>
 					<td>
 						<select id="searchType2" onkeyup="enterkey()">
 							<option value="none">검색항목 선택</option>
-							<option value="inv_no">투자번호</option>
-							<option value="inv_ttl">투자명</option>
-							<option value="po_no">PO번호</option>
-							<option value="mfgd_nm">품명</option>
-							<option value="dept_nm">부서</option>
-							<option value="inv_regr">담당자</option>
 						</select>
 					</td>
 					<td><input id="searchTxt2" type="text" placeholder="검색어를 입력하세요."></input></td>
@@ -549,9 +606,9 @@
 				<div class="result">Results : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
-					<a class="btn_save">일괄 업로드</a>
+					<a id="openInvPopup" class="btn_save">일괄 업로드</a>
 					<a class="btn_add">등록</a>
-					<a class="btn_save">삭제</a>
+					<a class="btn_del">삭제</a>
 				</div>
 				<!-- list_button -->
 		</div>
@@ -615,6 +672,10 @@
 						<tr>
 							<th>PO수량</th>
 							<td><input type="text" id="qty" /></td>
+						</tr>
+						<tr>
+							<th>PO금액</th>
+							<td><input type="text" id="poAmt" /></td>
 						</tr>
 						<tr>
 							<th>투자일자</th>

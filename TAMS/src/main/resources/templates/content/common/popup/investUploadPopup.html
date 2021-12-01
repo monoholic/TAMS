@@ -37,16 +37,20 @@
 		              return $("<span>").attr("id","row_"+item.poNo).text( getIndex(item)   );
 					 }
 					},
-					{ name: "invNo"		, type: "text"   , width: 100 ,align: "center", title: "투자번호"	},
-					{ name: "invTtl"	, type: "text"   , width: 150 ,align: "left"  , title: "투자명"	},
-					{ name: "poNo"		, type: "text"   , width: 100 ,align: "center", title: "PO번호" 	},
-					{ name: "mfgdNm"	, type: "text"   , width: 100 ,align: "left"  , title: "품명"	 	},
-					{ name: "qty"		, type: "number" , width: 100 ,align: "right" , title: "수량"	 	},
-					{ name: "invDt"		, type: "date"   , width: 100 ,align: "center", title: "투자일자"	},
-					{ name: "groupNm"	, type: "text"   , width: 100 ,align: "center", title: "사업부"	},
-					{ name: "deptNm"	, type: "text"   , width: 100 ,align: "center", title: "부서"		},
-					{ name: "invReqrNm"	, type: "text"   , width: 100 ,align: "center", title: "담당자"	},
-					{ name: "chkResult"	, type: "text"   , width: 150 ,align: "left"  , title: "유효성 검증" 
+					{ name: "invNo"		, type: "text"   , width: 100 , align: "center", title: "투자번호" },
+					{ name: "invTtl"	, type: "text"   , width: 150 , align: "left"  , title: "투자명"  },
+					{ name: "invQty"	, type: "text"	 , width: 55  , align: "left"  , title: "투자수량" },
+	                { name: "invAmt"	, type: "text"	 , width: 55  , align: "left"  , title: "투자금액" },
+	                { name: "actgYear"	, type: "text"	 , width: 70  , align: "left"  , title: "회계연도" },
+	                { name: "poNo"		, type: "text"   , width: 100 , align: "center", title: "PO번호"  },
+					{ name: "qty"		, type: "number" , width: 100 , align: "right" , title: "수량"    },
+					{ name: "mfgdNm"	, type: "text"   , width: 100 , align: "left"  , title: "품명"    },
+					{ name: "poAmt"		, type: "number" , width: 100 , align: "right" , title: "PO금액"    },					
+					{ name: "invDt"		, type: "date"   , width: 100 , align: "center", title: "투자일자" },
+					//{ name: "groupNm"	, type: "text"   , width: 100 , align: "center", title: "사업부"   },
+					{ name: "deptNm"	, type: "text"   , width: 100 , align: "center", title: "부서"	 },
+					{ name: "invReqrNm"	, type: "text"   , width: 100 , align: "center", title: "담당자"   },
+					{ name: "chkResult"	, type: "text"   , width: 150 , align: "left"  , title: "유효성 검증" 
 					 ,itemTemplate : function(value,item) {
 						 return "<span class='red'>"+value+"</span>";
 					 }
@@ -102,6 +106,8 @@
 			
 			function excelUploadProcess() {
 				
+				console.log(excelUpData);
+				
 				let url = "/common/invest/readExcel";
 				let reqType = "POST";	
 				$.commRequestFile(url, reqType, excelUpData)
@@ -153,7 +159,7 @@
 					var addFiles = obj.files;
 					excelUpData.append("file",addFiles[0]);
 					$("[name='excelNm']").val(addFiles[0].name);
-					
+					console.log(excelItems);
 					//파일선택후 엑셀업로드 처리한다.
 					excelUploadProcess()
 				});
@@ -166,15 +172,21 @@
 				//업로드된 엑셀 데이터 db에 저장한다...
 				$("#btnSave").on("click",function (){ 
 					
-					let url = "/common/invest/saveExcel";
+					let url = "/standard/invest/investMng/investMngSave";
 					let reqType = "POST";
-					$.commRequest(url, reqType, JSON.stringify(excelItems))
-						.then((res) => {
-							console.log('저장 성공!!');
-						})
-						.catch((error) => {
-							console.log('저장 실패!!');
-						});
+					
+					if(excelItems.filter(arr => arr.chkFlag == 'Y').length == 0){
+						$.commRequest(url, reqType, JSON.stringify(excelItems))
+							.then((res) => {
+								console.log('저장 성공!!');
+							})
+							.catch((error) => {
+								console.log('저장 실패!!');
+							}); 
+					}else{
+						alert("유효성이 맞지 않습니다");
+					}
+					
 					
 		        });
 				

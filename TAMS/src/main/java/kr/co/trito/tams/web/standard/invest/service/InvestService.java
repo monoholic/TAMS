@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.standard.code.dto.CodeDto;
+import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
 import kr.co.trito.tams.web.standard.invest.mapper.InvestMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +18,16 @@ public class InvestService {
 	@Autowired
 	InvestMapper mapper;
 	
+	/** 
+	 * 투자정보관리 리스트 조회
+	 * */
 	public List<InvestDto> selectInvestMngList(SearchCondition condition) {
 		return mapper.selectInvestMngList(condition);
 	}
 	
-	public List<CodeDto> selectCodeGrpList(String email){
-		return mapper.selectCodeGrpList(email);
-	}
-	
+	/** 
+	 * 투자정보관리 리스트 카운트
+	 * */
 	public int selectCountInvest(SearchCondition condition) {
 		return mapper.selectCountInvest(condition);
 	}
@@ -40,19 +42,14 @@ public class InvestService {
 	/** 
 	 * TB_PO 정보 등록
 	 * */
-	public int savePoInfo(List<InvestDto> invs){
+	public int savePoInfo(InvestDto invs){
 		return mapper.savePoInfo(invs);
 	}
 	
-	public int codeMngInsert(CodeDto dto) {
-		return mapper.codeMngInsert(dto);
-	}
-	
-	public int codeMngUpdate(CodeDto dto) {
-		return mapper.codeMngUpdate(dto);
-	}
-	
-	public int codeMngDelete(CodeDto dto) {
-		return mapper.codeMngDelete(dto);
+	/** 
+	 * TB_PO 정보 등록
+	 * */
+	public int deletePoInfo(InvestDto invs){
+		return mapper.deletePoInfo(invs);
 	}
 }

@@ -9,6 +9,7 @@ import kr.co.trito.tams.comm.util.file.FileDto;
 import kr.co.trito.tams.comm.util.file.excel.InvDto;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.common.dto.CodeTreeDto;
+import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
@@ -21,6 +22,10 @@ public interface CommonMapper {
 	public List<CodeTreeDto> selectDeptTree(Map<String,String> map);
 	
 	public List<UserMngDto> selectUserPopupList(SearchCondition condtion);
+	
+	public List<UserMngDto> selectUserFilterPopupList(SearchCondition condtion);
+	
+	public List<ComCodeDto> commSelectBox(String codeGrpId);
 	
 	public List<FileDto> selectFileList(SearchCondition condtion);
 	
