@@ -34,10 +34,17 @@
 		            var obj 	= $("#"+id+"_anchor");
 					var text 	= obj.text();
 		            var item = {};
+		            
 		            item.deptCd = id;
 		            item.deptNm = text;
-					
-					returnResult(item)
+		            
+		            var dept = $("#dept").text();
+		            
+		            if(dept == "DEPT" && item.deptCd.length <= 6){
+		            	alert("부서를 선택해 주세요.");
+		            }
+		            else
+						returnResult(item)
 				});
 						
 				//팝업창 닫기
@@ -128,6 +135,7 @@
 <div layout:fragment="content">
 	
 	<span id="bizDept" th:text="${param.bizDept}" style="display:none;"></span>
+	<span id="dept" th:text="${param.dept}" style="display:none;"></span>
 	
 	<!-- pop_alert -->
 	<div id="pop_wrap" >
