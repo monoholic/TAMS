@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +33,11 @@ import kr.co.trito.tams.comm.util.file.excel.ExcelConstant;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
 import kr.co.trito.tams.web.system.user.dto.UserMngExcelDto;
 import kr.co.trito.tams.web.system.user.service.UserMngService;
+import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -127,7 +131,7 @@ public class UserMngController {
 	private Map<String, Object> makeExcelData(List<UserMngExcelDto> list) {
 		Map<String, Object> map = new HashMap<>();
 		map.put(ExcelConstant.FILE_NAME, "사용자목록");
-		map.put(ExcelConstant.HEAD, Arrays.asList("사용자ID", "사용자명", "부서코드", "부서명", "이메일", "전화번호", "성별", "사용여부", "등록자", "등록일", "수정자", "수정일"));
+		map.put(ExcelConstant.HEAD, Arrays.asList("사용자ID", "사용자명", "부서코드", "부서명", "직급코드","직급명", "이메일", "전화번호", "성별", "사용여부", "등록자", "등록일", "수정자", "수정일"));
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		List<List<String>> rows = new ArrayList<List<String>>();
@@ -155,11 +159,14 @@ public class UserMngController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String userMngInsert( 
-			@ApiParam(value = "사용자 정보", required = true) 
-			@RequestBody(required = true) UserMngDto dto
+			@ApiParam(value = "사용자 정보", required = true) @RequestBody(required = true) UserMngDto dto,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
 			) { 
 		
 		String code = "202";
+		
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
 		
 //		UserMngDto dto = new UserMngDto();
 //		try {
@@ -178,7 +185,7 @@ public class UserMngController {
 //			dto.setUseYn (obj.get("useYn").toString());
 //		} catch(Exception e) {e.printStackTrace();}
 
-		dto.setRegr("system"); //임시
+		dto.setRegr("userId"); //임시
 		
 		int cnt = userService.userMngInsert(dto);
 		if( cnt > 0) code = "200";
@@ -230,10 +237,14 @@ public class UserMngController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String userMngUpdate( 
-			@ApiParam(value = "사용자정보", required = true) @RequestBody(required = true) UserMngDto dto
+			@ApiParam(value = "사용자정보", required = true) @RequestBody(required = true) UserMngDto dto,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
 			) { 
 		
 		String code = "202";
+		
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
 		
 //		UserMngDto dto = new UserMngDto();
 //		try {
@@ -251,9 +262,9 @@ public class UserMngController {
 //			dto.setSex   (obj.get("sex").toString());
 //			dto.setUseYn (obj.get("useYn").toString());
 //		} catch(Exception e) {e.printStackTrace();}
-
-		dto.setUpdr("system");
 		
+		dto.setUpdr(userId);
+			
 		int cnt = userService.userMngUpdate(dto);
 		if( cnt > 0) code = "200";
 		
@@ -348,6 +359,13 @@ public class UserMngController {
 //		return code;
 //	} 	
 	
-
+	/** 사용자관리 화면 : 직급 리스트 출력 */
+	@PostMapping("/codeClpstList")
+	@ResponseBody
+	public ResponseEntity<? extends Response> menulist(String str) { 
+		
+		List<CodeDto> list = userService.selectClpstList("");
+		return responseService.success(list);
+	}
 }
 

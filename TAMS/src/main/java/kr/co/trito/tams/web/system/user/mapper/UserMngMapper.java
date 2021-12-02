@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
 import kr.co.trito.tams.web.system.user.dto.UserMngExcelDto;
 
@@ -25,4 +26,5 @@ public interface UserMngMapper {
 	
 	public int userMngDelete(UserMngDto dto);
 	
+	public List<CodeDto> selectClpstList(String email);
 }

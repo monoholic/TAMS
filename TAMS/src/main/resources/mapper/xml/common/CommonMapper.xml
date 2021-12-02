@@ -306,65 +306,42 @@
 	
 	<!-- 자산 선택(팝업-공통) -->
 	<select id="selectAsetMasList" resultType="kr.co.trito.tams.web.common.dto.AsetMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 
-		SELECT aset_no 		    AS asetNo
-			 , aset_nm 		    AS asetNm
-			 , aset_type1 	    AS asetType1
-			 , aset_type2 	    AS asetType2
-			 , aset_type3 	    AS asetType3
-			 , mftco 			AS mftco
-			 , model 			AS model
-			 , sn 			    AS sn
-			 , biz_dept_cd 	    AS bizDeptCd  
-			 , dept_cd 		    AS deptCd
-			 , chrgr			AS chrgr
-			 , bsplc 			AS bsplc
-			 , buld 			AS buld
-			 , floor 			AS floor
-			 , loc 			    AS loc
-			 , exp_dept_cd 	    AS expDeptCd
-			 , exp_acct 		AS expAcct
-			 , dur_year 		AS durYear
-			 , acq_prc 		 	AS acqPrc
-			 , sval_prc 		AS svalPrc
-			 , dprc_prc 		AS dprcPrc
-			 , acq_dt 		  	AS acqDt
-			 , aset_out_book_yn AS asetOutBookYn
-			 , aset_stus		AS asetStus
-			 , updr 			AS updr
-			 , up_dt 			AS upDt
-			 , regr 			AS regr
-			 , reg_dt 		    AS regDt
-		FROM (
-			   		SELECT aset_no 			
-						 , aset_nm 			
-						 , aset_type1 		
-						 , aset_type2 		
-						 , aset_type3 		
-						 , mftco 			
-						 , model 			
-						 , sn 				
-						 , biz_dept_cd 		
-						 , dept_cd 			
-						 , chrgr			
-						 , bsplc 			
-						 , buld 			
-						 , floor 			
-						 , loc 				
-						 , exp_dept_cd 		
-						 , exp_acct 		
-						 , dur_year 		
-						 , acq_prc 			
-						 , sval_prc 		
-						 , dprc_prc 		
-						 , acq_dt 			
-						 , aset_out_book_yn 
-						 , aset_stus		
-						 , updr 			
-						 , up_dt 			
-						 , regr 			
-						 , reg_dt 			
-						 , ROW_NUMBER() OVER(ORDER BY aset_no) AS rn
-					FROM tb_aset_mas
+		SELECT *
+			FROM (
+			   		SELECT aset_no 		    AS asetNo
+						 , aset_nm 		    AS asetNm
+						 , aset_type1 	    AS asetType1
+						 , aset_type2 	    AS asetType2
+						 , aset_type3 	    AS asetType3
+						 , mftco 			AS mftco
+						 , model 			AS model
+						 , sn 			    AS sn
+						 , biz_dept_cd 	    AS bizDeptCd  
+						 , dept_cd 		    AS deptCd
+						 , chrgr			AS chrgr
+						 , bsplc 			AS bsplc
+						 , buld 			AS buld
+						 , floor 			AS floor
+						 , loc 			    AS loc
+						 , exp_dept_cd 	    AS expDeptCd
+						 , exp_acct 		AS expAcct
+						 , dur_year 		AS durYear
+						 , acq_prc 		 	AS acqPrc
+						 , sval_prc 		AS svalPrc
+						 , dprc_prc 		AS dprcPrc
+						 , acq_dt 		  	AS acqDt
+						 , aset_out_book_yn AS asetOutBookYn
+						 , aset_stus		AS asetStus
+						 , ( SELECT B.code_nm 
+						     FROM TB_COM_CODE B
+						     WHERE B.code_grp_id = "AS_STATUS" 
+							 AND B.code_id = A.aset_stus ) AS asetStusNm
+						 , updr 			AS updr
+						 , up_dt 			AS upDt
+						 , regr 			AS regr
+						 , reg_dt 		    AS regDt 			
+						 , ROW_NUMBER() OVER(ORDER BY A.aset_no) AS rn
+					FROM tb_aset_mas A
 					WHERE 1=1 
 						<if test="params.searchText != null">
 							AND ( aset_no LIKE CONCAT('%', #{params.searchText}, '%'))
@@ -390,9 +367,9 @@
 				 		<if test="params.chrgr != null">
 							AND ( chrgr = #{params.chrgr} )
 				 		</if>
-		) As a
+		) AS A
 		WHERE rn BETWEEN #{start} AND #{end}
-		ORDER BY aset_no
+		ORDER BY asetNo
    	</select>
 	
 	<!-- 자산 선택(팝업-공통) 카운트 -->

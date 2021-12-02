@@ -42,6 +42,10 @@
 			     , USER_PW      AS userPw
 			     , DEPT_CD      AS deptCd
 			     , (SELECT B.DEPT_NM FROM TB_DEPT B WHERE B.DEPT_CD = A.DEPT_CD)          AS deptNm
+			     , CLPST 		AS clpst
+			     , (SELECT C.CODE_NM FROM TB_COM_CODE C 
+			        WHERE C.CODE_GRP_ID = "USER_CLPST"
+			        AND C.CODE_ID = A.CLPST) 	AS clpstNm
 			     , USER_NM      AS userNm
 			     , EMAIL        AS email
 			     , TELNO        AS telno 
@@ -68,6 +72,10 @@
 			     , USER_PW      AS userPw
 			     , DEPT_CD      AS deptCd
 			     , (SELECT B.DEPT_NM FROM TB_DEPT B WHERE B.DEPT_CD = A.DEPT_CD)          AS deptNm
+			     , CLPST 		AS clpst
+			     , (SELECT C.CODE_NM FROM TB_COM_CODE C 
+			        WHERE C.CODE_GRP_ID = "USER_CLPST"
+			        AND C.CODE_ID = A.CLPST) 	AS clpstNm
 			     , USER_NM      AS userNm
 			     , EMAIL        AS email
 			     , TELNO        AS telno 
@@ -87,8 +95,8 @@
 	</select>
 	
 	<insert id="userMngInsert" parameterType="kr.co.trito.tams.web.system.user.dto.UserMngDto">
-		INSERT INTO TB_USER (USER_ID, USER_PW, DEPT_CD, USER_NM, EMAIL, TELNO, SEX, USE_YN, REGR)
-		                  VALUES(#{userId}, #{userPw}, #{deptCd}, #{userNm}, #{email}, #{telno}, #{sex}, #{useYn}, #{regr})
+		INSERT INTO TB_USER (USER_ID, USER_PW, DEPT_CD, CLPST, USER_NM, EMAIL, TELNO, SEX, USE_YN, REGR)
+		                  VALUES(#{userId}, #{userPw}, #{deptCd}, #{clpst}, #{userNm}, #{email}, #{telno}, #{sex}, #{useYn}, #{regr})
 	</insert>
 	
 	<update id="userMngUpdate" parameterType="kr.co.trito.tams.web.system.user.dto.UserMngDto">
@@ -98,6 +106,7 @@
 			 , USER_Pw      = #{userPw}
 			 </if>
 		     , DEPT_CD 		= #{deptCd}
+		     , CLPST 		= #{clpst}
 		     , EMAIL 		= #{email}
 		     , TELNO		= #{telno}
 		     , SEX			= #{sex}
@@ -111,5 +120,12 @@
 		DELETE FROM TB_USER 
         WHERE  USER_ID = #{userId}
 	</delete>
+	
+	<select id="selectClpstList" resultType="kr.co.trito.tams.web.standard.code.dto.CodeDto" parameterType="String"> 
+   		SELECT code_id, code_nm
+		FROM tb_com_code
+		WHERE code_grp_id= "USER_CLPST"
+		ORDER BY code_id
+   	</select>
 
 </mapper>

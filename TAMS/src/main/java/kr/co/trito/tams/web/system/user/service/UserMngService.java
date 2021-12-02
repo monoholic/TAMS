@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
 import kr.co.trito.tams.web.system.user.dto.UserMngExcelDto;
 import kr.co.trito.tams.web.system.user.mapper.UserMngMapper;
@@ -48,4 +49,7 @@ public class UserMngService {
 		return mapper.userMngDelete(dto);
 	}
 	
+	public List<CodeDto> selectClpstList(String email){
+		return mapper.selectClpstList(email);
+	}
 }

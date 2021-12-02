@@ -316,7 +316,7 @@
     					console.log(res);
     					alert("삭제 되었습니다!");
     					
-    					unselectItem();
+    					selectedItems = [];
     					$('.btn_srch').click();
     				})
     				.catch((error) => {
@@ -345,6 +345,8 @@
 					attachData.append("bbsCn", markupStr);
 					attachData.append("bbsId", $("#bbsId").val());
 					
+					console.log($("#bbsId").val());
+					
 					var files = attachData.getAll("files");
 					
 					let reqType = 'POST';
@@ -359,6 +361,7 @@
 						.then((res) => {
 							console.log('게시판 저장 성공!!');
 							
+							selectedItems = [];
 	            			$("#jsGrid").jsGrid("loadData");
 							setFormClear();
 							unselectItem(selectedItems);
@@ -798,6 +801,7 @@
 					<tr>
 						<th style="text-align:center;">제목</th>
 						<td colspan="5">
+							<input id="bbsId" type="hidden">
 							<input id="bbsTtl" style="width:100%" type="text" >
 						</td>
 					</tr>

@@ -18,6 +18,8 @@ public class UserMngDto {
 	private String userPw;
 	private String deptCd;
 	private String deptNm;
+	private String clpst;
+	private String clpstNm;
 	private String userNm;
 	private String email;	
 	private String telno;	
