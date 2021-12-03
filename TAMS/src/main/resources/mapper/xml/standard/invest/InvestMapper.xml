@@ -22,15 +22,18 @@
 	<select id="selectInvestMngList" resultType="kr.co.trito.tams.web.standard.invest.dto.InvestDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
 		SELECT a.inv_no 	as invNo
 			 , a.inv_ttl 	as invTtl
+			 , date_format(a.inv_dt, '%Y-%m-%d') as invDt
 			 , IFNULL(a.inv_qty, 0) as invQty
 	 		 , IFNULL(a.inv_amt, 0) as invAmt
 			 , a.actg_year  as actgYear
 			 , a.po_no 		as poNo
 			 , a.mfgd_nm 	as mfgdNm
 			 , a.qty 		as qty
-			 , a.po_amt		as poAmt
-			 , date_format(a.inv_dt, '%Y-%m-%d') as invDt
+			 , a.po_amt     as poAmt
 			 , a.dept_nm 	as deptNm
+			 , a.vend_nm    as vendNm
+			 , a.req_dt     as reqDt
+			 , a.dlv_dt     as dlvDt
 			 , a.inv_reqr 	as invReqr
 			 , a.user_nm 	as userNm
 			 , (SELECT CASE 
@@ -44,6 +47,7 @@
 				SELECT ROW_NUMBER() OVER(ORDER BY CAST(a.inv_no AS int)) as rn
 				  	 , a.inv_no
 					 , a.inv_ttl
+					 , a.inv_dt
 					 , a.inv_qty
 					 , a.inv_amt
 					 , a.actg_year
@@ -51,9 +55,11 @@
 					 , b.mfgd_nm
 					 , b.qty
 					 , b.po_amt
-					 , a.inv_dt
 					 , e.dept_nm
 					 , a.inv_reqr
+					 , b.vend_nm
+					 , b.req_dt
+					 , b.dlv_dt
 			 		 , d.user_nm
 					 , a.reg_dt
 				FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E

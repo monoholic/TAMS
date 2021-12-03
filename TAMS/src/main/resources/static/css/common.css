@@ -58,3 +58,9 @@ footer span.contact strong{margin-left:3px;padding-left:7px;font-weight:normal}
 .search {
     text-align: end;
 }
+.aset_td{
+	display: inline-flex;
+}
+#fromDate{
+	margin-right: 3px;
+}

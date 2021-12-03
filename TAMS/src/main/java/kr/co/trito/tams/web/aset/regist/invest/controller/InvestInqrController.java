@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.standard.invest.controller;
+package kr.co.trito.tams.web.aset.regist.invest.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,12 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,25 +24,24 @@ import io.swagger.annotations.ApiResponses;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.common.dto.ComCodeDto;
+import kr.co.trito.tams.web.aset.regist.invest.dto.InvestInqrDto;
+import kr.co.trito.tams.web.aset.regist.invest.service.InvestInqrService;
 import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
-import kr.co.trito.tams.web.standard.invest.service.InvestService;
-import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-@RequestMapping("/standard/invest")
-public class investController {
+@RequestMapping("/aset/regist/invest")
+public class InvestInqrController {
 	@Autowired
 	ResponseService responseService;
 	
 	@Autowired
-	InvestService investService;
+	InvestInqrService asetinqrService;
 	
 	/** 투자정보관리 화면 */
-	@PostMapping("/investMng")
-	public ModelAndView investMngView(HttpServletRequest request) {
+	@PostMapping("/investInqr")
+	public ModelAndView asetinqrView(HttpServletRequest request) {
 	
 		ModelAndView view = new ModelAndView();
 		view.addObject("menuId", request.getParameter("menuId"));
@@ -53,18 +49,18 @@ public class investController {
 		view.addObject("menuDesc", request.getParameter("menuDesc"));
 		view.addObject("url", request.getParameter("url"));
 		
-		view.setViewName("/content/standard/invest/investMng");
+		view.setViewName("/content/aset/regist/invest/investInqr");
 		
 		return view;
 	}
 	
 	/** 투자정보관리 화면 : 조회 */
-	@GetMapping(value="/investMng/investMngList")
+	@GetMapping(value="/investInqr/investInqrList")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> investMngList(
+	public ResponseEntity<? extends Response> asetinqrList(
 				@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage",required = true) String currentPage,
 				@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
 				@ApiParam(value = "검색 조건(투자번호, 투자명, 품명, 부서, 담당자)", required = false) @RequestParam(value = "searchType", required = false) String searchType,
@@ -107,64 +103,10 @@ public class investController {
 		params.put("sortOrder", sortOrder);
 		
 		SearchCondition condition = new SearchCondition(currentPage, numOfRows, params);
-		int total = investService.selectCountInvest(condition);
+		int total = asetinqrService.selectCountInvest(condition);
 		condition.pageSetup(total);
 		
-		List<InvestDto> list = investService.selectInvestMngList(condition);
+		List<InvestInqrDto> list = null; //asetinqrService.selectInvestList(condition);
 		return responseService.success(condition, list);
-	}
-
-	/** 투자정보관리 화면 : 저장 */
-	   @PostMapping(value="/investMng/investMngSave")
-	   @ResponseBody
-	   @ApiOperation(value = "Web API Menu Mgr Save", notes = "Web API Test")
-	   @ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-	   @ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	   public String investMngSave( 
-			   @ApiParam(value = "메뉴권한", required = false) @RequestBody(required = false) List<InvestDto> data,
-			   @AuthenticationPrincipal UserDetails userDetail) { 
-	      
-	       String code = "202";
-	       
-	       UserInfo userInfo = (UserInfo)userDetail;
-	       String userId = userInfo.getDto().getUserId();
-	       
-		   int cnt = 0;
-		   
-		   for(InvestDto inv : data) {
-		 	  inv.setRegr(userId);
-		 	  inv.setUpdr(userId);
-		 	  log.error("@@@ "+ inv.toString());
-		 	  if(investService.saveInvestInfo(inv) > 0 && investService.savePoInfo(inv) > 0) cnt++;
-		   }
-			 
-		   if(cnt > 0) code = "200";
-	       
-	       return code;
-	} 
-	
-	/** 메뉴관리 화면 : 삭제 */
-	@PostMapping(value="/investMng/investMngDelete")
-	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Delete", notes = "Web API Test")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String investMngDelete( 
-			@ApiParam(value = "Row값", required = false) @RequestBody(required = false) List<InvestDto> items
-			) { 
-		
-		String code = "202";
-		
-		int cnt = 0;
-		
-		for (InvestDto poNo : items) {
-			System.out.println("@@@@DELETE " + poNo);
-			if (investService.deletePoInfo(poNo) > 0)
-				cnt++;
-		}
-		 
-		if( cnt > 0) code = "200";
-		
-		return code;
 	}
 }

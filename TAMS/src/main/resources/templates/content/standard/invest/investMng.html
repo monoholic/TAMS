@@ -169,21 +169,24 @@
 		            	            });  
 		            	        }
 		    				   });
-					 	 } ,
-	                	},
+					 	 },
+	                },
 	            	{ name: "invNo"   , type: "text", width: 70 , align: "left"  , title: "투자번호" },
 	                { name: "invTtl"  , type: "text", width: 100, align: "left"  , title: "투자명"  },
-	                { name: "invQty"  , type: "text", width: 55 , align: "left"  , title: "투자수량" },
-	                { name: "invAmt"  , type: "text", width: 55 , align: "left"  , title: "투자금액" },
-	                { name: "actgYear", type: "text", width: 70 , align: "left"  , title: "회계연도" },
-	                { name: "poNo"	   , type: "text", width: 100, align: "left" , title: "PO번호"  },
-	                { name: "mfgdNm"  , type: "text", width: 100, align: "left"  , title: "품명" 	   },
-	                { name: "qty"	   , type: "text", width: 30 , align: "left" , title: "수량"    },
-	                { name: "poAmt"   , type: "text", width: 100, align: "left"  , title: "PO금액"  },
 	                { name: "invDt"   , type: "text", width: 100, align: "left"  , title: "투자일자" },
+	                { name: "invQty"  , type: "text", width: 50, align: "left"  , title: "투자수량"  },
+	                { name: "invAmt"  , type: "text", width: 70, align: "left"  , title: "투자금액"  },
+	                { name: "actgYear", type: "text", width: 70 , align: "left"  , title: "회계년도" },
+	                { name: "poNo"	  , type: "text", width: 70, align: "left"  , title: "PO번호"  },
+	                { name: "mfgdNm"  , type: "text", width: 100, align: "left"  , title: "품명" 	   },
+	                { name: "qty"	  , type: "text", width: 50 , align: "left"  , title: "PO수량"  },
+	                { name: "poAmt"	  , type: "text", width: 70 , align: "left"  , title: "PO금액"  },
 	                { name: "deptNm"  , type: "text", width: 100, align: "left"  , title: "부서" 	   },
-	                { name: "userNm"  , type: "text", width: 100, align: "left"  , title: "담당자"   },
-	                { name: "invReqr" , type: "text", width: 100, align: "left"  , title: "담당자",  visible: false },
+	                { name: "userNm"  , type: "text", width: 50, align: "left"  , title: "담당자"   },
+	                { name: "invReqr" , type: "text", width: 50, align: "left"  , title: "담당자ID", visible: false },
+	                { name: "vendNm"  , type: "text", width: 60, align: "left"  , title: "업체명"   },
+	                { name: "reqDt"   , type: "text", width: 60, align: "left"  , title: "구매요청일자"},
+	                { name: "dlvDt"   , type: "text", width: 50, align: "left"  , title: "납품일자"   },
 	                { name: "poAsetYn", type: "text", width: 100, align: "left"  , title: "자산등록"  },
 	                { name: "regDt"   , type: "text", width: 100, align: "left"  , title: "등록일자"  },
 	            ]
@@ -322,7 +325,7 @@
             //팝업 가운데로 띄우기
             jQuery.fn.center = function () {
                 this.css("position","absolute");
-                this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
+                this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 4) + $(window).scrollTop()) + "px");
                 this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
                 return this;
             }
@@ -434,8 +437,9 @@
 		    		 $(".detail_table").find("#invDt").val(item.invDt);
 		    		 $(".detail_table").find("#deptNm").val(item.deptNm);
 		     		 $(".detail_table").find("#userNm").val(item.userNm);
-		     		 $(".detail_table").find("#poAsetYn").val(item.poAsetYn);
-		     		 $(".detail_table").find("#regDt").val(item.regDt);
+		     		 $(".detail_table").find("#vendNm").val(item.vendNm);
+		     		 $(".detail_table").find("#reqDt").val(item.reqDt);
+		     		 $(".detail_table").find("#dlvDt").val(item.dlvDt);
 		    	 } else {
 		    		 save_mode = "insert";
 		    		 $(".detail_table").find("#invNo").attr("readOnly", false);
@@ -653,6 +657,10 @@
 							<td><input type="text" id="invAmt" /></td>
 						</tr>
 						<tr>
+							<th>투자일자</th>
+							<td><input type="date" id="invDt" /></td>
+						</tr>
+						<tr>
 							<th>회계년도</th>
 							<td><input type="text" id="actgYear" /></td>
 						</tr>
@@ -678,10 +686,6 @@
 							<td><input type="text" id="poAmt" /></td>
 						</tr>
 						<tr>
-							<th>투자일자</th>
-							<td><input type="date" id="invDt" /></td>
-						</tr>
-						<tr>
 							<th>담당자</th>
 							<td>
 							<div class="form_wrap_ico_invest">
@@ -689,6 +693,18 @@
 									<a href="#" id="openUserPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 							</div>
 							</td>
+						</tr>
+						<tr>
+							<th>업체</th>
+							<td><input type="text" id="vendNm" /></td>
+						</tr>
+						<tr>
+							<th>구매요청일자</th>
+							<td><input type="date" id="reqDt" /></td>
+						</tr>
+						<tr>
+							<th>납품일자</th>
+							<td><input type="date" id="dlvDt" /></td>
 						</tr>
 					</table>
 				<!-- //detail_table -->

@@ -41,9 +41,8 @@
 	    	
             let url = "/system/menurole/menuRoleMng/roleGroup";
 			let reqType = 'GET';	
-			let data = {}
-
-			$.commRequestSelectbox(url, reqType, data, "#searchType");
+			
+			$.commRequestSelectbox(url, reqType, "#searchType", "none");
 			
 	        $("#jsGrid").jsGrid({
 	        	height: "650",

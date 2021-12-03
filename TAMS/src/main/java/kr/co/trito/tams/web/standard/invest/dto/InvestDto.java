@@ -26,6 +26,8 @@ public class InvestDto extends ExcelDto {
 	private String invNo;
 	@ApiModelProperty(value="투자명")
 	private String invTtl;
+	@ApiModelProperty(value="투자일자")
+	private String invDt;
 	@ApiModelProperty(value="투자수량")
 	private String invQty;
 	@ApiModelProperty(value="투자금액")
@@ -36,14 +38,18 @@ public class InvestDto extends ExcelDto {
 	private String poNo;
 	@ApiModelProperty(value="품명")
 	private String mfgdNm;
-	@ApiModelProperty(value="수량")
+	@ApiModelProperty(value="PO수량")
 	private String qty;
 	@ApiModelProperty(value="PO금액")
 	private String poAmt;
-	@ApiModelProperty(value="투자일자")
-	private String invDt;
 	@ApiModelProperty(value="부서")
 	private String deptNm;
+	@ApiModelProperty(value="업체")
+	private String vendNm;
+	@ApiModelProperty(value="요청일자")
+	private String reqDt;
+	@ApiModelProperty(value="납품일자")
+	private String dlvDt;
 	@ApiModelProperty(value="담당자")
 	private String invReqr;	
 	@ApiModelProperty(value="회원명")
@@ -77,49 +83,58 @@ public class InvestDto extends ExcelDto {
     	if(row.getCell(2) != null) {
     		cell = row.getCell(2);
     		cell.setCellType(Cell.STRING);
-    		inv.setInvQty	(cell.getStringCellValue());
+    		inv.setInvDt	(cell.getStringCellValue());
     	}
     	if(row.getCell(3) != null) {
     		cell = row.getCell(3);
     		cell.setCellType(Cell.STRING);
-    		inv.setInvAmt	(cell.getStringCellValue());
+    		inv.setInvQty	(cell.getStringCellValue());
     	}
     	if(row.getCell(4) != null) {
     		cell = row.getCell(4);
     		cell.setCellType(Cell.STRING);
-    		inv.setActgYear	(cell.getStringCellValue());
+    		inv.setInvAmt	(cell.getStringCellValue());
     	}
-
     	if(row.getCell(5) != null) {
     		cell = row.getCell(5);
     		cell.setCellType(Cell.STRING);
+    		inv.setActgYear	(cell.getStringCellValue());
+    	}
+    	if(row.getCell(6) != null) {
+    		cell = row.getCell(6);
+    		cell.setCellType(Cell.STRING);
     		inv.setPoNo	(cell.getStringCellValue());    		
     	}
-		inv.setMfgdNm	(row.getCell(6).getStringCellValue());
-		if(row.getCell(7) != null) {
-    		cell = row.getCell(7);
-    		cell.setCellType(Cell.STRING);
-    		inv.setQty	(cell.getStringCellValue()); 
-		}
+		inv.setMfgdNm	(row.getCell(7).getStringCellValue());
 		if(row.getCell(8) != null) {
     		cell = row.getCell(8);
     		cell.setCellType(Cell.STRING);
-    		inv.setPoAmt	(cell.getStringCellValue()); 
+    		inv.setQty	(cell.getStringCellValue()); 
 		}
 		if(row.getCell(9) != null) {
-    		cell = row.getCell(9);
-    		cell.setCellType(Cell.STRING);
-    		inv.setInvDt	(cell.getStringCellValue());			
+			cell = row.getCell(9);
+			cell.setCellType(Cell.STRING);
+			inv.setPoAmt	(cell.getStringCellValue()); 
 		}
-		if(row.getCell(10) != null)	{
+		if(row.getCell(10) != null) {
     		cell = row.getCell(10);
     		cell.setCellType(Cell.STRING);
-    		inv.setDeptNm	(cell.getStringCellValue());
+    		inv.setInvReqr	(cell.getStringCellValue()); 
 		}
-		if(row.getCell(11) != null)	{
+		if(row.getCell(11) != null) {
     		cell = row.getCell(11);
     		cell.setCellType(Cell.STRING);
-    		inv.setInvReqr	(cell.getStringCellValue());			
+    		inv.setVendNm	(cell.getStringCellValue());			
+		}
+		if(row.getCell(12) != null)	{
+    		cell = row.getCell(12);
+    		cell.setCellType(Cell.STRING);
+    		inv.setReqDt	(cell.getStringCellValue());
+		}
+		if(row.getCell(13) != null)	{
+    		cell = row.getCell(13);
+    		cell.setCellType(Cell.STRING);
+    		inv.setDlvDt	(cell.getStringCellValue());			
 		}
 		
 		//inv.setInvRegrNm(row.getCell(9).getStringCellValue());

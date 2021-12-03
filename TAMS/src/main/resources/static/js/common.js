@@ -13,7 +13,7 @@
 				reject(error);
 			}
 		});
-	});
+	}); 
   };
 
   $.commRequestFile = function(url, reqType, data) {
