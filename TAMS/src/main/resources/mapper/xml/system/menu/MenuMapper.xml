@@ -78,9 +78,9 @@
 		     , POPUP_YN     AS popupYn
 		     , SORT_ODR     AS sortOdr
 		     , REGR         AS regr
-		     , REG_DT       AS regDt
+		     , DATE_FORMAT(REG_DT, '%Y-%m-%d') AS regDt
 		     , UPDR         AS updr
-		     , UP_DT        AS upDt
+		     , DATE_FORMAT(UP_DT, '%Y-%m-%d') AS upDt
 		  FROM CTE 
 		ORDER BY MENU_ID
 		)

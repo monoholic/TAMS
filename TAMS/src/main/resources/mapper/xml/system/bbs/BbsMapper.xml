@@ -14,9 +14,9 @@
 		     , view_cnt
 		     , del_yn
 		     , updr
-		     , up_dt
+		     , DATE_FORMAT(up_dt, '%Y-%m-%d') AS up_dt
 		     , regr
-		     , reg_dt
+		     , DATE_FORMAT(reg_dt, '%Y-%m-%d') AS reg_dt
 		     , bbs_id
 		FROM (
 				  SELECT user_id
@@ -179,9 +179,9 @@
 		     , view_cnt
 		     , del_yn
 		     , updr
-		     , up_dt
+		     , DATE_FORMAT(up_dt, '%Y-%m-%d') AS up_dt
 		     , regr
-		     , reg_dt
+		     , DATE_FORMAT(reg_dt, '%Y-%m-%d') AS reg_dt
 		     , bbs_id
 		FROM (
 				  SELECT user_id

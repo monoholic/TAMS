@@ -165,7 +165,7 @@
 	            fields: [
 	            	{  name : "chk"
 	                	 , align: "center"
-	                	 , width: 20
+	                	 , width: 15
 	                	 , title: ""
 	                	 , editing: false
 	                	 , sorting: false
@@ -198,21 +198,21 @@
 					 	 } ,
 	                },
 	                //{ name: "chk", type: "checkbox", width: 30, readOnly:false , title: "Sel<br><br>" },
-	                { name: "codeGrpId", type: "number", align: "center", width: 60,  title: "공통코드 그룹ID" },
-	                { name: "codeGrpNm", type: "text", align: "center", width: 60, readOnly:true , title: "공통코드 그룹명" },
-	                { name: "codeGrpEngNm", type: "text", align: "center", width: 60, readOnly:true , title: "공통코드 영문명" },
-	                { name: "codeGrpDesc", type: "text", align: "center", width: 75, readOnly:true , title: "공통코드 그룹 설명" },
-	                { name: "sortOdr", type: "number", align: "center", width: 40, title: "정렬순서" },
-	                { name: "useYn", type: "select", width: 40 ,align: "center"
+	                { name: "codeGrpId", type: "text", align: "left", width: 40,  title: "공통코드 그룹ID" },
+	                { name: "codeGrpNm", type: "text", align: "left", width: 50, readOnly:true , title: "공통코드 그룹명" },
+	                { name: "codeGrpEngNm", type: "text", align: "left", width: 50, readOnly:true , title: "공통코드 영문명" },
+	                { name: "codeGrpDesc", type: "text", align: "center", width: 80, readOnly:true , title: "공통코드 그룹 설명" },
+	                { name: "sortOdr", type: "number", align: "right", width: 20, title: "정렬순서" },
+	                { name: "useYn", type: "select", width: 20 ,align: "center"
 	                	   , items: [
 			                    { Name: "사용",  Id: "Y"},
 			                    { Name: "미사용", Id: "N"},
 			                  ],
 	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "사용 여부" },
-	                { name: "updr", type: "text", align: "center", width: 40, title: "수정자" },
-	                { name: "upDt", type: "text", align: "center", width: 40, title: "수정일자" },
-	                { name: "regr", type: "text", align: "center", width: 40, title: "등록자" },
-	                { name: "regDt", type: "text", align: "center", width: 40, title: "등록일자" },
+	                { name: "updr", type: "text", align: "center", width: 25, title: "수정자" },
+	                { name: "upDt", type: "text", align: "center", width: 30, title: "수정일자" },
+	                { name: "regr", type: "text", align: "center", width: 25, title: "등록자" },
+	                { name: "regDt", type: "text", align: "center", width: 30, title: "등록일자" },
 	            ]
 	        });
 	        
@@ -335,6 +335,8 @@
           	//리셋 버튼
     	    $(".btn_reset").click(function() {
     	    	$("#searchText").val("");
+    	    	$("#searchOption option:eq(0)").prop("selected",true);
+    	    	$("#useYnOption option:eq(0)").prop("selected",true);
     	    });
 	     	
 	     	// 팝업창 닫기 버튼 처리

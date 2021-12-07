@@ -185,7 +185,7 @@ public class UserMngController {
 //			dto.setUseYn (obj.get("useYn").toString());
 //		} catch(Exception e) {e.printStackTrace();}
 
-		dto.setRegr("userId"); //임시
+		dto.setRegr(userId); //임시
 		
 		int cnt = userService.userMngInsert(dto);
 		if( cnt > 0) code = "200";

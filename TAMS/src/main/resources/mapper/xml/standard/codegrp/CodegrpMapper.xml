@@ -12,9 +12,9 @@
    			 , a.sort_odr
    			 , a.use_yn
    			 , a.updr
-   			 , a.up_dt
+   			 , DATE_FORMAT(a.up_dt, '%Y-%m-%d') AS up_dt
    			 , a.regr
-   			 , a.reg_dt
+   			 , DATE_FORMAT(a.reg_dt, '%Y-%m-%d') AS reg_dt
 		FROM (
 			   		SELECT code_grp_id
 			   			 , code_grp_nm
@@ -34,25 +34,24 @@
 						       OR code_grp_nm LIKE CONCAT('%', #{params.searchText}, '%')
 						       OR code_grp_desc LIKE CONCAT('%', #{params.searchText}, '%'))
 					 	</if>
-					 	
 					 	<choose>
-					 		<when test="params.searchOption == 'code_grp_id'">
-					 			<if test="params.searchText != null">
-									AND code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
-							 	</if>
-					 		</when>
-					 		
-					 		<when test="params.searchOption == 'code_grp_nm'" >
-					 			<if test="params.searchText != null">
-					 				AND code_grp_nm LIKE CONCAT('%', #{params.searchText}, '%')
-					 			</if>
-					 		</when>
-					 		
-					 		<when test="params.searchOption == 'code_grp_desc'" >
-					 			<if test="params.searchText != null">
-					 				AND code_grp_desc LIKE CONCAT('%', #{params.searchText}, '%')
-					 			</if>
-					 		</when>
+						 		<when test="params.searchOption == 'code_grp_id'">
+						 			<if test="params.searchText != null">
+										AND code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
+									</if>
+						 		</when>
+						 		
+						 		<when test="params.searchOption == 'code_grp_nm'" >
+						 			<if test="params.searchText != null">
+						 				AND code_grp_nm LIKE CONCAT('%', #{params.searchText}, '%')
+						 			</if>
+						 		</when>
+						 		
+						 		<when test="params.searchOption == 'code_grp_desc'" >
+						 			<if test="params.searchText != null">
+						 				AND code_grp_desc LIKE CONCAT('%', #{params.searchText}, '%')
+						 			</if>
+						 		</when>
 					 	</choose>
 					 	
 						<if test="params.useYnOption != null">
@@ -60,7 +59,7 @@
 				 		</if>
 		) As a
 		WHERE rn BETWEEN #{start} AND #{end}
-		ORDER BY a.sort_odr
+		ORDER BY a.sort_odr, a.code_grp_id
    	</select>
    	
    	<select id="selectCountCodegrp" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
@@ -75,11 +74,15 @@
 		 	
 		 	<choose>
 		 		<when test="params.searchOption eq 'code_grp_id'">
-		 			AND code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
+		 			<if test="params.searchText != null">
+		 				AND code_grp_id LIKE CONCAT('%', #{params.searchText}, '%')
+		 			</if>
 		 		</when>
 		 		
 		 		<when test="params.searchOption eq 'code_grp_nm'" >
-		 			AND code_grp_nm LIKE CONCAT('%', #{params.searchText}, '%')
+		 			<if test="params.searchText != null">
+		 				AND code_grp_nm LIKE CONCAT('%', #{params.searchText}, '%')
+		 			</if>
 		 		</when>
 		 		
 		 		<when test="params.searchOption == 'code_grp_desc'" >

@@ -18,9 +18,9 @@
 			  , RESV3        AS resv3      
 			  , USE_YN       AS use_yn     
 			  , UPDR         AS updr       
-			  , UP_DT        AS up_dt      
+			  , DATE_FORMAT(UP_DT, '%Y-%m-%d') AS up_dt      
 			  , REGR         AS regr       
-			  , REG_DT       AS reg_dt
+			  , DATE_FORMAT(REG_DT, '%Y-%m-%d') AS reg_dt
 		FROM (
 					  SELECT  CODE_ID      AS code_id    
 						    , CODE_GRP_ID  AS code_grp_id
