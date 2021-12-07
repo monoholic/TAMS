@@ -1,12 +1,7 @@
 package kr.co.trito.tams.web.aset.regist.invest.dto;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kr.co.trito.tams.comm.util.file.excel.ExcelDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +16,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @ApiModel("공통코드")
-public class InvestInqrDto{
+public class InvInqrDto{
 	@ApiModelProperty(value="투자번호")
 	private String invNo;
 	@ApiModelProperty(value="투자명")

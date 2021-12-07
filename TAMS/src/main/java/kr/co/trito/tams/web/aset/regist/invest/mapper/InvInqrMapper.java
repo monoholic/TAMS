@@ -5,15 +5,16 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.aset.regist.invest.dto.InvestInqrDto;
+import kr.co.trito.tams.web.aset.regist.invest.dto.InvExcelDto;
+import kr.co.trito.tams.web.aset.regist.invest.dto.InvInqrDto;
 import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
 
 @Mapper
-public interface InvestInqrMapper {
+public interface InvInqrMapper {
 	
-	public List<InvestInqrDto> selectInvestInqrList(SearchCondition condition);
+	public List<InvInqrDto> selectInvestInqrList(SearchCondition condition);
 	
-	public List<InvestInqrDto> selectInvInqrExcelList(SearchCondition condition);	
+	public List<InvExcelDto> selectInvInqrExcelList(SearchCondition condition);	
 	
 	public int selectCountInvest(SearchCondition condition);
 	
