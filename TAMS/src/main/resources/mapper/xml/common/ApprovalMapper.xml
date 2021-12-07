@@ -4,9 +4,53 @@
 
 <mapper namespace="kr.co.trito.tams.web.common.mapper.ApprovalMapper">
 
+	<select id="selectAppvList" parameterType="map" resultType="kr.co.trito.tams.web.common.dto.AppvDto">
+		SELECT a.appv_id, a.appv_user_id, a.appv_type, a.appv_ttl, a.appv_cn, a.appv_stus, a.appv_step, a.del_yn, a.updr, a.up_dt, a.regr, a.reg_dt
+              ,(select user_nm from tb_user b where b.user_id = a.appv_user_id) appv_user_nm
+              ,(select code_nm from tb_com_code b where b.code_id = a.appv_type and b.code_grp_id='REQ_TYPE') appv_type_nm
+              ,(select code_nm from tb_com_code b where b.code_id = a.appv_stus and b.code_grp_id='APPR_STATUS') appv_stus_nm
+              ,(select code_nm from tb_com_code b where b.code_id = a.appv_step and b.code_grp_id='APPR_STEP') appv_step_nm
+          FROM tb_com_appv a
+	</select>
+	
+	<select id="selectAppvInfo" parameterType="map" resultType="kr.co.trito.tams.web.common.dto.AppvDto">
+		SELECT a.appv_id, a.appv_user_id, a.appv_type, a.appv_ttl, a.appv_cn, a.appv_stus, a.appv_step, a.del_yn, a.updr, a.up_dt, a.regr, a.reg_dt
+              ,(select user_nm from tb_user b where b.user_id = a.appv_user_id) appv_user_nm
+              ,(select code_nm from tb_com_code b where b.code_id = a.appv_type and b.code_grp_id='REQ_TYPE') appv_type_nm
+              ,(select code_nm from tb_com_code b where b.code_id = a.appv_stus and b.code_grp_id='APPR_STATUS') appv_stus_nm
+              ,(select code_nm from tb_com_code b where b.code_id = a.appv_step and b.code_grp_id='APPR_STEP') appv_step_nm
+          FROM tb_com_appv a
+         WHERE a.appv_id = '${appv_id}'
+	</select>
+	
+	<select id="selectAppvLine" parameterType="map" resultType="kr.co.trito.tams.web.common.dto.AppvLineDto">
+		SELECT appv_line_id, appv_id, appvr, appv_div, appv_ord, appv_stus, appv_comt, rcv_dt, appv_dt, updr, up_dt, regr, reg_dt
+		      ,(select user_nm from tb_user b where b.user_id = a.appvr) appvr_nm
+		  FROM tams.tb_com_appv_line a
+		 WHERE a.appv_id = '${appv_id}'
+	</select>
+
 	<insert id="insertAppv" parameterType="kr.co.trito.tams.web.common.dto.AppvDto" useGeneratedKeys="true" keyProperty="appvId">
-		INSERT INTO TB_COM_APPV(APPV_USER_ID, APPV_TYPE, APPV_TTL, APPV_CN, APPV_STUS, APPV_STEP, REGR)
-		                 VALUES(#{appvUserId}, #{appvType}, #{appvTtl}, #{appvCn}, #{appvStus}, #{appvStep}, #{regr})
+		INSERT INTO TB_COM_APPV(
+						<if test="appvId != null and appvId !=''">
+								APPV_ID,
+						</if>
+		                        APPV_USER_ID, APPV_TYPE, APPV_TTL, APPV_CN, APPV_STUS, APPV_STEP, REGR)
+		               VALUES(
+						<if test="appvId != null and appvId !=''">
+								#{appvId},
+						</if>
+		               #{appvUserId}, #{appvType}, #{appvTtl}, #{appvCn}, #{appvStus}, #{appvStep}, #{regr})
+		               ON DUPLICATE KEY
+						UPDATE APPV_USER_ID 	= #{appvUserId}
+						  	 , APPV_TYPE 		= #{appvType}
+						  	 , APPV_TTL 		= #{appvTtl}
+						  	 , APPV_CN 			= #{appvCn}
+						  	 , APPV_STUS 		= #{appvStus}
+						  	 , APPV_STEP 		= #{appvStep}
+						  	 , UPDR 			= #{regr}
+						  	 , UP_DT 			= CURRENT_TIMESTAMP()
+				                 
 	</insert>
 	
 	<insert id="insertAppvLine" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="appvId">
@@ -17,4 +61,8 @@
 		                    </foreach>
 	</insert>
 	
+	<delete id="deleteAppvLine" parameterType="String">
+		DELETE FROM TB_COM_APPV_LINE
+		      WHERE APPV_ID = #{appvId}
+	</delete>
 </mapper>

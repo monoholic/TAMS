@@ -41,6 +41,16 @@
 		
 		<script>
 		
+		/* var appv_id = '[[${appv_id}]]';
+		
+		if( param_id != null && param_id != "" ) {
+			var paramObj = $('<input name="'+param_id+'" value="'+param_value+'"  />');
+			$("#pop_wrap").append(paramObj);
+		} */
+		
+		
+		var appvId = '[[${appv_id}]]';
+		
 		var apprCnt  = 0;
 		var arrAppr  = [];
 		
@@ -53,22 +63,19 @@
 		var apprGbn  = "appr";
 		
 		var selectedObj;
-			
+		
 		$(function() {
-			//$("#divAppr").selectable();
+			
+			if( appvId != null && appvId != "" )  getApprovalInfo(appvId);
 			
 			//저장(임시)
 			$("#btnSave").on("click", function(){
-				
 				saveApproval('');
-				
 			});
 			
 			//상신
 			$("#btnApproval").on("click", function(){
-				
 				saveApproval('F');
-				
 			});
 			
 			//결재자 추가
@@ -97,12 +104,30 @@
 				setMoveAppr("DOWN");
 			});
 			
+			//결재자 구분(결재자, 함의자, 통보자)
+			$("input[name='appr_gbn']").on("change", function(){
+				if( $(this).is(":checked") ) {
+					apprGbn = $(this).val();
+				}
+				//console.log("@@@ "+apprGbn);
+			});
+			
 			//결재상신 내용 : web editor 설정
-			$("#apprContent").summernote({
+			$("#apprContent").summernote(getSummernoteBody());
+			
+			$(".pop_close").on("click", function(){
+				self.close();
+			});
+		});
+		
+		
+		//summer note 설정
+		function getSummernoteBody() {
+		return	{
 	            placeholder: '내용을 작성하세요',
-	            height: 300,
-	            minHeight: 300,
-	            maxHeight: 300,
+	            height: 250,
+	            minHeight: 250,
+	            maxHeight: 250,
 	            lang:"ko-KR",
 	            toolbar: [
 	    		    ['style', ['style']],
@@ -117,19 +142,8 @@
 	    		    ['view', ['fullscreen', 'codeview']],
 	    		    ['help', ['help']]
 	    		  ]
-	        });
-			
-			//결재자 구분(결재자, 함의자, 통보자)
-			$("input[name='appr_gbn']").on("change", function(){
-				if( $(this).is(":checked") ) {
-					apprGbn = $(this).val();
-				}
-				//console.log("@@@ "+apprGbn);
-			});
-			
-			
-			
-		});
+	        };
+		}
 		
 		//결재 저장/상신
 		function saveApproval(status) {
@@ -178,6 +192,7 @@
 			let reqType = 'POST';	
 			let data = {
 				"assetNo"     : $("#asset_no").text(),						
+				"appvId"      : $("#appvId").val(),						
 				"appr"        : arrAppr,
 				"agree"       : arrAgree,
 				"noti"        : arrNoti,
@@ -190,10 +205,11 @@
 			$.commRequest(url, reqType, JSON.stringify(data))
 				.then((res) => {
 					console.log('결재상신 성공!!');
-					
+					alert('성공!!')
 				})
 				.catch((error) => {
 					console.log('결재상신 실패!!');
+					alert('실패!!')
 				});
 			
 			
@@ -238,20 +254,25 @@
 			
 			if( !flag) return false;
 			
-			var objDel = $("<img src='/images/common/ico_pop_error.png' style='width:14px;height:14px;cursor:pointer;' onclick='removeUser(this,\""+apprGbn+"\");'/>"); //삭제용
-			var objSp  = $("<span style='width:1Opx;'>&nbsp;&nbsp;</span>");  //공백용
 			
 			var divAppr  = $("#divAppr");
 			var divAgree = $("#divAgree");
 			var divNoti  = $("#divNoti");
 			
-			var ojbGr = $('<li value="'+obj.userId+'" gbn="'+apprGbn+'" onclick="selList(this,\''+apprGbn+'\');">'+obj.userNm+'</li>');
+			var objStr = '';
+			    objStr+= '<li value="'+obj.userId+'" gbn="'+apprGbn+'" onclick="selList(this,\''+apprGbn+'\');">';
+			    objStr+= '<span style="width:5px;">&nbsp;&nbsp;</span>';  //공백용
+			    objStr+= '<img src="/images/common/ico_pop_error.png" style="width:14px;height:14px;cursor:pointer;" onclick="removeUser(this,\''+apprGbn+'\');"/>'; //삭제용
+			    objStr+= '<span style="width:1Opx;">&nbsp;&nbsp;</span>';  //공백용
+			    objStr+= obj.userNm;
+			    objStr+= '</li>';
+			var ojbGr = $(objStr);
 			    
 			if( apprGbn == "appr" ) { //결재자
 				
 				divAppr.append(ojbGr);
-				ojbGr.append(objSp);
-				ojbGr.append(objDel);
+				//ojbGr.append(objSp);
+				//ojbGr.append(objDel);
 				
 				apprCnt++;
 				
@@ -259,8 +280,8 @@
 			if( apprGbn == "agree" ) { //합의자
 				 
 				divAgree.append(ojbGr);
-				ojbGr.append(objSp);
-				ojbGr.append(objDel);
+				//ojbGr.append(objSp);
+				//ojbGr.append(objDel);
 				
 				agreeCnt++;
 				
@@ -268,8 +289,8 @@
 			if( apprGbn == "noti" ) { //통보자
 				
 				divNoti.append(ojbGr);
-				ojbGr.append(objSp);
-				ojbGr.append(objDel);
+				//ojbGr.append(objSp);
+				//ojbGr.append(objDel);
 				
 				notiCnt++;
 				
@@ -281,7 +302,7 @@
 		}
 		
 		//결재자 선택시 배경 표시
-		function selList(obj, gbn) {
+		function selList(obj, gbn) { 
 			selectedObj = obj;
 			var list = $("li");
 			$.each(list, function(index, element){
@@ -314,6 +335,57 @@
 			$("#agree_cnt").text(agreeCnt);
 			$("#noti_cnt").text(notiCnt);
 		}
+		
+		
+		function getApprovalInfo(appvId) {
+			let url = "/approval/approvalPopup2";
+			let reqType = 'GET';	
+			let data = {
+				"appv_id" : appvId					
+			};
+			//console.log(data);
+			$.commRequest(url, reqType, data)
+				.then((res) => {
+					//console.log(res.data);
+					//결재 제목, 본문
+					var appvDto = res.data.appvDto;
+					$("#appvId").val(appvDto.appvId);
+					$("#appvTtl").val(appvDto.appvTtl);
+					$("#apprContent").summernote("code",appvDto.appvCn);
+					
+					//결재 라인
+					var appvLines = JSON.parse(res.data.appvLines);
+					
+					$.each(appvLines, function(i, el){ 
+						if( el.appvDiv == 'APPROVAL' ) {
+							 var obj = {};
+							 apprGbn = "appr";
+							 obj.userId = el.appvr
+							 obj.userNm = el.appvrNm
+							 setResult(obj);
+						}
+						if( el.appvDiv == 'AGREEMENT' ) {
+							 var obj = {};
+							 apprGbn = "agree";
+							 obj.userId = el.appvr
+							 obj.userNm = el.appvrNm
+							 setResult(obj);
+						}
+						if( el.appvDiv == 'NOTIFY' ) {
+							var obj = {};
+							 apprGbn = "noti";
+							 obj.userId = el.appvr
+							 obj.userNm = el.appvrNm
+							 setResult(obj);
+						}
+							 
+					});
+					//apprGbn = "appr";
+				})
+				.catch((error) => {
+					
+				});
+		}
 		   
 		</script>
 	</th:block> 
@@ -322,7 +394,8 @@
 <body >
 
 <div layout:fragment="content">
-	<span id="asset_no" th:text='${param.asset_no}' style="display:none;"></span>
+	<!-- <span id="asset_no" th:text='${param.asset_no}' style="display:none;"></span> -->
+	<input type="hidden" id="appvId" name="appvId" />
 	<!-- pop_alert -->
 	<div id="pop_wrap" >
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
@@ -423,14 +496,14 @@
 								</td>
 							</tr>
 							<tr>
-								<th>제목</th>
+								<th  style="text-align:center">제&nbsp;&nbsp;목</th>
 								<td>
 									<input type="text" name="appvTtl" id="appvTtl" style="width:80%;"/>
 								</td>
 							</tr>
 							<tr>
 								<td colspan="2">
-									<div id="apprContent"></div>
+									<div id="apprContent"></span></div>
 								</td>
 							</tr>
 						</table>

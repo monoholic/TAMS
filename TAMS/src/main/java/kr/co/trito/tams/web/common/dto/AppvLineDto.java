@@ -4,9 +4,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter
+@ToString
 @ApiModel("결재 라인용 Dto")
 public class AppvLineDto {
 	
@@ -14,8 +16,10 @@ public class AppvLineDto {
 	String appvLineId;
 	@ApiModelProperty(value="결재ID")
 	String appvId;
-	@ApiModelProperty(value="결재자")
+	@ApiModelProperty(value="결재자ID")
 	String appvr;
+	@ApiModelProperty(value="결재자명")
+	String appvrNm;
 	@ApiModelProperty(value="공통코드(결재종류)")
 	String appvDiv;
 	@ApiModelProperty(value="결재순서")
