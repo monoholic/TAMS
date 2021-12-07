@@ -10,6 +10,7 @@
 		WHERE 1 = 1
 		AND A.inv_no = B.inv_no
 		AND D.use_yn = 'Y'
+		AND A.inv_reqr = D.user_id
 		AND D.dept_cd = E.dept_cd
 		<if test="params.searchType != 'none'">
 		AND ${params.searchType} LIKE CONCAT('%', #{params.searchText}, '%')
@@ -90,18 +91,49 @@
 	<insert id="saveInvestInfo" parameterType="kr.co.trito.tams.web.standard.invest.dto.InvestDto">
 		INSERT INTO TB_INV_MAS(INV_NO, INV_TTL, INV_QTY, INV_AMT, ACTG_YEAR, INV_DT, INV_REQR, REG_DT, REGR)
                 VALUES
-                (#{invNo}, #{invTtl}, CAST(#{invQty} as int), CAST(#{invAmt} as int), #{actgYear}, #{invDt}, #{regr}, now(), #{regr})
+                ( #{invNo}
+                , #{invTtl}
+                , CAST(#{invQty} as int)
+                , CAST(#{invAmt} as int)
+                , #{actgYear}
+                , #{invDt}
+                , #{regr}
+                , now()
+                , #{regr} )
                 ON DUPLICATE KEY
-                UPDATE INV_DT = #{invDt}, INV_QTY = CAST(#{invQty} as int), INV_AMT = CAST(#{invAmt} as int), INV_REQR = #{regr}, INV_TTL = #{invTtl}, UPDR = #{updr}, UP_DT = now()
+                UPDATE INV_TTL = #{invTtl}
+                     , INV_DT = #{invDt}
+                     , INV_QTY = CAST(#{invQty} as int)
+                     , INV_AMT = CAST(#{invAmt} as int)
+                     , INV_REQR = #{regr}
+                     , UPDR = #{updr}
+                     , UP_DT = now()
 	</insert>
 	
 	<!-- TB_PO 정보등록 -->
 	<insert id="savePoInfo" parameterType="kr.co.trito.tams.web.standard.invest.dto.InvestDto">
-		INSERT INTO TB_PO(PO_NO, INV_NO, PO_CHRGR, MFGD_NM, QTY, PO_AMT, REGR)
+		INSERT INTO TB_PO(PO_NO, INV_NO, MFGD_NM, QTY, PO_AMT, PO_CHRGR, VEND_NM, REQ_DT, DLV_DT, REGR)
                 VALUES 
-                (#{poNo}, #{invNo}, #{regr}, #{mfgdNm}, CAST(#{qty} as int), CAST(#{poAmt} as int), #{regr})
+                ( #{poNo}
+                , #{invNo}
+                , #{mfgdNm}
+                , CAST(#{qty} as int)
+                , CAST(#{poAmt} as int)
+                , #{regr} 
+                , #{vendNm}
+                , #{reqDt}
+                , #{dlvDt}
+                , #{regr} )
                 ON DUPLICATE KEY
-                UPDATE PO_CHRGR = #{regr}, MFGD_NM = #{mfgdNm}, QTY = CAST(#{qty} as int), PO_AMT = CAST(#{poAmt} as int), UPDR = #{regr}, UP_DT = now()
+                UPDATE PO_CHRGR = #{regr}
+                     , MFGD_NM = #{mfgdNm}
+                     , QTY = CAST(#{qty} as int)
+                     , PO_AMT = CAST(#{poAmt} as int)
+                     , VEND_NM = #{vendNm}
+                     , REQ_DT = #{reqDt}
+                     , DLV_DT = #{dlvDt}
+                     , UPDR = #{updr}
+                     , UP_DT = now()
 	</insert>
 
 	<!-- TB_PO 정보등록 -->

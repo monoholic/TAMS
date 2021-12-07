@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.trito.tams.web.aset.regist.invest.mapper.InvestInqrMapper">
+	
+	<select id="selectCountInvest" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   SELECT COUNT(*)
+		  FROM    
+				(
+					SELECT a.rn
+				  		 , a.inv_no
+						 , a.inv_ttl
+						 , date_format(a.inv_dt, '%Y-%m-%d')as inv_dt
+						 , a.po_no
+						 , a.mfgd_nm
+						 , a.qty
+						 , a.po_amt
+						 , a.upp_dept_cd
+						 , a.dept_cd
+						 , a.dept_nm
+						 , a.inv_reqr
+						 , a.user_nm
+						 , a.user_id
+						 , IFNULL((SELECT qty
+					 		FROM tb_po_aset B
+					 		WHERE 1 = 1
+					 		AND B.PO_NO = A.PO_NO), 0) as asetQty
+					  FROM (
+								SELECT ROW_NUMBER() OVER(ORDER BY CAST(b.po_no AS int) DESC) as rn
+								  	 , a.inv_no
+									 , a.inv_ttl
+									 , b.po_no
+									 , b.mfgd_nm
+									 , b.qty
+									 , a.inv_dt
+									 , b.po_amt
+									 , e.upp_dept_cd
+									 , e.dept_cd
+									 , e.dept_nm
+									 , a.inv_reqr
+							 		 , d.user_nm
+							 		 , d.user_id
+								FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
+								WHERE 1 = 1
+								AND A.inv_no = B.inv_no
+						        AND D.use_yn = 'Y'
+								AND E.use_yn = 'Y'
+								AND A.regr = D.user_id
+								AND D.dept_cd = E.dept_cd
+								<if test="params.invNo != '' and params.invNo != null">
+								AND a.inv_no LIKE CONCAT('%', #{params.invNo}, '%')
+								</if>
+								<if test="params.invTtl != '' and params.invTtl != null">
+								AND a.inv_ttl LIKE CONCAT('%', #{params.invTtl}, '%')
+								</if>
+								<if test="params.poNo != '' and params.poNo != null">
+								AND B.po_no LIKE CONCAT('%', #{params.poNo}, '%')
+								</if>
+								<if test="params.mfgdNm != '' and params.mfgdNm != null">
+								AND B.mfgd_nm LIKE CONCAT('%', #{params.mfgdNm}, '%')
+								</if>
+								<if test="params.deptCd != '' and params.deptCd != null">
+								AND E.dept_cd LIKE CONCAT('%', #{params.deptCd}, '%')
+								</if>
+								<if test="params.userId != '' and params.userId != null">
+								AND D.user_id LIKE CONCAT('%', #{params.userId}, '%')
+								</if>
+								<if test="params.fromDate != '' and params.fromDate != null">
+								AND A.inv_dt BETWEEN #{params.fromDate} AND #{params.toDate}
+								</if>								
+							) AS a
+				) AS b	
+		LEFT OUTER JOIN TB_DEPT F
+		ON f.use_yn = 'Y'
+		AND f.dept_cd = b.upp_dept_cd
+		WHERE 1 = 1
+		<if test="params.regYn != '' and params.regYn != null">
+			<if test='params.regYn != "N"'>
+				AND B.asetQty = 0
+			</if>
+		</if>
+	</select>
+	
+	<select id="selectInvestInqrList" resultType="kr.co.trito.tams.web.aset.regist.invest.dto.InvestInqrDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+  SELECT c.*
+    FROM
+		 (
+		   SELECT b.rn as rn
+				, b.inv_no 	    as invNo
+				, b.inv_ttl 	as invTtl
+				, b.inv_dt      as invDt
+				, b.po_no 		as poNo
+				, b.mfgd_nm 	as mfgdNm
+				, b.qty 		as qty
+				, b.po_amt     as poAmt
+				, f.dept_nm     as uppDeptNm
+				, b.upp_dept_cd as uppDeptCd 
+				, b.dept_nm 	as deptNm
+				, b.dept_cd 	as deptCd
+				, b.inv_reqr 	as invReqr
+				, b.user_nm 	as userNm
+				, b.user_id    as userId
+				, b.asetQty
+				, b.qty - b.asetQty as noAsetQty
+				  FROM    
+						(
+							SELECT a.rn
+						  		 , a.inv_no
+								 , a.inv_ttl
+								 , date_format(a.inv_dt, '%Y-%m-%d')as inv_dt
+								 , a.po_no
+								 , a.mfgd_nm
+								 , a.qty
+								 , a.po_amt
+								 , a.upp_dept_cd
+								 , a.dept_cd
+								 , a.dept_nm
+								 , a.inv_reqr
+								 , a.user_nm
+								 , a.user_id
+								 , IFNULL((SELECT qty
+							 		FROM tb_po_aset B
+							 		WHERE 1 = 1
+							 		AND B.PO_NO = A.PO_NO), 0) as asetQty
+							  FROM (
+										SELECT ROW_NUMBER() OVER(ORDER BY CAST(b.po_no AS int) DESC) as rn
+										  	 , a.inv_no
+											 , a.inv_ttl
+											 , b.po_no
+											 , b.mfgd_nm
+											 , b.qty
+											 , a.inv_dt
+											 , b.po_amt
+											 , e.upp_dept_cd
+											 , e.dept_cd
+											 , e.dept_nm
+											 , a.inv_reqr
+									 		 , d.user_nm
+									 		 , d.user_id
+										FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
+										WHERE 1 = 1
+										AND A.inv_no = B.inv_no
+								        AND D.use_yn = 'Y'
+										AND E.use_yn = 'Y'
+										AND A.regr = D.user_id
+										AND D.dept_cd = E.dept_cd
+										<if test="params.invNo != '' and params.invNo != null">
+										AND a.inv_no LIKE CONCAT('%', #{params.invNo}, '%')
+										</if>
+										<if test="params.invTtl != '' and params.invTtl != null">
+										AND a.inv_ttl LIKE CONCAT('%', #{params.invTtl}, '%')
+										</if>
+										<if test="params.poNo != '' and params.poNo != null">
+										AND B.po_no LIKE CONCAT('%', #{params.poNo}, '%')
+										</if>
+										<if test="params.mfgdNm != '' and params.mfgdNm != null">
+										AND B.mfgd_nm LIKE CONCAT('%', #{params.mfgdNm}, '%')
+										</if>
+										<if test="params.deptCd != '' and params.deptCd != null">
+										AND E.dept_cd LIKE CONCAT('%', #{params.deptCd}, '%')
+										</if>
+										<if test="params.userId != '' and params.userId != null">
+										AND D.user_id LIKE CONCAT('%', #{params.userId}, '%')
+										</if>
+										<if test="params.fromDate != '' and params.fromDate != null">
+										AND A.inv_dt BETWEEN #{params.fromDate} AND #{params.toDate}
+										</if>
+									) AS a
+						) AS b	
+				LEFT OUTER JOIN TB_DEPT F
+				ON f.use_yn = 'Y'
+				AND f.dept_cd = b.upp_dept_cd
+				WHERE rn BETWEEN #{start} AND #{end}
+				<if test="params.regYn != '' and params.regYn != null">
+					<if test='params.regYn != "N"'>
+						AND B.asetQty = 0
+					</if>
+				</if>
+			) as c
+		<choose> 
+			<when test="params.sortField != null">
+				ORDER BY ${params.sortField} ${params.sortOrder}
+			</when>
+			<otherwise>
+				ORDER BY c.poNo DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="selectInvInqrExcelList" resultType="kr.co.trito.tams.web.aset.regist.invest.dto.InvestInqrDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+					   SELECT b.rn as rn
+							, b.inv_no 	    as invNo
+							, b.inv_ttl 	as invTtl
+							, b.inv_dt      as invDt
+							, b.po_no 		as poNo
+							, b.mfgd_nm 	as mfgdNm
+							, b.qty 		as qty
+							, b.po_amt     as poAmt
+							, f.dept_nm     as uppDeptNm
+							, b.upp_dept_cd as uppDeptCd 
+							, b.dept_nm 	as deptNm
+							, b.dept_cd 	as deptCd
+							, b.inv_reqr 	as invReqr
+							, b.user_nm 	as userNm
+							, b.user_id    as userId
+							, b.asetQty
+							, b.qty - b.asetQty as noAsetQty
+							  FROM    
+									(
+										SELECT a.rn
+									  		 , a.inv_no
+											 , a.inv_ttl
+											 , date_format(a.inv_dt, '%Y-%m-%d')as inv_dt
+											 , a.po_no
+											 , a.mfgd_nm
+											 , a.qty
+											 , a.po_amt
+											 , a.upp_dept_cd
+											 , a.dept_cd
+											 , a.dept_nm
+											 , a.inv_reqr
+											 , a.user_nm
+											 , a.user_id
+											 , IFNULL((SELECT qty
+										 		FROM tb_po_aset B
+										 		WHERE 1 = 1
+										 		AND B.PO_NO = A.PO_NO), 0) as asetQty
+										  FROM (
+													SELECT ROW_NUMBER() OVER(ORDER BY CAST(a.po_no AS int) DESC) as rn
+													  	 , a.inv_no
+														 , a.inv_ttl
+														 , b.po_no
+														 , b.mfgd_nm
+														 , b.qty
+														 , a.inv_dt
+														 , b.po_amt
+														 , e.upp_dept_cd
+														 , e.dept_cd
+														 , e.dept_nm
+														 , a.inv_reqr
+												 		 , d.user_nm
+												 		 , d.user_id
+													FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
+													WHERE 1 = 1
+													AND A.inv_no = B.inv_no
+											        AND D.use_yn = 'Y'
+													AND E.use_yn = 'Y'
+													AND A.regr = D.user_id
+													AND D.dept_cd = E.dept_cd
+													<if test="params.invNo != '' and params.invNo != null">
+													AND a.inv_no LIKE CONCAT('%', #{params.invNo}, '%')
+													</if>
+													<if test="params.invTtl != '' and params.invTtl != null">
+													AND a.inv_ttl LIKE CONCAT('%', #{params.invTtl}, '%')
+													</if>
+													<if test="params.poNo != '' and params.poNo != null">
+													AND B.po_no LIKE CONCAT('%', #{params.poNo}, '%')
+													</if>
+													<if test="params.mfgdNm != '' and params.mfgdNm != null">
+													AND B.mfgd_nm LIKE CONCAT('%', #{params.mfgdNm}, '%')
+													</if>
+													<if test="params.deptCd != '' and params.deptCd != null">
+													AND E.dept_cd LIKE CONCAT('%', #{params.deptCd}, '%')
+													</if>
+													<if test="params.userId != '' and params.userId != null">
+													AND D.user_id LIKE CONCAT('%', #{params.userId}, '%')
+													</if>
+													<if test="params.fromDate != '' and params.fromDate != null">
+													AND A.inv_dt BETWEEN #{params.fromDate} AND #{params.endDate}
+													</if>
+												) AS a
+									) AS b	
+							LEFT OUTER JOIN TB_DEPT F
+							ON f.use_yn = 'Y'
+							AND f.dept_cd = b.upp_dept_cd
+							<if test="params.regYn != '' and params.regYn != null">
+								<if test='params.regYn != "N"'>
+									AND B.asetQty = 0
+								</if>
+							</if>
+	</select>
+	
+	<!-- TB_PO 정보등록 -->
+	<insert id="saveInvestInfo" parameterType="kr.co.trito.tams.web.standard.invest.dto.InvestDto">
+		INSERT INTO TB_INV_MAS(INV_NO, INV_TTL, INV_QTY, INV_AMT, ACTG_YEAR, INV_DT, INV_REQR, REG_DT, REGR)
+                VALUES
+                ( #{invNo}
+                , #{invTtl}
+                , CAST(#{invQty} as int)
+                , CAST(#{invAmt} as int)
+                , #{actgYear}
+                , #{invDt}
+                , #{regr}
+                , now()
+                , #{regr} )
+                ON DUPLICATE KEY
+                UPDATE INV_TTL = #{invTtl}
+                     , INV_DT = #{invDt}
+                     , INV_QTY = CAST(#{invQty} as int)
+                     , INV_AMT = CAST(#{invAmt} as int)
+                     , INV_REQR = #{regr}
+                     , UPDR = #{updr}
+                     , UP_DT = now()
+	</insert>
+	
+	<!-- TB_PO 정보등록 -->
+	<insert id="savePoInfo" parameterType="kr.co.trito.tams.web.standard.invest.dto.InvestDto">
+		INSERT INTO TB_PO(PO_NO, INV_NO, MFGD_NM, QTY, PO_AMT, PO_CHRGR, VEND_NM, REQ_DT, DLV_DT, REGR)
+                VALUES 
+                ( #{poNo}
+                , #{invNo}
+                , #{mfgdNm}
+                , CAST(#{qty} as int)
+                , CAST(#{poAmt} as int)
+                , #{regr} 
+                , #{vendNm}
+                , #{reqDt}
+                , #{dlvDt}
+                , #{regr} )
+                ON DUPLICATE KEY
+                UPDATE PO_CHRGR = #{regr}
+                     , MFGD_NM = #{mfgdNm}
+                     , QTY = CAST(#{qty} as int)
+                     , PO_AMT = CAST(#{poAmt} as int)
+                     , VEND_NM = #{vendNm}
+                     , REQ_DT = #{reqDt}
+                     , DLV_DT = #{dlvDt}
+                     , UPDR = #{updr}
+                     , UP_DT = now()
+	</insert>
+
+	<!-- TB_PO 정보등록 -->
+	<delete id="deletePoInfo" parameterType="kr.co.trito.tams.web.standard.invest.dto.InvestDto">
+		DELETE FROM TB_PO
+        WHERE  PO_NO = #{poNo}
+	</delete>
+
+</mapper>

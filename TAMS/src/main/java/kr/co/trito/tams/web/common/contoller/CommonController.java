@@ -216,9 +216,9 @@ public class CommonController {
 		if (!StringUtils.isEmpty(searchText2))
 			params.put("searchText2", searchText2);
 //		
-		SearchCondition condition = new SearchCondition("0","0",params);
+		SearchCondition condition = new SearchCondition("0", "0", params);
 		
-		List<UserMngDto> list = commonService.selectUserPopupList(condition);
+		List<UserMngDto> list = commonService.selectUserFilterPopupList(condition);
 		condition.pageSetup(list.size());
 		
 		return responseService.success(condition, list);
@@ -369,6 +369,9 @@ public class CommonController {
 			if( StringUtils.isEmpty(inv.getInvTtl()) ) {
 				chkResult += "투자명이 누락되었습니다";
 			}
+			if( StringUtils.isEmpty(inv.getInvDt()) ) {
+				chkResult += "투자일자가 누락되었습니다";
+			}
 			if( StringUtils.isEmpty(inv.getInvQty()) ) {
 				chkResult += "투자수량이 누락되었습니다";
 			} else {
@@ -410,12 +413,6 @@ public class CommonController {
 					chkResult += "숫자만 입력 가능합니다.";
 				}
 			}
-			if( StringUtils.isEmpty(inv.getInvDt()) ) {
-				chkResult += "투자일자가 누락되었습니다";
-			}
-			if( StringUtils.isEmpty(inv.getDeptNm()) ) {
-				chkResult += "부서가 누락되었습니다";
-			}
 			if( StringUtils.isEmpty(inv.getInvReqr()) ) {
 				chkResult += "담당자가 누락되었습니다";
 			} else {
@@ -429,6 +426,15 @@ public class CommonController {
 				  inv.setDeptNm(deptInfo.get("deptNm"));
 				  inv.setInvReqr(deptInfo.get("userNm"));
 				 
+			}
+			if( StringUtils.isEmpty(inv.getVendNm()) ) {
+				chkResult += "업체가 누락되었습니다";
+			}
+			if( StringUtils.isEmpty(inv.getReqDt()) ) {
+				chkResult += "구매요청일자가 누락되었습니다";
+			}
+			if( StringUtils.isEmpty(inv.getDlvDt()) ) {
+				chkResult += "납품일자가 누락되었습니다";
 			}
 			
 			//검증 결과 
@@ -619,5 +625,49 @@ public class CommonController {
 		List<CodeDto> list = commonService.selectAsetType("");
 		return responseService.success(list);
 	}
+	
+	/** 엑셀다운로드 */
+	
+	/*
+	 * @PostMapping("/excel/InvestDl") public void excelDownload(HttpServletResponse
+	 * response,
+	 * 
+	 * @ApiParam(value = "투자정보리스트", required = false) @RequestParam(required =
+	 * false) List<InvestInqrDto> items ) throws IOException {
+	 * 
+	 * Workbook wb = new XSSFWorkbook(); Sheet sheet = wb.createSheet("첫번째시트"); Row
+	 * row = null; Cell cell = null; int rowNum = 0;
+	 * 
+	 * // Header row = sheet.createRow(rowNum++); cell = row.createCell(0);
+	 * cell.setCellValue("투자번호"); cell = row.createCell(1);
+	 * cell.setCellValue("투자명"); cell = row.createCell(2);
+	 * cell.setCellValue("투자일자"); cell = row.createCell(3);
+	 * cell.setCellValue("PO번호"); cell = row.createCell(4); cell.setCellValue("품명");
+	 * cell = row.createCell(5); cell.setCellValue("수량"); cell = row.createCell(6);
+	 * cell.setCellValue("PO금액"); cell = row.createCell(7); cell.setCellValue("부서");
+	 * cell = row.createCell(8); cell.setCellValue("담당자"); cell = row.createCell(9);
+	 * cell.setCellValue("자산등록"); cell = row.createCell(10);
+	 * cell.setCellValue("자산미등록");
+	 * 
+	 * for (InvestInqrDto dto : items) { row = sheet.createRow(rowNum++); cell =
+	 * row.createCell(0); cell.setCellValue(dto.getInvNo()); cell =
+	 * row.createCell(1); cell.setCellValue(dto.getInvTtl()); cell =
+	 * row.createCell(2); cell.setCellValue(dto.getInvDt()); cell =
+	 * row.createCell(3); cell.setCellValue(dto.getPoNo()); cell =
+	 * row.createCell(4); cell.setCellValue(dto.getMfgdNm()); cell =
+	 * row.createCell(5); cell.setCellValue(dto.getQty()); cell = row.createCell(6);
+	 * cell.setCellValue(dto.getPoAmt()); cell = row.createCell(7);
+	 * cell.setCellValue(dto.getDeptNm()); cell = row.createCell(8);
+	 * cell.setCellValue(dto.getInvReqr()); cell = row.createCell(9);
+	 * cell.setCellValue(dto.getAsetQty()); cell = row.createCell(10);
+	 * cell.setCellValue(dto.getNoAsetQty()); }
+	 * 
+	 * // 컨텐츠 타입과 파일명 지정 response.setContentType("ms-vnd/excel"); //
+	 * response.setHeader("Content-Disposition", "attachment;filename=example.xls");
+	 * response.setHeader("Content-Disposition",
+	 * "attachment;filename=example.xlsx");
+	 * 
+	 * // Excel File Output wb.write(response.getOutputStream()); wb.close(); }
+	 */
 }
 

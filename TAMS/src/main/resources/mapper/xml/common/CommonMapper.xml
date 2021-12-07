@@ -103,11 +103,11 @@
 			     ,'' as chk
 			  FROM TB_USER A
 			 WHERE 1=1	 
-	   		<if test="params.searchType != 'none">
-	   			AND ${params.searchType} LIKE CONCAT('%', #{params.searchText} 
+	   		<if test="params.searchType != 'none'">
+	   			AND ${params.searchType} LIKE CONCAT('%', #{params.searchText}, '%')
 	   		</if>
-	   		<if test="params.searchType2 != 'none">
-	   			AND ${params.searchType2} LIKE CONCAT('%', #{params.searchText2} 
+	   		<if test="params.searchType2 != 'none'">
+	   			AND ${params.searchType2} LIKE CONCAT('%', #{params.searchText2}, '%')
 	   		</if>
 		ORDER BY DEPT_CD
 	</select>

@@ -147,7 +147,7 @@
 	                	 , itemTemplate: function(value, item) {
 	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox").attr("id", function(){
 	                    	   
-	                    	  return "checkbox" + $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.menuNm == item.menuNm);
+	                    	  return "checkbox" + $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.poNo == item.poNo);
 	                       })
 	                       .attr("checked", function(){
 	                    	  return value || item.checked;
@@ -260,7 +260,15 @@
     	    });
     	    
 	        $(".btn_srch").on("click",function (){
-	    	   $("#jsGrid").jsGrid().trigger("loadData");
+	           if($("#searchType").val() != "none" && $("#searchTxt").val() == ""){
+	        	   alert("검색어를 입력해주세요");
+	        	   $("#searchTxt").focus();
+	           }else if($("#searchType2").val() != "none" && $("#searchTxt2").val() == ""){
+	        	   alert("검색어를 입력해주세요");
+	        	   $("#searchTxt2").focus();
+	           }else{
+		    	   $("#jsGrid").jsGrid().trigger("loadData");
+	           }
 	        });
 	        
 	     	// 팝업창 저장 버튼 처리
@@ -288,7 +296,7 @@
 			    		insert_item.push(sub_item);
 			    		
 			        var action = "insertItem";
-			        
+			        console.log(insert_item);
 	    			$("#jsGrid").jsGrid(action, insert_item);
 	                
 		    		clearDetailForm();

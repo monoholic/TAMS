@@ -256,7 +256,5 @@ public class FileController {
 		}
 		return reFileNm;
 	}
-
-	
 	
 }

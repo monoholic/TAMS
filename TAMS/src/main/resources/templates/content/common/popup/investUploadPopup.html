@@ -39,17 +39,20 @@
 					},
 					{ name: "invNo"		, type: "text"   , width: 100 , align: "center", title: "투자번호" },
 					{ name: "invTtl"	, type: "text"   , width: 150 , align: "left"  , title: "투자명"  },
+	                { name: "invDt"   	, type: "text"	 , width: 100 , align: "left"  , title: "투자일자" },
 					{ name: "invQty"	, type: "text"	 , width: 55  , align: "left"  , title: "투자수량" },
 	                { name: "invAmt"	, type: "text"	 , width: 55  , align: "left"  , title: "투자금액" },
-	                { name: "actgYear"	, type: "text"	 , width: 70  , align: "left"  , title: "회계연도" },
+	                { name: "actgYear"	, type: "text"	 , width: 70  , align: "left"  , title: "회계년도" },
 	                { name: "poNo"		, type: "text"   , width: 100 , align: "center", title: "PO번호"  },
-					{ name: "qty"		, type: "number" , width: 100 , align: "right" , title: "수량"    },
 					{ name: "mfgdNm"	, type: "text"   , width: 100 , align: "left"  , title: "품명"    },
-					{ name: "poAmt"		, type: "number" , width: 100 , align: "right" , title: "PO금액"    },					
-					{ name: "invDt"		, type: "date"   , width: 100 , align: "center", title: "투자일자" },
+					{ name: "qty"		, type: "number" , width: 100 , align: "right" , title: "PO수량"  },
+					{ name: "poAmt"		, type: "number" , width: 100 , align: "right" , title: "PO금액"  },
 					//{ name: "groupNm"	, type: "text"   , width: 100 , align: "center", title: "사업부"   },
-					{ name: "deptNm"	, type: "text"   , width: 100 , align: "center", title: "부서"	 },
-					{ name: "invReqrNm"	, type: "text"   , width: 100 , align: "center", title: "담당자"   },
+					//{ name: "deptNm"	, type: "text"   , width: 100 , align: "center", title: "부서"	 },					
+					{ name: "invReqr"	, type: "text"   , width: 100 , align: "center", title: "담당자"   },
+					{ name: "vendNm"	, type: "text"   , width: 100 , align: "center", title: "업체"     },
+					{ name: "reqDt" 	, type: "text"   , width: 100 , align: "center", title: "구매요청일자"},
+					{ name: "dlvDt"		, type: "text"   , width: 100 , align: "center", title: "납품일자"   },
 					{ name: "chkResult"	, type: "text"   , width: 150 , align: "left"  , title: "유효성 검증" 
 					 ,itemTemplate : function(value,item) {
 						 return "<span class='red'>"+value+"</span>";
@@ -179,6 +182,8 @@
 						$.commRequest(url, reqType, JSON.stringify(excelItems))
 							.then((res) => {
 								console.log('저장 성공!!');
+								window.opener.location.reload();
+								window.close();
 							})
 							.catch((error) => {
 								console.log('저장 실패!!');
@@ -186,8 +191,6 @@
 					}else{
 						alert("유효성이 맞지 않습니다");
 					}
-					
-					
 		        });
 				
 				$(".btn_download").on("click", function(){

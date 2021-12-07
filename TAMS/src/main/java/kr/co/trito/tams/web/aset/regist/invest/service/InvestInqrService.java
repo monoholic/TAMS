@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.common.dto.ComCodeDto;
+import kr.co.trito.tams.web.aset.regist.invest.dto.InvestInqrDto;
+import kr.co.trito.tams.web.aset.regist.invest.mapper.InvestInqrMapper;
 import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
-import kr.co.trito.tams.web.standard.invest.mapper.InvestMapper;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -16,13 +16,20 @@ import lombok.RequiredArgsConstructor;
 public class InvestInqrService {
 	
 	@Autowired
-	InvestMapper mapper;
+	InvestInqrMapper mapper;
 	
 	/** 
 	 * 투자정보관리 리스트 조회
 	 * */
-	public List<InvestDto> selectInvestMngList(SearchCondition condition) {
-		return mapper.selectInvestMngList(condition);
+	public List<InvestInqrDto> selectInvestInqrList(SearchCondition condition) {
+		return mapper.selectInvestInqrList(condition);
+	}
+	
+	/** 
+	 * 투자정보관리 엑셀 리스트 다운로드
+	 * */
+	public List<InvestInqrDto> selectInvInqrExcelList(SearchCondition condition) {
+		return mapper.selectInvInqrExcelList(condition);
 	}
 	
 	/** 

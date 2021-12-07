@@ -30,6 +30,20 @@
     	        openPopup(popId, url, args);
     	    });
 			
+			// 사용자 필터 팝업 호출 
+    	    $("#openUserFilterPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/userFilterPopup";
+    	        var popId = "userFilterPopup";
+    	        var args = {};
+    	        args.width = 650;
+    	        args.height = 416;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        openPopup(popId, url, args);
+    	    });
+			
 			//투장정보 일괄 업로드 팝업 호출 
     	    $("#openInvPopup").on("click", function() { 
     	        // 팝업 호출 url
@@ -121,6 +135,12 @@
 		}
 		
 		//팝업에서 받은 결과 처리
+		function setResult1(obj) {
+			$("#userFId").val(obj.userId);
+			$("#userFNm").val(obj.userNm);
+		}
+		
+		//팝업에서 받은 결과 처리
 		function setResult2(obj) {
 			$("#codeCd").val(obj.codeCd);
 			$("#codeNm").val(obj.codeNm);
@@ -193,10 +213,15 @@
 				<h5>기타</h5>
 				<a href="/sample/etc1">로딩</a>&nbsp;/&nbsp;<a href="/sample/etc2">메일폼</a>&nbsp;/&nbsp;<a href="/sample/etc3">달력</a>
 				<br/>
-				<h5>팝업호출</h5>
+				<h5>사용자팝업호출</h5>
 				<a href="#;" id="openUserPopup">사용자팝업 호출</a>
 				<br/>
 				사용자id&nbsp;<input type="text" id="userId" name="userId"/>&nbsp;&nbsp;사용자명&nbsp;<input type="text" id="userNm" name="userNm"/>&nbsp;
+				<br/>
+				<h5>사용자팝업호출(필터)</h5>
+				<a href="#;" id="openUserFilterPopup">사용자필터팝업 호출</a>
+				<br/>
+				사용자id&nbsp;<input type="text" id="userFId" name="userFId"/>&nbsp;&nbsp;사용자명&nbsp;<input type="text" id="userFNm" name="userFNm"/>&nbsp;
 				<h5>투자정보 일괄 업로드 호출</h5>
 				<a href="#;" id="openInvPopup">투자정보 일괄 업로드 호출</a>
 				<br/><br/><br/>
