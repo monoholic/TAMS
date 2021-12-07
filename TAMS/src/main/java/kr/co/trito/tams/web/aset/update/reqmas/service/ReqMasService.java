@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasDto;
+import kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasExcelDto;
 import kr.co.trito.tams.web.aset.update.reqmas.mapper.ReqMasMapper;
 import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,12 @@ public class ReqMasService {
 		return mapper.selectCountReqInqr(condition);
 	}
 	
-	public List<ReqMasDto> selectReqInqr(SearchCondition condition){
-		return mapper.selectReqInqr(condition);
+	public List<ReqMasDto> selectReqInqrList(SearchCondition condition){
+		return mapper.selectReqInqrList(condition);
+	}
+	
+	public List<ReqMasExcelDto> selectReqInqrExcelList(SearchCondition condition) {
+		return mapper.selectReqInqrExcelList(condition);
 	}
 	
 	public int reqInqrInsert(ReqMasDto dto) {

@@ -3,7 +3,111 @@
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kr.co.trito.tams.web.aset.update.reqmas.mapper.ReqMasMapper">
-   	<select id="selectReqInqr" resultType="kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   	<select id="selectReqInqrList" resultType="kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   		SELECT req_no
+		     , req_type
+		     , (SELECT code_nm
+		          FROM tb_com_code
+		         WHERE code_id = A.req_type) AS req_type_nm
+		     , req_nm
+		     , DATE_FORMAT(req_dt, '%Y-%m-%d') AS req_dt
+		     , reqtr
+		     , (SELECT dept_nm
+	              FROM tb_dept
+	             WHERE dept_cd = A.dept_cd ) AS reqtr_dept
+		     , appv_doc_id
+		     , req_rsn
+		     , req_stus
+		     , (SELECT code_nm
+		          FROM tb_com_code
+		         WHERE code_id = A.req_stus ) AS req_stus_nm
+		     , move_pupos
+		     , move_dt
+		     , tkout_sche_yn
+		     , tkout_sche_dt
+		     , tkout_yn
+		     , tkout_dt
+		     , rtkin_yn
+		     , rtkin_dt
+		     , prgs_dcont_yn
+		     , updr
+		     , up_dt
+		     , regr
+		     , reg_dt
+		     , dept_cd
+		     , (SELECT count(*)
+		          FROM tb_aset_req
+		         WHERE req_no = A.req_no) AS aset_cnt
+		FROM (
+			SELECT
+			       req_no
+			     , req_type
+			     , req_nm
+			     , req_dt
+			     , reqtr
+			     , appv_doc_id
+			     , req_rsn
+			     , req_stus
+			     , move_pupos
+			     , move_dt
+			     , tkout_sche_yn
+			     , tkout_sche_dt
+			     , tkout_yn
+			     , tkout_dt
+			     , rtkin_yn
+			     , rtkin_dt
+			     , prgs_dcont_yn
+			     , updr
+			     , up_dt
+			     , regr
+			     , reg_dt
+			     , (SELECT dept_cd
+	  				  FROM tb_user
+	  		         WHERE user_id = #{params.userId}) AS dept_cd
+			 FROM TB_REQ_MAS
+			 WHERE 1=1
+			 <if test="params.userId != null">
+	     		AND reqtr = #{params.userId} <!-- 접속한 아이디 비교 -->
+	     		<!-- 작성한 사용자의 부서코드와 또 다른 접속자의 코드가 일치하면 조회. -->
+	     		OR (SELECT dept_cd
+	  				  FROM tb_user
+	  		         WHERE user_id = #{params.userId}) = (SELECT dept_cd
+			  				      							FROM tb_user
+			  		             						   WHERE user_id= reqtr)
+	     	 </if>
+	     ) AS A
+	     WHERE 1=1
+	     	<if test="params.reqNo != null">
+				AND (req_no LIKE CONCAT('%', #{params.reqNo}, '%'))
+		 	</if>
+		 	<if test="params.fromDate != null and (params.toDate !=null)">
+				AND (req_dt between #{params.fromDate} and #{params.toDate})
+	 		</if>
+	 		<if test="params.reqNm != null">
+				AND (req_nm LIKE CONCAT('%', #{params.reqNm}, '%'))
+		 	</if>
+		 	<if test="params.deptCd1 != null">
+				AND (dept_cd LIKE CONCAT(#{params.deptCd1}, '%'))
+		 	</if>
+		 	<if test="params.deptCd2 != null">
+				AND (dept_cd LIKE CONCAT(#{params.deptCd2}, '%'))
+		 	</if>
+		 	<if test="params.reqtr != null">
+				AND (reqtr LIKE CONCAT('%', #{params.reqtr}, '%'))
+		 	</if>
+		 	<if test="params.asetNo != null">
+				AND ((SELECT req_no
+					   FROM tb_aset_req
+					  WHERE aset_no = #{params.asetNo}) = req_no)
+		 	</if>
+		 	<if test="params.reqStus != null">
+				AND (req_stus LIKE CONCAT('%', #{params.reqStus}, '%'))
+		 	</if>
+		 	
+	  	 ORDER BY req_no
+   	</select>
+   	
+   	<select id="selectReqInqrExcelList" resultType="kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
    		SELECT req_no
 		     , req_type
 		     , (SELECT code_nm
@@ -116,6 +220,9 @@
 			     , (SELECT dept_cd
 	  				  FROM tb_user
 	  		         WHERE user_id = #{params.userId}) AS dept_cd
+	  		     , req_nm
+	  		     , reqtr
+	  		     , req_stus
 			 FROM TB_REQ_MAS
 			 WHERE 1=1
 			 <if test="params.userId != null">
@@ -132,10 +239,27 @@
 				AND (req_no LIKE CONCAT('%', #{params.reqNo}, '%'))
 		 	</if>
 		 	<if test="params.fromDate != null and (params.toDate !=null)">
-				AND ( req_dt between #{params.fromDate} and #{params.toDate} )
+				AND (req_dt between #{params.fromDate} and #{params.toDate})
 	 		</if>
-	 		<if test="params.deptCd1 != null">
-				AND (A.dept_cd LIKE CONCAT(#{params.deptCd1}, '%'))
+	 		<if test="params.reqNm != null">
+				AND (req_nm LIKE CONCAT('%', #{params.reqNm}, '%'))
+		 	</if>
+		 	<if test="params.deptCd1 != null">
+				AND (dept_cd LIKE CONCAT(#{params.deptCd1}, '%'))
+		 	</if>
+		 	<if test="params.deptCd2 != null">
+				AND (dept_cd LIKE CONCAT(#{params.deptCd2}, '%'))
+		 	</if>
+		 	<if test="params.reqtr != null">
+				AND (reqtr LIKE CONCAT('%', #{params.reqtr}, '%'))
+		 	</if>
+		 	<if test="params.asetNo != null">
+				AND ((SELECT req_no
+					   FROM tb_aset_req
+					  WHERE aset_no = #{params.asetNo}) = req_no)
+		 	</if>
+		 	<if test="params.reqStus != null">
+				AND (req_stus LIKE CONCAT('%', #{params.reqStus}, '%'))
 		 	</if>
    	</select>
    	

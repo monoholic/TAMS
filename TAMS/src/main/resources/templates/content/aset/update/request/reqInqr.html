@@ -143,7 +143,6 @@
         				    "reqtr"        : $("#Reqtr").val(),
         				    "asetNo" 	   : $("#aset_no").val(),
         				    "reqStus" 	   : $("#req_stus option:selected").val(),
-            				"useYnOption"  : $("#useYnOption option:selected").val(),
             				"sortField"    : filter.sortField,
             				"sortOrder"    : filter.sortOrder
             			}
@@ -247,7 +246,7 @@
 	                { name: "reqTypeNm", type: "text", align: "left", width: 25,  title: "의뢰구분" },
 	                { name: "reqNm", type: "text", align: "left", width: 80,  title: "의뢰명" },
 	                { name: "reqtrDept", type: "text", align: "left", width: 25, readOnly:true , title: "의뢰자 부서" },
-	                { name: "reqtr", type: "text", align: "center", width: 10, readOnly:true , title: "의뢰자" },
+	                { name: "reqtr", type: "text", align: "left", width: 10, readOnly:true , title: "의뢰자" },
 	                { name: "reqDt", type: "text", align: "center", width: 10, readOnly:true , title: "의뢰일자" },
 	                { name: "reqStusNm", type: "text", align: "left", width: 15, readOnly:true , title: "의뢰 상태" },
 	                { name: "asetCnt", type: "text", align: "right", width: 10, readOnly:true , title: "자산 수" }
@@ -381,9 +380,17 @@
           	
           	//리셋 버튼
     	    $(".btn_reset").click(function() {
-    	    	$("#searchText").val("");
-    	    	$("#searchOption option:eq(0)").prop("selected",true);
-    	    	$("#useYnOption option:eq(0)").prop("selected",true);
+    	    	$("#req_no").val("");
+    	    	$("#fromDate").val("");
+    	    	$("#toDate").val("");
+    	    	$("#req_nm").val("");
+    	    	$("#dept_cd1").val("");
+    	    	$("#dept_nm1").val("");
+    	    	$("#dept_cd2").val("");
+    	    	$("#dept_nm2").val("");
+    	    	$("#Reqtr").val("");
+    	    	$("#aset_no").val("");
+    	    	$("#req_stus option:eq(0)").prop("selected",true);
     	    });
 	     	
           	// #codeGrpId option:eq("+ find_idx +")").prop("selected",true);
@@ -600,8 +607,13 @@
 					$form.attr('method', 'post'); 
 					$form.attr('target', '_self');
 					
-				var searchTextStr 	= $('<input type="hidden" value="'+$("#searchText").val()+'" name="searchText">'); 
-					$form.append(searchTextStr);
+				var idArr = ['req_no', 'fromDate', 'toDate', 'req_nm', 'dept_cd1', 'dept_cd2', 'Reqtr', 'aset_no', 'req_stus'];
+				var inputStr = '';
+				
+				$.each(idArr,function(i){
+					inputStr = $('<input type="hidden" value="'+ $("#" + idArr[i]).val() + '" name="' + idArr[i] +'">');
+					$form.append(inputStr);
+				});
 					$form.appendTo('body'); 
 					$form.submit();
 			});
@@ -646,7 +658,7 @@
 					<td></td>
 					<th style="text-align:center;">사업부</th>
 					<td>
-						<input type="text" style="width:100%" id="dept_nm1" />
+						<input type="text" style="width:100%" id="dept_nm1" readonly/>
 						<input type="hidden" style="width:100%" id="dept_cd1" />
 					</td>
 					<td>
@@ -654,7 +666,7 @@
 					</td>
 					<th style="text-align:center;">부서</th>
 					<td>
-						<input type="text" style="width:100%" id="dept_nm2" />
+						<input type="text" style="width:100%" id="dept_nm2" readonly/>
 						<input type="hidden" style="width:100%" id="dept_cd2" />
 					</td>
 					<td>
@@ -743,7 +755,7 @@
 						<tr>
 							<th style="text-align: center;">의뢰자</th>
 							<td class="aset_td">
-								<input type="text" style="width:100%" id="reqtr" />
+								<input type="text" style="width:100%" id="reqtr" readonly/>
 								<a href="#" id="openUserPopup" ><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 							</td>
 							<th style="text-align: center;">의뢰 상태</th>

@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasDto;
+import kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasExcelDto;
 import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import kr.co.trito.tams.web.standard.codegrp.dto.CodegrpDto;
 
@@ -14,7 +15,9 @@ public interface ReqMasMapper {
 	
 	public int selectCountReqInqr(SearchCondition condtion);
 	
-	public List<ReqMasDto> selectReqInqr(SearchCondition condition);
+	public List<ReqMasDto> selectReqInqrList(SearchCondition condition);
+	
+	public List<ReqMasExcelDto> selectReqInqrExcelList(SearchCondition condition);
 	
 	public int reqInqrInsert(ReqMasDto dto);
 	

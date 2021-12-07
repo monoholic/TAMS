@@ -34,6 +34,7 @@ import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasDto;
+import kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasExcelDto;
 import kr.co.trito.tams.web.aset.update.reqmas.mapper.ReqMasMapper;
 import kr.co.trito.tams.web.aset.update.reqmas.service.ReqMasService;
 import kr.co.trito.tams.web.standard.code.dto.CodeDto;
@@ -160,7 +161,9 @@ public class ReqMasController {
 		int total = reqmasService.selectCountReqInqr(condition);
 		condition.pageSetup(total);
 		
-		List<ReqMasDto> list = reqmasService.selectReqInqr(condition);
+		System.out.println(total);
+		
+		List<ReqMasDto> list = reqmasService.selectReqInqrList(condition);
 		
 		return responseService.success(condition, list);
 	} 	
@@ -332,7 +335,15 @@ public class ReqMasController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ModelAndView reqMasListExcel(
-			@ApiParam(value = "검색 조건(메뉴ID, 메뉴명)", required = false) @RequestParam(value = "searchText", required = false) String searchText,
+			@ApiParam(value = "의뢰번호", required = false) @RequestParam(value = "req_no", required = false) String req_no,
+			@ApiParam(value = "시작일", required = false) @RequestParam(value = "fromDate", required = false) String fromDate,
+			@ApiParam(value = "종료일", required = false) @RequestParam(value = "toDate", required = false) String toDate,
+			@ApiParam(value = "의뢰명", required = false) @RequestParam(value = "req_nm", required = false) String req_nm,
+			@ApiParam(value = "사업부 코드", required = false) @RequestParam(value = "dept_cd1", required = false) String dept_cd1,
+			@ApiParam(value = "부서 코드", required = false) @RequestParam(value = "dept_cd2", required = false) String dept_cd2,
+			@ApiParam(value = "의뢰자", required = false) @RequestParam(value = "Reqtr", required = false) String Reqtr,
+			@ApiParam(value = "자산번호", required = false) @RequestParam(value = "aset_no", required = false) String aset_no,
+			@ApiParam(value = "의뢰상태", required = false) @RequestParam(value = "req_stus", required = false) String req_stus,
 			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
 			) { 
 		
@@ -341,17 +352,42 @@ public class ReqMasController {
 		UserInfo userInfo = (UserInfo)userDetail;
 		String userId = userInfo.getDto().getUserId();
 		
-		if (!StringUtils.isEmpty(searchText))
-			params.put("searchText", searchText);
-		
 		if (!StringUtils.isEmpty(userId))
-			params.put("userId", userId);
+		params.put("userId", userId);
+		
+		if (!StringUtils.isEmpty(req_no))
+		params.put("reqNo", req_no);
+			
+		if (!StringUtils.isEmpty(fromDate))
+		params.put("fromDate", fromDate);
+		
+		if (!StringUtils.isEmpty(toDate))
+		params.put("toDate", toDate);
+		
+		if (!StringUtils.isEmpty(req_nm))
+		params.put("reqNm", req_nm);
+		
+		if (!StringUtils.isEmpty(dept_cd1))
+		params.put("deptCd1", dept_cd1);
+		
+		if (!StringUtils.isEmpty(dept_cd2))
+		params.put("deptCd2", dept_cd2);
+		
+		if (!StringUtils.isEmpty(Reqtr))
+		params.put("reqtr", Reqtr);
+		
+		if (!StringUtils.isEmpty(aset_no))
+		params.put("asetNo", aset_no);
+		
+		if (!StringUtils.isEmpty(req_stus))
+		params.put("reqStus", req_stus);
 		
 		SearchCondition condition = new SearchCondition("0", "0", params);
 		int total = reqmasService.selectCountReqInqr(condition);
+		System.out.println(total);
 		condition.pageSetup(total);
 		
-		List<ReqMasDto> list = reqmasService.selectReqInqr(condition);
+		List<ReqMasExcelDto> list = reqmasService.selectReqInqrExcelList(condition);
 		
 		System.out.println(list);
 		
@@ -360,17 +396,16 @@ public class ReqMasController {
 	
 	
 	// 엑셀 다운로드용 데이터 생성 
-	private Map<String, Object> makeExcelData(List<ReqMasDto> list) {
+	private Map<String, Object> makeExcelData(List<ReqMasExcelDto> list) {
 		Map<String, Object> map = new HashMap<>();
 		map.put(ExcelConstant.FILE_NAME, "자산의뢰 리스트");
-		map.put(ExcelConstant.HEAD, Arrays.asList("의뢰번호", "의뢰구분", "의뢰구분명", "의뢰명", "의뢰일자","의뢰자", "의뢰자 부서", "결재문서 ID", "의뢰사유", "의뢰상태", "의뢰상태명", "이동목적", "이동일자", "반출예정여부", "반출예정일자", "반출여부", "반출일자", "재반입여부", "재반입일자", "진행중단여부", "수정자", "수정일자", "등록자", "등록일자", "부서코드", "자산 수"));
+		// map.put(ExcelConstant.HEAD, Arrays.asList("의뢰번호", "의뢰구분", "의뢰구분명", "의뢰명", "의뢰일자","의뢰자", "의뢰자 부서", "결재문서 ID", "의뢰사유", "의뢰상태", "의뢰상태명", "이동목적", "이동일자", "반출예정여부", "반출예정일자", "반출여부", "반출일자", "재반입여부", "재반입일자", "진행중단여부", "수정자", "수정일자", "등록자", "등록일자", "부서코드", "자산 수"));
+		map.put(ExcelConstant.HEAD, Arrays.asList("의뢰번호", "의뢰구분", "의뢰명", "의뢰자 부서", "의뢰자", "의뢰일자", "의뢰상태", "자산 수"));
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		List<List<String>> rows = new ArrayList<List<String>>();
 		
-		for( ReqMasDto req: list) {
-			
-			System.out.println(list);
+		for( ReqMasExcelDto req: list) {
 			Map<String, String> m = objectMapper.convertValue(req, Map.class);
 			List<String> l = new ArrayList<>(m.values());
 			
