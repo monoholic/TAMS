@@ -161,8 +161,6 @@ public class ReqMasController {
 		int total = reqmasService.selectCountReqInqr(condition);
 		condition.pageSetup(total);
 		
-		System.out.println(total);
-		
 		List<ReqMasDto> list = reqmasService.selectReqInqrList(condition);
 		
 		return responseService.success(condition, list);

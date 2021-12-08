@@ -63,8 +63,10 @@ public class AsetMasDto {
 	private String acqDt;
 	@ApiModelProperty(value="부외여부")
 	private String asetOutBookYn;
-	@ApiModelProperty(value="공통코드(자산상태")
-	private String aset_stus;
+	@ApiModelProperty(value="공통코드(자산상태)")
+	private String asetStus;
+	@ApiModelProperty(value="공통코드(자산상태명)")
+	private String asetStusNm;
 	@ApiModelProperty(value="수정자")
 	private String updr;
 	@ApiModelProperty(value="수정일자")

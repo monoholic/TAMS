@@ -359,9 +359,13 @@
 			    	
 			    	$.commRequestFile(url, reqType, attachData)
 						.then((res) => {
-							console.log('게시판 저장 성공!!');
+							if(save_mode=="update")
+								alert("수정이 완료되었습니다.");
 							
+							console.log(save_mode);
+							console.log('게시판 저장 성공!!');
 							selectedItems = [];
+							
 	            			$("#jsGrid").jsGrid("loadData");
 							setFormClear();
 							unselectItem(selectedItems);
