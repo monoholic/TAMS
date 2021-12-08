@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.aset.update.reqappv.service;
+package kr.co.trito.tams.web.asset.update.reqappv.service;
 
 public class ReqAppvService {
 

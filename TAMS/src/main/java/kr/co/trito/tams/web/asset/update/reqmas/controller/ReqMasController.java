@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.aset.update.reqmas.controller;
+package kr.co.trito.tams.web.asset.update.reqmas.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,10 +33,10 @@ import kr.co.trito.tams.comm.util.file.excel.ExcelConstant;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasDto;
-import kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasExcelDto;
-import kr.co.trito.tams.web.aset.update.reqmas.mapper.ReqMasMapper;
-import kr.co.trito.tams.web.aset.update.reqmas.service.ReqMasService;
+import kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasDto;
+import kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasExcelDto;
+import kr.co.trito.tams.web.asset.update.reqmas.mapper.ReqMasMapper;
+import kr.co.trito.tams.web.asset.update.reqmas.service.ReqMasService;
 import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import kr.co.trito.tams.web.standard.codegrp.dto.CodegrpDto;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
@@ -48,7 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/aset/update/reqmas")
+@RequestMapping("/asset/update/reqmas")
 @Slf4j
 public class ReqMasController {
 	@Autowired
@@ -69,7 +69,7 @@ public class ReqMasController {
 		view.addObject("menuId"  , menuId);
 		view.addObject("menuNm"  , menuNm);
 		view.addObject("menuDesc", menuDesc);
-		view.setViewName("/content/aset/update/request/reqInqr");
+		view.setViewName("/content/asset/update/request/reqInqr");
 		return view;
 	}
 	

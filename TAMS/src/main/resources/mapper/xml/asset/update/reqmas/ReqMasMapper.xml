@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.co.trito.tams.web.aset.update.reqmas.mapper.ReqMasMapper">
-   	<select id="selectReqInqrList" resultType="kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+<mapper namespace="kr.co.trito.tams.web.asset.update.reqmas.mapper.ReqMasMapper">
+   	<select id="selectReqInqrList" resultType="kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
    		SELECT req_no
 		     , req_type
 		     , (SELECT code_nm
@@ -107,7 +107,7 @@
 	  	 ORDER BY req_no
    	</select>
    	
-   	<select id="selectReqInqrExcelList" resultType="kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   	<select id="selectReqInqrExcelList" resultType="kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
    		SELECT req_no
 		     , req_type
 		     , (SELECT code_nm
@@ -263,12 +263,12 @@
 		 	</if>
    	</select>
    	
-   	<insert id="reqInqrInsert" parameterType="kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasDto" useGeneratedKeys="true" keyProperty="req_no">
+   	<insert id="reqInqrInsert" parameterType="kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasDto" useGeneratedKeys="true" keyProperty="req_no">
    		INSERT INTO tb_req_mas (req_type, req_nm, req_dt, reqtr, appv_doc_id, req_rsn, req_stus, move_pupos, move_dt, tkout_sche_yn, tkout_sche_dt, tkout_yn, tkout_dt, rtkin_yn, rtkin_dt, prgs_dcont_yn, regr, reg_dt)
    		VALUES (#{reqType}, #{reqNm}, current_timestamp(),  #{reqtr},  #{appvDocId},  #{reqRsn},  #{reqStus},  #{movePupos},  #{moveDt},  #{tkoutScheYn},  #{tkoutScheDt},  #{tkoutYn},  #{tkoutDt},  #{rtkinYn},  #{rtKinDt}, #{prgsDcontYn} , #{regr} , current_timestamp())
    	</insert>
    	
-   	<update id="reqInqrUpdate" parameterType="kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasDto">
+   	<update id="reqInqrUpdate" parameterType="kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasDto">
 		UPDATE tb_req_mas         
 		   SET req_type      = #{reqType}
 		     , req_nm 	     = #{reqNm}
@@ -290,7 +290,7 @@
 		WHERE req_no = #{reqNo}         
 	</update>
    	
-   	<delete id="reqInqrDelete" parameterType="kr.co.trito.tams.web.aset.update.reqmas.dto.ReqMasDto">
+   	<delete id="reqInqrDelete" parameterType="kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasDto">
 		DELETE 
 		FROM TB_REQ_MAS
         WHERE req_no = #{reqNo}

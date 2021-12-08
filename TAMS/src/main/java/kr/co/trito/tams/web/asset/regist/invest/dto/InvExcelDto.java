@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.aset.regist.invest.dto;
+package kr.co.trito.tams.web.asset.regist.invest.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

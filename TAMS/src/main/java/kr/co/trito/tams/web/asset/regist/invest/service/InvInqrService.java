@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.aset.regist.invest.service;
+package kr.co.trito.tams.web.asset.regist.invest.service;
 
 import java.util.List;
 
@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.aset.regist.invest.dto.InvExcelDto;
-import kr.co.trito.tams.web.aset.regist.invest.dto.InvInqrDto;
-import kr.co.trito.tams.web.aset.regist.invest.mapper.InvInqrMapper;
+import kr.co.trito.tams.web.asset.regist.invest.dto.InvExcelDto;
+import kr.co.trito.tams.web.asset.regist.invest.dto.InvInqrDto;
+import kr.co.trito.tams.web.asset.regist.invest.mapper.InvInqrMapper;
 import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
 import lombok.RequiredArgsConstructor;
 

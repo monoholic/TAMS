@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.aset.update.reqappv.controller;
+package kr.co.trito.tams.web.asset.update.reqappv.controller;
 
 public class ReqAppvController {
 

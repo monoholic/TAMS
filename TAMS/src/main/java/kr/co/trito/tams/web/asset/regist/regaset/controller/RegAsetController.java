@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.aset.regist.regaset.controller;
+package kr.co.trito.tams.web.asset.regist.regaset.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,14 +29,14 @@ import kr.co.trito.tams.comm.util.file.excel.ExcelConstant;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.aset.regist.invest.dto.InvExcelDto;
-import kr.co.trito.tams.web.aset.regist.invest.dto.InvInqrDto;
-import kr.co.trito.tams.web.aset.regist.regaset.service.RegAsetService;
+import kr.co.trito.tams.web.asset.regist.invest.dto.InvExcelDto;
+import kr.co.trito.tams.web.asset.regist.invest.dto.InvInqrDto;
+import kr.co.trito.tams.web.asset.regist.regaset.service.RegAsetService;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-@RequestMapping("/aset/regist/regaset")
+@RequestMapping("/asset/regist/regaset")
 public class RegAsetController {
 	@Autowired
 	ResponseService responseService;
@@ -164,7 +164,7 @@ public class RegAsetController {
 		if (!StringUtils.isEmpty(userId))
 		params.put("userId", userId);
 		
-		if (!StringUtils.isEmpty(fromDate))
+		if (!StringUtils.isEmpty(fromDate))	
 		params.put("fromDate", fromDate);
 		
 		if (!StringUtils.isEmpty(toDate))

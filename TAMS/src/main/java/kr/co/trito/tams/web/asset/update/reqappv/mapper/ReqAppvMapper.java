@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.aset.update.reqappv.mapper;
+package kr.co.trito.tams.web.asset.update.reqappv.mapper;
 
 public class ReqAppvMapper {
 

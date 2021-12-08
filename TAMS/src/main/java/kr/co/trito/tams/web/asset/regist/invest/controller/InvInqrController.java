@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.aset.regist.invest.controller;
+package kr.co.trito.tams.web.asset.regist.invest.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,14 +30,14 @@ import kr.co.trito.tams.comm.util.msg.Message;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.aset.regist.invest.dto.InvExcelDto;
-import kr.co.trito.tams.web.aset.regist.invest.dto.InvInqrDto;
-import kr.co.trito.tams.web.aset.regist.invest.service.InvInqrService;
+import kr.co.trito.tams.web.asset.regist.invest.dto.InvExcelDto;
+import kr.co.trito.tams.web.asset.regist.invest.dto.InvInqrDto;
+import kr.co.trito.tams.web.asset.regist.invest.service.InvInqrService;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-@RequestMapping("/aset/regist/invest")
+@RequestMapping("/asset/regist/invest")
 public class InvInqrController {
 	
 	@Autowired
@@ -59,7 +59,7 @@ public class InvInqrController {
 		view.addObject("menuDesc", request.getParameter("menuDesc"));
 		view.addObject("url", request.getParameter("url"));
 		
-		view.setViewName("/content/aset/regist/invest/investInqr");
+		view.setViewName("/content/asset/regist/invest/investInqr");
 		
 		return view;
 	}

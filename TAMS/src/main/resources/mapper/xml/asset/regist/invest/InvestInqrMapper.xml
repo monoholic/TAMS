@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.co.trito.tams.web.aset.regist.invest.mapper.InvInqrMapper">
+<mapper namespace="kr.co.trito.tams.web.asset.regist.invest.mapper.InvInqrMapper">
 	
 	<select id="selectCountInvest" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
    SELECT COUNT(*)
@@ -82,7 +82,7 @@
 		</if>
 	</select>
 	
-	<select id="selectInvestInqrList" resultType="kr.co.trito.tams.web.aset.regist.invest.dto.InvInqrDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+	<select id="selectInvestInqrList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvInqrDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
   SELECT c.*
     FROM
 		 (
@@ -188,7 +188,7 @@
 		</choose>
 	</select>
 	
-	<select id="selectInvInqrExcelList" resultType="kr.co.trito.tams.web.aset.regist.invest.dto.InvExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+	<select id="selectInvInqrExcelList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
 					   SELECT b.rn as rn
 							, b.inv_no 	    as invNo
 							, b.inv_ttl 	as invTtl

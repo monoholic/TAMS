@@ -1,12 +1,12 @@
-package kr.co.trito.tams.web.aset.regist.regaset.mapper;
+package kr.co.trito.tams.web.asset.regist.regaset.mapper;
 
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.aset.regist.invest.dto.InvExcelDto;
-import kr.co.trito.tams.web.aset.regist.invest.dto.InvInqrDto;
+import kr.co.trito.tams.web.asset.regist.invest.dto.InvExcelDto;
+import kr.co.trito.tams.web.asset.regist.invest.dto.InvInqrDto;
 import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
 
 @Mapper

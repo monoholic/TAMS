@@ -115,7 +115,7 @@
 
 							})
 							.catch((error) => {
-								console.log('메뉴조회 실패!!');
+								console.log([[#{screen.error.inqrfail}]]);
 							});						
 	                    
 	                    return d.promise();
@@ -274,24 +274,6 @@
 						$form.append(inputStr);
 					});
 					
-/*  					var inputStr = $('<input type="hidden" value="'+ $("#invNo").val() + '" name="invNo">'); 
-						$form.append(inputStr);
-						inputStr = $('<input type="hidden" value="'+ $("#invTtl").val() + '" name="invTtl">');
-						$form.append(inputStr);
-						inputStr = $('<input type="hidden" value="'+ $("#poNo").val() + '" name="poNo">');
-						$form.append(inputStr);
-						inputStr = $('<input type="hidden" value="'+ $("#mfgdNm").val() + '" name="mfgdNm">');
-						$form.append(inputStr);
-						inputStr = $('<input type="hidden" value="'+ $("#deptCd").val() + '" name="deptCd">');
-						$form.append(inputStr);
-						inputStr = $('<input type="hidden" value="'+ $("#userId").val() + '" name="userId">');
-						$form.append(inputStr);
-						inputStr = $('<input type="hidden" value="'+ $("#fromDate").val() + '" name="fromDate">');
-						$form.append(inputStr);
-						inputStr = $('<input type="hidden" value="'+ $("#toDate").val() + '" name="toDate">');
-						$form.append(inputStr);
-						inputStr = $('<input type="hidden" value="'+ $("#regYn").val() + '" name="regYn">'); 
-						$form.append(inputStr);					*/
 						$form.appendTo('body'); 
 						$form.submit();
 						
@@ -368,19 +350,19 @@
 								<th style="text-align:center;">[[#{screen.text.inv.no}]]</th>
 								<td><input type="text" id="invNo" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;" th:text="#{screen.text.inv.ttl}"></th>
+								<th style="text-align:center;">[[#{screen.text.inv.ttl}]]</th>
 								<td><input type="text" id="invTtl" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">PO번호</th>
+								<th style="text-align:center;">[[#{screen.text.po.no}]]</th>
 								<td><input type="text" id="poNo" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
 							</tr>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">품명</th>
+								<th style="text-align:center;">[[#{screen.text.po.mfgdnm}]]</th>
 								<td><input type="text" id="mfgdNm" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">부서</th>
+								<th style="text-align:center;">[[#{screen.text.dept.nm}]]</th>
 								<td>
 									<input type="hidden" id="deptCd"/>
 									<div class="inqr_popup_btn">
@@ -389,7 +371,7 @@
 									</div>
 								</td>
 								<td></td>
-								<th style="text-align:center;">담당자</th>
+								<th style="text-align:center;">[[#{screen.text.inv.reqr}]]</th>
 								<td>
 									<input type="hidden" id="userId"/>
 									<div class="inqr_popup_btn">
@@ -401,10 +383,10 @@
 							</tr>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">투자일자</th>
+								<th style="text-align:center;">[[#{screen.text.inv.dt}]]</th>
 								<td class="aset_td"><input type="date" id="fromDate" class="aset_date"><input type="date" id="toDate" class="aset_date"></td>
 								<td></td>
-								<th>자산미등록만 조회</th>
+								<th>[[#{screen.text.inv.asetinqr}]]</th>
 								<td>
 									<select id="regYn" style="width:100%;">
 										<option value="">선택</option>
@@ -425,7 +407,7 @@
 					<div class="list_head">
 						<div class="result">Totals : 0,000</div>
 						<div class="button">
-							<a class="btn_sel" id="excelDown">엑셀 다운로드</a>
+							<a class="btn_sel" id="excelDown">[[#{screen.btn.excel}]]</a>
 						</div>
 						<!-- list_button -->
 					</div>
