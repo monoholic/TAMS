@@ -13,7 +13,7 @@
 
 /* vertical2 */
 .vertical2 li{position:relative;}
-.vertical2 .group{float:left;width:140px;}
+.vertical2 .group{float:left;width:160px;}
 .vertical2 .group li{margin-bottom:10px;}
 .vertical2 .group li a{padding:0px 0 0 13px;font-weight:bold;font-size:12px;color:#2f3942!important;cursor:pointer;}
 .vertical2 .group li a:hover{color:#000!important;text-decoration:underline;}
