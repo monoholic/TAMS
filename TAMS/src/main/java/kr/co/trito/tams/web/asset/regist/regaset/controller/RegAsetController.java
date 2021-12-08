@@ -164,7 +164,7 @@ public class RegAsetController {
 		if (!StringUtils.isEmpty(userId))
 		params.put("userId", userId);
 		
-		if (!StringUtils.isEmpty(fromDate))	
+		if (!StringUtils.isEmpty(fromDate))
 		params.put("fromDate", fromDate);
 		
 		if (!StringUtils.isEmpty(toDate))

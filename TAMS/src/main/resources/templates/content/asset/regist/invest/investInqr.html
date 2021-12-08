@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>자산 등록(투자정보조회)</title>
+	    <title>[[#{screen.title.aset.reg.invinqr}]]</title>
 	</head>
         
 	<!-- css -->
@@ -308,7 +308,7 @@
 	    	var toDate = $("#toDate").val().replaceAll("-", "");
 	    	
 			if(fromDate > toDate) {
-				alert("날짜를 다시 선택해 주세요");
+				alert([[#{screen.info.status.date.fail}]]);
 				$("#toDate").focus();
 				code = '200';
 			}
