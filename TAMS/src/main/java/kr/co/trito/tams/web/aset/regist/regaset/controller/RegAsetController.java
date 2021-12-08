@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.aset.regist.invest.controller;
+package kr.co.trito.tams.web.aset.regist.regaset.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,32 +26,27 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import kr.co.trito.tams.comm.util.file.excel.ExcelConstant;
-import kr.co.trito.tams.comm.util.msg.Message;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.aset.regist.invest.dto.InvExcelDto;
 import kr.co.trito.tams.web.aset.regist.invest.dto.InvInqrDto;
-import kr.co.trito.tams.web.aset.regist.invest.service.InvInqrService;
+import kr.co.trito.tams.web.aset.regist.regaset.service.RegAsetService;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-@RequestMapping("/aset/regist/invest")
-public class InvInqrController {
-	
-	@Autowired
-	Message message;
-	
+@RequestMapping("/aset/regist/regaset")
+public class RegAsetController {
 	@Autowired
 	ResponseService responseService;
 	
 	@Autowired
-	InvInqrService investInqrService;
+	RegAsetService regAsetService;
 	
 	/** 투자정보관리 화면 */
-	@PostMapping("/investInqr")
-	public ModelAndView asetinqrView(HttpServletRequest request) {
+	@PostMapping("/regAsetMain")
+	public ModelAndView regAsetView(HttpServletRequest request) {
 	
 		ModelAndView view = new ModelAndView();
 		view.addObject("menuId", request.getParameter("menuId"));
@@ -59,18 +54,18 @@ public class InvInqrController {
 		view.addObject("menuDesc", request.getParameter("menuDesc"));
 		view.addObject("url", request.getParameter("url"));
 		
-		view.setViewName("/content/aset/regist/invest/investInqr");
+		view.setViewName("/content/aset/regist/invest/regAsetPopup");
 		
 		return view;
 	}
 	
 	/** 투자정보관리 화면 : 조회 */
-	@GetMapping(value="/investInqr/investInqrList")
+	@GetMapping(value="/regAsetMain/regAsetList")
 	@ResponseBody
 	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> investInqrList(
+	public ResponseEntity<? extends Response> regAsetList(
 				@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage",required = true) String currentPage,
 				@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
 				@ApiParam(value = "투자번호", required = false) @RequestParam(value = "invNo", required = false) String invNo,
@@ -125,10 +120,10 @@ public class InvInqrController {
 		params.put("sortOrder", sortOrder);
 		
 		SearchCondition condition = new SearchCondition(currentPage, numOfRows, params);
-		int total = investInqrService.selectCountInvest(condition);
+		int total = regAsetService.selectCountInvest(condition);
 		condition.pageSetup(total);
 		
-		List<InvInqrDto> list = investInqrService.selectInvestInqrList(condition);
+		List<InvInqrDto> list = regAsetService.selectInvestInqrList(condition);
 		return responseService.success(condition, list);
 	}
 	
@@ -137,7 +132,7 @@ public class InvInqrController {
 	@ApiOperation(value = "투자정보조회화면 엑셀다운로드", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ModelAndView invListExcel(
+	public ModelAndView regAsetExcel(
 			@ApiParam(value = "투자번호", required = false) @RequestParam(value = "invNo", required = false) String invNo,
 			@ApiParam(value = "투자명", required = false) @RequestParam(value = "invTtl", required = false) String invTtl,
 			@ApiParam(value = "PO번호", required = false) @RequestParam(value = "poNo", required = false) String poNo,
@@ -179,10 +174,10 @@ public class InvInqrController {
 		params.put("regYn", regYn);	
 		
 		SearchCondition condition = new SearchCondition("0", "0", params);
-		int total = investInqrService.selectCountInvest(condition);
+		int total = regAsetService.selectCountInvest(condition);
 		condition.pageSetup(total);
 		
-		List<InvExcelDto> list = investInqrService.selectInvInqrExcelList(condition);
+		List<InvExcelDto> list = regAsetService.selectInvInqrExcelList(condition);
 		
 		return new ModelAndView("excelXlsxView", makeExcelData(list)) ;
 	}
