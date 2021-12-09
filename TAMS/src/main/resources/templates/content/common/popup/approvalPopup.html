@@ -4,7 +4,7 @@
         layout:decorator="layout/popup2">
 <head>
 <meta charset="utf-8" />
-<title>결재상신</title>
+<title>[[#{screen.text.appr.req.screen.text}]]</title>
 
 	<!-- css -->
 	<th:block layout:fragment="css">
@@ -124,7 +124,7 @@
 		//summer note 설정
 		function getSummernoteBody() {
 		return	{
-	            placeholder: '내용을 작성하세요',
+	            placeholder: '[[#{screen.info.status.error.input.content}]]',
 	            height: 250,
 	            minHeight: 250,
 	            maxHeight: 250,
@@ -168,16 +168,16 @@
 				
 				var apprCnt = arrAppr.length;
 				if( apprCnt == 0 ) {
-					alert("결재자가 누락 되었습니다.");
+					alert("[[#{screen.info.status.error.appr.no.approver}]]");
 					return false;
 				}
 				
 				if( apprContent == "<p><br></p>" ) {
-					alert("본문 내용을 작성해주세요.");
+					alert("[[#{screen.info.status.error.input.content}]]");
 					return false;
 				}
 				
-				if( !confirm("상신 하시겠습니까?") ) {
+				if( !confirm("[[#{screen.info.status.approval.yn}]]") ) {
 					return false;
 				}
 				
@@ -205,11 +205,11 @@
 			$.commRequest(url, reqType, JSON.stringify(data))
 				.then((res) => {
 					console.log('결재상신 성공!!');
-					alert('성공!!')
+					alert('[[#{screen.info.status.approval.success}]]')
 				})
 				.catch((error) => {
 					console.log('결재상신 실패!!');
-					alert('실패!!')
+					alert('[[#{screen.info.status.error.occur}]]')
 				});
 			
 			
@@ -238,7 +238,7 @@
 			
 			//결재자 중복 체크
 			if( obj.userId == $("#apprId").text() ) { 
-				alert('상신자는 선택할 수 없습니다.');
+				alert('[[#{screen.info.status.error.appr.not.yourself}]]');
 				flag = false;
 			}
 			
@@ -246,7 +246,7 @@
 				var list = $("li");
 				$.each(list, function(index, element){
 					if( flag && obj.userId == $(element).attr('value') ) {
-						alert('이미 선택한 결재자 입니다.');
+						alert('[[#{screen.info.status.error.appr.dup.approver}]]');
 						flag = false;
 					}	
 				});
@@ -400,8 +400,8 @@
 	<div id="pop_wrap" >
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
 					<!-- head -->
-					<h3><span id="popTitle"></span>&nbsp;결재상신
-						 <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a>
+					<h3><span id="popTitle"></span>&nbsp;[[#{screen.text.comm.approve}]]
+						 <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">[[#{screen.btn.close}]]</a>
 					</h3>
 					<!-- //head -->
 					<!-- contents -->
@@ -421,8 +421,8 @@
 										<th colspan="2">&nbsp;</th>
 										<td style="text-align:right;" >
 											<!-- search_button -->
-												<a href="#;" class="btn_srch" id="btnSave">저  장</a>
-												<a href="#;" class="btn_srch" id="btnApproval">결재</a>
+												<a href="#;" class="btn_srch" id="btnSave">[[#{screen.btn.save}]]</a>
+												<a href="#;" class="btn_srch" id="btnApproval">[[#{screen.btn.approve}]]</a>
 											<!-- //search_button -->
 										</td>
 									</tr>
@@ -443,17 +443,17 @@
 							<tr>
 								<th >결재자 지정</th>
 								<th align="left">
-									<input type="radio" name="appr_gbn" value="appr" checked>&nbsp;결재자&nbsp;[<span id="appr_cnt">0</span>]&nbsp;&nbsp;
-									<input type="radio" name="appr_gbn" value="agree" >&nbsp;합의자&nbsp;[<span id="agree_cnt">0</span>]&nbsp;&nbsp;
-									<input type="radio" name="appr_gbn" value="noti" >&nbsp;통보자&nbsp;[<span id="noti_cnt">0</span>]&nbsp;&nbsp;
+									<input type="radio" name="appr_gbn" value="appr" checked>&nbsp;[[#{screen.text.comm.approver1}]]&nbsp;[<span id="appr_cnt">0</span>]&nbsp;&nbsp;
+									<input type="radio" name="appr_gbn" value="agree" >&nbsp;[[#{screen.text.comm.approver2}]]&nbsp;[<span id="agree_cnt">0</span>]&nbsp;&nbsp;
+									<input type="radio" name="appr_gbn" value="noti" >&nbsp;[[#{screen.text.comm.approver3}]]&nbsp;[<span id="noti_cnt">0</span>]&nbsp;&nbsp;
 								</th>
 								<td>
-									<a href="#;" class="btn_srch" id="btnAdd">결재자 추가</a>
+									<a href="#;" class="btn_srch" id="btnAdd">[[#{screen.text.comm.add.approver}]]</a>
 								</td>
 								<td style="text-align:right;" >
 									<!-- search_button -->
-										<a href="#;" id="btnUp" title="위로">▲</a>
-										<a href="#;" id="btnDown" title="아래로">▼</a>
+										<a href="#;" id="btnUp" title="[[#{screen.btn.up}]]">▲</a>
+										<a href="#;" id="btnDown" title="[[#{screen.btn.down}]]">▼</a>
 									<!-- //search_button -->
 								</td>
 							</tr>
@@ -466,13 +466,13 @@
 									<col />
 							</colgroup>
 							<tr>
-								<th style="text-align:center">기&nbsp;&nbsp;안</th>
+								<th style="text-align:center">[[#{screen.text.appr.draft}]]</th>
 								<td>
 									<span sec:authentication="principal.dto.userNm"></span><span id="apprId" sec:authentication="principal.dto.userId" style="display:none;"></span>
 								</td>
 							</tr>
 							<tr>
-								<th style="text-align:center">결&nbsp;&nbsp;재</th>
+								<th style="text-align:center">[[#{screen.text.appr.approval}]]</th>
 								<td style="padding-left:5px;">
 									<div class="apprList">
 									<ol id="divAppr"  ></ol>
@@ -480,7 +480,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th style="text-align:center">합&nbsp;&nbsp;의</th>
+								<th style="text-align:center">[[#{screen.text.appr.agreement}]]</th>
 								<td style="padding-left:5px;">
 									<div class="apprList">
 									<ol id="divAgree" ></ol>
@@ -488,7 +488,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th style="text-align:center">통&nbsp;&nbsp;보</th>
+								<th style="text-align:center">[[#{screen.text.appr.inform}]]</th>
 								<td style="padding-left:5px;">
 									<div class="apprList">
 									<ol id="divNoti" ></ol>
@@ -496,7 +496,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th  style="text-align:center">제&nbsp;&nbsp;목</th>
+								<th  style="text-align:center">[[#{screen.text.appr.title}]]</th>
 								<td>
 									<input type="text" name="appvTtl" id="appvTtl" style="width:80%;"/>
 								</td>

@@ -4,7 +4,7 @@
         layout:decorator="layout/popup2">
 <head>
 <meta charset="utf-8" />
-<title>공통팝업</title>
+<title>[[#{screen.popup.text.code.screen.title}]]</title>
 
 	<!-- css -->
 	<th:block layout:fragment="css">
@@ -65,7 +65,7 @@
 											{ "confirm" : { 
 															"separator_before" : false
 														  , "separator_after" : false
-														  , "label" : "선택"
+														  , "label" : "[[#{screen.text.comm.choice}]]"
 														  , "icon" : "/images/common/confirm.png"
 														  , "action" : function(obj){
 												             returnResult();
@@ -159,10 +159,10 @@
 								</table>
 								<!-- search_button -->
 								<div class="button">
-									<img id="tree_open" src="/images/common/plus.png" style="padding-top:4px;cursor:pointer;" title="펼치기">
-									<img id="tree_close" src="/images/common/minus.png" style="padding-top:4px;cursor:pointer;" title="접기">
+									<img id="tree_open" src="/images/common/plus.png" style="padding-top:4px;cursor:pointer;" title="[[#{screen.text.comm.spread}]]">
+									<img id="tree_close" src="/images/common/minus.png" style="padding-top:4px;cursor:pointer;" title="[[#{screen.text.comm.fold}]]">
 									&nbsp;&nbsp;
-									<a href="#;" class="btn_srch">새로고침</a>
+									<a href="#;" class="btn_srch">[[#{screen.text.comm.refreshd}]]</a>
 								</div>
 								<!-- //search_button -->
 							</div>
@@ -182,7 +182,7 @@
 					<div class="pop_button">
 						<p>
 						<p>
-						<a href="#;" id="btn_close_pop" class="btn_list_rd">닫기</a>
+						<a href="#;" id="btn_close_pop" class="btn_list_rd">[[#{screen.text.comm.close}]]</a>
 						</p>
 					</div>
 					<!-- //button -->

@@ -4,7 +4,7 @@
         layout:decorator="layout/popup2">
 
 	<head>
-	    <title>자산 선택(팝업-공통)</title>
+	    <title>[[#{screen.popup.text.asset.screen.title}]]</title>
 	</head>
         
 	<!-- css -->
@@ -82,7 +82,7 @@
 	            }, 
 	            pagerContainerClass: "paginate",
 	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
+	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
 	            },
 	            controller:  {
 	                loadData: function(filter) {
@@ -115,7 +115,7 @@
 
 							})
 							.catch((error) => {
-								console.log('메뉴조회 실패!!');
+								console.log('조회 실패!!');
 							});						
 	                    
 	                    return d.promise();
@@ -153,17 +153,17 @@
 		    				   });
 					 	 } ,
 	                },
-	                { name: "asetNo"	, type: "text"   , width: 100 ,align: "center", title: "자산번호"	},
-					{ name: "asetType1"	, type: "text"   , width: 150 ,align: "center", title: "자산유형1"	},
-					{ name: "asetType2"	, type: "text"   , width: 150 ,align: "center", title: "자산유형2"	},
-					{ name: "asetType3"	, type: "text"   , width: 150 ,align: "center", title: "자산유형3"	},
-					{ name: "mftco"		, type: "text"   , width: 100 ,align: "center", title: "메이커" 	},
-					{ name: "model"		, type: "text"   , width: 100 ,align: "center", title: "모델"	 	},
-					{ name: "sn"		, type: "number" , width: 100 ,align: "center", title: "S/N" 	},
-					{ name: "bizDeptCd"	, type: "date"   , width: 100 ,align: "center", title: "사업부"	},
-					{ name: "deptCd"	, type: "text"   , width: 100 ,align: "center", title: "부서"		},
-					{ name: "chrgr"		, type: "text"   , width: 100 ,align: "center", title: "담당자"	},
-					{ name: "asetStusNm", type: "text"   , width: 100 ,align: "center", title: "자산상태"	}
+	                { name: "asetNo"	, type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.no}]]"},
+					{ name: "asetType1"	, type: "text"   , width: 150 ,align: "center", title: "[[#{screen.popup.text.asset.type1}]]"},
+					{ name: "asetType2"	, type: "text"   , width: 150 ,align: "center", title: "[[#{screen.popup.text.asset.type2}]]"},
+					{ name: "asetType3"	, type: "text"   , width: 150 ,align: "center", title: "[[#{screen.popup.text.asset.type3}]]"},
+					{ name: "mftco"		, type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.manufacture}]]"	},
+					{ name: "model"		, type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.model}]]"	},
+					{ name: "sn"		, type: "number" , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.sn}]]"},
+					{ name: "bizDeptCd"	, type: "date"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.biz.dept}]]"},
+					{ name: "deptCd"	, type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.dept}]]"},
+					{ name: "chrgr"		, type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.charger}]]"},
+					{ name: "asetStusNm", type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.status}]]"}
 	            ]
 	        });
 	        
@@ -226,8 +226,8 @@
     	    	
     	    	makeAsetCombo("#asetType2", getAsetType(asetType1))
     	    	makeAsetCombo("#asetType3", "")
-    	    	$("#asetType2").prepend('<option value="">' + "선택" + '</option>');
-    	    	$('#asetType2 option:contains("선택")').prop('selected', true);
+    	    	$("#asetType2").prepend('<option value="">' + "[[#{screen.text.comm.choice}]]" + '</option>');
+    	    	$('#asetType2 option:contains("[[#{screen.text.comm.choice}]]")').prop('selected', true);
     	    });
     		
     	 	// 자산 유형 선택 3레벨 그리기
@@ -235,8 +235,8 @@
     	    	var asetType2 = event.srcElement.value;
     	    	
     	    	makeAsetCombo("#asetType3", getAsetType(asetType2))
-    	    	$("#asetType3").prepend('<option value="">' + "선택" + '</option>');
-    	    	$('#asetType3 option:contains("선택")').prop('selected', true);
+    	    	$("#asetType3").prepend('<option value="">' + "[[#{screen.text.comm.choice}]]" + '</option>');
+    	    	$('#asetType3 option:contains("[[#{screen.text.comm.choice}]]")').prop('selected', true);
     	    });
     	 	
     	 	
@@ -329,7 +329,7 @@
 		 			})
 		 		})
 		 		.catch((error) => {                                                                      
-		 			alert('메뉴조회 실패!!');                                                                  
+		 			alert('[[#{screen.info.status.error.occur}]]');                                                                  
 		 		});
 		 };
 		 
@@ -349,7 +349,7 @@
 	    	var toDate = $("#toDate").val().replaceAll("-", "");
 	    	
 			if(fromDate > toDate) {
-				alert("날짜를 다시 선택해 주세요");
+				alert("[[#{screen.info.status.error.input.date}]]");
 				$("#toDate").focus();
 				code = '200';
 			}
@@ -369,8 +369,8 @@
 	<div id="pop_wrap" >
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
 			<!-- head -->
-			<h3>자산 선택(팝업-공통)
-				 <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a>
+			<h3>[[#{screen.popup.text.asset.screen.title}]]
+				 <a href="#;" id="btn_close_pop" class="pop_close" title="[[#{screen.text.user.id}]]">[[#{screen.text.comm.close}]]</a>
 			</h3>
 			<!-- //head -->
 			<!-- contents -->
@@ -392,10 +392,10 @@
 							</colgroup>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">자산번호</th>
+								<th style="text-align:center;">[[#{screen.popup.text.asset.no}]]</th>
 								<td><input type="text" id="asetNo" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">등록일자</th>
+								<th style="text-align:center;">[[#{screen.text.comm.regdt}]]</th>
 								<td><input type="date" id="fromDate" style="width:100%;"></td>
 								<td></td>
 								<td></td>
@@ -404,20 +404,20 @@
 							</tr>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">자산유형1</th>
+								<th style="text-align:center;">[[#{screen.popup.text.asset.type1}]]</th>
 								<td>
 									<select id="asetType1" style="width:100%;">
-										<option value="">선택</option>
+										<option value="">[[#{screen.text.comm.choice}]]</option>
 									</select>
 								</td>
 								<td></td>
-								<th style="text-align:center;">자산유형2</th>
+								<th style="text-align:center;">[[#{screen.popup.text.asset.type2}]]</th>
 								<td>
 									<select id="asetType2" style="width:100%;">
 									</select>
 								</td>
 								<td></td>
-								<th style="text-align:center;">자산유형3</th>
+								<th style="text-align:center;">[[#{screen.popup.text.asset.type3}]]</th>
 								<td>
 									<select id="asetType3" style="width:100%;">
 									</select>
@@ -426,26 +426,26 @@
 							</tr>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">사업부</th>
+								<th style="text-align:center;">[[#{screen.popup.text.asset.biz.dept}]]</th>
 								<td>
 									<input type="hidden" id="deptCd1"/>
 									<input type="text" id="deptNm1" style="width:100%;" readonly/>
 								</td>
-								<td style="text-align:center;"><a href="#" id="openDeptPopup1" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a></td>
-								<th style="text-align:center;">부서</th>
+								<td style="text-align:center;"><a href="#" id="openDeptPopup1" ><img title="[[#{screen.text.comm.search.user}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a></td>
+								<th style="text-align:center;">[[#{screen.popup.text.asset.dept}]]</th>
 								<td>
 									<input type="hidden" id="deptCd2"/>
 									<input type="text" id="deptNm2" style="width:100%;" readonly/>
 								</td>
-								<td style="text-align:center;"><a href="#" id="openDeptPopup2" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a></td>
-								<th style="text-align:center;">담당자</th>
+								<td style="text-align:center;"><a href="#" id="openDeptPopup2" ><img title="[[#{screen.text.comm.search.user}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a></td>
+								<th style="text-align:center;">[[#{screen.popup.text.asset.charger}]]</th>
 								<td><input type="text" id="chrgr" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
 							</tr>
 							<tr>
 								<td class="search" colspan="10 ">
-									<a href="#;" class="btn_reset">Reset</a>
-									<a href="#;" class="btn_srch">Search</a>
+									<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+									<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 								</td>
 							</tr>
 						</table>
@@ -454,7 +454,7 @@
 					<div class="list_head">
 						<div class="result">Results : 0,000</div>
 						<div class="button">
-							<a class="btn_sel" id="btn_sel">선택</a>
+							<a class="btn_sel" id="btn_sel">[[#{screen.text.comm.choice}]]</a>
 						</div>
 						<!-- list_button -->
 					</div>
