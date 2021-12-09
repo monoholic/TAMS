@@ -15,12 +15,21 @@ public class PageResponse extends Response{
 	private int size;
 	@ApiModelProperty(value="조회 데이터")
 	private List<?> data;
+	@ApiModelProperty(value="조회 데이터2")
+	private List<?> data2;
 	@ApiModelProperty(value="검색조건")
 	private SearchCondition condition;
 	
 	public PageResponse(SearchCondition condition, List<?> data) {
 		this.condition = condition;
 		this.data = data;
+		this.size =  data != null ? data.size() : 0;
+	}
+	
+	public PageResponse(SearchCondition condition, List<?> data, List<?> data2) {
+		this.condition = condition;
+		this.data = data;
+		this.data2 = data2;
 		this.size =  data != null ? data.size() : 0;
 	}
 }

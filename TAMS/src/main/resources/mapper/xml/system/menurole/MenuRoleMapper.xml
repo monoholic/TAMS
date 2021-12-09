@@ -127,10 +127,5 @@
 		     , UP_DT		= current_timestamp()
         WHERE  MENU_ID = #{menuId}
 	</update>
-	
-	<delete id="menuMngDelete" parameterType="kr.co.trito.tams.web.system.menurole.dto.MenuRoleDto">
-		DELETE FROM TB_COM_MENU 
-        WHERE  MENU_ID = #{menuId}
-	</delete>
 
 </mapper>

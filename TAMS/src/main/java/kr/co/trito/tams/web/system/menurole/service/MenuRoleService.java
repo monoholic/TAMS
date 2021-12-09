@@ -39,8 +39,4 @@ public class MenuRoleService {
 		return mapper.menuMngUpdate(dto);
 	}
 	
-	public int menuMngDelete(MenuDto dto) {
-		return mapper.menuMngDelete(dto);
-	}
-	
 }

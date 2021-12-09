@@ -21,6 +21,4 @@ public interface MenuRoleMapper {
 	
 	public int menuMngUpdate(MenuDto dto);
 	
-	public int menuMngDelete(MenuDto dto);
-	
 }

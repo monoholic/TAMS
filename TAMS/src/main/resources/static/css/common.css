@@ -67,3 +67,6 @@ footer span.contact strong{margin-left:3px;padding-left:7px;font-weight:normal}
 #fromDate{
 	margin-right: 3px;
 }
+#asetStatusQty{
+	display: flex;
+}

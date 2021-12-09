@@ -60,7 +60,7 @@ public class MenuRoleController {
 	/** 메뉴권한관리 화면 : 셀렉트박스 */
 	@GetMapping(value="/menuRoleMng/roleGroup")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
+	@ApiOperation(value = "메뉴권한관리 화면 / 필터 데이터 조회", notes = "권한그룹을 조회한다")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> roleGroup() { 
@@ -73,7 +73,7 @@ public class MenuRoleController {
 	/** 메뉴권한관리 화면 : 조회 */
 	@GetMapping(value="/menuRoleMng/menuRoleMngList")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Role Mng test", notes = "Web API Test")
+	@ApiOperation(value = "메뉴권한관리 화면 / 리스트 ", notes = "전체메뉴권한들을 조회한다")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> menuRoleMngList(
@@ -109,7 +109,7 @@ public class MenuRoleController {
 	/** 메뉴권한관리 화면 : 저장 */
 	   @PostMapping(value="/menuRoleMng/menuRoleSave")
 	   @ResponseBody
-	   @ApiOperation(value = "Web API Menu Mgr Save", notes = "Web API Test")
+	   @ApiOperation(value = "메뉴권한관리 화면 / 저장", notes = "선택한 그룹의 변경된 권한값을 저장한다.")
 	   @ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	   @ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	   public String menuRoleMngSave( 
@@ -142,32 +142,6 @@ public class MenuRoleController {
 	      
 	      return code;
 	   } 
-	
-	/** 메뉴관리 화면 : 삭제 */
-	@GetMapping(value="/menuMng/menuDelete")
-	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Delete", notes = "Web API Test")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String menuRoleMngDelete( 
-			@ApiParam(value = "메뉴ID", required = true) @RequestParam(value = "items", required = true) List<String> items
-			) { 
-		
-		String code = "202";
-		
-		int cnt = 0;
-		
-		for(String menuId : items) {
-			System.out.println("@@@@@@@@@@ "+menuId);
-			MenuDto dto = new MenuDto();
-			dto.setMenuId(menuId);
-			if( menuroleService.menuMngDelete(dto) > 0 ) cnt++;
-		}
-		
-		if( cnt > 0) code = "200";
-		
-		return code;
-	}
 
 }
 
