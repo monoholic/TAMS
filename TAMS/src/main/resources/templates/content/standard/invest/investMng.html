@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>메뉴관리</title>
+	    <title>[[#{screen.text.inv.mng.screen.title}]]</title>
 	</head>
         
 	<!-- css -->
@@ -78,7 +78,7 @@
 					}
 	            }, 
 	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
+	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
 	            },
 	            controller:  {
 	                loadData: function(filter) {
@@ -105,7 +105,7 @@
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
 							})
 							.catch((error) => {
-								console.log('메뉴조회 실패!!');
+								console.log('조회 실패!!');
 							});
 	                    
 	                    return d.promise();
@@ -171,24 +171,24 @@
 		    				   });
 					 	 },
 	                },
-	            	{ name: "invNo"   , type: "text", width: 70 , align: "left"  , title: "투자번호" },
-	                { name: "invTtl"  , type: "text", width: 100, align: "left"  , title: "투자명"  },
-	                { name: "invDt"   , type: "text", width: 100, align: "left"  , title: "투자일자" },
-	                { name: "invQty"  , type: "text", width: 50, align: "left"  , title: "투자수량"  },
-	                { name: "invAmt"  , type: "text", width: 70, align: "left"  , title: "투자금액"  },
-	                { name: "actgYear", type: "text", width: 70 , align: "left"  , title: "회계년도" },
-	                { name: "poNo"	  , type: "text", width: 70, align: "left"  , title: "PO번호"  },
-	                { name: "mfgdNm"  , type: "text", width: 100, align: "left"  , title: "품명" 	   },
-	                { name: "qty"	  , type: "text", width: 50 , align: "left"  , title: "PO수량"  },
-	                { name: "poAmt"	  , type: "text", width: 70 , align: "left"  , title: "PO금액"  },
-	                { name: "deptNm"  , type: "text", width: 100, align: "left"  , title: "부서" 	   },
-	                { name: "userNm"  , type: "text", width: 50, align: "left"  , title: "담당자"   },
-	                { name: "invReqr" , type: "text", width: 50, align: "left"  , title: "담당자ID", visible: false },
-	                { name: "vendNm"  , type: "text", width: 60, align: "left"  , title: "업체명"   },
-	                { name: "reqDt"   , type: "text", width: 60, align: "left"  , title: "구매요청일자"},
-	                { name: "dlvDt"   , type: "text", width: 50, align: "left"  , title: "납품일자"   },
-	                { name: "poAsetYn", type: "text", width: 100, align: "left"  , title: "자산등록"  },
-	                { name: "regDt"   , type: "text", width: 100, align: "left"  , title: "등록일자"  },
+	            	{ name: "invNo"   , type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.inv.mng.no}]]" },
+	                { name: "invTtl"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.mng.nm}]]"  },
+	                { name: "invDt"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.mng.dt}]]" },
+	                { name: "invQty"  , type: "text", width: 50, align: "left"  , title: "[[#{screen.text.inv.mng.qty}]]"  },
+	                { name: "invAmt"  , type: "text", width: 70, align: "left"  , title: "[[#{screen.text.inv.mng.amt}]]"  },
+	                { name: "actgYear", type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.inv.mng.financial.year}]]" },
+	                { name: "poNo"	  , type: "text", width: 70, align: "left"  , title: "[[#{screen.text.inv.mng.po.no}]]"  },
+	                { name: "mfgdNm"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.mng.item.nm}]]" 	   },
+	                { name: "qty"	  , type: "text", width: 50 , align: "left"  , title: "[[#{screen.text.inv.mng.po.qty}]]"  },
+	                { name: "poAmt"	  , type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.inv.mng.po.amt}]]"  },
+	                { name: "deptNm"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.mng.dept}]]" 	   },
+	                { name: "userNm"  , type: "text", width: 50, align: "left"  , title: "[[#{screen.text.inv.mng.charger}]]"   },
+	                { name: "invReqr" , type: "text", width: 50, align: "left"  , title: "[[#{screen.text.inv.mng.charger.id}]]", visible: false },
+	                { name: "vendNm"  , type: "text", width: 60, align: "left"  , title: "[[#{screen.text.inv.mng.vendor.nm}]]"   },
+	                { name: "reqDt"   , type: "text", width: 60, align: "left"  , title: "[[#{screen.text.inv.mng.order.dt}]]"},
+	                { name: "dlvDt"   , type: "text", width: 50, align: "left"  , title: "[[#{screen.text.inv.mng.ship.dt}]]"   },
+	                { name: "poAsetYn", type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.mng.asset.regist.yn}]]"  },
+	                { name: "regDt"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.comm.regdt}]]"  },
 	            ]
 	        });
 	        
@@ -248,11 +248,11 @@
     			$.commRequest(url, reqType, JSON.stringify(items))
     				.then((res) => {
     					console.log(res);
-    					alert("삭제 되었습니다!");
+    					alert("[[#{screen.info.status.delete.success}]]");
     					$('.btn_srch').click();
     				})
     				.catch((error) => {
-    					alert("오류가 발생했습니다");
+    					alert("[[#{screen.info.status.error.occur}]]");
     					console.log(error);
     				}) 
     	    	
@@ -261,10 +261,10 @@
     	    
 	        $(".btn_srch").on("click",function (){
 	           if($("#searchType").val() != "none" && $("#searchTxt").val() == ""){
-	        	   alert("검색어를 입력해주세요");
+	        	   alert("[[#{screen.info.status.error.input.search.text}]]");
 	        	   $("#searchTxt").focus();
 	           }else if($("#searchType2").val() != "none" && $("#searchTxt2").val() == ""){
-	        	   alert("검색어를 입력해주세요");
+	        	   alert("[[#{screen.info.status.error.input.search.text}]]");
 	        	   $("#searchTxt2").focus();
 	           }else{
 		    	   $("#jsGrid").jsGrid().trigger("loadData");
@@ -423,11 +423,11 @@
 	    let save_mode = "";
 	    function showDetailForm(item) {
 		    	
-		    	let title = "메뉴 등록";
+		    	let title = "[[#{screen.text.inv.mng.insert.title}]]";
 		    	 var readOnly = false;
 		    	 
 		    	 if( item != null ) {
-		    		 title = "메뉴 수정";
+		    		 title = "[[#{screen.text.inv.mng.update.title}]]";
 		    		 save_mode = "update";
 		    		 
 		    		 readOnly = false;
@@ -482,7 +482,7 @@
 		        if($("#searchType").val() != 'none'){
 		    	   $("#jsGrid").jsGrid().trigger("loadData");
 		        }else{
-		       	   alert("검색항목을 선택해주세요.");
+		       	   alert("[[#{screen.info.status.error.search.condition}]]");
 		        }
 	        }
 	    }
@@ -540,31 +540,31 @@
 			let code = "200";
 			
 	    	if($(".detail_table").find("#invNo").val() == ''){
-	    		alert("투자번호를 입력해주세요.");
+	    		alert("[[#{screen.info.status.error.inv.no}]]");
 	    		$(".detail_table").find("#invNo").focus();
 	    	}else if($(".detail_table").find("#invTtl").val() == ''){
-	    		alert("투자명을 입력해주세요.");
+	    		alert("[[#{screen.info.status.error.inv.nm}]]");
 	    		$(".detail_table").find("#invTtl").focus();
 	    	}else if($(".detail_table").find("#invQty").val() == ''){
-	    		alert("투자수량을 입력해주세요.");
+	    		alert("[[#{screen.info.status.error.inv.qty}]]");
 	    		$(".detail_table").find("#invQty").focus();
 	    	}else if($(".detail_table").find("#invAmt").val() == ''){
-	    		alert("투자금액을 입력해주세요.");
+	    		alert("[[#{screen.info.status.error.inv.amt}]]");
 	    		$(".detail_table").find("#invAmt").focus();
 	    	}else if($(".detail_table").find("#actgYear").val() == ''){
-	    		alert("회계연도를 입력해주세요.");
+	    		alert("[[#{screen.info.status.error.inv.financial.year}]]");
 	    		$(".detail_table").find("#actgYear").focus();
 	    	}else if($(".detail_table").find("#poNo").val() == ''){
-	    		alert("PO번호를 입력해주세요.");
+	    		alert("[[#{screen.info.status.error.inv.po.no}]]");
 	    		$(".detail_table").find("#poNo").focus();
 	    	}else if($(".detail_table").find("#poAmt").val() == ''){
-	    		alert("PO금액을 입력해주세요.");
+	    		alert("[[#{screen.info.status.error.inv.po.amt}]]");
 	    		$(".detail_table").find("#poAmt").focus();
 	    	}else if($(".detail_table").find("#invDt").val() == ''){
-	    		alert("투자일자를 입력해주세요.");
+	    		alert("[[#{screen.info.status.error.inv.dt}]]");
 	    		$(".detail_table").find("#invDt").focus();
 	    	}else if($(".detail_table").find("#userNm").val() == ''){
-	    		alert("담당자를 입력해주세요.");
+	    		alert("[[#{screen.info.status.error.inv.charger}]]");
 	    		$(".detail_table").find("#userNm").focus();
 	    	}else{
 	    		code = "202";
@@ -596,19 +596,19 @@
 				<tr>
 					<td>
 						<select id="searchType" onkeyup="enterkey()">
-							<option value="none">검색항목 선택</option>
+							<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
 						</select>
 					</td>
-					<td><input id="searchTxt" type="text" placeholder="검색어를 입력하세요."></input></td>
+					<td><input id="searchTxt" type="text" placeholder="[[#{screen.info.status.error.input.search.text}]]"></input></td>
 					<td>
 						<select id="searchType2" onkeyup="enterkey()">
 							<option value="none">검색항목 선택</option>
 						</select>
 					</td>
-					<td><input id="searchTxt2" type="text" placeholder="검색어를 입력하세요."></input></td>
+					<td><input id="searchTxt2" type="text" placeholder="[[#{screen.info.status.error.input.search.text}]]"></input></td>
 					<td class="search" colspan="3">
-						<a href="#;" class="btn_reset">Reset</a>
-						<a href="#;" class="btn_srch">Search</a>
+						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 					</td>
 				</tr>
 			</table>
@@ -618,9 +618,9 @@
 				<div class="result">Results : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
-					<a id="openInvPopup" class="btn_save">일괄 업로드</a>
-					<a class="btn_add">등록</a>
-					<a class="btn_del">삭제</a>
+					<a id="openInvPopup" class="btn_save">[[#{screen.btn.upload}]]</a>
+					<a class="btn_add">[[#{screen.btn.insert}]]</a>
+					<a class="btn_del">[[#{screen.btn.delete}]]</a>
 				</div>
 				<!-- list_button -->
 		</div>
@@ -639,9 +639,9 @@
 					<h6><span id="head_title" ></span></h6>
 					<!-- list_button -->
 						<div class="button">
-							<a class="btn_list save_btn">저장</a>
-							<a class="btn_list close_btn">삭제</a>
-							<a class="btn_list close_btn">닫기</a>
+							<a class="btn_list save_btn">[[#{screen.btn.save}]]</a>
+							<a class="btn_list close_btn">[[#{screen.btn.delete}]]</a>
+							<a class="btn_list close_btn">[[#{screen.btn.close}]]</a>
 						</div>
 					<!-- list_button -->
 				</div>
@@ -649,69 +649,69 @@
 				<!-- detail_table -->
 					<table class="detail_table">
 						<tr>
-							<th>투자번호</th>
+							<th>[[#{screen.text.inv.mng.no}]]</th>
 							<td><input type="text" id="invNo"/></td>
 						</tr>
 						<tr>
-							<th>투자명</th>
+							<th>[[#{screen.text.inv.mng.nm}]]</th>
 							<td><input type="text" id="invTtl" /></td>
 						</tr>
 						<tr>
-							<th>투자수량</th>
+							<th>[[#{screen.text.inv.mng.qty}]]</th>
 							<td><input type="text" id="invQty" /></td>
 						</tr>
 						<tr>
-							<th>투자금액</th>
+							<th>[[#{screen.text.inv.mng.amt}]]</th>
 							<td><input type="text" id="invAmt" /></td>
 						</tr>
 						<tr>
-							<th>투자일자</th>
+							<th>[[#{screen.text.inv.mng.dt}]]</th>
 							<td><input type="date" id="invDt" /></td>
 						</tr>
 						<tr>
-							<th>회계년도</th>
+							<th>[[#{screen.text.inv.mng.financial.year}]]</th>
 							<td><input type="text" id="actgYear" /></td>
 						</tr>
 						<tr>
-							<th>PO번호</th>
+							<th>[[#{screen.text.inv.mng.po.no}]]</th>
 							<td><input type="text" id="poNo" /></td>
 						</tr>
 						<tr>
-							<th>품명</th>
+							<th>[[#{screen.text.inv.mng.item.nm}]]</th>
 							<td>
 							<div class="form_wrap_ico_invest">
 									<input type="text" id="codeNm" name="codeNm"/>&nbsp;&nbsp;<input type="hidden" id="codeCd" name="codeCd"/>&nbsp;
-									<a href="#" id="openCommCodePopup" ><img title="품명검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+									<a href="#" id="openCommCodePopup" ><img title="[[#{screen.text.inv.mng.item.nm}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 							</div>
 							</td>
 						</tr>
 						<tr>
-							<th>PO수량</th>
+							<th>[[#{screen.text.inv.mng.po.qty}]]</th>
 							<td><input type="text" id="qty" /></td>
 						</tr>
 						<tr>
-							<th>PO금액</th>
+							<th>[[#{screen.text.inv.mng.po.amt}]]</th>
 							<td><input type="text" id="poAmt" /></td>
 						</tr>
 						<tr>
-							<th>담당자</th>
+							<th>[[#{screen.text.inv.mng.charger}]]</th>
 							<td>
 							<div class="form_wrap_ico_invest">
 									<input type="text" id="userNm" name="userNm"/>&nbsp;&nbsp;<input type="hidden" id="userId" name="userId"/>&nbsp;
-									<a href="#" id="openUserPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+									<a href="#" id="openUserPopup" ><img title="[[#{screen.text.comm.search.user}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 							</div>
 							</td>
 						</tr>
 						<tr>
-							<th>업체</th>
+							<th>[[#{screen.text.inv.mng.vendor.nm}]]</th>
 							<td><input type="text" id="vendNm" /></td>
 						</tr>
 						<tr>
-							<th>구매요청일자</th>
+							<th>[[#{screen.text.inv.mng.order.dt}]]</th>
 							<td><input type="date" id="reqDt" /></td>
 						</tr>
 						<tr>
-							<th>납품일자</th>
+							<th>[[#{screen.text.inv.mng.ship.dt}]]</th>
 							<td><input type="date" id="dlvDt" /></td>
 						</tr>
 					</table>

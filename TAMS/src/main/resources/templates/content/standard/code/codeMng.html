@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>공통코드 그룹 관리</title>
+	    <title>[[#{screen.text.code.screen.title}]]</title>
 	</head>
         
 	<!-- css -->
@@ -53,7 +53,7 @@
 		 			})
 		 		})
 		 		.catch((error) => {                                                                      
-		 			alert('메뉴조회 실패!!');                                                                  
+		 			alert('[[#{screen.info.status.error.occur}]]');                                                                  
 		 		});
 		 });
 	 	
@@ -100,7 +100,7 @@
 	            }, 
 	            pagerContainerClass: "paginate",
 	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
+	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
 	            },
 	            controller:  {
 	                loadData: function(filter) {
@@ -126,7 +126,7 @@
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
 							})
 							.catch((error) => {
-								console.log('메뉴조회 실패!!');
+								console.log('조회 실패!!');
 							});						
 	                    
 	                    return d.promise();
@@ -142,7 +142,7 @@
                 			console.log(res);
                 			unselectItem(item);
                 			
-                			alert("수정이 완료되었습니다.");
+                			alert("[[#{screen.info.status.update.success}]]");
                 			selectedItems = [];
                 			$("#jsGrid").jsGrid("loadData");
                 		})
@@ -217,24 +217,24 @@
 		    				   });
 					 	 } ,
 	                },
-	                { name: "codeId", type: "text", align: "left", width: 40,  title: "공통코드 ID" },
-	                { name: "codeGrpId", type: "text", align: "left", width: 45,  title: "공통코드 그룹 ID" },
-	                { name: "codeNm", type: "text", align: "left", width: 50, readOnly:true , title: "공통코드명" },
-	                { name: "codeEngNm", type: "text", align: "left", width: 50, readOnly:true , title: "공통코드 영문명" },
-	                { name: "uppCodeId", type: "text", align: "left", width: 45, readOnly:true , title: "상위 공통코드 ID" },
-	                { name: "codeLvl", type: "number", align: "right", width: 25, readOnly:true , title: "코드 레벨" },
-	                { name: "codeDesc", type: "text", align: "center", width: 60, readOnly:true , title: "공통코드 설명" },
-	                { name: "sortOdr", type: "number", align: "right", width: 25, title: "정렬 순서" },
+	                { name: "codeId", type: "text", align: "left", width: 40,  title: "[[#{screen.text.code.id}]]" },
+	                { name: "codeGrpId", type: "text", align: "left", width: 45,  title: "[[#{screen.text.code.grp.id}]]" },
+	                { name: "codeNm", type: "text", align: "left", width: 50, readOnly:true , title: "[[#{screen.text.code.nm}]]" },
+	                { name: "codeEngNm", type: "text", align: "left", width: 50, readOnly:true , title: "[[#{screen.text.code.eng.nm}]]" },
+	                { name: "uppCodeId", type: "text", align: "left", width: 45, readOnly:true , title: "[[#{screen.text.code.upper.id}]]" },
+	                { name: "codeLvl", type: "number", align: "right", width: 25, readOnly:true , title: "[[#{screen.text.code.level}]]" },
+	                { name: "codeDesc", type: "text", align: "center", width: 60, readOnly:true , title: "[[#{screen.text.code.desc}]]" },
+	                { name: "sortOdr", type: "number", align: "right", width: 25, title: "[[#{screen.text.code.sort}]]" },
 	                { name: "useYn", type: "select", width: 25 ,align: "center"
 	                	   , items: [
-			                    { Name: "사용",  Id: "Y"},
-			                    { Name: "미사용", Id: "N"},
+			                    { Name: "[[#{screen.text.comm.ues}]]",  Id: "Y"},
+			                    { Name: "[[#{screen.text.comm.unuesd}]]", Id: "N"},
 			                  ],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1, title: "사용 여부" },
-	                { name: "updr", type: "text", align: "left", width: 30, title: "수정자" },
-	                { name: "upDt", type: "text", align: "center", width: 40, title: "수정일자" },
-	                { name: "regr", type: "text", align: "left", width: 30, title: "등록자" },
-	                { name: "regDt", type: "text", align: "center", width: 40, title: "등록일자" },
+	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1, title: "[[#{screen.text.comm.useyn}]]" },
+	                { name: "updr", type: "text", align: "left", width: 30, title: "[[#{screen.text.comm.updr}]]" },
+	                { name: "upDt", type: "text", align: "center", width: 40, title: "[[#{screen.text.comm.updt}]]" },
+	                { name: "regr", type: "text", align: "left", width: 30, title: "[[#{screen.text.comm.regr}]]" },
+	                { name: "regDt", type: "text", align: "center", width: 40, title: "[[#{screen.text.comm.regdt}]]" },
 	            ]
             	
 	        });
@@ -304,11 +304,11 @@
     				.then((res) => {
     					console.log(res);
     					selectedItems = [];
-    					alert("삭제 되었습니다!");
+    					alert("[[#{screen.info.status.delete.success}]]");
     					$('.btn_srch').click();
     				})
     				.catch((error) => {
-    					alert("오류가 발생했습니다");
+    					alert("[[#{screen.info.status.error.occur}]]");
     					console.log(error);
     				})
     	    });
@@ -426,11 +426,11 @@
 	    		
 	    	if(selectedItems.length <= 1){
 		    	
-		    	let title = "공통코드 등록";
+		    	let title = "[[#{screen.text.code.insert.title}]]";
 		    	 var readOnly = false;
 		    	 
 		    	 if( item != null ) {
-		    		 title = "공통코드 수정";
+		    		 title = "[[#{screen.text.code.update.title}]]";
 		    		 save_mode = "update";
 	 				 
 		    		 readOnly = false;
@@ -469,7 +469,7 @@
 	                 height	 : "450px"
 	             }).center().show();
 	    	}else{
-	    		alert("수정은 1개이상 되지 않습니다.");
+	    		alert("[[#{screen.info.status.modify.just.one}]]");
 	    	}
 	    }
 	    
@@ -484,19 +484,19 @@
 	    	let code = '202';
 			
 			if($("#codeId").val() == "") {
-				alert("공통코드 ID를 입력해 주세요.");
+				alert("[[#{screen.info.status.error.code.id}]]");
 				$("#codeId").focus();
 				code = '200';
 			}else if($("#codeNm").val() == "") {
-				alert("공통코드명을 입력해 주세요.");
+				alert("[[#{screen.info.status.error.code.nm}]]");
 				$("#codeNm").focus();
 				code = '200';
 			}else if($("#codeLvl").val() == "") {
-				alert("정렬 순서를 입력해 주세요.");
+				alert("[[#{screen.info.status.error.code.level}]]");
 				$("#codeLvl").focus();
 				code = '200';
 			}else if($("#sortOdr").val() == "") {
-				alert("정렬 순서를 입력해 주세요.");
+				alert("[[#{screen.info.status.error.code.sort}]]");
 				$("#sortOdr").focus();
 				code = '200';
 			}
@@ -525,11 +525,11 @@
 				<tr>
 					<td>
 						<select id="searchOption" style="width:90%;">
-							<option selected value="">검색항목 선택</option>
-							<option value="code_id">공통코드 ID</option>
-							<option value="code_grp_id">공통코드 그룹 ID</option>
-							<option value="code_nm">공통코드명</option>
-							<option value="code_desc">공통코드 설명</option>
+							<option selected value="">[[#{screen.text.comm.select.search.condition}]]</option>
+							<option value="code_id">[[#{screen.text.code.id}]]</option>
+							<option value="code_grp_id">[[#{screen.text.code.grp.id}]]</option>
+							<option value="code_nm">[[#{screen.text.code.nm}]]</option>
+							<option value="code_desc">[[#{screen.text.code.desc}]]</option>
 						</select>
 					</td>	
 					<td>
@@ -538,15 +538,15 @@
 					
 					<td>
 						<select id="useYnOption" style="width:40%;">
-							<option selected value="">사용 여부</option>
-							<option value="Y">사용</option>
-							<option value="N">미사용</option>
+							<option selected value="">[[#{screen.text.comm.useyn}]]</option>
+							<option value="Y">[[#{screen.text.comm.ues}]]</option>
+							<option value="N">[[#{screen.text.comm.unuesd}]]</option>
 						</select>
 					</td>
 					
 					<td class="search" colspan="3">
-						<a href="#;" class="btn_reset">Reset</a>
-						<a href="#;" class="btn_srch">Search</a>
+						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 					</td>
 				</tr>
 			</table>
@@ -561,9 +561,9 @@
 					<a class="btn_saveall">일괄 저장</a>
 					<a class="btn_del">메뉴 삭제</a>
 					-->
-					<a class="btn_add">등록</a>
-					<a class="btn_update">수정</a>
-					<a class="btn_del">삭제</a>
+					<a class="btn_add">[[#{screen.btn.insert}]]</a>
+					<a class="btn_update">[[#{screen.btn.update}]]</a>
+					<a class="btn_del">[[#{screen.btn.delete}]]</a>
 				</div>
 				<!-- list_button -->
 		</div>
@@ -584,8 +584,8 @@
 					<h6><span id="head_title" ></span></h6>
 					<!-- list_button -->
 					<div class="button">
-						<a class="btn_list save_btn">저장</a>
-						<a class="btn_list close_btn">닫기</a>
+						<a class="btn_list save_btn">[[#{screen.btn.save}]]</a>
+						<a class="btn_list close_btn">[[#{screen.btn.close}]]</a>
 					</div>
 					<!-- list_button -->
 				</div>
@@ -599,46 +599,46 @@
 							<col style="width:25%" />
 						<col />
 						<tr>
-							<th>공통코드 ID</th>
+							<th>[[#{screen.text.code.id}]]</th>
 							<td><input type="text" style="width:100%" id="codeId" /></td>
-							<th>공통코드 그룹 ID</th>
+							<th>[[#{screen.text.code.grp.id}]]</th>
 							<td>
 								<select id="codeGrpId" style="width:100%;">
 								</select>
 							</td>
 						</tr>
 						<tr>
-							<th>공통코드명</th>
+							<th>[[#{screen.text.code.nm}]]</th>
 							<td><input type="text" style="width:100%" id="codeNm" /></td>
-							<th>공통코드 영문명</th>
+							<th>[[#{screen.text.code.eng.nm}]]</th>
 							<td><input type="text" style="width:100%" id="codeEngNm" /></td>
 						</tr>
 						<tr>
-							<th>상위 공통코드 ID</th>
+							<th>[[#{screen.text.code.upper.id}]]</th>
 							<td><input type="text" style="width:100%" id="uppCodeId" /></td>
-							<th>공통코드 설명</th>
+							<th>[[#{screen.text.code.desc}]]</th>
 							<td><input type="text" style="width:100%" id="codeDesc" /></td>
 						</tr>
 						<tr>
-							<th>코드 레벨</th>
+							<th>[[#{screen.text.code.level}]]</th>
 							<td><input type="text" style="width:100%" id="codeLvl"/></td>
-							<th>정렬 순서</th>
+							<th>[[#{screen.text.code.sort}]]</th>
 							<td><input type="text" style="width:100%" id="sortOdr" /></td>
 						</tr>
 						<tr>
-							<th>예비1</th>
+							<th>[[#{screen.text.code.resv1}]]</th>
 							<td><input type="text" style="width:100%" id="resv1" /></td>
-							<th>예비2</th>
+							<th>[[#{screen.text.code.resv2}]]</th>
 							<td><input type="text" style="width:100%" id="resv2" /></td>
 						</tr>
 						<tr>
-							<th>예비3</th>
+							<th>[[#{screen.text.code.resv3}]]</th>
 							<td><input type="text" style="width:100%" id="resv3" /></td>
-							<th>사용 여부</th>
+							<th>[[#{screen.text.comm.useyn}]]</th>
 							<td colspan="3">
 								<select id="useYn">
-									<option value="Y">사용</option>
-									<option value="N">미사용</option>
+									<option value="Y">[[#{screen.text.comm.ues}]]</option>
+									<option value="N">[[#{screen.text.comm.unuesd}]]</option>
 								</select>
 							</td>
 						</tr>

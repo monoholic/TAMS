@@ -214,7 +214,7 @@
 	           if($("#searchType").val() != 'none'){
 	    	   	   $("#jsGrid").jsGrid().trigger("loadData");
 	           }else{
-	        	   alert("[[#{screen.info.status.check.search.condition}]]");
+	        	   alert("[[#{screen.info.status.error.search.condition}]]");
 	           }
 	        });
 	        
@@ -263,7 +263,7 @@
 		        if($("#searchType").val() != 'none'){
 		    	   $("#jsGrid").jsGrid().trigger("loadData");
 		        }else{
-		       	   alert("[[#{screen.info.status.check.search.condition}]]");
+		       	   alert("[[#{screen.info.status.error.search.condition}]]");
 		        }
 	        }
 	    }   
