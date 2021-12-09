@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>사용자 관리</title>
+	    <title>[[#{screen.title.system.user}]]</title>
 	</head>
         
 	<!-- css -->
@@ -50,7 +50,7 @@
 					})
 				})
 				.catch((error) => {                                                                      
-					alert('메뉴조회 실패!!');                                                                  
+					alert('[[#{screen.info.status.error.search.comcode}]]');                                                                  
 				});
 		});
 	 	
@@ -97,7 +97,7 @@
 	            }, 
 	            pagerContainerClass: "paginate",
 	            deleteConfirm: function(item) {
-	                return "\""+item.userNm+"("+userId+")"+"\""+ "을 삭제 하시겠습니까?";
+	                return "\""+item.userNm+"("+userId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
 	            },
 	            controller:  {
 	                loadData: function(filter) { 
@@ -120,7 +120,7 @@
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
 							})
 							.catch((error) => {
-								console.log('사용자 조회 실패!!');
+								console.log('[[#{screen.info.status.error.search.user}]]');
 							});
 	                    
 	                    return d.promise();
@@ -138,7 +138,7 @@
                 		.then((res) => {
                 			console.log(res);
                 			//$(".save_btn").click();
-                			alert("수정이 완료되었습니다.");
+                			alert("[[#{screen.info.status.update.success}]]");
                 			$("#jsGrid").jsGrid("loadData");
                 		})
                 		.catch((error) => {
@@ -211,28 +211,28 @@
 		    				   });
 					 	 } ,
 	                	},
-	                { name: "userId", type: "text", width: 50, align: "center", readOnly:true , title: "사용자ID" },
-	                { name: "userNm", type: "text", width: 90 ,align: "left"  , title: "사용자명" },
-	                { name: "deptNm", type: "text", width: 80 ,align: "left"  , title: "부서" },
-	                { name: "clpstNm", type: "text", width: 80 ,align: "left"  , title: "직급" },
-	                { name: "email", type: "text", width: 120 ,align: "left"  , title: "이메일" },
-	                { name: "telno", type: "text", width: 100 ,align: "center"  , title: "전화번호" },
+	                { name: "userId", type: "text", width: 50, align: "center", readOnly:true , title: "[[#{screen.text.user.id}]]" },
+	                { name: "userNm", type: "text", width: 90 ,align: "left"  , title: "[[#{screen.text.user.nm}]]" },
+	                { name: "deptNm", type: "text", width: 80 ,align: "left"  , title: "[[#{screen.text.user.dept}]]" },
+	                { name: "clpstNm", type: "text", width: 80 ,align: "left"  , title: "[[#{screen.text.user.position}]]" },
+	                { name: "email", type: "text", width: 120 ,align: "left"  , title: "[[#{screen.text.user.email}]]" },
+	                { name: "telno", type: "text", width: 100 ,align: "center"  , title: "[[#{screen.text.user.telno}]]" },
 	                { name: "sex", type: "select", width: 50 ,align: "center"
 	                	   , items: [
-			                    { Name: "남성",  Id: "M"},
-			                    { Name: "여성", Id: "F"},
+			                    { Name: "[[#{screen.text.user.male}]]",  Id: "M"},
+			                    { Name: "[[#{screen.text.user.female}]]", Id: "F"},
 			                  ],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1 , title: "성별" },
+	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1 , title: "[[#{screen.text.user.sex}]]" },
 	                { name: "useYn", type: "select", width: 40 ,align: "center"
 	                	   , items: [
-			                    { Name: "사용",  Id: "Y"},
-			                    { Name: "미사용", Id: "N"},
+			                    { Name: "[[#{screen.text.comm.ues}]]",  Id: "Y"},
+			                    { Name: "[[#{screen.text.comm.unuesd}]]", Id: "N"},
 			                  ],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "USE YN" },
-	                { name: "regr", type: "text", width: 60, align: "center"  , readOnly:true, title: "등록자" },
-	                { name: "regdt", type: "date", width: 80, align: "center", readOnly:true  , title: "등록일시" },
-	                { name: "updr", type: "text", width: 60, align: "center", readOnly:true  , title: "수정" },
-	                { name: "updt", type: "date", width: 80, align: "center", readOnly:true  , title: "수정일시" }
+	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "[[#{screen.text.user.useyn}]]" },
+	                { name: "regr", type: "text", width: 60, align: "center"  , readOnly:true, title: "[[#{screen.text.comm.regr}]]" },
+	                { name: "regdt", type: "date", width: 80, align: "center", readOnly:true  , title: "[[#{screen.text.comm.regdt}]]" },
+	                { name: "updr", type: "text", width: 60, align: "center", readOnly:true  , title: "[[#{screen.text.comm.updr}]]" },
+	                { name: "updt", type: "date", width: 80, align: "center", readOnly:true  , title: "[[#{screen.text.comm.updt}]]" }
 	                /*
 	                ,
 	                { name: "Country", type: "select", items: db.countries, valueField: "Id", textField: "Name" },
@@ -312,11 +312,11 @@
     			$.commRequest(url, reqType, JSON.stringify(items))
     				.then((res) => {
     					console.log(res);
-    					alert("삭제 되었습니다!");
+    					alert("[[#{screen.info.status.delete.success}]]");
     					$('.btn_srch').click();
     				})
     				.catch((error) => {
-    					alert("오류가 발생했습니다");
+    					alert("[[#{screen.info.status.error.occur}]]");
     					console.log(error);
     				})
     	    	
@@ -353,13 +353,19 @@
 		    	if( save_mode == "insert" ) {	
 		    		//validation check
 		    		var required    = ["userId", "userNm", "userPw", "passRe"   ,"deptCd", "clpst", "email"];
-		    		var requiredStr = ["사용자ID", "사용자명", "비밀번호", "확인용 비밀번호", "부서코드", "직급", "이메일"];
+		    		var requiredStr = ["[[#{screen.text.user.id}]]", 
+		    						   "[[#{screen.text.user.nm}]]", 
+		    						   "[[#{screen.text.user.pw}]]", 
+		    						   "[[#{screen.text.user.pw.check}]]", 
+		    						   "[[#{screen.text.user.dept}]]", 
+		    						   "[[#{screen.text.user.position}]]", 
+		    						   "[[#{screen.text.user.email}]]"];
 		    		var invalidCnt = 0;
 		    		var invalidMsg = "";
 		    		for(var i=0; i<required.length; i++) {
 		    			//console.log(required[i]+" @@@ "+insert_item[required[i]]);
 		    			if( insert_item[required[i]] == "" || insert_item[required[i]] == null ) {
-		    				invalidMsg += requiredStr[i]+"은(는) 입력 필수 항목입니다. \n";
+		    				invalidMsg += requiredStr[i]+"[[#{screen.info.status.required.input}]] \n";
 		    				invalidCnt++;
 		    			}
 		    		}
@@ -371,7 +377,7 @@
 		    		}
 		    	}
 		    		if( insert_item.userPw != insert_item.passRe ) {
-		    			alert("비밀번호와 확인용 비밀번호가 일치하지 않습니다.");
+		    			alert("[[#{screen.info.status.pw.not.match}]]");
 		    			return false;
 		    		}
 	          // <--- 유효성 검사..	    		
@@ -404,13 +410,13 @@
         			$.commRequest(url, reqType, data)
         				.then((res) => {
         					console.log(res);
-        					alert("저장되었습니다!");
+        					alert("[[#{screen.info.status.save.success}]]");
         					$(".btn_srch").click();
         					insertedItems = [];
         				})
         				.catch((error) => {
         					console.log(error);
-        					alert("오류가 발생했습니다 "+error);
+        					alert("[[#{screen.info.status.error.occur}]] "+error);
         				})
     	    	}
     	    	
@@ -423,13 +429,13 @@
         			$.commRequest(url, reqType, data)
         				.then((res) => {
         					console.log(res);
-        					alert("저장되었습니다!");
+        					alert("[[#{screen.info.status.save.success}]]");
         					updatedItems = [];
         					$(".btn_srch").click();
         				})
         				.catch((error) => {
         					console.log(error);
-        					alert("오류가 발생했습니다");
+        					alert("[[#{screen.info.status.error.occur}]]");
         				})
     	    	}
     	    	
@@ -543,11 +549,11 @@
 	    	
 	    	if(selectedItems.length <= 1){
 		    	
-		    	let title = "사용자 등록";
+		    	let title = "[[#{screen.text.user.regist.title}]]";
 		    	 var readOnly = false;
 		    	 
 		    	 if( item != null ) {
-		    		 title = "사용자 수정";
+		    		 title = "[[#{screen.text.user.modify.title}]]";
 		    		 save_mode = "update";
 		    		 
 		    		 readOnly = false;
@@ -581,7 +587,7 @@
 		    	 df.center();
 	             df.show();
 	    	}else{
-	    		alert("수정은 1개이상 되지 않습니다.");
+	    		alert("[[#{screen.info.status.modify.just.one}]]");
 	    	}
 	    } 
 	    
@@ -716,7 +722,7 @@
 							<td>
 								<div class="form_wrap_ico">
 									<input type="text" id="deptNm" style="width:40%;" readOnly/>&nbsp;<input type="text" id="deptCd" style="width:50%;" readOnly />
-									<a href="#" id="openModalPopup" ><img title="부서찾기" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+									<a href="#" id="openModalPopup" ><img title="[[#{screen.text.user.img.dept}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 								</div>
 							</td>
 						</tr>
@@ -729,14 +735,14 @@
 						<tr>
 							<th>성별</th>
 							<td><select id="sex" style="width:100%;">
-									<option value="M">남성</option>
-									<option value="F">여성</option>
+									<option value="M">[[#{screen.text.user.male}]]</option>
+									<option value="F">[[#{screen.text.user.female}]]</option>
 								</select>
 							</td>
 							<th>사용여부</th>
 							<td ><select id="useYn" style="width:100%;">
-									<option value="Y">사용</option>
-									<option value="N">미사용</option>
+									<option value="Y">[[#{screen.text.user.ues}]]</option>
+									<option value="N">[[#{screen.text.user.unuesd}]]</option>
 								</select>
 							</td>
 						</tr>

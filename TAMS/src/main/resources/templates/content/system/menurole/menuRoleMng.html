@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>메뉴관리</title>
+	    <title>[[#{screen.title.menu.role}]]</title>
 	</head>
         
 	<!-- css -->
@@ -146,24 +146,24 @@
 		    				   });
 					 	 } ,
 	                	}
-	            	,{ name: "menuId", type: "text", align: "left", title: "메뉴ID", editing: false, visible: false }
-	                ,{ name: "menuNm", type: "text", width: 100 , align: "left"  , title: "메뉴명", editing: false }
-	                ,{ name: "menuYn", type: "checkbox", width: 40 , align: "center", title: "메뉴사용", sorting: false
+	            	,{ name: "menuId", type: "text", align: "left", title: "[[#{screen.text.role.menu.id}]]", editing: false, visible: false }
+	                ,{ name: "menuNm", type: "text", width: 100 , align: "left"  , title: "[[#{screen.text.role.menu.nm}]]", editing: false }
+	                ,{ name: "menuYn", type: "checkbox", width: 40 , align: "center", title: "[[#{screen.text.role.menu.useyn}]]", sorting: false
 	                	, itemTemplate: function(value, item) {
 	                		   return checkBoxClass("menuCheckbox", "menuYn", value, item);
 	                	 }
 	                 }
-	                ,{ name: "inqrYn", type: "checkbox", width: 40 , align: "center", title: "조회", sorting: false
+	                ,{ name: "inqrYn", type: "checkbox", width: 40 , align: "center", title: "[[#{screen.btn.search}]]", sorting: false
 	                   , itemTemplate: function(value, item) {
 	                	   	   return checkBoxClass("inqrCheckbox", "inqrYn", value, item);
 		                 } 
 	                 }
-	                ,{ name: "regYn", type: "checkbox", width: 40 , align: "center", title: "생성", sorting: false
+	                ,{ name: "regYn", type: "checkbox", width: 40 , align: "center", title: "[[#{screen.btn.create}]]", sorting: false
 	                   , itemTemplate: function(value, item) {
 		                       return checkBoxClass("regCheckbox", "regYn", value, item);
 		                 } 
 	                 }
-	                ,{ name: "updYn", type: "checkbox", width: 40 , align: "center", title: "수정", sorting: false
+	                ,{ name: "updYn", type: "checkbox", width: 40 , align: "center", title: "[[#{screen.btn.update}]]", sorting: false
 	                   , itemTemplate: function(value, item) {
 		                       return checkBoxClass("updCheckbox", "updYn", value, item);
  		                 } 
@@ -214,7 +214,7 @@
 	           if($("#searchType").val() != 'none'){
 	    	   	   $("#jsGrid").jsGrid().trigger("loadData");
 	           }else{
-	        	   alert("검색항목을 선택해주세요.");
+	        	   alert("[[#{screen.info.status.check.search.condition}]]");
 	           }
 	        });
 	        
@@ -235,7 +235,7 @@
 	    			$("#jsGrid").jsGrid("insertItem", insert_item);
 	    			
                 }else{
-                	alert("권한그룹을 선택해주세요.");
+                	alert("[[#{screen.info.status.select.auth.group}]]");
                 }
 
             });
@@ -263,7 +263,7 @@
 		        if($("#searchType").val() != 'none'){
 		    	   $("#jsGrid").jsGrid().trigger("loadData");
 		        }else{
-		       	   alert("검색항목을 선택해주세요.");
+		       	   alert("[[#{screen.info.status.check.search.condition}]]");
 		        }
 	        }
 	    }   
@@ -288,15 +288,15 @@
 					<col width=""/>
 			</colgroup>
 				<tr>
-					<td><label for="searchText" class="menu_label">권한그룹</label></td>
+					<td><label for="searchText" class="menu_label">[[#{screen.text.role.menu.auth.group}]]</label></td>
 					<td>
 						<select id="searchType" onkeyup="enterkey()">
-							<option value="none">권한그룹을 선택하세요</option>
+							<option value="none">[[#{screen.text.comm.select.auth.group}]]</option>
 						</select>
 					</td>
 					<td class="search" colspan="3">
-						<a href="#;" class="btn_reset">Reset</a>
-						<a href="#;" class="btn_srch">Search</a>
+						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 					</td>
 				</tr>
 			</table>
@@ -306,7 +306,7 @@
 				<div class="result">Results : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
-					<a class="btn_save">저장</a>
+					<a class="btn_save">[[#{screen.btn.save}]]</a>
 				</div>
 				<!-- list_button -->
 		</div>
