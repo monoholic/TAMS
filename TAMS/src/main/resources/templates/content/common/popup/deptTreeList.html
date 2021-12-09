@@ -4,7 +4,7 @@
         layout:decorator="layout/popup2">
 <head>
 <meta charset="utf-8" />
-<title>공통팝업</title>
+<title>[[#{screen.popup.text.dept.screen.title}]]</title>
 
 	<!-- css -->
 	<th:block layout:fragment="css">
@@ -41,7 +41,7 @@
 		            var dept = $("#dept").text();
 		            
 		            if(dept == "DEPT" && item.deptCd.length <= 6){
-		            	alert("부서를 선택해 주세요.");
+		            	alert("[[#{screen.info.status.error.input.dept}]]");
 		            }
 		            else
 						returnResult(item)
@@ -141,7 +141,7 @@
 	<div id="pop_wrap" >
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
 					<!-- head -->
-					<h3>부서 선택
+					<h3>[[#{screen.popup.text.dept.screen.title}]]
 						 <!-- <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a> -->
 					</h3>
 					<!-- //head -->
@@ -165,7 +165,7 @@
 								</table>
 								<!-- search_button -->
 								<div class="button">
-									<a href="#;" class="btn_srch">새로고침</a>
+									<a href="#;" class="btn_srch">[[#{screen.text.comm.refresh}]]</a>
 								</div>
 								<!-- //search_button -->
 							</div>
@@ -185,7 +185,7 @@
 					<div class="pop_button">
 						<p>
 						<p>
-						<a href="#;" id="btn_close_pop" class="btn_list_rd">닫기</a>
+						<a href="#;" id="btn_close_pop" class="btn_list_rd">[[#{screen.text.comm.close}]]</a>
 						</p>
 					</div>
 					<!-- //button -->

@@ -4,7 +4,7 @@
         layout:decorator="layout/popup2">
 <head>
 <meta charset="utf-8" />
-<title>투자정보 일괄 업로드</title>
+<title>[[#{screen.text.inv.mng.upload.screen.title}]]</title>
 
 	<!-- css -->
 	<th:block layout:fragment="css">
@@ -37,23 +37,23 @@
 		              return $("<span>").attr("id","row_"+item.poNo).text( getIndex(item)   );
 					 }
 					},
-					{ name: "invNo"		, type: "text"   , width: 100 , align: "center", title: "투자번호" },
-					{ name: "invTtl"	, type: "text"   , width: 150 , align: "left"  , title: "투자명"  },
-	                { name: "invDt"   	, type: "text"	 , width: 100 , align: "left"  , title: "투자일자" },
-					{ name: "invQty"	, type: "text"	 , width: 55  , align: "left"  , title: "투자수량" },
-	                { name: "invAmt"	, type: "text"	 , width: 55  , align: "left"  , title: "투자금액" },
-	                { name: "actgYear"	, type: "text"	 , width: 70  , align: "left"  , title: "회계년도" },
-	                { name: "poNo"		, type: "text"   , width: 100 , align: "center", title: "PO번호"  },
-					{ name: "mfgdNm"	, type: "text"   , width: 100 , align: "left"  , title: "품명"    },
-					{ name: "qty"		, type: "number" , width: 100 , align: "right" , title: "PO수량"  },
-					{ name: "poAmt"		, type: "number" , width: 100 , align: "right" , title: "PO금액"  },
+					{ name: "invNo"		, type: "text"   , width: 100 , align: "center", title: "[[#{screen.text.inv.mng.no}]]"},
+					{ name: "invTtl"	, type: "text"   , width: 150 , align: "left"  , title: "[[#{screen.text.inv.mng.nm}]]"},
+	                { name: "invDt"   	, type: "text"	 , width: 100 , align: "left"  , title: "[[#{screen.text.inv.mng.dt}]]"},
+					{ name: "invQty"	, type: "text"	 , width: 55  , align: "left"  , title: "[[#{screen.text.inv.mng.qty}]]"},
+	                { name: "invAmt"	, type: "text"	 , width: 55  , align: "left"  , title: "[[#{screen.text.inv.mng.amt}]]"},
+	                { name: "actgYear"	, type: "text"	 , width: 70  , align: "left"  , title: "[[#{screen.text.inv.mng.financial.year}]]"},
+	                { name: "poNo"		, type: "text"   , width: 100 , align: "center", title: "[[#{screen.text.inv.mng.po.no}]]"},
+					{ name: "mfgdNm"	, type: "text"   , width: 100 , align: "left"  , title: "[[#{screen.text.inv.mng.item.nm}]]"},
+					{ name: "qty"		, type: "number" , width: 100 , align: "right" , title: "[[#{screen.text.inv.mng.po.qty}]]"},
+					{ name: "poAmt"		, type: "number" , width: 100 , align: "right" , title: "[[#{screen.text.inv.mng.po.amt}]]"},
 					//{ name: "groupNm"	, type: "text"   , width: 100 , align: "center", title: "사업부"   },
 					//{ name: "deptNm"	, type: "text"   , width: 100 , align: "center", title: "부서"	 },					
-					{ name: "invReqr"	, type: "text"   , width: 100 , align: "center", title: "담당자"   },
-					{ name: "vendNm"	, type: "text"   , width: 100 , align: "center", title: "업체"     },
-					{ name: "reqDt" 	, type: "text"   , width: 100 , align: "center", title: "구매요청일자"},
-					{ name: "dlvDt"		, type: "text"   , width: 100 , align: "center", title: "납품일자"   },
-					{ name: "chkResult"	, type: "text"   , width: 150 , align: "left"  , title: "유효성 검증" 
+					{ name: "invReqr"	, type: "text"   , width: 100 , align: "center", title: "[[#{screen.text.inv.mng.charger}]]"},
+					{ name: "vendNm"	, type: "text"   , width: 100 , align: "center", title: "[[#{screen.text.inv.mng.vendor.nm}]]"},
+					{ name: "reqDt" 	, type: "text"   , width: 100 , align: "center", title: "[[#{screen.text.inv.mng.order.dt}]]"},
+					{ name: "dlvDt"		, type: "text"   , width: 100 , align: "center", title: "[[#{screen.text.inv.mng.ship.dt}]]"},
+					{ name: "chkResult"	, type: "text"   , width: 150 , align: "left"  , title: "[[#{screen.text.inv.mng.upload.valid}]]" 
 					 ,itemTemplate : function(value,item) {
 						 return "<span class='red'>"+value+"</span>";
 					 }
@@ -189,7 +189,7 @@
 								console.log('저장 실패!!');
 							}); 
 					}else{
-						alert("유효성이 맞지 않습니다");
+						alert("[[#{screen.info.status.error.inv.upload.invalid}]]");
 					}
 		        });
 				
@@ -231,8 +231,8 @@
 	<div id="pop_wrap" >
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
 					<!-- head -->
-					<h3>투자정보 일괄 업로드
-						 <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a>
+					<h3>[[#{screen.text.inv.mng.upload.screen.title}]]
+						 <a href="#;" id="btn_close_pop" class="pop_close" title="[[#{screen.text.comm.close}]]">[[#{screen.text.comm.close}]]</a>
 					</h3>
 					<!-- //head -->
 					<!-- contents -->
@@ -249,21 +249,21 @@
 											<col width="15%"/>
 									</colgroup>
 									<tr>
-										<th>업로드 건수 : <span id="uploadCnt" class="tr">0</span></th>
+										<th>[[#{screen.text.comm.upload.cnt}]] : <span id="uploadCnt" class="tr">0</span></th>
 										<td valign="top">
 											<table>
 												<tr>
-													<th>파일업로드&nbsp;&nbsp;</th> 
+													<th>[[#{screen.text.comm.upload}]]&nbsp;&nbsp;</th> 
 													<td><input type="text" name="excelNm" id="excelNm" style="width:200px" readOnly > <input type="file" id="upFile" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;"></td>
-													<td>&nbsp;&nbsp;<a href="#;" id="addFile" class="btn_srch">찾아보기</a></td>
-													<td>&nbsp;&nbsp;<input type="checkbox" id="errChk" >&nbsp;오류건만보기</td>
+													<td>&nbsp;&nbsp;<a href="#;" id="addFile" class="btn_srch">[[#{screen.text.comm.file.search}]]</a></td>
+													<td>&nbsp;&nbsp;<input type="checkbox" id="errChk" >&nbsp;[[#{screen.text.inv.mng.view.invalid}]]</td>
 												</tr>
 											</table>
 										</td>
 										<td align="right">
 											<!-- search_button -->
-												<a href="#;" class="btn_download">양식다운로드</a>
-												<a href="#;" class="btn_srch" id="btnSave">저  장</a>
+												<a href="#;" class="btn_download">[[#{screen.text.comm.download.sample}]]</a>
+												<a href="#;" class="btn_srch" id="btnSave">[[#{screen.text.comm.save}]]</a>
 											<!-- //search_button -->
 										</td>
 									</tr>

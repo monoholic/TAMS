@@ -4,7 +4,7 @@
         layout:decorator="layout/popup2">
 <head>
 <meta charset="utf-8" />
-<title>사용자팝업</title>
+<title>[[#{screen.popup.text.user.screen.title}]]</title>
 
 	<!-- css -->
 	<th:block layout:fragment="css">
@@ -85,7 +85,7 @@
 		            }, 
 		            pagerContainerClass: "paginate",
 		            deleteConfirm: function(item) {
-		                return "\""+item.userNm+"("+userId+")"+"\""+ "을 삭제 하시겠습니까?";
+		                return "\""+item.userNm+"("+userId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
 		            },
 		            controller:  {
 		                loadData: function(filter) { 
@@ -157,21 +157,21 @@
 					              return $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.userId == item.userId) + 1;
 								 }
 						},
-		                { name: "userId", type: "text", width: 80, align: "center", readOnly:true , title: "사용자ID" },
-		                { name: "userNm", type: "text", width: 130 ,align: "left"  , title: "사용자명" },
-		                { name: "deptCd", type: "text", width: 80 ,align: "left"  , title: "부서코드" },
-		                { name: "deptNm", type: "text", width: 80 ,align: "left"  , title: "부서명" },
-		                { name: "email", type: "text", width: 80 ,align: "left"  , title: "사용자 이메일" },
-		                { name: "telno", type: "text", width: 80 ,align: "left"  , title: "전화번호" },
+		                { name: "userId", type: "text", width: 80, align: "center", readOnly:true , title: "[[#{screen.popup.text.user.id}]]" },
+		                { name: "userNm", type: "text", width: 130 ,align: "left"  , title: "[[#{screen.popup.text.user.nm}]]" },
+		                { name: "deptCd", type: "text", width: 80 ,align: "left"  , title: "[[#{screen.popup.text.user.dept.cd}]]" },
+		                { name: "deptNm", type: "text", width: 80 ,align: "left"  , title: "[[#{screen.popup.text.user.dept.nm}]]" },
+		                { name: "email", type: "text", width: 80 ,align: "left"  , title: "[[#{screen.popup.text.user.email}]]" },
+		                { name: "telno", type: "text", width: 80 ,align: "left"  , title: "[[#{screen.popup.text.user.telno}]]" },
 		            	{  name : "sel"
 		                	 , align: "center"
 		                	 , width: 60
-		                	 , title: "선택"
+		                	 , title: "[[#{screen.text.comm.choice}]]"
 		                	 , editing: false
 		                	 , sorting: false
 		                	 , filtering: false
 		                	 , itemTemplate: function(value, item) {
-		                       return $("<input>").attr("type", "button").attr("class","btn_list_rd").attr("value","선택")
+		                       return $("<input>").attr("type", "button").attr("class","btn_list_rd").attr("value","[[#{screen.text.comm.choice}]]")
 		                       .on("click", function () {
 		  					  	 	selectItem(item);
 		  					  	 });
@@ -284,7 +284,7 @@
 	<div id="pop_wrap" >
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
 					<!-- head -->
-					<h3>사용자 선택
+					<h3>[[#{screen.popup.text.user.screen.title}]]
 						 <!-- <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a> -->
 					</h3>
 					<!-- //head -->
@@ -305,7 +305,7 @@
 									<tr>
 										<td>
 											<select id="searchType" onkeyup="enterkey()">
-												<option value="none">검색항목 선택</option>
+												<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
 											</select>
 										</td>
 										<td>
@@ -313,7 +313,7 @@
 										</td>
 										<td>
 											<select id="searchType2" onkeyup="enterkey()">
-												<option value="none">검색항목 선택</option>
+												<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
 											</select>
 										</td>
 										<td>
@@ -323,8 +323,8 @@
 								</table>
 								<!-- search_button -->
 								<div class="button">
-									<a href="#;" class="btn_reset">Reset</a>
-									<a href="#;" class="btn_srch">Search</a>
+									<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+									<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 								</div>
 								<!-- //search_button -->
 							</div>
@@ -341,7 +341,7 @@
 					<!-- button -->
 					<div class="pop_button">
 						<p>
-						<a href="#;" id="btn_close_pop" class="btn_list_rd">닫기</a>
+						<a href="#;" id="btn_close_pop" class="btn_list_rd">[[#{screen.text.comm.close}]]</a>
 						</p>
 					</div>
 					<!-- //button -->

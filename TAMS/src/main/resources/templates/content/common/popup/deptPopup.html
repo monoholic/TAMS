@@ -4,7 +4,7 @@
         layout:decorator="layout/popup">
 <head>
 <meta charset="utf-8" />
-<title>부서팝업</title>
+<title>[[#{screen.popup.text.dept.screen.title}]]</title>
 
 	<!-- css -->
 	<th:block layout:fragment="css">
@@ -64,7 +64,7 @@
 		            }, 
 		            pagerContainerClass: "paginate",
 		            deleteConfirm: function(item) {
-		                return "\""+item.userNm+"("+userId+")"+"\""+ "을 삭제 하시겠습니까?";
+		                return "\""+item.userNm+"("+userId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
 		            },
 		            controller:  {
 		                loadData: function(filter) { 
@@ -131,22 +131,22 @@
 		            	{  name : "sel"
 		                	 , align: "center"
 		                	 , width: 60
-		                	 , title: "선택"
+		                	 , title: "[[#{screen.text.comm.choice}]]"
 		                	 , editing: false
 		                	 , sorting: false
 		                	 , filtering: false
 		                	 , itemTemplate: function(value, item) {
-		                       return $("<input>").attr("type", "button").attr("class","btn_list_rd").attr("value","선택")
+		                       return $("<input>").attr("type", "button").attr("class","btn_list_rd").attr("value","[[#{screen.text.comm.choice}]]")
 		                       .on("click", function () {
 		  					  	 	selectItem(item);
 		  					  	 });
 		            		   }
 		                },
-		                { name: "deptCd", type: "text", width: 80, align: "center", readOnly:true , title: "부서코드" },
-		                { name: "deptNm", type: "text", width: 130 ,align: "left"  , title: "부서명" },
-		                { name: "uppDeptCd", type: "text", width: 80 ,align: "left"  , title: "상위 부서코드" },
-		                { name: "loc", type: "text", width: 120 ,align: "left"  , title: "위치" },
-		                { name: "deptChrgrId", type: "text", width: 60 ,align: "center"  , title: "담당자ID" }
+		                { name: "deptCd", type: "text", width: 80, align: "center", readOnly:true , title: "[[#{screen.popup.text.dept.cd}]]" },
+		                { name: "deptNm", type: "text", width: 130 ,align: "left"  , title: "[[#{screen.popup.text.dept.nm}]]" },
+		                { name: "uppDeptCd", type: "text", width: 80 ,align: "left"  , title: "[[#{screen.popup.text.dept.upper.cd}]]" },
+		                { name: "loc", type: "text", width: 120 ,align: "left"  , title: "[[#{screen.popup.text.dept.location}]]" },
+		                { name: "deptChrgrId", type: "text", width: 60 ,align: "center"  , title: "[[#{screen.popup.text.dept.location}]]" }
 		                /*,
 		                { name: "sortOdr", type: "number", width: 100 ,align: "center"  , title: "정렬순서" },
 		                { name: "useYn", type: "select", width: 40 ,align: "center"
@@ -276,8 +276,8 @@
 	<div id="pop_wrap" >
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
 					<!-- head -->
-					<h3>부서선택
-					<a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a>
+					<h3>[[#{screen.popup.text.dept.screen.title}]]
+					<a href="#;" id="btn_close_pop" class="pop_close" title="[[#{screen.text.comm.close}]]">[[#{screen.text.comm.close}]]</a>
 					</h3>
 					<!-- //head -->
 					<!-- contents -->
@@ -295,7 +295,7 @@
 											<col width=""/>
 									</colgroup>
 									<tr>
-										<th>부서명</th>
+										<th>[[#{screen.popup.text.dept.nm}]]</th>
 										<td>
 											<input type="text" id="deptNm"/>
 										</td>
@@ -303,8 +303,8 @@
 								</table>
 								<!-- search_button -->
 								<div class="button">
-									<a href="#;" class="btn_reset">Reset</a>
-									<a href="#;" class="btn_srch">Search</a>
+									<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+									<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 								</div>
 								<!-- //search_button -->
 							</div>
@@ -321,7 +321,7 @@
 					<!-- button -->
 					<div class="pop_button">
 						<p>
-						<a href="#;" class="btn_close_pop" id="btn_close_pop2">닫기</a>
+						<a href="#;" class="btn_close_pop" id="btn_close_pop2">[[#{screen.text.comm.close}]]</a>
 						</p>
 					</div>
 					<!-- //button -->
