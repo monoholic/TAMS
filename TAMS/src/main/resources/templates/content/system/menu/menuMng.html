@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>메뉴관리</title>
+	    <title>[[#{screen.text.menu.screen.title}]]</title>
 	</head>
         
 	<!-- css -->
@@ -81,7 +81,7 @@
 	            }, 
 	            pagerContainerClass: "paginate",
 	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
+	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
 	            },
 	            controller:  {
 	                loadData: function(filter) {
@@ -119,7 +119,7 @@
                 		.then((res) => {
                 			console.log(res);
                 			//$(".save_btn").click();
-                			alert("수정이 완료되었습니다.");
+                			alert("[[#{screen.info.status.update.success}]]");
                 			$("#jsGrid").jsGrid("loadData");
                 		})
                 		.catch((error) => {
@@ -187,29 +187,29 @@
 		    				   });
 					 	 } ,
 	                	},
-	                { name: "menuId", type: "number", width: 40, readOnly:true , title: "MENU ID" },
-	                { name: "menuNm", type: "text", width: 100 ,align: "left"  , title: "MENU NAME" },
-	                { name: "url", type: "text", width: 120 ,align: "left"  , title: "URL" },
-	                { name: "menuDesc", type: "text", width: 120 ,align: "left"  , title: "MENU DESC" },
-	                { name: "uppMenuId", type: "number", width: 40   , title: "UP MENU ID" },
-	                { name: "lvl", type: "number", width: 20  , title: "LEVEL" },
+	                { name: "menuId", type: "number", width: 40, readOnly:true , title: "[[#{screen.text.menu.id}]]" },
+	                { name: "menuNm", type: "text", width: 100 ,align: "left"  , title: "[[#{screen.text.role.auth.nm}]]" },
+	                { name: "url", type: "text", width: 120 ,align: "left"  , title: "[[#{screen.text.role.auth.url}]]" },
+	                { name: "menuDesc", type: "text", width: 120 ,align: "left"  , title: "[[#{screen.text.menu.desc}]]" },
+	                { name: "uppMenuId", type: "number", width: 40   , title: "[[#{screen.text.menu.upper.id}]]" },
+	                { name: "lvl", type: "number", width: 20  , title: "[[#{screen.text.menu.level}]" },
 	                { name: "useYn", type: "select", width: 40 ,align: "center"
 	                	   , items: [
-			                    { Name: "사용",  Id: "Y"},
-			                    { Name: "미사용", Id: "N"},
+			                    { Name: "[[#{screen.text.comm.ues}]]",  Id: "Y"},
+			                    { Name: "[[#{screen.text.comm.unuesd}]]", Id: "N"},
 			                  ],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "USE YN" }
+	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "[[#{screen.text.comm.useyn}]]" }
 	                ,{ name: "popupYn", type: "select", width: 40 ,align: "center"
 	                	   , items: [
-			                    { Name: "사용",  Id: "Y"},
-			                    { Name: "미사용", Id: "N"},
+			                    { Name: "[[#{screen.text.comm.ues}]]",  Id: "Y"},
+			                    { Name: "[[#{screen.text.comm.unuesd}]]", Id: "N"},
 			                  ],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "팝업구분" }
-	                ,{ name: "sortOdr", type: "number", align: "center", width: 40, title: "SORT" }
-	                ,{ name: "regr", type: "text", width: 60, align: "center"  , readOnly:true, title: "등록자" }
-	                ,{ name: "regDt", type: "date", width: 80, align: "center", readOnly:true  , title: "등록일시" }
-	                ,{ name: "updr", type: "text", width: 60, align: "center", readOnly:true  , title: "수정" }
-	                ,{ name: "upDt", type: "date", width: 80, align: "center", readOnly:true  , title: "수정일시" }
+	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "[[#{screen.text.menu.ispopup}]]" }
+	                ,{ name: "sortOdr", type: "number", align: "center", width: 40, title: "[[#{screen.text.menu.sort}]" }
+	                ,{ name: "regr", type: "text", width: 60, align: "center"  , readOnly:true, title: "[[#{screen.text.comm.regr}]" }
+	                ,{ name: "regDt", type: "date", width: 80, align: "center", readOnly:true  , title: "[[#{screen.text.comm.regdt}]" }
+	                ,{ name: "updr", type: "text", width: 60, align: "center", readOnly:true  , title: "[[#{screen.text.comm.updr}]" }
+	                ,{ name: "upDt", type: "date", width: 80, align: "center", readOnly:true  , title: "[[#{screen.text.comm.updt}]" }
 	            ]
 	        });
 	        
@@ -272,11 +272,11 @@
     			$.commRequest(url, reqType, data)
     				.then((res) => {
     					console.log(res);
-    					alert("삭제 되었습니다!");
+    					alert("[[#{screen.info.status.delete.success}]]");
     					$('.btn_srch').click();
     				})
     				.catch((error) => {
-    					alert("오류가 발생했습니다");
+    					alert("[[#{screen.info.status.error.occur}]]");
     					console.log(error);
     				})
     	    	
@@ -443,11 +443,11 @@
 					<col width=""/>
 			</colgroup>
 				<tr>
-					<td><label for="searchText" class="menu_label">메뉴 명</label></td>
+					<td><label for="searchText" class="menu_label">[[#{screen.text.role.menu.nm}]]</label></td>
 					<td><input id="searchText" type="text" style="width:100%; margin:10px;" onkeyup="enterkey()"></td>
 					<td class="search" colspan="3">
-						<a href="#;" class="btn_reset">Reset</a>
-						<a href="#;" class="btn_srch">Search</a>
+						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 					</td>
 				</tr>
 			</table>
@@ -457,9 +457,9 @@
 				<div class="result">Results : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
-					<a class="btn_add">등록</a>
-					<a class="btn_update">수정</a>
-					<a class="btn_del">삭제</a>
+					<a class="btn_add">[[#{screen.btn.insert}]]</a>
+					<a class="btn_update">[[#{screen.btn.update}]]</a>
+					<a class="btn_del">[[#{screen.btn.delete}]]</a>
 				</div>
 				<!-- list_button -->
 		</div>
@@ -480,8 +480,8 @@
 					<h6><span id="head_title" ></span></h6>
 					<!-- list_button -->
 					<div class="button">
-						<a class="btn_list save_btn">저장</a>
-						<a class="btn_list close_btn">닫기</a>
+						<a class="btn_list save_btn">[[#{screen.btn.save}]]</a>
+						<a class="btn_list close_btn">[[#{screen.btn.close}]]</a>
 					</div>
 					<!-- list_button -->
 				</div>
@@ -496,39 +496,39 @@
 						<col />
 						</colgroup>
 						<tr>
-							<th>메뉴ID</th>
+							<th>[[#{screen.text.menu.id}]]</th>
 							<td><input type="text" id="menuId" /></td>
-							<th>메뉴명</th>
+							<th>[[#{screen.text.menu.nm}]]</th>
 							<td><input type="text" id="menuNm" /></td>
 						</tr>
 						<tr>
-							<th>URL</th>
+							<th>[[#{screen.text.menu.url}]]</th>
 							<td><input type="text" id="url" /></td>
-							<th>메뉴 설명</th>
+							<th>[[#{screen.text.menu.desc}]</th>
 							<td><input type="text" id="menuDesc" /></td>
 						</tr>
 						<tr>
-							<th>상위메뉴ID</th>
+							<th>[[#{screen.text.menu.upper.id}]</th>
 							<td><input type="text" id="uppMenuId" /></td>
-							<th>메뉴 Level</th>
+							<th>[[#{screen.text.menu.level}]</th>
 							<td><input type="text" id="menuLvl" /></td>
 						</tr>
 						<tr>
-							<th>팝업구분</th>
+							<th>[[#{screen.text.menu.ispopup}]</th>
 							<td><select id="popupYn">
-									<option value="Y">사용</option>
-									<option value="N">미사용</option>
+									<option value="Y">[[#{screen.text.comm.ues}]</option>
+									<option value="N">[[#{screen.text.comm.unuesd}]</option>
 								</select>
 							</td>
 							<th>Sort Order</th>
 							<td><input type="text" id="sortOdr" /></td>
 						</tr>
 						<tr>
-							<th>사용여부</th>
+							<th>[[#{screen.text.comm.useyn}]</th>
 							<td colspan="3">
 								<select id="useYn">
-									<option value="Y">사용</option>
-									<option value="N">미사용</option>
+									<option value="Y">[[#{screen.text.comm.ues}]</option>
+									<option value="N">[[#{screen.text.comm.unuesd}]</option>
 								</select>
 							</td>
 						</tr>
