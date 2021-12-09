@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>게시판 관리</title>
+	    <title>[[#{screen.text.bbs.screen.title}]]</title>
 	</head>
         
 	<!-- css -->
@@ -50,17 +50,17 @@
 	    var rowIdx = 0;
 	    
 	 	var attachGridField = [
-			{ name: "chk"	, type: "checkbox" , width: 30  , title: "선택"
+			{ name: "chk"	, type: "checkbox" , width: 30  , title: "[[#{screen.text.comm.choice}]]"
 			 ,itemTemplate: function(value, item) {
 				 return '<input type="checkbox" name="add_file" value="'+item.name+'" gbn="'+item.gbn+'" id="'+item.id+'" >';
 			 }	
 			},
-			{ name: "name" , type: "text" , width: 200 , align: "left", title: "파일명"
+			{ name: "name" , type: "text" , width: 200 , align: "left", title: "[[#{screen.text.comm.file.nm}]]"
 			 ,itemTemplate: function(value, item) {
 				 return '<span style="cursor:hand;" onclick="fileDownload(\''+item.gbn+'\',\''+item.realName+'\',\''+item.name+'\')">'+item.name+'</span>';
 			 }
 			},
-			{ name: "size" , type: "number"   , width: 100 , align: "center" , title: "파일사이즈"
+			{ name: "size" , type: "number"   , width: 100 , align: "center" , title: "[[#{screen.text.comm.file.size}]]"
 			 ,itemTemplate: function(value, item) {
 				 return '<span>'+ bytesToSize(item.size) +'</span>';
 			 }
@@ -169,7 +169,7 @@
 	            }, 
 	            pagerContainerClass: "paginate",
 	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
+	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
 	            },
 	            controller:  {
 	                loadData: function(filter) {
@@ -195,7 +195,7 @@
 
 							})
 							.catch((error) => {
-								console.log('메뉴조회 실패!!');
+								console.log('조회 실패!!');
 							});						
 	                    
 	                    return d.promise();
@@ -238,22 +238,22 @@
 					 	 } ,
 	                },
 	                //{ name: "chk", type: "checkbox", width: 30, readOnly:false , title: "Sel<br><br>" },
-	                { name: "bbsId", type: "number", align: "center", width: 25,  title: "게시글 ID" },
-	                { name: "userId", type: "text", align: "center", width: 25, readOnly:true , title: "사용자 ID" },
-	                { name: "bbsGrpId", type: "text", align: "left", width: 35, readOnly:true , title: "게시글 그룹" },
-	                { name: "bbsDp", type: "text", align: "right", width: 20, readOnly:true , title: "레벨" },
-	                { name: "bbsTtl", type: "number", align: "left", width: 110, title: "게시글 제목" },
-	                { name: "viewCnt", type: "number", align: "center", width: 15, title: "조회수" },
+	                { name: "bbsId", type: "number", align: "center", width: 25,  title: "[[#{screen.text.bbs.id}]]" },
+	                { name: "userId", type: "text", align: "center", width: 25, readOnly:true , title: "[[#{screen.text.comm.user.id}]]" },
+	                { name: "bbsGrpId", type: "text", align: "left", width: 35, readOnly:true , title: "[[#{screen.text.bbs.group}]]" },
+	                { name: "bbsDp", type: "text", align: "right", width: 20, readOnly:true , title: "[[#{screen.text.bbs.level}]]" },
+	                { name: "bbsTtl", type: "number", align: "left", width: 110, title: "[[#{screen.text.bbs.title}]]" },
+	                { name: "viewCnt", type: "number", align: "center", width: 15, title: "[[#{screen.text.bbs.view.cnt}]]" },
 	                { name: "delYn", type: "select", width: 20 ,align: "center"
 	                	   , items: [
-			                    { Name: "삭제",  Id: "Y"},
-			                    { Name: "미삭제", Id: "N"},
+			                    { Name: "[[#{screen.text.comm.delete.yes}]]",  Id: "Y"},
+			                    { Name: "[[#{screen.text.comm.delete.no}]]", Id: "N"},
 			                  ],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "삭제 구분" },
-	                { name: "updr", type: "text", align: "left", width: 20, title: "수정자" },
-	                { name: "upDt", type: "text", align: "center", width: 30, title: "수정일자" },
-	                { name: "regr", type: "text", align: "left", width: 20, title: "등록자" },
-	                { name: "regDt", type: "text", align: "center", width: 30, title: "등록일자" },
+	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "[[#{screen.text.bbs.delete.yn}]]" },
+	                { name: "updr", type: "text", align: "left", width: 20, title: "[[#{screen.text.comm.updr}]]" },
+	                { name: "upDt", type: "text", align: "center", width: 30, title: "[[#{screen.text.comm.updt}]]" },
+	                { name: "regr", type: "text", align: "left", width: 20, title: "[[#{screen.text.comm.regr}]]" },
+	                { name: "regDt", type: "text", align: "center", width: 30, title: "[[#{screen.text.comm.regdt}]]" },
 	            ]
 	        });
 	        
@@ -314,13 +314,13 @@
     			$.commRequest(url, reqType, data)
     				.then((res) => {
     					console.log(res);
-    					alert("삭제 되었습니다!");
+    					alert("[[#{screen.info.status.delete.success}]]");
     					
     					selectedItems = [];
     					$('.btn_srch').click();
     				})
     				.catch((error) => {
-    					alert("오류가 발생했습니다");
+    					alert("[[#{screen.info.status.error.occur}]]");
     					console.log(error);
     				})
     	    });
@@ -360,7 +360,7 @@
 			    	$.commRequestFile(url, reqType, attachData)
 						.then((res) => {
 							if(save_mode=="update")
-								alert("수정이 완료되었습니다.");
+								alert("[[#{screen.info.status.update.success}]]");
 							
 							console.log(save_mode);
 							console.log('게시판 저장 성공!!');
@@ -421,7 +421,7 @@
             
           	//web editor 설정
 			$("#summernote").summernote({
-	            placeholder: '내용을 작성하세요',
+	            placeholder: '[[#{screen.text.bbs.note.placeholder}]]',
 	            height: 150,
 	            maxHeight: 170,
 	            minHeight: 170,
@@ -455,7 +455,7 @@
 			 			})
 			 		})
 			 		.catch((error) => {                                                                      
-			 			alert('메뉴조회 실패!!');                                                                  
+			 			alert('조회 실패!!');                                                                  
 			 		});
 			});
 			
@@ -543,11 +543,11 @@
 	    	if(selectedItems.length <= 1){
 	    		$("#fileGrid").jsGrid(getGridBody());
 	    		
-		    	let title = "게시글 등록";
+		    	let title = "[[#{screen.text.bbs.insert.title}]]";
 		    	 var readOnly = false;
 		    	 
 		    	 if( item != null ) {
-		    		 title = "게시글 수정";
+		    		 title = "[[#{screen.text.bbs.update.title}]]";
 		    		 save_mode = "update";
 		    		 
 		    		 readOnly = false;
@@ -605,7 +605,7 @@
 	             }).center().show();
 		    	 
 	    	}else{
-	    		alert("수정은 1개이상 되지 않습니다.");
+	    		alert("[[#{screen.info.status.modify.just.one}]]");
 	    	}
 	    }
 	    
@@ -686,11 +686,11 @@
 	    	let code = '202';
 			
 			if($("#bbsTtl").val() == "") {
-				alert("제목을 입력해 주세요.");
+				alert("[[#{screen.info.status.error.input.title}]]");
 				$("#bbsTtl").focus();
 				code = '200';
 			}else if($("#summernote").val() == "") {
-				alert("내용을 입력해 주세요.");
+				alert("[[#{screen.info.status.error.input.content}]]");
 				$("#summernote").focus();
 				code = '200';
 			}
@@ -721,9 +721,9 @@
 				<tr>
 					<td>
 						<select id="searchOption" style="width:90%;">
-							<option value="">검색항목 선택</option>
-							<option value="bbs_grp_id">게시글 그룹</option>
-							<option value="bbs_ttl">게시글 제목</option>
+							<option value="">[[#{screen.text.comm.select.search.condition}]]</option>
+							<option value="bbs_grp_id">[[#{screen.text.bbs.group}]]</option>
+							<option value="bbs_ttl">[[#{screen.text.bbs.title}]]</option>
 						</select>
 					</td>	
 					<td>
@@ -732,15 +732,15 @@
 					
 					<td>
 						<select id="delYnOption" style="width:40%;">
-							<option value="">삭제 구분</option>
-							<option value="Y">삭제</option>
-							<option value="N">미삭제</option>
+							<option value="">[[#{screen.text.bbs.delete.yn}]]</option>
+							<option value="Y">[[#{screen.text.comm.delete.yes}]]</option>
+							<option value="N">[[#{screen.text.comm.delete.no}]]</option>
 						</select>
 					</td>
 					
 					<td class="search" colspan="3">
-						<a href="#;" class="btn_reset">Reset</a>
-						<a href="#;" class="btn_srch">Search</a>
+						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 					</td>
 				</tr>
 			</table>
@@ -755,9 +755,9 @@
 					<a class="btn_saveall">일괄 저장</a>
 					<a class="btn_del">메뉴 삭제</a>
 					-->
-					<a class="btn_add">등록</a>
-					<a class="btn_update">수정</a>
-					<a class="btn_del">삭제</a>
+					<a class="btn_add">[[#{screen.btn.insert}]]</a>
+					<a class="btn_update">[[#{screen.btn.update}]]</a>
+					<a class="btn_del">[[#{screen.btn.delete}]]</a>
 				</div>
 				<!-- list_button -->
 		</div>
@@ -778,8 +778,8 @@
 					<h6><span id="head_title" ></span></h6>
 					<!-- list_button -->
 					<div class="button">
-						<a class="btn_list save_btn">저장</a>
-						<a class="btn_list close_btn">닫기</a>
+						<a class="btn_list save_btn">[[#{screen.btn.save}]]</a>
+						<a class="btn_list close_btn">[[#{screen.btn.close}]]</a>
 					</div>
 					<!-- list_button -->
 				</div>
@@ -794,41 +794,41 @@
 					</colgroup>
 					
 					<tr>
-						<th style="text-align:center;">게시글 그룹</th>
+						<th style="text-align:center;">[[#{screen.text.bbs.group}]]</th>
 						<td>
 							<select id="bbsGrpId" style="width:100%">
-								<option selected value="">검색항목 선택</option>
+								<option selected value="">[[#{screen.text.comm.select.search.condition}]]</option>
 							</select>
 						</td>
 					</tr>
 									
 					<tr>
-						<th style="text-align:center;">제목</th>
+						<th style="text-align:center;">[[#{screen.text.bbs.title}]</th>
 						<td colspan="5">
 							<input id="bbsId" type="hidden">
 							<input id="bbsTtl" style="width:100%" type="text" >
 						</td>
 					</tr>
 					<tr>
-						<th style="text-align:center;">게시글 내용</th>
+						<th style="text-align:center;">[[#{screen.text.bbs.content}]</th>
 						<td>
 							<textarea id="summernote" class="bbsCn" ></textarea>
 						</td>
 					</tr>
 					<tr>
-						<th style="text-align:center;">첨부파일</th>
+						<th style="text-align:center;">[[#{screen.text.comm.file}]]</th>
 						<td>
 							<table>
 								<tr>
 									<td width="55%">
 										<input type="file" id="upFile" style="display:none;">
-											<a id="addFile" class="btn_file_srch">파일찾기</a>
-											<a id="delFile" class="btn_list">파일삭제</a>
-											&nbsp;<label for="totalSize" >총 파일크기</label> :
+											<a id="addFile" class="btn_file_srch">[[#{screen.text.comm.file.search}]]</a>
+											<a id="delFile" class="btn_list">[[#{screen.text.comm.file.delete}]]</a>
+											&nbsp;<label for="totalSize" >[[#{screen.text.comm.file.size}]]</label> :
 										<input type="text" name="totalSize" id="totalSize" readonly style="width:50px;">
 									</td>
 									<td>
-										<div id="dragFile" class="box_form" style="cursor:pointer;text-align:center;" >파일을 여기에 끌어다 놓으세요.</div>
+										<div id="dragFile" class="box_form" style="cursor:pointer;text-align:center;" >[[#{screen.text.comm.file.drag.text}]]</div>
 									</td>
 								</tr>
 								<tr>

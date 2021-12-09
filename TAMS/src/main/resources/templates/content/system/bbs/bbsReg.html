@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>게시판</title>
+	    <title>[[#{screen.text.bbs.insert.title}]]</title>
 	</head>
         
 	<!-- css -->
@@ -52,17 +52,17 @@
 		    
 		    var rowIdx = 0;
 			var attachGridField = [
-					{ name: "chk"	, type: "checkbox" , width: 30  , title: "선택"
+					{ name: "chk"	, type: "checkbox" , width: 30  , title: "[[#{screen.text.comm.choice}]]"
 					 ,itemTemplate: function(value, item) { 
 						 return '<input type="checkbox" name="add_file" value="'+item.name+'" gbn="'+item.gbn+'" id="'+item.id+'" >';
 					 }	
 					},
-					{ name: "name"	, type: "text"     , width: 200 , align: "left", title: "파일명"
+					{ name: "name"	, type: "text"     , width: 200 , align: "left", title: "[[#{screen.text.comm.file.nm}]]"
 					 ,itemTemplate: function(value, item) {
 						 return '<span style="cursor:hand;" onclick="fileDownload(\''+item.gbn+'\',\''+item.realName+'\',\''+item.name+'\')">'+item.name+'</span>';
 					 }
 					},
-					{ name: "size"	, type: "number"   , width: 100 , align: "right" , title: "파일사이즈"
+					{ name: "size"	, type: "number"   , width: 100 , align: "right" , title: "[[#{screen.text.comm.file.size}]]"
 					 ,itemTemplate: function(value, item) {
 						 return '<span>'+ bytesToSize(item.size) +'</span>';
 					 }
@@ -86,7 +86,7 @@
 			}
 			
 			function fileDownload(gbn, realName, name) { console.log(gbn);
-				 if( gbn == "undefined" && confirm("다운로드 하시겠습니까?") ) {
+				 if( gbn == "undefined" && confirm("[[#{screen.info.status.file.download.yn}]]") ) {
        		      
 		            	//파일 다운로드
 		            	var $form = $('<form></form>'); 
@@ -350,7 +350,7 @@
 				
 				//web editor 설정
 				$("#summernote").summernote({
-		            placeholder: '내용을 작성하세요',
+		            placeholder: '[[#{screen.text.bbs.note.placeholder}]]',
 		            height: 400,
 		            maxHeight: 400,
 		            lang:"ko-KR",
@@ -413,14 +413,14 @@
 			    <div></div>
 		        <!-- list_head -->
 				<div class="list_head">
-					<h6><span id="head_title" >게시판 등록/조회 테스트</span></h6>
+					<h6><span id="head_title">게시판 등록/조회 테스트</span></h6>
 					<!-- list_button -->
 					<div class="button">
-						<label for="searchText">게시판ID</label>
+						<label for="searchText">[[#{screen.text.bbs.id}]]</label>
 						<input type="text" name="searchText" id="searchText">
-						<a class="btn_list search_btn">조회</a>
-						<a class="btn_list save_btn">저장</a>
-						<a class="btn_list close_btn">닫기</a>
+						<a class="btn_list search_btn">[[#{screen.btn.search}]]</a>
+						<a class="btn_list save_btn">[[#{screen.btn.save}]]</a>
+						<a class="btn_list close_btn">[[#{screen.btn.close}]]</a>
 					</div>
 					<!-- list_button -->
 				</div>
@@ -447,14 +447,14 @@
 									<tr>
 										<td width="35%">
 											<input type="file" id="upFile" style="display:none;">
-											<a id="addFile" class="btn_srch">파일찾기</a>
-											<a id="delFile" class="btn_list">파일삭제</a>
+											<a id="addFile" class="btn_srch">[[#{screen.text.comm.file.search}]]</a>
+											<a id="delFile" class="btn_list">[[#{screen.text.comm.file.delete}]]</a>
 											&nbsp;&nbsp;
-											<label for="totalSize" >총 파일크기</label> :
+											<label for="totalSize" >[[#{screen.text.comm.file.total.size}]]</label> :
 											<input type="text" name="totalSize" id="totalSize" readonly>
 										</td>
 										<td>
-											<div id="dragFile" class="box_form" style="cursor:pointer;text-align:center;" >파일을 여기에 끌어다 놓으세요.</div>
+											<div id="dragFile" class="box_form" style="cursor:pointer;text-align:center;" >[[#{screen.text.comm.file.drag.text}]]</div>
 										</td>
 									</tr>
 									<tr>

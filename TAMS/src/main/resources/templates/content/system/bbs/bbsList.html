@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>게시판 관리</title>
+	    <title>[[#{screen.text.bbs.screen.title}]]</title>
 	</head>
         
 	<!-- css -->
@@ -50,7 +50,7 @@
 		 			})
 		 		})
 		 		.catch((error) => {                                                                      
-		 			alert('메뉴조회 실패!!');                                                                  
+		 			alert('조회 실패!!');                                                                  
 		 		});
 		 });
 	 	
@@ -95,7 +95,7 @@
 	            }, 
 	            pagerContainerClass: "paginate",
 	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
+	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
 	            },
 	            controller:  {
 	                loadData: function(filter) {
@@ -121,7 +121,7 @@
 
 							})
 							.catch((error) => {
-								console.log('메뉴조회 실패!!');
+								console.log('조회 실패!!');
 							});						
 	                    
 	                    return d.promise();
@@ -129,11 +129,11 @@
             	},
             	
 	            fields: [
-	                { name: "bbsId", type: "number", align: "center", width: 15,  title: "번호" },
-	                { name: "bbsTtl", type: "text", align: "left", width: 150, title: "게시글 제목" },
-	                { name: "userId", type: "text", align: "left", width: 20, readOnly:true , title: "작성자" },
-	                { name: "regDt", type: "text", align: "center", width: 30, title: "작성일" },
-	                { name: "viewCnt", type: "number", align: "center", width: 15, title: "조회수" },
+	                { name: "bbsId", type: "number", align: "center", width: 15,  title: "[[#{screen.text.bbs.no}]]" },
+	                { name: "bbsTtl", type: "text", align: "left", width: 150, title: "[[#{screen.text.bbs.title}]]" },
+	                { name: "userId", type: "text", align: "left", width: 20, readOnly:true , title: "[[#{screen.text.comm.regr}]]" },
+	                { name: "regDt", type: "text", align: "center", width: 30, title: "[[#{screen.text.comm.regdt}]]" },
+	                { name: "viewCnt", type: "number", align: "center", width: 15, title: "[[#{screen.text.bbs.view.cnt}]]" },
 	            ]
 	        });
 	        
@@ -195,8 +195,8 @@
 				<tr>
 					<td>
 						<select id="searchOption" style="width:90%;">
-							<option value="">검색항목 선택</option>
-							<option value="bbs_ttl">게시글 제목</option>
+							<option value="">[[#{screen.text.comm.select.search.condition}]]</option>
+							<option value="bbs_ttl">[[#{screen.text.bbs.title}]]</option>
 						</select>
 					</td>	
 					<td>
@@ -205,15 +205,15 @@
 					
 					<td>
 						<select id="delYnOption" style="width:40%;">
-							<option value="">삭제 구분</option>
-							<option value="Y">삭제</option>
-							<option value="N">미삭제</option>
+							<option value="">[[#{screen.text.comm.select.delete.yn}]]</option>
+							<option value="Y">[[#{screen.text.comm.delete.yes}]]</option>
+							<option value="N">[[#{screen.text.comm.delete.no}]]</option>
 						</select>
 					</td>
 					
 					<td class="search" colspan="3">
-						<a href="#;" class="btn_reset">Reset</a>
-						<a href="#;" class="btn_srch">Search</a>
+						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 					</td>
 				</tr>
 			</table>
