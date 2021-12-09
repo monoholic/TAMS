@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.co.trito.tams.web.asset.regist.invest.mapper.InvInqrMapper">
+<mapper namespace="kr.co.trito.tams.web.asset.regist.invest.mapper.InvestRegistMapper">
 	
 	<select id="selectCountInvest" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
    SELECT COUNT(*)
@@ -82,7 +82,7 @@
 		</if>
 	</select>
 	
-	<select id="selectInvestInqrList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvInqrDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+	<select id="selectInvestRegList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
   SELECT c.*
     FROM
 		 (
@@ -188,7 +188,81 @@
 		</choose>
 	</select>
 	
-	<select id="selectInvInqrExcelList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+	<select id="selectInvestReg" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+  SELECT c.*
+    FROM
+		 (
+		   SELECT b.rn as rn
+				, b.inv_no 	    as invNo
+				, b.inv_ttl 	as invTtl
+				, b.inv_dt      as invDt
+				, b.po_no 		as poNo
+				, b.mfgd_nm 	as mfgdNm
+				, b.qty 		as qty
+				, b.po_amt     as poAmt
+				, f.dept_nm     as uppDeptNm
+				, b.upp_dept_cd as uppDeptCd 
+				, b.dept_nm 	as deptNm
+				, b.dept_cd 	as deptCd
+				, b.inv_reqr 	as invReqr
+				, b.user_nm 	as userNm
+				, b.user_id    as userId
+				, b.asetQty
+				, b.qty - b.asetQty as noAsetQty
+				  FROM    
+						(
+							SELECT a.rn
+						  		 , a.inv_no
+								 , a.inv_ttl
+								 , date_format(a.inv_dt, '%Y-%m-%d')as inv_dt
+								 , a.po_no
+								 , a.mfgd_nm
+								 , a.qty
+								 , a.po_amt
+								 , a.upp_dept_cd
+								 , a.dept_cd
+								 , a.dept_nm
+								 , a.inv_reqr
+								 , a.user_nm
+								 , a.user_id
+								 , IFNULL((SELECT qty
+							 		FROM tb_po_aset B
+							 		WHERE 1 = 1
+							 		AND B.PO_NO = A.PO_NO), 0) as asetQty
+							  FROM (
+										SELECT ROW_NUMBER() OVER(ORDER BY CAST(b.po_no AS int) DESC) as rn
+										  	 , a.inv_no
+											 , a.inv_ttl
+											 , b.po_no
+											 , b.mfgd_nm
+											 , b.qty
+											 , a.inv_dt
+											 , b.po_amt
+											 , e.upp_dept_cd
+											 , e.dept_cd
+											 , e.dept_nm
+											 , a.inv_reqr
+									 		 , d.user_nm
+									 		 , d.user_id
+										FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
+										WHERE 1 = 1
+										AND A.inv_no = B.inv_no
+								        AND D.use_yn = 'Y'
+										AND E.use_yn = 'Y'
+										AND A.regr = D.user_id
+										AND D.dept_cd = E.dept_cd
+										<if test="params.poNo != '' and params.poNo != null">
+										AND B.po_no = #{params.poNo}
+                                        </if>
+									) AS a
+						) AS b	
+				LEFT OUTER JOIN TB_DEPT F
+				ON f.use_yn = 'Y'
+				AND f.dept_cd = b.upp_dept_cd
+			) as c
+	</select>
+	
+	<select id="selectInvInqrExcelList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
 					   SELECT b.rn as rn
 							, b.inv_no 	    as invNo
 							, b.inv_ttl 	as invTtl

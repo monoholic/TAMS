@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html 	xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorator="layout/popup2">
+        layout:decorator="layout/default">
 
 	<head>
-	    <title>자산 등록(투자정보조회)</title>
+	    <title>[[#{screen.text.inv.screen.title}]]</title>
 	</head>
         
 	<!-- css -->
@@ -30,15 +30,16 @@
 	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
 		
 	    <script>
-	    
 	    // 공통코드(자산유형 1레벨 출력)
-	    let numOfRows = 15;
+	    let numOfRows = 10;
 	    var status = true;
         var selectedItems = [];
 	 	var insertedItems = [];
 	 	var updatedItems = [];
+	 	//var currentPage = 1;
 	 	
 	 	var asetType = [];
+	 	//var condition = {};
 	 	
 	    $(function(){
 	        $("#jsGrid").jsGrid({
@@ -71,6 +72,7 @@
 						// detail form
 						/* alert(JSON.stringify(args)); */
 						// showDetailForm(args.item);
+						openAsetListPopup(args.item);
 						
 					} else {
 					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
@@ -91,56 +93,86 @@
 	                    currentPage = filter.pageIndex;
 	                    
 	                    
-	                    let url = "/asset/regist/invest/regAset/regAsetList";
+	                    let url = "/asset/regist/invest/investReg/investRegList";
 						let reqType = 'GET';	
 						let data = {
             				"currentPage"  : filter.pageIndex,
             				"numOfRows"    : numOfRows,
-            				"poNo"         : "[[${poNo}]]",
+            				"invNo"   	   : $("#invNo").val(),
+            				"invTtl"   	   : $("#invTtl").val(),
+            				"poNo"         : $("#poNo").val(),
+            				"mfgdNm"   	   : $("#mfgdNm").val(),
+            				"deptCd"       : $("#deptCd").val(),
+            				"userId"   	   : $("#userId").val(),
+            			    "fromDate"     : $("#fromDate").val().replaceAll("-", ""),
+        				    "toDate"       : $("#toDate").val().replaceAll("-", ""),
+        				    "regYn"	   	   : $("#regYn").val(),
             				"sortField"    : filter.sortField,
             				"sortOrder"    : filter.sortOrder
             			}
 						$.commRequest(url, reqType, data)
 							.then((res) => {
 								console.log(res);
-								$(".result").text("Totals : " + res.condition.totalCount);
+								$(".result").text("Results : " + res.condition.totalCount);
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
-								
-								$("#invNo").val(res.data2[0].invNo);
-								$("#invTtl").val(res.data2[0].invTtl);
-								$("#poNo").val(res.data2[0].poNo);
-								$("#mfgdNm").val(res.data2[0].mfgdNm);
-								$("#qty").val(res.data2[0].qty);
-								$("#uppDeptNm").val(res.data2[0].uppDeptNm);
-								$("#deptNm").val(res.data2[0].deptNm);
-								$("#invReqr").val(res.data2[0].invReqr);
-								
-								$("#all").val(res.data2[0].qty);
-								$("#cpt").val(res.data2[0].asetQty);
-								$("#icpt").val(res.data2[0].noAsetQty);
-								
+								currentPage = res.condition.currentPage;
+								condition = res.condition;
 							})
 							.catch((error) => {
-								console.log('메뉴조회 실패!!');
+								console.log('[[#{screen.info.status.error.search}]]');
 							});						
 	                    
 	                    return d.promise();
 	                },
             },
 	            fields: [
-	            	{ name: "asetNo"    	, type: "text"	, width: 70 	, align: "left"  , title: "자산번호"   },
-	                { name: "asetType1"   	, type: "text"	, width: 100	, align: "left"  , title: "자산유형1"  },
-	                { name: "asetType2"   	, type: "text"	, width: 100	, align: "left"  , title: "자산유형2"  },
-	                { name: "asetType3"	   	, type: "text"	, width: 100	, align: "left"  , title: "자산유형3"  },
-	                { name: "mftco"   		, type: "text"	, width: 100	, align: "left"  , title: "제조사" 	 },
-	                { name: "model"	   		, type: "text"	, width: 30 	, align: "left"  , title: "모델"      },
-	                { name: "sn"    		, type: "text"	, width: 100	, align: "left"  , title: "S/N"      },
-	                { name: "deptNm"   		, type: "text"	, width: 100	, align: "left"  , title: "사업부" 	 },
-	                { name: "deptNm"   		, type: "text"	, width: 100	, align: "left"  , title: "부서" 	     },
-	                { name: "chrgr"   		, type: "text"	, width: 100	, align: "left"  , title: "담당자"     },
-	                { name: "asetQty"  		, type: "text"	, width: 100	, align: "left"  , title: "자산확정여부" },
-	                { name: "noAsetQty"		, type: "text"	, width: 100	, align: "left"  , title: "태깅여부"    },
-	                { name: "asetStatus"		, type: "text"	, width: 100	, align: "left"  , title: "등록상태"}
+	            	{  name : "chk"
+	                	 , align: "center"
+	                	 , width: 30
+	                	 , title: ""
+	                	 , editing: false
+	                	 , sorting: false
+	                	 , filtering: false
+	                	 , itemTemplate: function(value, item) {
+	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
+	                       .prop("checked", $.inArray(item.firstName, selectedItems) > -1)
+	                       .on("change", function () {
+	  					  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
+	  					  	 });
+	            		   }
+	                	 , headerTemplate : function ()  { 
+						  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
+		                     .on("change", function (item) {
+		             	    	selectedItems = [];
+		            	    	if(this.checked) { // check select status
+		            	            $('.singleCheckbox').each(function() { 
+		            	                $(this).prop("checked", true).change();
+		            	            });			         
+		            	        }else {
+		            	            $('.singleCheckbox').each(function() { 
+		            	            	$(this).prop("checked", false).change();
+		            	            });  
+		            	            selectedItems = [];
+		            	        }
+		    				   });
+					 	 } ,
+	                },
+	            	{ name: "invNo"    , type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.inv.no}]]"    },
+	                { name: "invTtl"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.ttl}]]"   },
+	                { name: "invDt"    , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.dt}]]"    },
+	                { name: "poNo"	   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.no}]]"     },
+	                { name: "mfgdNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.mfgdnm}]]" },
+	                { name: "qty"	   , type: "text", width: 30 , align: "left"  , title: "[[#{screen.text.po.qty}]]"    },
+	                { name: "poAmt"    , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.amt}]]"    },
+	                { name: "deptNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.dept.nm}]]"   },
+	                { name: "userNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.reqr}]]"  },
+	                { name: "invReqr"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.reqr}]]",  visible: false },
+	                { name: "asetQty"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.asetqty}]]",
+	                  itemTemplate: function(value, item) {
+	                    return '<a href="javascript:void(0);" onclick="openAsetListPopup(' + item.poNo + ');">' + value + '</a>';
+	                  }
+	                },
+	                { name: "noAsetQty", type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.noasetqty}]]"  }
 	            ]
 	        });
 	        
@@ -229,9 +261,12 @@
      	    });
      	    
      	    $("#excelDown").on("click",function() {
-     	    	
+     	    	    
 			       	event.preventDefault();
-	                let url = "/aset/regist/invest/invInqr/invListExcel";
+			       	
+			       	$(".btn_srch").click();
+			       	
+	                let url = "/asset/regist/invest/investReg/invListExcel";
 					
 					var $form = $('<form id="downForm"></form>'); 
 						$form.attr('action', url); 
@@ -245,7 +280,7 @@
 						inputStr = $('<input type="hidden" value="'+ $("#" + idArr[i]).val() + '" name="' + idArr[i] +'">');	
 						$form.append(inputStr);
 					});
-
+					
 						$form.appendTo('body'); 
 						$form.submit();
 						
@@ -280,7 +315,7 @@
 	    	var toDate = $("#toDate").val().replaceAll("-", "");
 	    	
 			if(fromDate > toDate) {
-				alert("날짜를 다시 선택해 주세요");
+				alert("[[#{screen.info.status.date.fail}]]");
 				$("#toDate").focus();
 				code = '200';
 			}
@@ -291,19 +326,35 @@
 			opener.selectAsetList(item);
 			window.close();
 	    }
+	    
+	    function openAsetListPopup(val){
+	    	console.log(val.poNo);
+	    	
+     	    // 팝업 호출 url
+	        var url = "/asset/regist/invest/regAset";
+	        var popId = "RegAsetPopup";
+	        var args = {
+	        };
+	        args.width = 1250;
+	        args.height = 650;
+	        args.fullscreen = "no";
+	        args.resizable = "no";
+	        
+	        var param = {};
+	        param.id     = "poNo";
+	        param.value  = val.poNo;
+	        
+	        openPopup(popId, url, args, param);	
+	    }
 	    </script>	
 	</th:block>
 
 	<div layout:fragment="content">
-	
-	<!-- pop_alert -->
-	<div id="pop_wrap" >	
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
-			<!-- head -->
-			<h3>투자정보조회
-				 <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a>
-			</h3>
-			<!-- //head -->
+			<!-- contents_head -->
+			<div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div>
+			<h3><span th:text="${menuNm}"></span></h3>
+			<!-- //contents_head -->
 			<!-- contents -->
 			<div id="contents">
 				<div class="srch_wrap">
@@ -323,43 +374,61 @@
 							</colgroup>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">투자번호</th>
+								<th style="text-align:center;">[[#{screen.text.inv.no}]]</th>
 								<td><input type="text" id="invNo" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">투자명</th>
+								<th style="text-align:center;">[[#{screen.text.inv.ttl}]]</th>
 								<td><input type="text" id="invTtl" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">PO번호</th>
+								<th style="text-align:center;">[[#{screen.text.po.no}]]</th>
 								<td><input type="text" id="poNo" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
 							</tr>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">품명</th>
+								<th style="text-align:center;">[[#{screen.text.po.mfgdnm}]]</th>
 								<td><input type="text" id="mfgdNm" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">수량</th>
-								<td><input type="text" id="qty" onkeyup="enterkey()" style="width:100%;"></td>
+								<th style="text-align:center;">[[#{screen.text.dept.nm}]]</th>
+								<td th:if="${session.MenuRoleCheck.roleId}=='ROLE_ADMIN'">
+									<input type="hidden" id="deptCd"/>
+									<div class="inqr_popup_btn">
+										<input type="text" id="deptNm" style="width:100%; border-right: 1px none;" />
+										<a href="#" id="openDeptPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+									</div>
+								</td>
+								<td th:if="${session.MenuRoleCheck.roleId}!='ROLE_ADMIN'">
+									<input type="text" id="deptNm" style="width:100%;" />
+								</td>
 								<td></td>
-								<th style="text-align:center;">사업부</th>
-                                <td><input type="text" id="uppDeptNm" onkeyup="enterkey()" style="width:100%;"></td>
+								<th style="text-align:center;">[[#{screen.text.inv.reqr}]]</th>
+								<td>
+									<input type="hidden" id="userId"/>
+									<div class="inqr_popup_btn">
+										<input type="text" id="userNm" style="width:100%; border-right: 1px none;" />
+										<a href="#" id="openUserFilterPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+									</div>
+								</td>
 								<td></td>
 							</tr>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">부서</th>
-                                <td><input type="text" id="deptNm" onkeyup="enterkey()" style="width:100%;"></td>
+								<th style="text-align:center;">[[#{screen.text.inv.dt}]]</th>
+								<td class="aset_td"><input type="date" id="fromDate" class="aset_date"><input type="date" id="toDate" class="aset_date"></td>
 								<td></td>
-								<th style="text-align:center;">담당자</th>
-                                <td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;"></td>
-								<td></td>
-								<th style="text-align:center;">전체/완료/미완료</th>
+								<th>[[#{screen.text.inv.asetinqr}]]</th>
 								<td>
-								    <div id="asetStatusQty">
-										<input type="text" id="all" onkeyup="enterkey()" style="width:100%;">
-										<input type="text" id="cpt" onkeyup="enterkey()" style="width:100%;">
-										<input type="text" id="icpt" onkeyup="enterkey()" style="width:100%;">
-									</div>
+									<select id="regYn" style="width:100%;">
+										<option value="">선택</option>
+										<option value="Y">Y</option>
+										<option value="N">N</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class="search" colspan="10 ">
+									<a href="#;" class="btn_reset">Reset</a>
+									<a href="#;" class="btn_srch">Search</a>
 								</td>
 							</tr>
 						</table>
@@ -368,10 +437,7 @@
 					<div class="list_head">
 						<div class="result">Totals : 0,000</div>
 						<div class="button">
-							<a class="btn_sel" id="excelDown">신규자산 등록</a>
-							<a class="btn_sel" id="excelDown">개조자산 선택</a>
-							<a class="btn_sel" id="excelDown">일괄 업로드</a>
-							<a class="btn_sel" id="excelDown">엑셀 다운로드</a>
+							<a class="btn_sel" id="excelDown">[[#{screen.btn.excel}]]</a>
 						</div>
 						<!-- list_button -->
 					</div>
@@ -379,7 +445,6 @@
 			</div>
 			
 			<div id="excelDownTarget"></div>
-			<!-- //pop_alert -->
-		</div>			
-	</div>
+			
+		</div>
 </html>

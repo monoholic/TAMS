@@ -22,6 +22,12 @@ public class ResponseService {
 		return ResponseEntity.ok().body(pageResponse);
 	}
 	
+	public ResponseEntity<PageResponse> success(SearchCondition condition, List<?> data, List<?> data2){
+		PageResponse pageResponse = new PageResponse(condition, data, data2);
+		this.setSuccessMsg(pageResponse);
+		return ResponseEntity.ok().body(pageResponse);
+	}
+	
 	public <T>ResponseEntity<GeneralResponse<T>> success(String code, String message){
 		return this.success(code, message, null);
 	}	

@@ -15,8 +15,8 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-@ApiModel("투자정보엑셀DTO")
-public class InvExcelDto{
+@ApiModel("공통코드")
+public class InvestRegistDto{
 	@ApiModelProperty(value="투자번호")
 	private String invNo;
 	@ApiModelProperty(value="투자명")
@@ -33,10 +33,27 @@ public class InvExcelDto{
 	private String poAmt;
 	@ApiModelProperty(value="부서")
 	private String deptNm;
+	@ApiModelProperty(value="부서코드")
+	private String deptCd;
+	@ApiModelProperty(value="사업부")
+	private String uppDeptNm;
+	@ApiModelProperty(value="사업부코드")
+	private String uppDeptCd;
 	@ApiModelProperty(value="담당자")
-	private String invReqr;
+	private String invReqr;	
+	@ApiModelProperty(value="유저명")
+	private String userNm;
+	@ApiModelProperty(value="유저ID")
+	private String userId;
 	@ApiModelProperty(value="등록된 자산 수량")
 	private String asetQty;
 	@ApiModelProperty(value="미등록된 자산 수량")
 	private String noAsetQty;
+	@ApiModelProperty(value="투자일자(시작)")
+	private String fromDate;
+	@ApiModelProperty(value="투자일자(종료)")
+	private String toDate;
+	@ApiModelProperty(value="미등록자산여부")
+	private String regYn;
+	
 }
