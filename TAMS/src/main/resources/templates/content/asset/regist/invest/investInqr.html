@@ -29,13 +29,14 @@
 	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
 	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
 		
-	    <script th:inline="javascript">
+	    <script>
 	    // 공통코드(자산유형 1레벨 출력)
-	    let numOfRows = 15;
+	    let numOfRows = 10;
 	    var status = true;
         var selectedItems = [];
 	 	var insertedItems = [];
 	 	var updatedItems = [];
+	 	var currentPage = 1;
 	 	
 	 	var asetType = [];
 	 	
@@ -90,7 +91,7 @@
 	                    currentPage = filter.pageIndex;
 	                    
 	                    
-	                    let url = "/aset/regist/invest/investInqr/investInqrList";
+	                    let url = "/asset/regist/invest/investInqr/investInqrList";
 						let reqType = 'GET';	
 						let data = {
             				"currentPage"  : filter.pageIndex,
@@ -112,10 +113,10 @@
 								console.log(res);
 								$(".result").text("Results : " + res.condition.totalCount);
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
-
+								currentPage = res.condition.currentPage;
 							})
 							.catch((error) => {
-								console.log([[#{screen.error.inqrfail}]]);
+								console.log('[[#{screen.error.inqrfail}]]');
 							});						
 	                    
 	                    return d.promise();
@@ -153,22 +154,22 @@
 		    				   });
 					 	 } ,
 	                },
-	            	{ name: "invNo"    , type: "text", width: 70 , align: "left"  , title: [[#{screen.text.inv.no}]]    },
-	                { name: "invTtl"   , type: "text", width: 100, align: "left"  , title: [[#{screen.text.inv.ttl}]]   },
-	                { name: "invDt"    , type: "text", width: 100, align: "left"  , title: [[#{screen.text.inv.dt}]]    },
-	                { name: "poNo"	   , type: "text", width: 100, align: "left"  , title: [[#{screen.text.po.no}]]     },
-	                { name: "mfgdNm"   , type: "text", width: 100, align: "left"  , title: [[#{screen.text.po.mfgdnm}]] },
-	                { name: "qty"	   , type: "text", width: 30 , align: "left"  , title: [[#{screen.text.po.qty}]]    },
-	                { name: "poAmt"    , type: "text", width: 100, align: "left"  , title: [[#{screen.text.po.amt}]]    },
-	                { name: "deptNm"   , type: "text", width: 100, align: "left"  , title: [[#{screen.text.dept.nm}]] 	},
-	                { name: "userNm"   , type: "text", width: 100, align: "left"  , title: [[#{screen.text.inv.reqr}]]  },
-	                { name: "invReqr"  , type: "text", width: 100, align: "left"  , title: [[#{screen.text.inv.reqr}]],  visible: false },
-	                { name: "asetQty"  , type: "text", width: 100, align: "left"  , title: [[#{screen.text.inv.asetqty}]],
+	            	{ name: "invNo"    , type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.inv.no}]]"    },
+	                { name: "invTtl"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.ttl}]]"   },
+	                { name: "invDt"    , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.dt}]]"    },
+	                { name: "poNo"	   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.no}]]"     },
+	                { name: "mfgdNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.mfgdnm}]]" },
+	                { name: "qty"	   , type: "text", width: 30 , align: "left"  , title: "[[#{screen.text.po.qty}]]"    },
+	                { name: "poAmt"    , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.amt}]]"    },
+	                { name: "deptNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.dept.nm}]]"   },
+	                { name: "userNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.reqr}]]"  },
+	                { name: "invReqr"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.reqr}]]",  visible: false },
+	                { name: "asetQty"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.asetqty}]]",
 	                  itemTemplate: function(value, item) {
-	                    return '<a href="naver.com">' + value + '</a>';
+	                    return '<a href="javascript:void(0);" onclick="test(' + item.poNo + ');">' + value + '</a>';
 	                  }
 	                },
-	                { name: "noAsetQty", type: "text", width: 100, align: "left"  , title: [[#{screen.text.inv.noasetqty}]]  }
+	                { name: "noAsetQty", type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.noasetqty}]]"  }
 	            ]
 	        });
 	        
@@ -257,9 +258,12 @@
      	    });
      	    
      	    $("#excelDown").on("click",function() {
-     	    	
+     	    	    
 			       	event.preventDefault();
-	                let url = "/aset/regist/invest/invInqr/invListExcel";
+			       	
+			       	$(".btn_srch").click();
+			       	
+	                let url = "/asset/regist/invest/invInqr/invListExcel";
 					
 					var $form = $('<form id="downForm"></form>'); 
 						$form.attr('action', url); 
@@ -308,7 +312,7 @@
 	    	var toDate = $("#toDate").val().replaceAll("-", "");
 	    	
 			if(fromDate > toDate) {
-				alert([[#{screen.info.status.date.fail}]]);
+				alert("[[#{screen.info.status.date.fail}]]");
 				$("#toDate").focus();
 				code = '200';
 			}
@@ -318,6 +322,12 @@
 	    function returnResult(item) {
 			opener.selectAsetList(item);
 			window.close();
+	    }
+	    
+	    function test(val){
+	    	console.log(val);
+	    	console.log("[[${session.MenuRoleCheck.menuId}]]");
+	    	console.log(currentPage);
 	    }
 	    </script>	
 	</th:block>
@@ -363,12 +373,15 @@
 								<td><input type="text" id="mfgdNm" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.text.dept.nm}]]</th>
-								<td>
+								<td th:if="${session.MenuRoleCheck.roleId}=='ROLE_ADMIN'">
 									<input type="hidden" id="deptCd"/>
 									<div class="inqr_popup_btn">
 										<input type="text" id="deptNm" style="width:100%; border-right: 1px none;" />
 										<a href="#" id="openDeptPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 									</div>
+								</td>
+								<td th:if="${session.MenuRoleCheck.roleId}!='ROLE_ADMIN'">
+									<input type="text" id="deptNm" style="width:100%;" />
 								</td>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.text.inv.reqr}]]</th>

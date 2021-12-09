@@ -41,9 +41,6 @@ import lombok.extern.slf4j.Slf4j;
 public class InvInqrController {
 	
 	@Autowired
-	Message message;
-	
-	@Autowired
 	ResponseService responseService;
 	
 	@Autowired

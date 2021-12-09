@@ -126,62 +126,7 @@ public class RegAsetController {
 		List<InvInqrDto> list = regAsetService.selectInvestInqrList(condition);
 		return responseService.success(condition, list);
 	}
-	
-	/** 사용자 관리 화면 : 조회 - 엑셀다운 */
-	@PostMapping(value="/invInqr/invListExcel")
-	@ApiOperation(value = "투자정보조회화면 엑셀다운로드", notes = "Web API Test")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ModelAndView regAsetExcel(
-			@ApiParam(value = "투자번호", required = false) @RequestParam(value = "invNo", required = false) String invNo,
-			@ApiParam(value = "투자명", required = false) @RequestParam(value = "invTtl", required = false) String invTtl,
-			@ApiParam(value = "PO번호", required = false) @RequestParam(value = "poNo", required = false) String poNo,
-			@ApiParam(value = "품명", required = false) @RequestParam(value = "mfgdNm",required = false) String mfgdNm,
-			@ApiParam(value = "부서코드", required = false) @RequestParam(value = "deptCd",required = false) String deptCd,
-			@ApiParam(value = "사용자ID", required = false) @RequestParam(value = "userId", required = false) String userId,
-			@ApiParam(value = "투자일자범위(from)", required = false) @RequestParam(value = "fromDate", required = false) String fromDate,
-			@ApiParam(value = "투자일자범위(to)", required = false) @RequestParam(value = "toDate", required = false) String toDate,
-			@ApiParam(value = "자산미등록체크", required = false) @RequestParam(value = "regYn", required = false) String regYn
-			) { 
-		
-		Map<String, Object> params = new HashMap<>();
-		
-		if (!StringUtils.isEmpty(invNo))
-		params.put("invNo", invNo);
-		
-		if (!StringUtils.isEmpty(invTtl))
-		params.put("invTtl", invTtl);
-		
-		if (!StringUtils.isEmpty(poNo))
-		params.put("poNo", poNo);
-		
-		if (!StringUtils.isEmpty(mfgdNm))
-		params.put("mfgdNm", mfgdNm);
-		
-		if (!StringUtils.isEmpty(deptCd))
-		params.put("deptCd", deptCd);
-		
-		if (!StringUtils.isEmpty(userId))
-		params.put("userId", userId);
-		
-		if (!StringUtils.isEmpty(fromDate))
-		params.put("fromDate", fromDate);
-		
-		if (!StringUtils.isEmpty(toDate))
-		params.put("toDate", toDate);
-		
-		if (!StringUtils.isEmpty(regYn))
-		params.put("regYn", regYn);	
-		
-		SearchCondition condition = new SearchCondition("0", "0", params);
-		int total = regAsetService.selectCountInvest(condition);
-		condition.pageSetup(total);
-		
-		List<InvExcelDto> list = regAsetService.selectInvInqrExcelList(condition);
-		
-		return new ModelAndView("excelXlsxView", makeExcelData(list)) ;
-	}
-	
+
 	/** 엑셀 다운로드용 데이터 생성 */
 	private Map<String, Object> makeExcelData(List<InvExcelDto> list) {
 		Map<String, Object> map = new HashMap<>();
