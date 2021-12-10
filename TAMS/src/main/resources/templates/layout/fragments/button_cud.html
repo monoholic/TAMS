@@ -11,10 +11,10 @@
 					<a class="btn_add">메뉴 등록</a>
 					<a class="btn_saveall">일괄 저장</a>
 					<a class="btn_del">메뉴 삭제</a> -->
-					<a th:if="${session.MenuRoleCheck.regYn}=='Y'" class="btn_add">등록</a>
-					<a th:if="${session.MenuRoleCheck.updYn}=='Y'" class="btn_update">수정</a>
-					<a th:if="${session.MenuRoleCheck.delYn}=='Y'" class="btn_del">삭제</a>
-					<a th:if="${session.MenuRoleCheck.inqrYn}=='Y'" class="btn_download" id="excelDown">엑셀 다운</a>
+					<a th:if="${session.MenuRoleCheck.regYn}=='Y'" class="btn_add">[[#{screen.btn.insert}]]</a>
+					<a th:if="${session.MenuRoleCheck.updYn}=='Y'" class="btn_update">[[#{screen.btn.update}]]</a>
+					<a th:if="${session.MenuRoleCheck.delYn}=='Y'" class="btn_del">[[#{screen.btn.delete}]]</a>
+					<a th:if="${session.MenuRoleCheck.inqrYn}=='Y'" class="btn_download" id="excelDown">[[#{screen.btn.excel}]]</a>
 				</div>
 				<!-- list_button -->
 	</div>
