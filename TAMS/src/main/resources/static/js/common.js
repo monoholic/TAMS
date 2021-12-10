@@ -50,6 +50,25 @@
 				console.log('조회 실패');
 			});
   };
+  
+  /*
+  	key - 화면ID(저장화면 중복이 안되는 상황이면 MenuID를 써도 될듯.)
+  	value - 검색조건 ({a:1, b:2} 객체 타입)
+  */
+  $.commSaveSearchParams = function(key, value){
+	localStorage.setItem(key, JSON.stringify(value));
+  };
+
+  //화면 조회 파라미터 로드 	  
+  $.commLoadSearchParams = function(key){
+	return JSON.parse(localStorage.getItem(key));
+  };	
+  	
+  //화면 조회 파라미터 삭제	
+  $.commRemoveSearchParams = function(key){
+	localStorage.removeItem(key);
+  };
+
 
 }(jQuery));
 
