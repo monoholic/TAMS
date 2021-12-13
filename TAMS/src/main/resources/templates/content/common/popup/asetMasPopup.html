@@ -253,10 +253,11 @@
     	        args.resizable = "no";
     	        
     	        var param = {};
-    	        param.id    = "bizDept";
-    	        param.value = "BIZ_DEPT";
-    	        
-    	        openPopup(popId, url, args, param);
+    	        param.searchType = "BIZ_DEPT";
+ 	        	param.deptCd = "#deptCd1";
+ 	        	param.deptNm = "#deptNm1";
+    	         	  
+ 	           openPopup2(popId, url, args, param);
      	    });
     	  	
      	    $("#openDeptPopup2").on("click", function() { 
@@ -270,11 +271,12 @@
        	        args.fullscreen = "no";
        	        args.resizable = "no";
        	        
-       	     	var param = {};
- 	        	param.id    = "dept";
- 	        	param.value = "DEPT";
+       	     	var param = {}; 	        	
+    	        param.searchType = "DEPT";
+ 	        	param.deptCd = "#deptCd2";
+ 	        	param.deptNm = "#deptNm2"; 	        	
        	        
-       	        openPopup(popId, url, args, param);
+ 	        	openPopup2(popId, url, args, param);
         	});
      	    
      	    $("#btn_sel").on("click",function() {
@@ -283,18 +285,7 @@
      		  	
 			});
     	});
-	 	
-		function setResult3(obj) {
-			if(obj.deptCd.length <= 6) {
-				$("#deptCd1").val(obj.deptCd);
-				$("#deptNm1").val(obj.deptNm);
-			}
-			else{
-				$("#deptCd2").val(obj.deptCd);
-				$("#deptNm2").val(obj.deptNm);
-			}
-		}
-		
+	 			
 	 	// 자산 유형 부모 요소 찾아서 return
 	 	function getAsetType(asetType1) {
 	 		return asetType.filter( function(el) {

@@ -37,8 +37,8 @@ public class CommonService {
 	/** 
 	 * 부서팝업(트리) 조회
 	 * */
-	public List<CodeTreeDto> selectDeptTree(SearchCondition condtion){
-		return mapper.selectDeptTree(condtion);
+	public List<CodeTreeDto> selectDeptTree(String searchType){
+		return mapper.selectDeptTree(searchType);
 	}
 	
 	/** 

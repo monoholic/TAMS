@@ -22,7 +22,7 @@ public interface CommonMapper {
 	
 	public List<DeptDto> selectDeptPopupList(SearchCondition condtion);
 	
-	public List<CodeTreeDto> selectDeptTree(SearchCondition condtion);
+	public List<CodeTreeDto> selectDeptTree(String searchType);
 	
 	public List<UserMngDto> selectUserPopupList(SearchCondition condtion);
 	

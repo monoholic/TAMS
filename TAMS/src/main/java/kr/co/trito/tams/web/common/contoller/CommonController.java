@@ -69,14 +69,9 @@ public class CommonController {
 	
 	/** 부서팝업 화면 */
 	@GetMapping("/popup/deptPopup")
-	public ModelAndView deptPopupView1(HttpServletRequest request) {
-		
+	public ModelAndView deptPopupView1(HttpServletRequest request) {		
 		ModelAndView view = new ModelAndView();
-//		view.addObject("menuId", request.getParameter("menuId"));
-//		view.addObject("menuNm", request.getParameter("menuNm"));
-//		view.addObject("menuDesc", request.getParameter("menuDesc"));
-		view.setViewName("/content/common/popup/deptPopup");
-		    
+		view.setViewName("/content/common/popup/deptPopup");		    
 		return view;
 	}
 	
@@ -103,14 +98,9 @@ public class CommonController {
 	
 	/** 부서팝업 화면 */
 	@GetMapping("/popup/deptTreePopup")
-	public ModelAndView deptPopupView2(HttpServletRequest request) {
-		
+	public ModelAndView deptPopupView2(HttpServletRequest request) {		
 		ModelAndView view = new ModelAndView();
-//		view.addObject("menuId", request.getParameter("menuId"));
-//		view.addObject("menuNm", request.getParameter("menuNm"));
-//		view.addObject("menuDesc", request.getParameter("menuDesc"));
-		view.setViewName("/content/common/popup/deptTreeList");
-		    
+		view.setViewName("/content/common/popup/deptTreeList");		    
 		return view;
 	}
 	
@@ -121,17 +111,8 @@ public class CommonController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response>  deptTreePopupList(
-        @ApiParam(value = "조회 페이지 번호", required = false) @RequestParam(value = "param",required = false) String param) {
-		
-		Map<String, Object> params = new HashMap<>();
-		
-		if (!StringUtils.isEmpty(param))
-			params.put("param", param);
-		
-		SearchCondition condition = new SearchCondition("0","0", params);
-		
-		List<CodeTreeDto> list = commonService.selectDeptTree(condition);
-		
+        @ApiParam(value = "조회 페이지 번호", required = false) @RequestParam(value = "searchType",required = false) String searchType) {		
+		List<CodeTreeDto> list = commonService.selectDeptTree(searchType);		
 		return responseService.success(list);
 	}
 	
@@ -157,7 +138,6 @@ public class CommonController {
 		Map<String, Object> params = new HashMap<>();
 		if (!StringUtils.isEmpty(searchText))
 			params.put("searchText", searchText);
-//		
 		
 		SearchCondition condition = new SearchCondition("0","0",params);
 		
@@ -218,7 +198,7 @@ public class CommonController {
 			
 		if (!StringUtils.isEmpty(searchText2))
 			params.put("searchText2", searchText2);
-//		
+		
 		SearchCondition condition = new SearchCondition("0", "0", params);
 		
 		List<UserMngDto> list = commonService.selectUserFilterPopupList(condition);

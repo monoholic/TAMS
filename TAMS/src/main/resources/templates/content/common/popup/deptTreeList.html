@@ -42,9 +42,12 @@
 		            
 		            if(dept == "DEPT" && item.deptCd.length <= 6){
 		            	alert("[[#{screen.info.status.error.input.dept}]]");
+		            }else{	            	
+		            	$($("#deptCd").text(), opener.document).val(id);
+		            	$($("#deptNm").text(), opener.document).val(text);
+		            	window.close();
 		            }
-		            else
-						returnResult(item)
+						
 				});
 						
 				//팝업창 닫기
@@ -87,11 +90,9 @@
 					  , "label" : "선택"
 					  , "action" : function(obj){
 						             var item = $("#jstree").jstree('get_selected', true);
-						             var result = {};
-						             result.deptCd = item[0].id;
-						             result.deptNm = item[0].text;
-						             //console.log(result);
-						             returnResult(result);
+					            	 $($("#deptCd").text(), opener.document).val(item[0].id);
+					            	 $($("#deptNm").text(), opener.document).val(item[0].text);
+					            	 window.close();						             
 	           					} 
                        		}
                         } 
@@ -107,7 +108,7 @@
 				let url = "/common/popup/deptTreeList";
 				let reqType = 'GET';	
 				let data = {
-					"param" : $("#bizDept").text()
+					"searchType" : $("#searchType").text()
 				};
 				 
 				$.commRequest(url, reqType, data)
@@ -121,11 +122,6 @@
 						console.log('공통코드 조회 실패!!');
 					});
 			}
- 
-		    function returnResult(item) {
-				 opener.setResult3(item);
-				 window.close();
-		    }
 		</script>
 	</th:block> 
 
@@ -134,8 +130,10 @@
 
 <div layout:fragment="content">
 	
-	<span id="bizDept" th:text="${param.bizDept}" style="display:none;"></span>
-	<span id="dept" th:text="${param.dept}" style="display:none;"></span>
+	<span id="searchType" th:text="${param.searchType}" style="display:none;"></span>
+	<span id="deptCd" th:text="${param.deptCd}" style="display:none;"></span>
+	<span id="deptNm" th:text="${param.deptNm}" style="display:none;"></span>
+
 	
 	<!-- pop_alert -->
 	<div id="pop_wrap" >
