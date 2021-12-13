@@ -27,7 +27,7 @@ public interface CommonMapper {
 	
 	public List<UserMngDto> selectUserFilterPopupList(SearchCondition condtion);
 	
-	public List<ComCodeDto> commSelectBox(String codeGrpId);
+	public List<ComCodeDto> commSelectBox(String codeGrpId, String codeLvl);
 	
 	public List<FileDto> selectFileList(SearchCondition condtion);
 	

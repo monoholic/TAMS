@@ -183,9 +183,10 @@ public class CommonController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> commSelectBox(
-			@ApiParam(value = "코드그룹ID", required = false) @RequestParam(value="codeGrpId",required = false) String codeGrpId) { 
+			@ApiParam(value = "코드그룹ID", required = false) @RequestParam(value="codeGrpId",required = false) String codeGrpId, 
+			@ApiParam(value = "코드그룹 레벨", required = false) @RequestParam(value="codeLvl",required = false) String codeLvl) { 
 
-		List<ComCodeDto> list = commonService.commSelectBox(codeGrpId);
+		List<ComCodeDto> list = commonService.commSelectBox(codeGrpId, codeLvl);
 		
 		return responseService.success(list);
 	}

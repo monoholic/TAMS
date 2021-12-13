@@ -118,8 +118,11 @@
 			 , B.CODE_NM as codeNm
 		FROM TB_COM_CODE B
 		WHERE B.USE_YN = 'Y'
-		AND B.CODE_GRP_ID = #{codeGrpId}
-		ORDER BY 1 DESC
+		  AND B.CODE_GRP_ID = #{codeGrpId}
+		  <if test="codeLvl != ''">
+		  AND B.CODE_LVL = #{codeLvl}
+		  </if>
+		ORDER BY sort_odr DESC
 	</select>	
 	
 	<!-- 첨부파일 목록 조회 -->

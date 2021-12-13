@@ -57,8 +57,8 @@ public class CommonService {
 	/** 
 	 * 공통) 필터 데이터 조회
 	 * */
-	public List<ComCodeDto> commSelectBox(String codeGrpId){
-		return mapper.commSelectBox(codeGrpId);
+	public List<ComCodeDto> commSelectBox(String codeGrpId, String codeLvl){
+		return mapper.commSelectBox(codeGrpId, codeLvl);
 	}	
 	
 	/** 

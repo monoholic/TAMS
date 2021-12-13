@@ -34,17 +34,20 @@
 	});
   };
 
-  $.commRequestSelectbox = function(url, reqType, selectboxId, codeGrpId) {
+//  $.commRequestSelectbox = function(url, reqType, selectboxId, codeGrpId, codeLvl) {
+  $.commRequestSelectbox = function(...args) {
+		console.log(args);
 		let data = {
-			"codeGrpId" : codeGrpId
+			"codeGrpId" : args[3],
+			"codeLvl" : args.length > 4 ? args[4]: ""
 		}
-		$.commRequest(url, reqType, data)
+		$.commRequest(args[0], args[1], data)
 			.then((res) => {
 				var str = '';
 				$.each(res.data, function(i){
 					str += '<option value="' + res.data[i].codeId + '">' + res.data[i].codeNm + '</option>';
 				})
-				$(selectboxId).append(str);
+				$(args[2]).append(str);
 			})
 			.catch((error) => {
 				console.log('조회 실패');
