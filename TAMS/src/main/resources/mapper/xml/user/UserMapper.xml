@@ -51,6 +51,8 @@
 		      , USER_PW      AS userPw
 		      , DEPT_CD      AS deptCd
 		      , (SELECT B.DEPT_NM FROM TB_DEPT B WHERE B.DEPT_CD = A.DEPT_CD)  AS deptNm
+		      , (SELECT B.DEPT_CD FROM TB_DEPT B WHERE B.DEPT_CD = SUBSTRING(A.DEPT_CD, 1, 6)) AS bizDeptCd
+		      , (SELECT B.DEPT_NM FROM TB_DEPT B WHERE B.DEPT_CD = SUBSTRING(A.DEPT_CD, 1, 6)) AS bizDeptNm
 		      , USER_NM      AS userNm
 		      , EMAIL        AS email
 		      , TELNO        AS telno 
