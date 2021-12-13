@@ -21,6 +21,8 @@ public class UserDto {
 	private String userPw;
 	private String deptCd;
 	private String deptNm;
+	private String bizDeptCd;
+	private String bizDeptNm;
 	private String email;	
 	private String telNo;	
 	private String useYn;

@@ -40,6 +40,7 @@ public class MenuRoleInterceptor implements HandlerInterceptor {
 		
 		//인증정보가 있을 때만 조회한다 
 		if( auth != null ) {
+			
 			List<GrantedAuthority> userRole = new ArrayList<>(auth.getAuthorities());
 			
 			String role = userRole.get(0).getAuthority();
