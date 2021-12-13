@@ -122,7 +122,10 @@
 		  <if test="codeLvl != ''">
 		  AND B.CODE_LVL = #{codeLvl}
 		  </if>
-		ORDER BY sort_odr DESC
+		  <if test="upperCodeId != ''">
+		  AND B.UPP_CODE_ID = #{upperCodeId}
+		  </if>		  
+		ORDER BY sort_odr
 	</select>	
 	
 	<!-- 첨부파일 목록 조회 -->

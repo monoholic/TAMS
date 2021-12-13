@@ -12,6 +12,7 @@ import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.common.dto.AsetMasDto;
 import kr.co.trito.tams.web.common.dto.CodeTreeDto;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
+import kr.co.trito.tams.web.common.dto.ComCodeParamDto;
 import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
 import kr.co.trito.tams.web.common.mapper.CommonMapper;
@@ -57,8 +58,8 @@ public class CommonService {
 	/** 
 	 * 공통) 필터 데이터 조회
 	 * */
-	public List<ComCodeDto> commSelectBox(String codeGrpId, String codeLvl){
-		return mapper.commSelectBox(codeGrpId, codeLvl);
+	public List<ComCodeDto> commSelectBox(ComCodeParamDto params){
+		return mapper.commSelectBox(params);
 	}	
 	
 	/** 

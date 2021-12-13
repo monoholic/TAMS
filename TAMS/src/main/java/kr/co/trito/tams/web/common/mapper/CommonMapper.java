@@ -11,6 +11,7 @@ import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.common.dto.AsetMasDto;
 import kr.co.trito.tams.web.common.dto.CodeTreeDto;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
+import kr.co.trito.tams.web.common.dto.ComCodeParamDto;
 import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
 import kr.co.trito.tams.web.standard.code.dto.CodeDto;
@@ -27,7 +28,7 @@ public interface CommonMapper {
 	
 	public List<UserMngDto> selectUserFilterPopupList(SearchCondition condtion);
 	
-	public List<ComCodeDto> commSelectBox(String codeGrpId, String codeLvl);
+	public List<ComCodeDto> commSelectBox(ComCodeParamDto params);
 	
 	public List<FileDto> selectFileList(SearchCondition condtion);
 	

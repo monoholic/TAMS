@@ -18,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +40,7 @@ import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.common.dto.AsetMasDto;
 import kr.co.trito.tams.web.common.dto.CodeTreeDto;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
+import kr.co.trito.tams.web.common.dto.ComCodeParamDto;
 import kr.co.trito.tams.web.common.dto.DeptDto;
 import kr.co.trito.tams.web.common.dto.MenuRoleCheckDto;
 import kr.co.trito.tams.web.common.service.CommonService;
@@ -183,13 +185,13 @@ public class CommonController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> commSelectBox(
-			@ApiParam(value = "코드그룹ID", required = false) @RequestParam(value="codeGrpId",required = false) String codeGrpId, 
-			@ApiParam(value = "코드그룹 레벨", required = false) @RequestParam(value="codeLvl",required = false) String codeLvl) { 
+			@ApiParam(value = "공통코드 조회 조건", required = false) @ModelAttribute ComCodeParamDto params) { 
 
-		List<ComCodeDto> list = commonService.commSelectBox(codeGrpId, codeLvl);
+		List<ComCodeDto> list = commonService.commSelectBox(params);
 		
 		return responseService.success(list);
-	}
+	}	
+	
 	
 	/** 부서팝업 조회 */
 	@GetMapping("/popup/userFilterPopupList")

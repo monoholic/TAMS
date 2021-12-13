@@ -34,14 +34,15 @@
 	});
   };
 
-//  $.commRequestSelectbox = function(url, reqType, selectboxId, codeGrpId, codeLvl) {
+  //$.commRequestSelectbox = function(url, reqType, selectboxId, codeGrpId, codeLvl, upperCodeId) {
   $.commRequestSelectbox = function(...args) {
-		console.log(args);
-		let data = {
+		//console.log(args);
+		let params = {
 			"codeGrpId" : args[3],
-			"codeLvl" : args.length > 4 ? args[4]: ""
+			"codeLvl" : args.length > 4 ? args[4]: "", 
+			"upperCodeId" : args.length > 5 ? args[5]: ""
 		}
-		$.commRequest(args[0], args[1], data)
+		$.commRequest(args[0], args[1], params)
 			.then((res) => {
 				var str = '';
 				$.each(res.data, function(i){
