@@ -85,8 +85,7 @@ public class AssetInfomationController {
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ModelAndView userMngListExcel(
 			@ApiParam(value = "검색 조건 파리미터 Dto", required = true) @RequestParam Map<String, Object> params) { 
-		
-		log.info("Parameter... " + params.toString());
+				
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);			
 		condition.pageSetup(assetInformationService.selectAssetStatusCount(condition));		
 		List<AssetStatusExcelDto> list = assetInformationService.selectAssetStatusExcel(condition);				
@@ -105,7 +104,7 @@ public class AssetInfomationController {
 		}
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
-		paramMap.put(ExcelConstant.FILE_NAME, "사용자목록");
+		paramMap.put(ExcelConstant.FILE_NAME, "자산현황");
 		paramMap.put(ExcelConstant.HEAD, 
 				Arrays.asList("자산번호", "자산명", "자산유형1", "자산유형2", "자산유형3","메이커", "모델", "S/N", "사업부", "부서", "담당자", "자산상태"));				
 		paramMap.put(ExcelConstant.BODY, rows);
