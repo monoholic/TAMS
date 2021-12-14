@@ -40,7 +40,7 @@ public class RoleController {
 	@Autowired
 	RoleService roleService;
 
-	/** 메뉴관리 화면 */
+	/** 권한관리 화면 */
 	@PostMapping("/roleMng")
 	public ModelAndView menumngView(HttpServletRequest request) {
 
@@ -56,7 +56,7 @@ public class RoleController {
 	/** 권한관리 화면 : 조회 */
 	@GetMapping(value = "/roleMng/roleList")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
+	@ApiOperation(value = "권한관리 화면 / 전체 권한 조회", notes = "권한코드나 권한명으로 권한을 조회한다")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> roleMngList(
@@ -91,10 +91,10 @@ public class RoleController {
 		return responseService.success(condition, list);
 	}
 
-	/** 메뉴관리 화면 : 등록 */
+	/** 권한관리 화면 : 등록 */
 	   @GetMapping(value="/roleMng/roleInsert")
 	   @ResponseBody
-	   @ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
+	   @ApiOperation(value = "권한관리 화면 / 등록", notes = "권한을 등록한다")
 	   @ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	   @ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	   public String roleMngInsert( 
@@ -122,10 +122,10 @@ public class RoleController {
 	      return code;
 	   } 
 	   
-	/** 메뉴관리 화면 : 수정 */
+	/** 권한관리 화면 : 수정 */
 		@GetMapping(value="/roleMng/roleUpdate")
 		@ResponseBody
-		@ApiOperation(value = "Web API Role Mng Update", notes = "Web API Test")
+		@ApiOperation(value = "권한관리 화면 / 수정", notes = "등록된 권한을 수정한다")
 		@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 		@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 		public String roleMngUpdate( 
@@ -154,10 +154,10 @@ public class RoleController {
 		} 	
 		
 		
-	/** 메뉴관리 화면 : 삭제 */
+	/** 권한관리 화면 : 삭제 */
 		@GetMapping(value="/roleMng/roleDelete")
 		@ResponseBody
-		@ApiOperation(value = "Web API Role Mng Delete", notes = "Web API Test")
+		@ApiOperation(value = "권한관리 화면 / 삭제", notes = "등록된 권한을 삭제한다(일괄삭제가능)")
 		@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 				@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 		public String roleMngDelete( 

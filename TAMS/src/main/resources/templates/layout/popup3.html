@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html 	lang="ko" 
+        xmlns:th="http://www.thymeleaf.org" 
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+	<!-- [head] 영역 시작 -->
+	<head th:replace="layout/fragments/head :: headFragment">
+		<title layout:title-pattern="TAMS - $CONTENT_TITLE">default</title>
+	</head>		
+	<!-- [head] 영역 끝 -->
+
+  		
+	<body>
+		
+		<!-- [content] 영역 시작 -->
+		<div id="container">
+			<div id="contents">
+				<div layout:fragment="content"></div>
+			</div>
+			<!-- [footer] -->
+			<footer th:replace="layout/fragments/footer :: footerFragment"></footer>
+		</div>
+	
+	</body>
+</html>

@@ -30,6 +30,7 @@ import kr.co.trito.tams.comm.util.msg.Message;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.asset.regist.invest.dto.AsetListDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto;
 import kr.co.trito.tams.web.asset.regist.invest.service.InvestRegistService;
@@ -67,7 +68,7 @@ public class InvestRegistController {
 	@ApiOperation(value = "투자자산등록(투자정보조회) 화면 / 리스트", notes = "전체 투자정보를 조회한다")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> investInqrList(
+	public ResponseEntity<? extends Response> investRegList(
 				@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage",required = true) String currentPage,
 				@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
 				@ApiParam(value = "투자번호", required = false) @RequestParam(value = "invNo", required = false) String invNo,
@@ -202,8 +203,9 @@ public class InvestRegistController {
 	}	
 	
 	/** 투자자산등록(팝업) 등록자산목록 화면 */
-	@GetMapping("/regAset")
+	@PostMapping("/regAset")
 	public ModelAndView regAsetMain(HttpServletRequest request,
+			@ApiParam(value = "메뉴ID", required = false) @RequestParam(value = "menuId", required = false) String menuId,
 			@ApiParam(value = "PO번호", required = false) @RequestParam(value = "poNo", required = false) String poNo) {
 	
 		ModelAndView view = new ModelAndView();
@@ -212,7 +214,7 @@ public class InvestRegistController {
 		view.addObject("menuDesc", request.getParameter("menuDesc"));
 		view.addObject("poNo", poNo);
 		
-		view.setViewName("/content/asset/regist/invest/regAsetPopup");
+		view.setViewName("/content/asset/regist/invest/regAset");
 		
 		return view;
 	}
@@ -249,9 +251,43 @@ public class InvestRegistController {
 		int total = investRegistService.selectCountInvest(condition);
 		condition.pageSetup(total);
 		
-		List<InvestRegistDto> list = investRegistService.selectInvestRegList(condition);
+		List<AsetListDto> list = investRegistService.selectAsetList(condition);
 		List<InvestRegistDto> list2 = investRegistService.selectInvestReg(condition);
 		
 		return responseService.success(condition, list, list2);
+	}
+	
+	/** 신규자산등록(팝업) 화면 */
+	@GetMapping("/newAsetReg")
+	public ModelAndView newAsetRegView(HttpServletRequest request,
+			@ApiParam(value = "PO번호", required = false) @RequestParam(value = "poNo", required = false) String poNo) {
+	
+		ModelAndView view = new ModelAndView();
+		view.addObject("menuId", request.getParameter("menuId"));
+		view.addObject("menuNm", request.getParameter("menuNm"));
+		view.addObject("menuDesc", request.getParameter("menuDesc"));
+		view.addObject("url", request.getParameter("url"));
+		view.addObject("poNo", poNo);
+		
+		view.setViewName("/content/asset/regist/invest/newAsetRegist");
+		
+		return view;
+	}
+	
+	/** 신규자산등록(팝업) 화면 */
+	@GetMapping("/remodelAsetReg")
+	public ModelAndView remodelAsetRegView(HttpServletRequest request,
+			@ApiParam(value = "PO번호", required = false) @RequestParam(value = "poNo", required = false) String poNo) {
+		
+		ModelAndView view = new ModelAndView();
+		view.addObject("menuId", request.getParameter("menuId"));
+		view.addObject("menuNm", request.getParameter("menuNm"));
+		view.addObject("menuDesc", request.getParameter("menuDesc"));
+		view.addObject("url", request.getParameter("url"));
+		view.addObject("poNo", poNo);
+		
+		view.setViewName("/content/asset/regist/invest/remodelAsetRegist");
+		
+		return view;
 	}
 }

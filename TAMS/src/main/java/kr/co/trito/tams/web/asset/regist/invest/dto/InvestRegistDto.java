@@ -15,7 +15,7 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-@ApiModel("공통코드")
+@ApiModel("투자정보조회(필터포함) Dto")
 public class InvestRegistDto{
 	@ApiModelProperty(value="투자번호")
 	private String invNo;

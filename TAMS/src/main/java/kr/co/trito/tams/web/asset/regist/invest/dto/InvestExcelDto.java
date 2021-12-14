@@ -15,7 +15,7 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-@ApiModel("투자정보엑셀DTO")
+@ApiModel("투자정보조회 엑셀 Dto")
 public class InvestExcelDto{
 	@ApiModelProperty(value="투자번호")
 	private String invNo;
