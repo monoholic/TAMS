@@ -55,6 +55,24 @@
 			});
   };
   
+  
+  $.commExcelDown = function(url, params){
+	let exlForm = $('<form id="downForm"></form>');
+	exlForm.attr('action', url); 
+	exlForm.attr('method', 'post');
+	exlForm.attr('target', '_self');
+	
+    if(params != null && params != "") {
+	   	for (var key in params) {
+			var str = '<input name="'+key+'" value="'+params[key]+'">';
+			exlForm.append(str);
+		} 	     
+    }	 
+	exlForm.appendTo('body'); 
+	exlForm.submit();		 
+  };
+  
+  
   /*
   	key - 화면ID(저장화면 중복이 안되는 상황이면 MenuID를 써도 될듯.)
   	value - 검색조건 ({a:1, b:2} 객체 타입)
