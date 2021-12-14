@@ -119,7 +119,7 @@
 								 , a.inv_reqr
 								 , a.user_nm
 								 , a.user_id
-								 , IFNULL((SELECT qty
+								 , IFNULL((SELECT SUM(qty)
 							 		FROM tb_po_aset B
 							 		WHERE 1 = 1
 							 		AND B.PO_NO = A.PO_NO), 0) as asetQty
@@ -225,7 +225,7 @@
 								 , a.inv_reqr
 								 , a.user_nm
 								 , a.user_id
-								 , IFNULL((SELECT qty
+								 , IFNULL((SELECT SUM(qty)
 							 		FROM tb_po_aset B
 							 		WHERE 1 = 1
 							 		AND B.PO_NO = A.PO_NO), 0) as asetQty
@@ -260,6 +260,70 @@
 				ON f.use_yn = 'Y'
 				AND f.dept_cd = b.upp_dept_cd
 			) as c
+	</select>
+	
+	<select id="selectAsetList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.AsetListDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+						SELECT a.asetNo
+					         , c.code_nm as asetType1
+					         , d.code_nm as asetType2
+					         , e.code_nm as asetType3
+					         , a.mftco
+					         , a.model
+					         , a.sn
+					         , f.dept_nm as uppDeptNm
+					         , g.dept_nm as deptNm
+					         , a.chrgr
+						     , (SELECT CASE 
+						               WHEN COUNT(*) > 0 THEN 'Y'
+						               ELSE 'N' END
+						          FROM tb_tag_his C
+					             WHERE C.tag_id = a.tagId
+					           ) as tagYn
+					         , h.code_nm as asetStus
+						FROM
+								(
+									SELECT STRAIGHT_JOIN
+									       ROW_NUMBER() OVER(ORDER BY CAST(A.aset_no as int) asc) as rn
+									     , A.aset_no as asetNo
+									     , A.aset_type1 as asetType1
+									     , A.aset_type2 as asetType2
+									     , A.aset_type3 as asetType3
+									     , A.mftco as mftco
+									     , A.model as model
+									     , A.sn as sn
+									     , A.biz_dept_cd as bizDeptCd
+									     , A.dept_cd as deptCd
+									     , A.chrgr as chrgr
+									     , A.aset_stus as asetStus
+									     , C.tag_id as tagId
+									FROM TB_ASET_MAS A
+									INNER JOIN TB_PO_ASET B
+									ON A.aset_no = B.aset_no
+									INNER JOIN TB_TAG_MAS C
+									ON C.aset_no = B.aset_no
+									WHERE 1 = 1
+									AND B.po_no = #{params.poNo}
+								) a
+						LEFT OUTER JOIN tb_com_code c
+						ON  c.use_yn = 'Y'
+						AND c.code_id = a.asetType1
+						LEFT OUTER JOIN tb_com_code d
+						ON  d.use_yn = 'Y'
+						AND d.code_id = a.asetType2
+						LEFT OUTER JOIN tb_com_code e
+						ON  e.use_yn = 'Y'
+						AND e.code_id = a.asetType3
+						LEFT OUTER JOIN tb_dept f
+						ON  f.use_yn = 'Y'
+						AND f.dept_cd = a.bizDeptCd
+						LEFT OUTER JOIN tb_dept g
+						ON  g.use_yn = 'Y'
+						AND g.dept_cd = a.deptCd
+						LEFT OUTER JOIN tb_com_code h
+						ON  h.use_yn = 'Y'
+						AND h.code_id = a.asetStus
+						AND h.code_grp_id = 'AS_STATUS'
+						WHERE rn BETWEEN #{start} AND #{end}
 	</select>
 	
 	<select id="selectInvInqrExcelList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">

@@ -4,7 +4,7 @@
         layout:decorator="layout/popup2">
 
 	<head>
-	    <title>자산 등록(투자정보조회)</title>
+	    <title>[[#{screen.text.inv.screen.title3}]]</title>
 	</head>
         
 	<!-- css -->
@@ -16,7 +16,6 @@
 	</th:block>
 	
 	<th:block layout:fragment="script">
-		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="/js/jsgrid/db.js"></script>
 	    <script src="/js/jsgrid/jsgrid.core.js"></script>
 	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
@@ -30,16 +29,17 @@
 	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
 		
 	    <script>
-	    
 	    // 공통코드(자산유형 1레벨 출력)
-	    let numOfRows = 15;
+	    let numOfRows = 10;
+	    let menuId = "[[${menuId}]]";
+	    
 	    var status = true;
-        var selectedItems = [];
-	 	var insertedItems = [];
-	 	var updatedItems = [];
 	 	
-	 	var asetType = [];
+	 	var condition = {};
 	 	
+	    let invData = $.commLoadSearchParams("invData");
+	    var asetType = [];
+	    
 	    $(function(){
 	        $("#jsGrid").jsGrid({
 	        	height: "400",
@@ -68,16 +68,9 @@
 	            	var target = args.event.target;
 	            	
 					if(target instanceof HTMLTableCellElement) {
-						// detail form
-						/* alert(JSON.stringify(args)); */
-						// showDetailForm(args.item);
 						
-					} else {
-					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
-					                .on("change", function () {
-						  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
-						});
+						openAsetList(args.item);
+						
 					}
 	            }, 
 	            pagerContainerClass: "paginate",
@@ -91,84 +84,72 @@
 	                    currentPage = filter.pageIndex;
 	                    
 	                    
-	                    let url = "/asset/regist/invest/regAset/regAsetList";
+	                    let url = "/asset/regist/invest/investReg/investRegList";
 						let reqType = 'GET';	
 						let data = {
             				"currentPage"  : filter.pageIndex,
             				"numOfRows"    : numOfRows,
-            				"poNo"         : "[[${poNo}]]",
+            				"invNo"   	   : $("#invNo").val(),
+            				"invTtl"   	   : $("#invTtl").val(),
+            				"poNo"         : $("#poNo").val(),
+            				"mfgdNm"   	   : $("#mfgdNm").val(),
+            				"deptCd"       : $("#deptCd").val(),
+            				"userId"   	   : $("#userId").val(),
+            			    "fromDate"     : $("#fromDate").val(),
+        				    "toDate"       : $("#toDate").val(),
+        				    "regYn"	   	   : $("#regYn").val(),
             				"sortField"    : filter.sortField,
             				"sortOrder"    : filter.sortOrder
             			}
 						$.commRequest(url, reqType, data)
 							.then((res) => {
 								console.log(res);
-								$(".result").text("Totals : " + res.condition.totalCount);
+								$(".result").text("Results : " + res.condition.totalCount);
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
-								
-								$("#invNo").val(res.data2[0].invNo);
-								$("#invTtl").val(res.data2[0].invTtl);
-								$("#poNo").val(res.data2[0].poNo);
-								$("#mfgdNm").val(res.data2[0].mfgdNm);
-								$("#qty").val(res.data2[0].qty);
-								$("#uppDeptNm").val(res.data2[0].uppDeptNm);
-								$("#deptNm").val(res.data2[0].deptNm);
-								$("#invReqr").val(res.data2[0].invReqr);
-								
-								$("#all").val(res.data2[0].qty);
-								$("#cpt").val(res.data2[0].asetQty);
-								$("#icpt").val(res.data2[0].noAsetQty);
-								
+								currentPage = res.condition.currentPage;
+								condition = res.condition;
 							})
 							.catch((error) => {
-								console.log('메뉴조회 실패!!');
+								console.log('[[#{screen.info.status.error.search}]]');
 							});						
 	                    
 	                    return d.promise();
 	                },
             },
 	            fields: [
-	            	{ name: "asetNo"    	, type: "text"	, width: 70 	, align: "left"  , title: "자산번호"   },
-	                { name: "asetType1"   	, type: "text"	, width: 100	, align: "left"  , title: "자산유형1"  },
-	                { name: "asetType2"   	, type: "text"	, width: 100	, align: "left"  , title: "자산유형2"  },
-	                { name: "asetType3"	   	, type: "text"	, width: 100	, align: "left"  , title: "자산유형3"  },
-	                { name: "mftco"   		, type: "text"	, width: 100	, align: "left"  , title: "제조사" 	 },
-	                { name: "model"	   		, type: "text"	, width: 30 	, align: "left"  , title: "모델"      },
-	                { name: "sn"    		, type: "text"	, width: 100	, align: "left"  , title: "S/N"      },
-	                { name: "deptNm"   		, type: "text"	, width: 100	, align: "left"  , title: "사업부" 	 },
-	                { name: "deptNm"   		, type: "text"	, width: 100	, align: "left"  , title: "부서" 	     },
-	                { name: "chrgr"   		, type: "text"	, width: 100	, align: "left"  , title: "담당자"     },
-	                { name: "asetQty"  		, type: "text"	, width: 100	, align: "left"  , title: "자산확정여부" },
-	                { name: "noAsetQty"		, type: "text"	, width: 100	, align: "left"  , title: "태깅여부"    },
-	                { name: "asetStatus"		, type: "text"	, width: 100	, align: "left"  , title: "등록상태"}
+	            	{ name: "invNo"    , type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.inv.no}]]"    },
+	                { name: "invTtl"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.ttl}]]"   },
+	                { name: "invDt"    , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.dt}]]"    },
+	                { name: "poNo"	   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.no}]]"     },
+	                { name: "mfgdNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.mfgdnm}]]" },
+	                { name: "qty"	   , type: "text", width: 30 , align: "left"  , title: "[[#{screen.text.po.qty}]]"    },
+	                { name: "poAmt"    , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.amt}]]"    },
+	                { name: "deptNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.dept.nm}]]"   },
+	                { name: "userNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.reqr}]]"  },
+	                { name: "invReqr"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.reqr}]]",  visible: false },
+	                { name: "asetQty"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.asetqty}]]",
+	                  itemTemplate: function(value, item) {
+	                    return '<a href="javascript:void(0);" onclick="openAsetList(' + item.poNo + ');">' + value + '</a>';
+	                  }
+	                },
+	                { name: "noAsetQty", type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.noasetqty}]]"  }
 	            ]
 	        });
+	    	
+	    	
+	    	
+	    	
+	    	//작업해당하는 투자정보
+			$("#invNo").val(invData.invNo);
+			$("#invTtl").val(invData.invTtl);
+			$("#poNo").val(invData.poNo);
+			$("#mfgdNm").val(invData.mfgdNm);
+			$("#qty").val(invData.qty);
+			$("#uppDeptNm").val(invData.uppDeptNm);
+			$("#deptNm").val(invData.deptNm);
+			$("#invReqr").val(invData.invReqr);
+	    	
 	        
-		    var selectItem = function(item) {
-		    	if(!selectedItems.includes(item)){
-			    	selectedItems.push(item);
-		    	}
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             $("#selectAllCheckbox").prop("checked", true);
-	         } else {
-	             $("#selectAllCheckbox").prop("checked", false);
-	         }
-			};
-		     
-		    var unselectItem = function(item) {
-			    selectedItems = $.grep(selectedItems, function(i) {
-			    return i !== item;
-			    });
-			    if(selectedItems.length == 0) {
-			    	$('#selectAllCheckbox').attr('checked', false);
-			    }
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             $("#selectAllCheckbox").prop("checked", true);
-	         } else {
-	             $("#selectAllCheckbox").prop("checked", false);
-	         }
-	        
-		    };
     	    $(".btn_srch").on("click",function (){
     	    	if (validationCheck() == '202') {
 	    	   		$("#jsGrid").jsGrid().trigger("loadData");
@@ -195,14 +176,14 @@
     	    	$("#regYn").val("");
     	    });
           	
-			// 사용자 필터 팝업 호출 
-    	    $("#openUserFilterPopup").on("click", function() { 
+			// 신규 자산 등록
+    	    $("#newAsetRegist").on("click", function() { 
     	        // 팝업 호출 url
-    	        var url = "/common/popup/userFilterPopup";
-    	        var popId = "userFilterPopup";
+    	        var url = "/asset/regist/invest/newAsetReg";
+    	        var popId = "newAsetRegist";
     	        var args = {};
-    	        args.width = 650;
-    	        args.height = 416;
+    	        args.width = 1350;
+    	        args.height = 850;
     	        args.fullscreen = "no";
     	        args.resizable = "no";
     	        
@@ -250,6 +231,28 @@
 						$form.submit();
 						
 			});
+     	    
+    	    asetTypeList();
+    	    
+    		// 자산 유형 선택 2레벨 그리기
+    	    $('#asetType1').on('change', function() {
+    	    	var asetType1 = event.srcElement.value;
+    	    	
+    	    	makeAsetCombo("#asetType2", getAsetType(asetType1))
+    	    	makeAsetCombo("#asetType3", "")
+    	    	$("#asetType2").prepend('<option value="">' + "[[#{screen.text.comm.choice}]]" + '</option>');
+    	    	$('#asetType2 option:contains("[[#{screen.text.comm.choice}]]")').prop('selected', true);
+    	    });
+    		
+    	 	// 자산 유형 선택 3레벨 그리기
+    	    $('#asetType2').on('change', function() {
+    	    	var asetType2 = event.srcElement.value;
+    	    	
+    	    	makeAsetCombo("#asetType3", getAsetType(asetType2))
+    	    	$("#asetType3").prepend('<option value="">' + "[[#{screen.text.comm.choice}]]" + '</option>');
+    	    	$('#asetType3 option:contains("[[#{screen.text.comm.choice}]]")').prop('selected', true);
+    	    });
+    	 	
     	});
 	    
 		//팝업에서 받은 결과 처리
@@ -263,29 +266,6 @@
 			$("#deptCd").val(obj.deptCd);
 			$("#deptNm").val(obj.deptNm);
 		}
-		 
-		function enterkey() {
-	    	if (window.event.keyCode == 13) {
-	    		if (validationCheck() == '202') {
-	    			$("#jsGrid").jsGrid().trigger("loadData");
-	    		}
-	        }
-	    }
-		 
-		// 유효성 검사
-	    function validationCheck() {
-	    	let code = '202';
-			
-	    	var fromDate = $("#fromDate").val().replaceAll("-", "");
-	    	var toDate = $("#toDate").val().replaceAll("-", "");
-	    	
-			if(fromDate > toDate) {
-				alert("날짜를 다시 선택해 주세요");
-				$("#toDate").focus();
-				code = '200';
-			}
-			return code;
-	    }
 		
 	    function returnResult(item) {
 			opener.selectAsetList(item);
@@ -295,15 +275,13 @@
 	</th:block>
 
 	<div layout:fragment="content">
-	
+	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->	
 	<!-- pop_alert -->
-	<div id="pop_wrap" >	
-	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
-			<!-- head -->
-			<h3>투자정보조회
-				 <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a>
-			</h3>
-			<!-- //head -->
+	<div id="pop_wrap" >
+			<!-- contents_head -->
+			<!-- <div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div> -->
+			<h3><span>[[#{screen.text.inv.screen.title3}]]</span></h3>
+			<!-- //contents_head -->
 			<!-- contents -->
 			<div id="contents">
 				<div class="srch_wrap">
@@ -323,63 +301,55 @@
 							</colgroup>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">투자번호</th>
+								<th style="text-align:center;">[[#{screen.text.inv.no}]]</th>
 								<td><input type="text" id="invNo" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">투자명</th>
+								<th style="text-align:center;">[[#{screen.text.inv.ttl}]]</th>
 								<td><input type="text" id="invTtl" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">PO번호</th>
+								<th style="text-align:center;">[[#{screen.text.po.no}]]</th>
 								<td><input type="text" id="poNo" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
 							</tr>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">품명</th>
+								<th style="text-align:center;">[[#{screen.text.po.mfgdnm}]]</th>
 								<td><input type="text" id="mfgdNm" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">수량</th>
+								<th style="text-align:center;">[[#{screen.text.comm.qty}]]</th>
 								<td><input type="text" id="qty" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">사업부</th>
+								<th style="text-align:center;">[[#{screen.text.asset.bizDeptCd}]]</th>
                                 <td><input type="text" id="uppDeptNm" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
 							</tr>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">부서</th>
+								<th style="text-align:center;">[[#{screen.text.asset.deptCd}]]</th>
                                 <td><input type="text" id="deptNm" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">담당자</th>
+								<th style="text-align:center;">[[#{screen.text.asset.chrgr}]]</th>
                                 <td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">전체/완료/미완료</th>
-								<td>
-								    <div id="asetStatusQty">
-										<input type="text" id="all" onkeyup="enterkey()" style="width:100%;">
-										<input type="text" id="cpt" onkeyup="enterkey()" style="width:100%;">
-										<input type="text" id="icpt" onkeyup="enterkey()" style="width:100%;">
-									</div>
-								</td>
+								<th style="text-align:center;"></th>
+								<td></td>
 							</tr>
 						</table>
 					 </div>
 				</div>
 					<div class="list_head">
 						<div class="result">Totals : 0,000</div>
+						<!-- list_button -->
 						<div class="button">
-							<a class="btn_sel" id="excelDown">신규자산 등록</a>
-							<a class="btn_sel" id="excelDown">개조자산 선택</a>
-							<a class="btn_sel" id="excelDown">일괄 업로드</a>
-							<a class="btn_sel" id="excelDown">엑셀 다운로드</a>
+							<a class="btn_sel" id="newAsetRegist">자산추가</a>
+							<a class="btn_sel" id="newAsetRegist">저장</a>
+							<a class="btn_sel" id="excelDown">삭제</a>
 						</div>
 						<!-- list_button -->
 					</div>
-					<div id="jsGrid"></div>
+				<div id="jsGrid"></div>
 			</div>
-			
-			<div id="excelDownTarget"></div>
+			</div>
 			<!-- //pop_alert -->
 		</div>			
-	</div>
 </html>

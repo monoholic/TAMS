@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.asset.regist.invest.dto.AsetListDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto;
 import kr.co.trito.tams.web.asset.regist.invest.mapper.InvestRegistMapper;
@@ -20,7 +21,7 @@ public class InvestRegistService {
 	InvestRegistMapper mapper;
 	
 	/** 
-	 * 투자자산등록 리스트 조회
+	 * 투자자산등록 다건 조회
 	 * */
 	public List<InvestRegistDto> selectInvestRegList(SearchCondition condition) {
 		return mapper.selectInvestRegList(condition);
@@ -31,6 +32,13 @@ public class InvestRegistService {
 	 * */
 	public List<InvestRegistDto> selectInvestReg(SearchCondition condition) {
 		return mapper.selectInvestReg(condition);
+	}
+	
+	/** 
+	 * 등록자산목록 다건 조회
+	 * */
+	public List<AsetListDto> selectAsetList(SearchCondition condition) {
+		return mapper.selectAsetList(condition);
 	}
 	
 	/** 

@@ -61,7 +61,7 @@ public class InvestController {
 	/** 투자정보관리 화면 : 조회 */
 	@GetMapping(value="/investMng/investMngList")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
+	@ApiOperation(value = "투자정보관리 화면 / 조회", notes = "투자정보들을 조회한다")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> investMngList(
@@ -117,7 +117,7 @@ public class InvestController {
 	/** 투자정보관리 화면 : 저장 */
 	   @PostMapping(value="/investMng/investMngSave")
 	   @ResponseBody
-	   @ApiOperation(value = "Web API Menu Mgr Save", notes = "Web API Test")
+	   @ApiOperation(value = "투자정보관리 화면 / (저장/수정)", notes = "투자정보를 새로 저장하거나 기존 정보를 수정한다")
 	   @ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	   @ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	   public String investMngSave( 
@@ -143,10 +143,10 @@ public class InvestController {
 	       return code;
 	} 
 	
-	/** 메뉴관리 화면 : 삭제 */
+	/** 투자정보관리 화면 : 삭제 */
 	@PostMapping(value="/investMng/investMngDelete")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Delete", notes = "Web API Test")
+	@ApiOperation(value = "투자정보관리 화면 / 삭제", notes = "투자정보를 삭제한다(일괄삭제가능)")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String investMngDelete( 

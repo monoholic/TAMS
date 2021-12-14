@@ -32,14 +32,11 @@
 	    <script>
 	    // 공통코드(자산유형 1레벨 출력)
 	    let numOfRows = 10;
+	    let menuId = "[[${menuId}]]";
+	    
 	    var status = true;
-        var selectedItems = [];
-	 	var insertedItems = [];
-	 	var updatedItems = [];
-	 	//var currentPage = 1;
 	 	
-	 	var asetType = [];
-	 	//var condition = {};
+	 	var condition = {};
 	 	
 	    $(function(){
 	        $("#jsGrid").jsGrid({
@@ -69,17 +66,9 @@
 	            	var target = args.event.target;
 	            	
 					if(target instanceof HTMLTableCellElement) {
-						// detail form
-						/* alert(JSON.stringify(args)); */
-						// showDetailForm(args.item);
-						openAsetListPopup(args.item);
 						
-					} else {
-					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
-					                .on("change", function () {
-						  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
-						});
+						openAsetList(args.item);
+						
 					}
 	            }, 
 	            pagerContainerClass: "paginate",
@@ -126,37 +115,6 @@
 	                },
             },
 	            fields: [
-	            	{  name : "chk"
-	                	 , align: "center"
-	                	 , width: 30
-	                	 , title: ""
-	                	 , editing: false
-	                	 , sorting: false
-	                	 , filtering: false
-	                	 , itemTemplate: function(value, item) {
-	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-	                       .prop("checked", $.inArray(item.firstName, selectedItems) > -1)
-	                       .on("change", function () {
-	  					  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
-	  					  	 });
-	            		   }
-	                	 , headerTemplate : function ()  { 
-						  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
-		                     .on("change", function (item) {
-		             	    	selectedItems = [];
-		            	    	if(this.checked) { // check select status
-		            	            $('.singleCheckbox').each(function() { 
-		            	                $(this).prop("checked", true).change();
-		            	            });			         
-		            	        }else {
-		            	            $('.singleCheckbox').each(function() { 
-		            	            	$(this).prop("checked", false).change();
-		            	            });  
-		            	            selectedItems = [];
-		            	        }
-		    				   });
-					 	 } ,
-	                },
 	            	{ name: "invNo"    , type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.inv.no}]]"    },
 	                { name: "invTtl"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.ttl}]]"   },
 	                { name: "invDt"    , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.dt}]]"    },
@@ -169,38 +127,13 @@
 	                { name: "invReqr"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.reqr}]]",  visible: false },
 	                { name: "asetQty"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.asetqty}]]",
 	                  itemTemplate: function(value, item) {
-	                    return '<a href="javascript:void(0);" onclick="openAsetListPopup(' + item.poNo + ');">' + value + '</a>';
+	                    return '<a href="javascript:void(0);" onclick="openAsetList(' + item.poNo + ');">' + value + '</a>';
 	                  }
 	                },
 	                { name: "noAsetQty", type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.noasetqty}]]"  }
 	            ]
 	        });
-	        
-		    var selectItem = function(item) {
-		    	if(!selectedItems.includes(item)){
-			    	selectedItems.push(item);
-		    	}
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             $("#selectAllCheckbox").prop("checked", true);
-	         } else {
-	             $("#selectAllCheckbox").prop("checked", false);
-	         }
-			};
-		     
-		    var unselectItem = function(item) {
-			    selectedItems = $.grep(selectedItems, function(i) {
-			    return i !== item;
-			    });
-			    if(selectedItems.length == 0) {
-			    	$('#selectAllCheckbox').attr('checked', false);
-			    }
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             $("#selectAllCheckbox").prop("checked", true);
-	         } else {
-	             $("#selectAllCheckbox").prop("checked", false);
-	         }
-	        
-		    };
+	       
     	    $(".btn_srch").on("click",function (){
     	    	if (validationCheck() == '202') {
 	    	   		$("#jsGrid").jsGrid().trigger("loadData");
@@ -243,7 +176,7 @@
 			
     	  	//공통코드팝업(트리) 호출 
      	    $("#openDeptPopup").on("click", function() { 
-     	    // 팝업 호출 url
+     	    	// 팝업 호출 url
     	        var url = "/common/popup/deptTreePopup";
     	        var popId = "DeptPopup";
     	        var args = {
@@ -327,25 +260,33 @@
 			window.close();
 	    }
 	    
-	    function openAsetListPopup(val){
-	    	console.log(val.poNo);
+	    function openAsetList(val){
 	    	
-     	    // 팝업 호출 url
-	        var url = "/asset/regist/invest/regAset";
-	        var popId = "RegAsetPopup";
-	        var args = {
-	        };
-	        args.width = 1250;
-	        args.height = 650;
-	        args.fullscreen = "no";
-	        args.resizable = "no";
-	        
-	        var param = {};
-	        param.id     = "poNo";
-	        param.value  = val.poNo;
-	        
-	        openPopup(popId, url, args, param);	
+	       	event.preventDefault();
+	       	
+	       	$(".btn_srch").click();
+	       	
+	       	$.commSaveSearchParams("condition", condition);
+	       	$.commSaveSearchParams("menuId", "[[${menuId}]]");
+	       	
+            let url = "/asset/regist/invest/regAset";
+			let menuId = "[[${menuId}]]";
+            
+			var $form = $('<form></form>'); 
+				$form.attr('action', url); 
+				$form.attr('method', 'Post'); 
+				$form.attr('target', '_self'); 
+				
+			var inputStr = $('<input type="hidden" value="' + val.poNo + '" name="poNo">');
+				$form.append(inputStr);
+ 				inputStr = $('<input type="hidden" value="' + menuId + '" name="menuId">');
+				$form.append(inputStr); 
+				
+				$form.appendTo('body'); 
+				
+				$form.submit();
 	    }
+	    
 	    </script>	
 	</th:block>
 
@@ -371,6 +312,7 @@
 								<col style="width:5%"/>
 								<col style="width:10%"/>
 								<col style="width:15%"/>
+								<col style="width:10%"/>
 							</colgroup>
 							<tr>
 								<td></td>

@@ -445,3 +445,9 @@ input#userPw{
     padding-right: 21px;
     height: 22px;
 }
+#contents .bbc {
+    position: absolute;
+    top: 45px;
+    right: 70px;
+    font-size: 11px;
+}
