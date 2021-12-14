@@ -41,7 +41,7 @@
 	</select>
 	
 	<!-- 부서 팝업(트리) 조회 -->
-	<select id="selectDeptTree" resultType="kr.co.trito.tams.web.common.dto.CodeTreeDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+	<select id="selectDeptTree" resultType="kr.co.trito.tams.web.common.dto.CodeTreeDto">
 		WITH RECURSIVE CTE (dept_cd, dept_nm, upp_dept_cd, sort_odr) AS
 		(
 			SELECT T1.dept_cd, T1.dept_nm, IFNULL(T1.upp_dept_cd,'#') upp_dept_cd, T1.sort_odr
@@ -55,7 +55,7 @@
 		SELECT CTE.dept_cd AS id, CTE.dept_nm AS text, CTE.sort_odr AS depth, CTE.upp_dept_cd AS parent 
 		  FROM CTE
 		  WHERE 1=1
-		 	<if test="params.param != null"> 
+		 	<if test="searchType == 'BIZ_DEPT'"> 
 		 		AND LENGTH(dept_cd) &lt; 7
 		 	</if>
 		ORDER BY CTE.dept_cd, CTE.sort_odr
@@ -122,7 +122,10 @@
 		  <if test="codeLvl != ''">
 		  AND B.CODE_LVL = #{codeLvl}
 		  </if>
-		ORDER BY sort_odr DESC
+		  <if test="upperCodeId != ''">
+		  AND B.UPP_CODE_ID = #{upperCodeId}
+		  </if>		  
+		ORDER BY sort_odr
 	</select>	
 	
 	<!-- 첨부파일 목록 조회 -->

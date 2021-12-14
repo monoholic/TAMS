@@ -34,14 +34,15 @@
 	});
   };
 
-//  $.commRequestSelectbox = function(url, reqType, selectboxId, codeGrpId, codeLvl) {
+  //$.commRequestSelectbox = function(url, reqType, selectboxId, codeGrpId, codeLvl, upperCodeId) {
   $.commRequestSelectbox = function(...args) {
-		console.log(args);
-		let data = {
+		//console.log(args);
+		let params = {
 			"codeGrpId" : args[3],
-			"codeLvl" : args.length > 4 ? args[4]: ""
+			"codeLvl" : args.length > 4 ? args[4]: "", 
+			"upperCodeId" : args.length > 5 ? args[5]: ""
 		}
-		$.commRequest(args[0], args[1], data)
+		$.commRequest(args[0], args[1], params)
 			.then((res) => {
 				var str = '';
 				$.each(res.data, function(i){
@@ -227,11 +228,52 @@ function openPopup(popId, url, args, param) {
     $form.attr("action", url);
     $form.attr("target", popId);
     $form.appendTo("body");
+    
     if( param != null && param != "" ) {
     	var str = '<input name="'+param.id+'" value="'+param.value+'">';
+    	var str2 = '<input name="'+param.rcd+'" value="'+param.rnm+'">';
     	$form.append(str);
+    	$form.append(str2);
     }
     $form.submit();	        
     $form.empty();
 }
 
+
+function openPopup2(popId, url, args, param) {
+	
+    var options;
+	
+	var width 	= args.width;
+    var height 	= args.height;
+    var fullscreen = args.fullscreen;
+    if( fullscreen == null || fullscreen == "" ) fullscreen = "no";
+    var resizable = args.resizable;
+    if( resizable == null || resizable == "" ) full = "no";
+    
+    var sTop  = Math.max(0, (($(window).height() - height) / 2) + $(window).scrollTop()) + "px";
+    var sLeft = Math.max(0, (($(window).width() - width) / 2) + $(window).scrollLeft()) + "px";
+    
+    options = "";
+    options += "position=absolute";
+    options += ",top="+sTop+", left="+sLeft+", height="+height+"px, width="+width+"px";
+    options += ",fullscreen="+fullscreen+", resizable="+resizable;
+    
+    var child;
+    child = window.open("", popId, options);
+    
+    $form = $("<form></form>");
+    $form.attr("action", url);
+    $form.attr("target", popId);
+    $form.appendTo("body");
+    
+    if( param != null && param != "" ) {
+	   	for (var key in param) {
+			var str = '<input name="'+key+'" value="'+param[key]+'">';
+			$form.append(str);
+		} 	     
+    }
+    
+    $form.submit();	        
+    $form.empty();
+}
