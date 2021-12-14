@@ -72,7 +72,7 @@ public class CodeController {
 	/* 공통코드 관리 화면 : 조회 */
 	@GetMapping(value="/codeMng/codeList")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
+	@ApiOperation(value = "공통코드 관리 화면 : 조회", notes = "공통코드 관리 화면 : 조회")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> codeMngList(
@@ -116,7 +116,7 @@ public class CodeController {
 	/* 공통코드 관리 화면 : 등록 */  
 	@GetMapping(value="/codeMng/codeInsert")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
+	@ApiOperation(value = "공통코드 관리 화면 : 등록", notes = "공통코드 관리 화면 : 등록")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String codeMngInsert(
@@ -173,7 +173,7 @@ public class CodeController {
 	/* 공통코드 관리 화면 : 수정 */
 	@GetMapping(value="/codeMng/codeUpdate")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Update", notes = "Web API Test")
+	@ApiOperation(value = "공통코드 관리 화면 : 수정", notes = "공통코드 관리 화면 : 수정")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String codegrpMngUpdate( 
@@ -228,7 +228,7 @@ public class CodeController {
 	/* 공통코드 화면 : 삭제 */
 	@PostMapping(value="/codeMng/codeDelete")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Delete", notes = "Web API Test")
+	@ApiOperation(value = "공통코드 화면 : 삭제", notes = "공통코드 화면 : 삭제")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String codegrpMngDelete( 

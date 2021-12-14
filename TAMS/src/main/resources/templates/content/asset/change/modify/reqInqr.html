@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>공통코드 그룹 관리</title>
+	    <title>자산정보수정</title>
 	</head>
         
 	<!-- css -->
@@ -40,7 +40,7 @@
 	 	
 		// 공통코드(의뢰구분) 조회                                                                                   
 		$(document).ready(function(){                                                                    
-			let url = '/aset/update/reqmas/selectReqTypeList';                                                      
+			let url = '/asset/update/reqmas/selectReqTypeList';                                                      
 			let reqType = 'POST';                                                                        
 			let data = {                                                                                 
 				"email" : ""                                                                             
@@ -60,7 +60,7 @@
 	 	
 		// 공통코드(의뢰상태) 조회                                                                                   
 		$(document).ready(function(){                                                                    
-			let url = '/aset/update/reqmas/selectReqStusList';                                                      
+			let url = '/asset/update/reqmas/selectReqStusList';
 			let reqType = 'POST';                                                                        
 			let data = {                                                                                 
 				"email" : ""                                                                             
@@ -109,8 +109,8 @@
 					if(target instanceof HTMLTableCellElement) {
 						// detail form
 						/* alert(JSON.stringify(args)); */
-						showDetailForm(args.item);
-						
+						// showDetailForm(args.item);
+						reqInqrMngView(args.item)
 					} else {
 					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
 					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
@@ -128,7 +128,7 @@
 	                    var d = $.Deferred();
 	                    
 	                    currentPage = filter.pageIndex; 
-	                    let url = "/aset/update/reqmas/reqInqrList";
+	                    let url = "/asset/update/reqmas/reqInqrList";
 						let reqType = 'GET';	
 						let data = {
             				"currentPage"  : filter.pageIndex,
@@ -160,7 +160,7 @@
 	                },
 	                
 		            updateItem: function(item) { 
-	                	let url = "/aset/update/reqmas/reqmasUpdate";
+	                	let url = "/asset/update/reqmas/reqmasUpdate";
 	                	let reqType = 'GET';
 	                	$.commRequest(url, reqType, item)
 	                		.then((res) => {
@@ -177,7 +177,7 @@
 	                },
 	                
 	                deleteItem: function(item) { 
-	        			let url = "/aset/update/reqmas/reqmasDelete";
+	        			let url = "/asset/update/reqmas/reqmasDelete";
 	        			let reqType = 'GET';
 	        			$.commRequest(url, reqType, item)
 	        				.then((res) => {
@@ -193,7 +193,7 @@
 	                
 	             	insertItem: function(item) { 
 	             		//insertedItems.push(item);
-	        			let url = "/aset/update/reqmas/reqmasInsert";
+	        			let url = "/asset/update/reqmas/reqmasInsert";
 	        			let reqType = 'GET';
 	        			
 	        			$.commRequest(url, reqType, item)
@@ -414,15 +414,6 @@
                 return this;
             }
             
-         	// 정렬 순서 유효성 검사
-            $("#codeLvl").on("input", function() {
-        		$(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
-        	});
-        	
-            $("#sortOdr").on("input", function() {
-        		$(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
-        	});
-            
             // 사용자 팝업 호출
             $("#openUserPopup").on("click", function() { 
     	        // 팝업 호출 url
@@ -595,12 +586,44 @@
 			return code;
 	    }
 	 	
+	   // 자산수정 의뢰작성
+	   /* function reqInqrMngView(item) { 
+	        // 팝업 호출 url
+	        var url = "/asset/update/reqmas/reqInqrPopupView";
+	        var popId = "ReqInqrMng";
+	        var args = {};
+	        args.width = 1350;
+	        args.height = 600;
+	        args.fullscreen = "no";
+	        args.resizable = "no";
+	        
+	        var param = {};
+	        
+	        param.id = "reqNo";
+	        param.value = item.reqNo;
+	        
+	        openPopup(popId, url, args, param);
+	    }; */
+	 	
+	    function reqInqrMngView(item) {
+	    	var $form = $('<form id="form"></form>'); 
+			$form.attr('action', "/asset/update/reqmas/reqInqrPopupView"); 
+			$form.attr('method', 'post'); 
+			$form.appendTo('body');
+			
+			var reqNoStr = $('<input type="hidden" value="'+item.reqNo+'" name="reqNo">');
+			
+			$form.append(reqNoStr);
+			
+			$form.submit();
+	    }
+	    
 	 	// 엑셀 다운로드
 		$(function(){
 			$(".btn_excelDown").on("click", function(){
 				
 		       	event.preventDefault();
-                let url = "/aset/update/reqmas/reqInqrExcel";
+                let url = "/asset/update/reqmas/reqInqrExcel";
 				
 				var $form = $('<form id="downForm"></form>'); 
 					$form.attr('action', url); 
@@ -690,8 +713,8 @@
 				</tr>
 				<tr>
 					<td class="search" colspan="10 ">
-						<a href="#;" class="btn_reset">Reset</a>
-						<a href="#;" class="btn_srch">Search</a>
+						<a href="#;" class="btn_reset">초기화</a>
+						<a href="#;" class="btn_srch">검색</a>
 					</td>
 				</tr>
 			</table>

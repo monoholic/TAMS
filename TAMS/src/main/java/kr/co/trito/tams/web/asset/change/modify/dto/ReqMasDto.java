@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.asset.update.reqmas.dto;
+package kr.co.trito.tams.web.asset.change.modify.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -67,6 +67,12 @@ public class ReqMasDto {
 	private String regDt;
 	@ApiModelProperty(value="부서코드")
 	private String deptCd;
+	@ApiModelProperty(value="부서코드명")
+	private String deptNm;
+	@ApiModelProperty(value="상위 부서코드")
+	private String uppDeptCd;
+	@ApiModelProperty(value="상위 부서코드명")
+	private String uppDeptNm;
 	@ApiModelProperty(value="자산 수")
 	private String asetCnt;
 	@ApiModelProperty(value="rn")

@@ -79,7 +79,7 @@
 .jsgrid-insert-row textarea,
 .jsgrid-insert-row select {
     width: 100%;
-    padding: .3em .5em;
+    /* padding: .3em .5em; */
 }
 
 .jsgrid-filter-row input[type='checkbox'],

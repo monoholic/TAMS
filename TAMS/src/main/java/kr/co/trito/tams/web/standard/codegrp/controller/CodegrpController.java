@@ -57,7 +57,7 @@ public class CodegrpController {
 	/* 공통코드 그룹 관리 화면 : 조회 */
 	@GetMapping(value="/codegrpMng/codegrpList")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
+	@ApiOperation(value = " 공통코드 그룹 관리 화면 : 조회", notes = " 공통코드 그룹 관리 화면 : 조회")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> codegrpMngList(
@@ -101,7 +101,7 @@ public class CodegrpController {
 	/* 공통코드 그룹 관리 화면 : 등록 */ 
 	@GetMapping(value="/codegrpMng/codegrpInsert")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
+	@ApiOperation(value = "공통코드 그룹 관리 화면 : 등록", notes = "공통코드 그룹 관리 화면 : 등록")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String codegrpMngInsert( 
@@ -141,7 +141,7 @@ public class CodegrpController {
 	/* 공통코드 그룹 관리 화면 : 수정 */
 	@GetMapping(value="/codegrpMng/codegrpUpdate")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Update", notes = "Web API Test")
+	@ApiOperation(value = "공통코드 그룹 관리 화면 : 수정", notes = "공통코드 그룹 관리 화면 : 수정")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String codegrpMngUpdate( 
@@ -186,7 +186,7 @@ public class CodegrpController {
 	/* 공통코드 그룹 화면 : 삭제 */
 	@GetMapping(value="/codegrpMng/codegrpDelete")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Delete", notes = "Web API Test")
+	@ApiOperation(value = "공통코드 그룹 화면 : 삭제", notes = "공통코드 그룹 화면 : 삭제")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String codegrpMngDelete( 

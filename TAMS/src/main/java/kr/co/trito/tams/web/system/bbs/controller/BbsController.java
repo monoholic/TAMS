@@ -128,7 +128,7 @@ public class BbsController {
 	/* 게시판 관리 화면 : 조회 */
 	@GetMapping(value="/bbsMng/bbsMngList")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
+	@ApiOperation(value = "게시판 관리 화면 : 조회", notes = "게시판 관리 화면 : 조회")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> bbsMngList(
@@ -172,7 +172,7 @@ public class BbsController {
 	/* 게시판 관리 화면 : 등록 */  
 	@PostMapping(value="/bbsMng/bbsInsert")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
+	@ApiOperation(value = "게시판 관리 화면 : 등록", notes = "게시판 관리 화면 : 등록")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String bbsMngInsert(
@@ -221,10 +221,10 @@ public class BbsController {
 		return code;
 	}
 	
-	/* 공통코드 관리 화면 : 수정 */
+	/* 게시판 관리 화면 : 수정 */
 	@PostMapping(value="/bbsMng/bbsUpdate")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Update", notes = "Web API Test")
+	@ApiOperation(value = "게시판 관리 화면 : 수정", notes = "게시판 관리 화면 : 수정")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String bbsMngUpdate(
@@ -302,7 +302,7 @@ public class BbsController {
 	/* 공통코드 그룹 화면 : 삭제 */
 	@GetMapping(value="/bbsMng/bbsDelete")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Delete", notes = "Web API Test")
+	@ApiOperation(value = "게시판 관리 화면 : 삭제", notes = "게시판 관리 화면 : 삭제")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String bbsMngDelete( 
@@ -331,7 +331,7 @@ public class BbsController {
 	/* 게시판 화면 : 조회 */
 	@GetMapping(value="/bbsMng/bbsList")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
+	@ApiOperation(value = "게시판 화면 : 조회", notes = "게시판 화면 : 조회")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> bbsList(

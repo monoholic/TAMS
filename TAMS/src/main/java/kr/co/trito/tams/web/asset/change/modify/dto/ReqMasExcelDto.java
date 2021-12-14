@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.asset.update.reqmas.dto;
+package kr.co.trito.tams.web.asset.change.modify.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

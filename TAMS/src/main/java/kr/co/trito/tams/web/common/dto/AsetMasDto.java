@@ -35,8 +35,12 @@ public class AsetMasDto {
 	private String sn;
 	@ApiModelProperty(value="사업부코드")
 	private String bizDeptCd;
+	@ApiModelProperty(value="사업부코드명")
+	private String bizDeptNm;
 	@ApiModelProperty(value="부서코드")
 	private String deptCd;
+	@ApiModelProperty(value="부서코드명")
+	private String deptNm;
 	@ApiModelProperty(value="담장자")
 	private String chrgr;
 	@ApiModelProperty(value="공통코드(사업장)")

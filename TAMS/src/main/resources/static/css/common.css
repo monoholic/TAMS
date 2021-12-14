@@ -70,3 +70,6 @@ footer span.contact strong{margin-left:3px;padding-left:7px;font-weight:normal}
 #asetStatusQty{
 	display: flex;
 }
+.reInqrInput{
+	width: 100%;
+}

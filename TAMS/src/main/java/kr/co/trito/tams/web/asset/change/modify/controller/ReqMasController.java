@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.asset.update.reqmas.controller;
+package kr.co.trito.tams.web.asset.change.modify.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,10 +33,11 @@ import kr.co.trito.tams.comm.util.file.excel.ExcelConstant;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasDto;
-import kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasExcelDto;
-import kr.co.trito.tams.web.asset.update.reqmas.mapper.ReqMasMapper;
-import kr.co.trito.tams.web.asset.update.reqmas.service.ReqMasService;
+import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
+import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasExcelDto;
+import kr.co.trito.tams.web.asset.change.modify.mapper.ReqMasMapper;
+import kr.co.trito.tams.web.asset.change.modify.service.ReqMasService;
+import kr.co.trito.tams.web.common.dto.AsetMasDto;
 import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import kr.co.trito.tams.web.standard.codegrp.dto.CodegrpDto;
 import kr.co.trito.tams.web.system.user.dto.UserMngDto;
@@ -69,7 +70,21 @@ public class ReqMasController {
 		view.addObject("menuId"  , menuId);
 		view.addObject("menuNm"  , menuNm);
 		view.addObject("menuDesc", menuDesc);
-		view.setViewName("/content/asset/update/request/reqInqr");
+		view.setViewName("/content/asset/change/modify/reqInqr");
+		return view;
+	}
+	
+	/** 자산수정 의뢰작성 화면 */
+	@PostMapping("/reqInqrPopupView")
+	@ResponseBody
+	public ModelAndView reqInqrMngView(HttpServletRequest request) {
+		
+		ModelAndView view = new ModelAndView();
+		
+		String reqNo = request.getParameter("reqNo");
+		
+		view.addObject("reqNo", reqNo);
+		view.setViewName("/content/asset/change/modify/reqInqrPopup");
 		return view;
 	}
 	
@@ -94,7 +109,7 @@ public class ReqMasController {
 	/** 자산정보수정 화면 : 조회 */
 	@GetMapping(value="/reqInqrList")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
+	@ApiOperation(value = "자산정보수정 화면 : 조회", notes = "자산정보수정 화면 : 조회")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> reqInqrList(
@@ -164,12 +179,12 @@ public class ReqMasController {
 		List<ReqMasDto> list = reqmasService.selectReqInqrList(condition);
 		
 		return responseService.success(condition, list);
-	} 	
+	}
 	
 	/** 자산정보수정 화면 : 등록 */  
 	@GetMapping(value="/reqmasInsert")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
+	@ApiOperation(value = "자산정보수정 화면 : 등록", notes = "자산정보수정 화면 : 등록")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String reqmasInsert(
@@ -234,7 +249,7 @@ public class ReqMasController {
 	/** 자산정보수정 화면 : 수정 */ 
 	@GetMapping(value="/reqmasUpdate")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
+	@ApiOperation(value = "자산정보수정 화면 : 수정", notes = "자산정보수정 화면 : 수정")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String reqmasUpdate(
@@ -301,7 +316,7 @@ public class ReqMasController {
 	/** 자산정보수정 화면 : 삭제 */
 	@GetMapping(value="/reqmasDelete")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Delete", notes = "Web API Test")
+	@ApiOperation(value = "자산정보수정 화면 : 삭제", notes = "자산정보수정 화면 : 삭제")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String reqmasDelete( 
@@ -329,7 +344,7 @@ public class ReqMasController {
 	
 	// 사용자 관리 화면 : 조회 - 엑셀다운 
 	@PostMapping(value="/reqInqrExcel")
-	@ApiOperation(value = "Web API Menu Mgr test", notes = "Web API Test")
+	@ApiOperation(value = "자산정보수정 화면 : 조회 - 엑셀다운", notes = "자산정보수정 화면 : 조회 - 엑셀다운")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ModelAndView reqMasListExcel(
@@ -412,6 +427,43 @@ public class ReqMasController {
 		//log.error("@@@@ "+ rows.toString());
 		map.put(ExcelConstant.BODY, rows);
 		return map;
+	}
+	
+	/** 자산수정 의뢰작성 화면 : 조회 */
+	@GetMapping(value="/reqInqrPopup")
+	@ResponseBody
+	@ApiOperation(value = "자산수정 의뢰작성 화면 : 조회", notes = "자산수정 의뢰작성 화면 : 조회")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> reqInqrList(
+		@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage",required = true) String currentPage,
+		@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
+		@ApiParam(value = "의뢰번호", required = false) @RequestParam(value = "reqNo", required = false) String reqNo,
+		@ApiParam(value = "정렬 필드", required = false) @RequestParam(value = "sortField", required = false) String sortField,
+		@ApiParam(value = "정렬 타입", required = false) @RequestParam(value = "sortOrder", required = false) String sortOrder,
+		@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) {
+		
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
+
+		Map<String, Object> params = new HashMap<>();
+		
+		if (!StringUtils.isEmpty(userId))
+			params.put("userId", userId);
+		
+		if (!StringUtils.isEmpty(reqNo))
+			params.put("reqNo", reqNo);
+		
+		// System.out.println("@@@@" + userId);
+		
+		SearchCondition condition = new SearchCondition("0", "0", params);
+		int total = reqmasService.selectCountReqInqr(condition);
+		condition.pageSetup(total);
+		
+		List<ReqMasDto> list = reqmasService.selectReqInqrPopup(condition);
+		List<AsetMasDto> list2 = reqmasService.selectAsetReqList(condition);
+		
+		return responseService.success(condition, list, list2);
 	}
 }
 

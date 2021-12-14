@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.asset.update.reqmas.service;
+package kr.co.trito.tams.web.asset.change.modify.service;
 
 import java.util.List;
 
@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasDto;
-import kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasExcelDto;
-import kr.co.trito.tams.web.asset.update.reqmas.mapper.ReqMasMapper;
+import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
+import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasExcelDto;
+import kr.co.trito.tams.web.asset.change.modify.mapper.ReqMasMapper;
+import kr.co.trito.tams.web.common.dto.AsetMasDto;
 import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import lombok.RequiredArgsConstructor;
 
@@ -43,11 +44,19 @@ public class ReqMasService {
 		return mapper.reqInqrDelete(dto);
 	}
 	
-	public List<CodeDto> selectReqTypeList(String email){
+	public List<CodeDto> selectReqTypeList(String email) {
 		return mapper.selectReqTypeList(email);
 	}
 	
-	public List<CodeDto> selectReqStusList(String email){
+	public List<CodeDto> selectReqStusList(String email) {
 		return mapper.selectReqStusList(email);
+	}
+	
+	public List<ReqMasDto> selectReqInqrPopup(SearchCondition condition) {
+		return mapper.selectReqInqrPopup(condition);
+	}
+	
+	public List<AsetMasDto> selectAsetReqList(SearchCondition condition) {
+		return mapper.selectAsetReqList(condition);
 	}
 }

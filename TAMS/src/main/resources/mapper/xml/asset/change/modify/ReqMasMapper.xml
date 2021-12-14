@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.co.trito.tams.web.asset.update.reqmas.mapper.ReqMasMapper">
-   	<select id="selectReqInqrList" resultType="kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+<mapper namespace="kr.co.trito.tams.web.asset.change.modify.mapper.ReqMasMapper">
+   	<select id="selectReqInqrList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
    		SELECT req_no
 		     , req_type
 		     , (SELECT code_nm
@@ -30,11 +30,18 @@
 		     , rtkin_yn
 		     , rtkin_dt
 		     , prgs_dcont_yn
-		     , updr
-		     , up_dt
-		     , regr
-		     , reg_dt
+		     , A.updr
+		     , A.up_dt
+		     , A.regr
+		     , A.reg_dt
 		     , dept_cd
+	         , (SELECT dept_nm
+	  			  FROM tb_dept
+	         	 WHERE dept_cd = A.dept_cd) AS dept_nm
+	         , upp_dept_cd
+	         , (SELECT dept_nm
+	  			  FROM tb_dept
+	         	 WHERE dept_cd = A.upp_dept_cd) AS upp_dept_nm
 		     , (SELECT count(*)
 		          FROM tb_aset_req
 		         WHERE req_no = A.req_no) AS aset_cnt
@@ -57,23 +64,21 @@
 			     , rtkin_yn
 			     , rtkin_dt
 			     , prgs_dcont_yn
-			     , updr
-			     , up_dt
-			     , regr
-			     , reg_dt
-			     , (SELECT dept_cd
-	  				  FROM tb_user
-	  		         WHERE user_id = #{params.userId}) AS dept_cd
-			 FROM TB_REQ_MAS
-			 WHERE 1=1
+			     , a.updr
+			     , a.up_dt
+			     , a.regr
+			     , a.reg_dt
+			     , b.dept_cd
+			     , (SELECT upp_dept_cd
+		  			  FROM tb_dept
+		         	 WHERE dept_cd = b.dept_cd) AS upp_dept_cd
+			 FROM TB_REQ_MAS a
+			 INNER JOIN tb_user b
+			    ON a.reqtr = b.user_id
 			 <if test="params.userId != null">
-	     		AND reqtr = #{params.userId} <!-- 접속한 아이디 비교 -->
-	     		<!-- 작성한 사용자의 부서코드와 또 다른 접속자의 코드가 일치하면 조회. -->
-	     		OR (SELECT dept_cd
-	  				  FROM tb_user
-	  		         WHERE user_id = #{params.userId}) = (SELECT dept_cd
-			  				      							FROM tb_user
-			  		             						   WHERE user_id= reqtr)
+				WHERE 1=1
+				AND (reqtr = #{params.userId} OR 
+		       		dept_cd = (SELECT dept_cd FROM tb_user WHERE user_id = #{params.userId}))
 	     	 </if>
 	     ) AS A
 	     WHERE 1=1
@@ -107,7 +112,7 @@
 	  	 ORDER BY req_no
    	</select>
    	
-   	<select id="selectReqInqrExcelList" resultType="kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   	<select id="selectReqInqrExcelList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
    		SELECT req_no
 		     , req_type
 		     , (SELECT code_nm
@@ -263,12 +268,12 @@
 		 	</if>
    	</select>
    	
-   	<insert id="reqInqrInsert" parameterType="kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasDto" useGeneratedKeys="true" keyProperty="req_no">
+   	<insert id="reqInqrInsert" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" useGeneratedKeys="true" keyProperty="req_no">
    		INSERT INTO tb_req_mas (req_type, req_nm, req_dt, reqtr, appv_doc_id, req_rsn, req_stus, move_pupos, move_dt, tkout_sche_yn, tkout_sche_dt, tkout_yn, tkout_dt, rtkin_yn, rtkin_dt, prgs_dcont_yn, regr, reg_dt)
    		VALUES (#{reqType}, #{reqNm}, current_timestamp(),  #{reqtr},  #{appvDocId},  #{reqRsn},  #{reqStus},  #{movePupos},  #{moveDt},  #{tkoutScheYn},  #{tkoutScheDt},  #{tkoutYn},  #{tkoutDt},  #{rtkinYn},  #{rtKinDt}, #{prgsDcontYn} , #{regr} , current_timestamp())
    	</insert>
    	
-   	<update id="reqInqrUpdate" parameterType="kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasDto">
+   	<update id="reqInqrUpdate" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto">
 		UPDATE tb_req_mas         
 		   SET req_type      = #{reqType}
 		     , req_nm 	     = #{reqNm}
@@ -290,7 +295,7 @@
 		WHERE req_no = #{reqNo}         
 	</update>
    	
-   	<delete id="reqInqrDelete" parameterType="kr.co.trito.tams.web.asset.update.reqmas.dto.ReqMasDto">
+   	<delete id="reqInqrDelete" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto">
 		DELETE 
 		FROM TB_REQ_MAS
         WHERE req_no = #{reqNo}
@@ -307,4 +312,61 @@
 		FROM tb_com_code
 		WHERE code_grp_id="APPR_STATUS"
    	</select>
+   	
+   	<select id="selectReqInqrPopup" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   		SELECT    
+   	           (SELECT code_nm
+		          FROM tb_com_code
+		         WHERE code_id = A.req_type) AS req_type_nm
+		     , req_type 
+			 , req_no
+			 , DATE_FORMAT(req_dt, '%Y-%m-%d') AS req_dt
+			 , dept_cd
+			 , (SELECT dept_nm
+	  			  FROM tb_dept
+	         	 WHERE dept_cd = A.dept_cd) AS dept_nm
+			 , reqtr
+		     , req_nm
+			 , req_rsn
+		FROM (
+			SELECT
+			  	   req_type
+			     , req_no
+			     , req_dt
+			     , b.dept_cd
+			     , reqtr
+			     , req_nm
+			     , req_rsn
+			 FROM TB_REQ_MAS a
+			 INNER JOIN tb_user b
+			    ON a.reqtr = b.user_id
+	     ) AS A
+	   WHERE 1=1
+	   		<if test="params.reqNo != null">
+				AND A.req_no = #{params.reqNo}
+		 	</if>
+   	</select>
+   	
+   	<select id="selectAsetReqList" resultType="kr.co.trito.tams.web.common.dto.AsetMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+	   	SELECT aset_no
+		 	 , aset_type1
+		     , aset_type2
+		     , aset_type3
+		     , mftco
+		     , model
+		     , sn
+		     , biz_dept_cd
+		     , (SELECT dept_nm
+		 	      FROM tb_dept a
+	             WHERE dept_cd = b.biz_dept_cd) biz_dept_nm
+		     , dept_cd
+		     , (SELECT dept_nm
+		 	      FROM tb_dept a
+	             WHERE dept_cd = b.dept_cd) dept_nm
+		     , chrgr
+		  FROM tb_req_mas a
+		 INNER JOIN tb_aset_req b
+		    ON a.req_no = b.req_no
+		  WHERE b.req_no = #{params.reqNo}
+	</select>
 </mapper>
