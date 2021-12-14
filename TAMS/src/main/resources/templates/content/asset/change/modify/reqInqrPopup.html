@@ -44,8 +44,6 @@
 	 	
 	    $(function(){
 	    	
-	    	asetTypeList();
-	    	
 	        var selectItem = function(item) {
 		    	if(!selectedItems.includes(item))
 			    selectedItems.push(item);
@@ -279,7 +277,16 @@
 		        
 		        openPopup(popId, url, args);
 		    });
-     	    
+	        			
+			/*-------------------------------------------------------------------------*/			
+	        (async () => {	        	
+  				console.log(">>>>>> step 1 asetArr1 " + asetArr1.length);  				
+  				await asetTypeList();
+  				await jsGridLoad();
+  				//await asetTypeSel();
+  				})();			
+	        /*-------------------------------------------------------------------------*/
+	        
     	});
 	    
 	 	// 사용자 선택 팝업에서 받은 결과 처리
@@ -299,14 +306,18 @@
 		}
 
 		// asetType 리스트 출력
-	    function asetTypeList() {
+	    async function asetTypeList() {
+			
+	    	console.log('--------------- asetTypeList ------------------');
+			
 		 	let url = '/common/popup/asetType';                                                      
 		 	let reqType = 'POST';                                                                        
 		 	let data = {                                                                                 
 		 		"email" : ""                                                                             
 		 	};                                                                                           
-		 	$.commRequest(url, reqType, JSON.stringify(data))                                            
+		 	await $.commRequest(url, reqType, JSON.stringify(data))                                            
 		 		.then((res) => {
+		 			
 		 			$.each(res.data, function(index, el){                                                        
 		 				asetType.push(el);
 		 				
@@ -314,7 +325,9 @@
 			 				asetArr1.push({Id : el.codeId, Nm:el.codeNm});
 		 				}
 		 			})
-		 			jsGridLoad();
+		 			
+		 			console.log(">>>>>> step 2 asetArr1 " + asetArr1.length);
+		 			//jsGridLoad();
 		 		})
 		 		
 		 		.catch((error) => {                                                                      
@@ -322,7 +335,9 @@
 		 		});
 		};
 		
-	 	function jsGridLoad() {
+		function jsGridLoad() {
+			console.log('--------------- jsGridLoad ------------------');
+	 		
 	 		 $("#jsGrid").jsGrid({
 		        	height: "600",
 	                width: "100%",
@@ -377,6 +392,7 @@
 	            				"sortField"    : filter.sortField,
 	            				"sortOrder"    : filter.sortOrder
 	            			}
+							
 							$.commRequest(url, reqType, data)
 								.then((res) => {
 									
@@ -610,6 +626,11 @@
 	    
 	 	// 자산유형 option 선택
 	    function asetTypeSel() {
+	    	
+	    	console.log('--------------- asetTypeSel ------------------');
+	    	
+	    	console.log("---- asetArr1------ " + asetArr1.length)
+	    	
 	    	$.each(asetArr1, function(idx, el) {
 		    	$('#asetType1'+(idx+1)+" "+'option:contains('+ el.Nm +')').prop('selected', true);
 	    	})
