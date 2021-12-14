@@ -54,6 +54,7 @@
 				console.log('조회 실패');
 			});
   };
+   
     
   $.commExcelDown = function(url, params){
 	let exlForm = $('<form id="downForm"></form>');
@@ -148,12 +149,50 @@ function removeComma(value){
 
 //파일 사이즈 표시
 function bytesToSize(bytes) {
-   var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-   if (bytes == 0) return '0 Byte';
-   var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-   return addComma(Math.round(bytes / Math.pow(1024, i), 2)+"") + ' ' + sizes[i];
+	var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+	if (bytes == 0) return '0 Byte';
+	var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+	return addComma(Math.round(bytes / Math.pow(1024, i), 2)+"") + ' ' + sizes[i];
 }
 
+// asetType 리스트 출력
+function asetTypeList(){                                                                    
+	let url = '/common/popup/asetType';                                                      
+	let reqType = 'POST';                                                                        
+	let data = {                                                                                 
+		"email" : ""                                                                             
+	};                                                                                           
+	$.commRequest(url, reqType, JSON.stringify(data))                                            
+		.then((res) => {
+			console.log(res);
+			$.each(res.data, function(index, el){                                                        
+				asetType.push(el);
+				
+				if(el.codeLvl == '1') {
+					$("#asetType1").append('<option value="'+ el.codeId+'">' + el.codeNm+ '</option>');
+				}
+			})
+		})
+		.catch((error) => {                                                                      
+			alert('[[#{screen.info.status.error.occur}]]');                                                                  
+		});
+};
+
+// 자산 유형 옵션 그리기
+function makeAsetCombo(objNm, arr) {
+	$(objNm).empty();
+	
+	$.each(arr, function(i, e) {
+		$(objNm).append('<option value="'+ e.codeId+'">' + e.codeNm+ '</option>');
+	});
+}
+
+// 자산 유형 부모 요소 찾아서 return
+function getAsetType(asetType1) {
+	return asetType.filter( function(el) {
+		return el.uppCodeId == asetType1;
+	});
+}
 /* ///////////////////////////////////////////////////////////////////////// */
 /* datepicker 기본 설정  */
 /* ///////////////////////////////////////////////////////////////////////// */
