@@ -54,8 +54,7 @@
 				console.log('조회 실패');
 			});
   };
-  
-  
+    
   $.commExcelDown = function(url, params){
 	let exlForm = $('<form id="downForm"></form>');
 	exlForm.attr('action', url); 
