@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.trito.tams.web.asset.status.information.mapper.AssetInformationMapper">
+   
+	<!-- 자산현황 카운트 -->
+	<select id="selectAssetStatusCount" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+			SELECT COUNT(*) cnt 
+			FROM tb_aset_mas a 
+			WHERE 1=1
+			<if test="params.asetNo != ''">
+				AND a.aset_no LIKE CONCAT('%', #{params.asetNo}, '%') 
+		 	</if>
+	 		<if test="params.asetType1 != 'ALL'">
+				AND a.aset_type1 = #{params.asetType1}
+	 		</if>
+	 		<if test="params.asetType2 != 'ALL'">
+				AND a.aset_type2 = #{params.asetType2}
+	 		</if>
+	 		<if test="params.asetType3 != 'ALL'">
+				AND a.aset_type3 = #{params.asetType3}
+	 		</if>
+	 		<if test="params.bizDeptCd != ''">
+				AND a.biz_dept_cd = #{params.bizDeptCd}
+	 		</if>	 		
+	 		<if test="params.deptCd != ''">
+				AND a.dept_cd = #{params.deptCd}
+	 		</if>
+	 		<if test="params.chrgr != ''">
+				AND a.chrgr LIKE CONCAT('%', #{params.chrgr}, '%') 
+	 		</if>
+	 		<if test="params.mftco != ''">
+				AND a.mftco LIKE CONCAT('%', #{params.mftco}, '%') 
+	 		</if>
+	 		<if test="params.model != ''">
+				AND a.model LIKE CONCAT('%', #{params.model}, '%') 
+	 		</if>
+	 		<if test="params.asetStatus != 'ALL'">
+				AND a.aset_stus = #{params.asetStatus}
+	 		</if>	 		
+	</select>   
+   
+   	<!-- 자산현황 -->
+	<select id="selectAssetStatusList" resultType="kr.co.trito.tams.web.asset.status.information.dto.AssetStatusDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 
+		SELECT a.*
+		     , b.code_nm as asetType1Nm
+		     , c.code_nm as asetType2Nm
+		     , d.code_nm as asetType3Nm
+		     , e.dept_nm as bizDeptNm
+		     , f.dept_nm as deptNm
+			FROM (
+			   		SELECT aset_no 		    AS asetNo
+						 , aset_nm 		    AS asetNm
+						 , aset_type1 	    AS asetType1
+						 , aset_type2 	    AS asetType2
+						 , aset_type3 	    AS asetType3
+						 , mftco 			AS mftco
+						 , model 			AS model
+						 , sn 			    AS sn
+						 , biz_dept_cd 	    AS bizDeptCd  
+						 , dept_cd 		    AS deptCd
+						 , chrgr			AS chrgr
+						 , bsplc 			AS bsplc
+						 , buld 			AS buld
+						 , floor 			AS floor
+						 , loc 			    AS loc
+						 , exp_dept_cd 	    AS expDeptCd
+						 , exp_acct 		AS expAcct
+						 , dur_year 		AS durYear
+						 , acq_prc 		 	AS acqPrc
+						 , sval_prc 		AS svalPrc
+						 , dprc_prc 		AS dprcPrc
+						 , acq_dt 		  	AS acqDt
+						 , aset_out_book_yn AS asetOutBookYn
+						 , aset_stus		AS asetStus
+						 , ( SELECT B.code_nm 
+						     FROM TB_COM_CODE B
+						     WHERE B.code_grp_id = "AS_STATUS" 
+							 AND B.code_id = A.aset_stus ) AS asetStusNm
+						 , updr 			AS updr
+						 , up_dt 			AS upDt
+						 , regr 			AS regr
+						 , reg_dt 		    AS regDt 			
+						 , ROW_NUMBER() OVER(ORDER BY A.aset_no) AS rn
+					FROM tb_aset_mas A
+					WHERE 1=1 
+					<if test="params.asetNo != ''">
+						AND a.aset_no LIKE CONCAT('%', #{params.asetNo}, '%')
+				 	</if>
+			 		<if test="params.asetType1 != 'ALL'">
+						AND a.aset_type1 = #{params.asetType1}
+			 		</if>
+			 		<if test="params.asetType2 != 'ALL'">
+						AND a.aset_type2 = #{params.asetType2}
+			 		</if>
+			 		<if test="params.asetType3 != 'ALL'">
+						AND a.aset_type3 = #{params.asetType3}
+			 		</if>
+			 		<if test="params.bizDeptCd != ''">
+						AND a.biz_dept_cd = #{params.bizDeptCd}
+			 		</if>	 		
+			 		<if test="params.deptCd != ''">
+						AND a.dept_cd = #{params.deptCd}
+			 		</if>
+			 		<if test="params.chrgr != ''">
+						AND a.chrgr LIKE CONCAT('%', #{params.chrgr}, '%') 
+			 		</if>
+			 		<if test="params.mftco != ''">
+						AND a.mftco LIKE CONCAT('%', #{params.mftco}, '%') 
+			 		</if>
+			 		<if test="params.model != ''">
+						AND a.model LIKE CONCAT('%', #{params.model}, '%') 
+			 		</if>
+			 		<if test="params.asetStatus != 'ALL'">
+						AND a.aset_stus = #{params.asetStatus}
+			 		</if>	 	
+					ORDER BY asetNo				 		
+		) AS a
+		LEFT OUTER JOIN tb_com_code b
+		  ON a.asetType1 = b.code_id
+		 AND b.use_yn = 'Y'
+		LEFT OUTER JOIN tb_com_code c
+		  ON a.asetType2 = c.code_id
+		 AND c.use_yn = 'Y'
+		LEFT OUTER JOIN tb_com_code d
+		  ON a.asetType3 = d.code_id
+		 AND d.use_yn = 'Y' 	
+		LEFT OUTER JOIN tb_dept e
+		  ON a.bizDeptCd = e.dept_cd 
+		 AND e.use_yn = 'Y'	  
+		LEFT OUTER JOIN tb_dept f
+		  ON a.deptCd = f.dept_cd 
+		 AND f.use_yn = 'Y'	  		 
+		WHERE rn BETWEEN #{start} AND #{end}
+   	</select>
+	
+   	<!-- 자산현황 -->
+	<select id="selectAssetStatusExcel" resultType="kr.co.trito.tams.web.asset.status.information.dto.AssetStatusExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 
+		SELECT a.asetNo
+		     , a.asetNm
+		     , b.code_nm as asetType1Nm
+		     , c.code_nm as asetType2Nm
+		     , d.code_nm as asetType3Nm		     
+		     , a.mftco
+		     , a.model
+		     , a.sn
+		     , e.dept_nm as bizDeptNm
+		     , f.dept_nm as deptNm
+		     , a.chrgr
+		     , a.asetStusNm
+			FROM (
+			   		SELECT aset_no 		    AS asetNo
+						 , aset_nm 		    AS asetNm
+						 , aset_type1 	    AS asetType1
+						 , aset_type2 	    AS asetType2
+						 , aset_type3 	    AS asetType3
+						 , mftco 			AS mftco
+						 , model 			AS model
+						 , sn 			    AS sn
+						 , biz_dept_cd 	    AS bizDeptCd  
+						 , dept_cd 		    AS deptCd
+						 , chrgr			AS chrgr
+						 , bsplc 			AS bsplc
+						 , buld 			AS buld
+						 , floor 			AS floor
+						 , loc 			    AS loc
+						 , exp_dept_cd 	    AS expDeptCd
+						 , exp_acct 		AS expAcct
+						 , dur_year 		AS durYear
+						 , acq_prc 		 	AS acqPrc
+						 , sval_prc 		AS svalPrc
+						 , dprc_prc 		AS dprcPrc
+						 , acq_dt 		  	AS acqDt
+						 , aset_out_book_yn AS asetOutBookYn
+						 , aset_stus		AS asetStus
+						 , ( SELECT B.code_nm 
+						     FROM TB_COM_CODE B
+						     WHERE B.code_grp_id = "AS_STATUS" 
+							 AND B.code_id = A.aset_stus ) AS asetStusNm
+						 , updr 			AS updr
+						 , up_dt 			AS upDt
+						 , regr 			AS regr
+						 , reg_dt 		    AS regDt 			
+						 , ROW_NUMBER() OVER(ORDER BY A.aset_no) AS rn
+					FROM tb_aset_mas A
+					WHERE 1=1 
+					<if test="params.asetNo != ''">
+						AND a.aset_no LIKE CONCAT('%', #{params.asetNo}, '%')
+				 	</if>
+			 		<if test="params.asetType1 != 'ALL'">
+						AND a.aset_type1 = #{params.asetType1}
+			 		</if>
+			 		<if test="params.asetType2 != 'ALL'">
+						AND a.aset_type2 = #{params.asetType2}
+			 		</if>
+			 		<if test="params.asetType3 != 'ALL'">
+						AND a.aset_type3 = #{params.asetType3}
+			 		</if>
+			 		<if test="params.bizDeptCd != ''">
+						AND a.biz_dept_cd = #{params.bizDeptCd}
+			 		</if>	 		
+			 		<if test="params.deptCd != ''">
+						AND a.dept_cd = #{params.deptCd}
+			 		</if>
+			 		<if test="params.chrgr != ''">
+						AND a.chrgr LIKE CONCAT('%', #{params.chrgr}, '%') 
+			 		</if>
+			 		<if test="params.mftco != ''">
+						AND a.mftco LIKE CONCAT('%', #{params.mftco}, '%') 
+			 		</if>
+			 		<if test="params.model != ''">
+						AND a.model LIKE CONCAT('%', #{params.model}, '%') 
+			 		</if>
+			 		<if test="params.asetStatus != 'ALL'">
+						AND a.aset_stus = #{params.asetStatus}
+			 		</if>	 	
+					ORDER BY asetNo				 		
+		) AS a
+		LEFT OUTER JOIN tb_com_code b
+		  ON a.asetType1 = b.code_id
+		 AND b.use_yn = 'Y'
+		LEFT OUTER JOIN tb_com_code c
+		  ON a.asetType2 = c.code_id
+		 AND c.use_yn = 'Y'
+		LEFT OUTER JOIN tb_com_code d
+		  ON a.asetType3 = d.code_id
+		 AND d.use_yn = 'Y' 	
+		LEFT OUTER JOIN tb_dept e
+		  ON a.bizDeptCd = e.dept_cd 
+		 AND e.use_yn = 'Y'	  
+		LEFT OUTER JOIN tb_dept f
+		  ON a.deptCd = f.dept_cd 
+		 AND f.use_yn = 'Y'	  		 
+		WHERE rn BETWEEN #{start} AND #{end}
+   	</select>	
+	
+</mapper>
