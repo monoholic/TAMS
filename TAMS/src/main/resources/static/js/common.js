@@ -63,7 +63,7 @@
 	
     if(params != null && params != "") {
 	   	for (var key in params) {
-			var str = '<input name="'+key+'" value="'+params[key]+'">';
+			var str = '<input type="hidden" name="'+key+'" value="'+params[key]+'">';
 			exlForm.append(str);
 		} 	     
     }	 
