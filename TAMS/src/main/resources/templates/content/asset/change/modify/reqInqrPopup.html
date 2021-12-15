@@ -324,6 +324,14 @@
 		 				if(el.codeLvl == '1') {
 			 				asetArr1.push({Id : el.codeId, Nm:el.codeNm});
 		 				}
+		 				
+		 				if(el.codeLvl == '2') {
+			 				asetArr2.push({Id : el.codeId, Nm:el.codeNm});
+		 				}
+		 				
+		 				if(el.codeLvl == '3') {
+			 				asetArr3.push({Id : el.codeId, Nm:el.codeNm});
+		 				}
 		 			})
 		 			
 		 			console.log(">>>>>> step 2 asetArr1 " + asetArr1.length);
@@ -361,7 +369,7 @@
 	                pageButtonCount: 5,
 	                loadonce: true,
 	                updateOnResize: true,
-		            rowClick: function(args) {
+		            /* rowClick: function(args) {
 		            	var target = args.event.target;
 		            	
 						if(target instanceof HTMLTableCellElement) {
@@ -373,7 +381,7 @@
 							  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
 							});
 						}
-		            },
+		            }, */
 		            pagerContainerClass: "paginate",
 		            deleteConfirm: function(item) {
 		                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
@@ -460,7 +468,7 @@
 		        				.catch((error) => {
 		        					console.log(error);
 		        				})
-		            	},
+		            	}
 	           		},
 		            fields: [
 		            	{  	   name : "chk"
@@ -498,8 +506,8 @@
 						 	 } ,
 		                },
 		                { name: "asetNo", type: "text", width: 35 ,align: "left", title: "자산번호", editing: false},
-		                { name: "asetType1", type:"select", width: 35, align:"left", title:"자산유형1", editing: false,
-		                	itemTemplate : function(value, item){
+		                { name: "asetType1", type:"select", width: 35, align:"left", title:"자산유형1", items:asetArr1, valueField :"Id", textField : "Nm"
+		                	/* itemTemplate : function(value, item){
 		                		var str = "";
 		                		
 		                		let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
@@ -514,10 +522,10 @@
 			                	$('#asetType1'+idx+" "+'option[value='+value+']').attr('selected', true);
 			                	
 			                	return str;
-			                  }
+			                  } */
 		                },
-		                { name: "asetType2", type:"select", width: 35, align:"left", title:"자산유형2", editing: false,
-		                	itemTemplate : function(value, item){
+		                { name: "asetType2", type:"select", width: 35, align:"left", title:"자산유형2", items:asetArr2, valueField :"Id", textField : "Nm"
+		                	/* itemTemplate : function(value, item){
 		                		var str = "";
 		                		
 		                		let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
@@ -532,10 +540,10 @@
 			                	str += '</select>';
 			                	
 			                	return str;
-			            	}
+			            	} */
 		                },
-						{ name: "asetType3", type:"select", width: 35, align:"left", title:"자산유형3", editing: false,
-		                	itemTemplate : function(value, item){
+						{ name: "asetType3", type:"select", width: 35, align:"left", title:"자산유형3", items:asetArr3, valueField :"Id", textField : "Nm"
+		                	/* itemTemplate : function(value, item){
 		                		// var asetVal3 = "";
 		                		var str = "";
 		                		
@@ -551,35 +559,35 @@
 			                	str += '</select>';
 			                	
 			                	return str;
-			                  }
+			                  } */
 		                },
 						{ name: "mftco"	    , type: "text", width: 30 ,align: "left", title: "메이커",
-		                	itemTemplate : function(value, item){
+		                	/* itemTemplate : function(value, item){
 			                	
 		                		let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
 		                		
 			                	var str = '<input type="text" style="width:100%;" value='+item.mftco+'>'
 			                	  
 			                	return str;
-			            	}, editing: false	
+			            	}, editing: false */	
 						},
 						{ name: "model"	    , type: "text", width: 40 ,align: "left", title: "모델",
-							itemTemplate : function(value, item){
+							/* itemTemplate : function(value, item){
 			                	  
 								var str = '<input type="text" style="width:100%;" value='+item.model+'>'
 			                	  
 			                	return str;
-			                }, editing: false	
+			                }, editing: false */	
 						},
 						{ name: "sn"     	, type: "text", width: 30 ,align: "left", title: "S/N",
-							itemTemplate : function(value, item){
+							/* itemTemplate : function(value, item){
 			                	
 								let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
 								
 								var str = '<input type="text" style="width:100%;" value='+item.sn+'>'
 			                	  
 			                	return str;
-			                  }, editing: false	
+			                  }, editing: false */	
 						},
 						{ name: "bizDeptNm"	, type: "text", width: 40 ,align: "left", title: "사업부",editing: false},
 						{ name: "deptNm"    , type: "text", width: 40 ,align: "left", title: "부서", editing: false},
