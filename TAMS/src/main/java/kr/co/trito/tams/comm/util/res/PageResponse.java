@@ -12,7 +12,9 @@ import lombok.Setter;
 public class PageResponse extends Response{
 	
 	@ApiModelProperty(value="조회 데이터 수")
-	private int size;
+	private int size;	
+	@ApiModelProperty(value="마지막 페이지 수")	
+	private int last_page;	
 	@ApiModelProperty(value="조회 데이터")
 	private List<?> data;
 	@ApiModelProperty(value="조회 데이터2")
@@ -22,6 +24,7 @@ public class PageResponse extends Response{
 	
 	public PageResponse(SearchCondition condition, List<?> data) {
 		this.condition = condition;
+		this.last_page = condition.getLastPage();
 		this.data = data;
 		this.size =  data != null ? data.size() : 0;
 	}

@@ -171,7 +171,7 @@ public class CommonController {
 		
 		return responseService.success(list);
 	}	
-	
+
 	
 	/** 부서팝업 조회 */
 	@GetMapping("/popup/userFilterPopupList")

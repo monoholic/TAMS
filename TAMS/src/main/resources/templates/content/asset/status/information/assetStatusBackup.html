@@ -9,20 +9,99 @@
 	</head>        
         
 	<!-- css -->
-	<th:block layout:fragment="css">	
+	<th:block layout:fragment="css">
 	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="/css/theme.css" />
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.7/css/tabulator_bootstrap3.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="/css/jsgrid.css" />
+		<link rel="stylesheet" href="/css/theme.css" />		
 	</th:block>        
         
 	<th:block layout:fragment="script">
-		<script type="text/javascript" src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
-		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="/js/jsgrid/db.js"></script>
+	    <script src="/js/jsgrid/jsgrid.core.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.field.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	        
 	
 		<script>
-
+	    	let numOfRows = 10;
+	    	let status = true;		
+		
 			$(function(){
 				
+		        $("#jsGrid").jsGrid({
+		        	height: "100%",
+	                width: "100%",
+	                filtering: false,
+	                editing: true,
+	                inserting: true,
+	                sorting: true,
+	                paging: true,
+	                sorter: "number",
+	                pageIndex:1,
+	                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
+	                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
+	                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
+	                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
+	                pagerFormat: "{first} {prev} {pages} {next} {last}",
+	                pagerContainer:null,
+	                pageLoading: true,
+	                pager: "#pager",
+	                autoload: status,
+	                pageSize: numOfRows,
+	                pageButtonCount: 5,
+	                loadonce: true,
+	                updateOnResize: true, 
+		            rowClick: function(args){}, 
+		            pagerContainerClass: "paginate",
+		            deleteConfirm: function(item) {
+		                console.log(item);		                
+		            },
+		            controller: {
+		                loadData: function(filter){
+		                	let d = $.Deferred();
+			                currentPage = filter.pageIndex;
+
+		                    let url = "/asset/status/information/assetStatusList";
+							let reqType = 'GET';	
+							let params = getParams();							
+							params.sortField = filter.sortField;
+							params.sortOrder = filter.sortOrder;
+							
+							$.commRequest(url, reqType, params)
+							.then((res) => {
+								$(".result").text("Results : " + res.condition.totalCount);
+								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
+
+							})
+							.catch((error) => {
+								console.log('조회 실패!!');
+							});
+							
+							return d.promise();							
+		                }
+	            	},
+		            fields: [
+		            	{ name: "asetNo"    	, type: "text", width: 70 , align: "left", title: "[[#{screen.text.asset.asetNo}]]"},
+		                { name: "asetType1Nm" 	, type: "text", width: 100, align: "left", title: "[[#{screen.text.asset.asetType1}]]"},
+		                { name: "asetType2Nm" 	, type: "text", width: 100, align: "left", title: "[[#{screen.text.asset.asetType2}]]"},
+		                { name: "asetType3Nm"	, type: "text", width: 100, align: "left", title: "[[#{screen.text.asset.asetType3}]]"},
+		                { name: "mftco"   		, type: "text", width: 100, align: "left", title: "[[#{screen.text.asset.mftco}]]"},
+		                { name: "model"	   		, type: "text", width: 100, align: "left", title: "[[#{screen.text.asset.model}]]"},
+		                { name: "sn"    		, type: "text", width: 80 , align: "left", title: "[[#{screen.text.asset.sn}]]"},
+		                { name: "bizDeptNm"		, type: "text", width: 100, align: "left", title: "[[#{screen.text.asset.bizDeptCd}]]"},
+		                { name: "deptNm"   		, type: "text", width: 100, align: "left", title: "[[#{screen.text.asset.deptCd}]]"},
+		                { name: "chrgr"  		, type: "text", width: 100, align: "center", title: "[[#{screen.text.asset.chrgr}]]"},
+		                { name: "asetStusNm"	, type: "text", width: 100, align: "center", title: "[[#{screen.text.asset.asetStus}]]"  }
+		            ]
+		        });				
+		        
 		        //자산유형1 코드 조회
 		        getCommCode("#asetType1", "AS_CLASS", "1", "");
 		        
@@ -115,88 +194,24 @@
 	    	        }
 	    	    }); 	
 				
-				let asetType1;
-				
-				$.commRequestComCode("AS_CLASS", "1", "")
-				 .then((data) => {
-					 asetType1 = data;
-					 console.log(asetType1);
-				 });
-
-				
-				//grid
-				let table = new Tabulator("#data-table", {
-				 	locale:true,
-				    langs: $.commGridLocalization(),								
-				 	height:"95%",
-				 	layout:"fitColumns",
-				 	movableColumns:true,
-				 	pagination:true,
-				 	paginationMode:"remote",
-				 	ajaxURL:"/asset/status/information/assetStatusList",				 	
-				 	ajaxParams: getParams(),
-				 	paginationSize:2,				    
-				 	paginationSizeSelector:[10, 25, 50, 100, 500],			
-				 	dataSendParams:{
-				        "page":"currentPage",
-				        "size":"numOfRows"
-				    } ,				 	
-				 	placeholder:"No Data Set",
-				 	index:"asetNo",
-				 	columns:[ 
-					 	{title:"자산번호"	, field:"asetNo"	 , hozAlign:"center", headerHozAlign:"center"},
-					 	{title:"자산유형1"	, field:"asetType1Nm", hozAlign:"left"  , headerHozAlign:"center", editor:"select", editorParams:function(cell){
-					 		var values = {};					 		
-					 		$.each(asetType1, function(i){
-					 			values[asetType1[i].codeNm] = asetType1[i].codeNm;	
-							});	
-					 		return {values:values};
-					 	}},
-					 	{title:"유형1코드"	, field:"asetType1"  , visible:false},
-					 	{title:"자산유형2"	, field:"asetType2Nm", hozAlign:"left"  , headerHozAlign:"center"},
-					 	{title:"자산유형3"	, field:"asetType3Nm", hozAlign:"left"  , headerHozAlign:"center"},
-					 	{title:"메이커"	, field:"mftco"		 , hozAlign:"left"  , headerHozAlign:"center", editor:"input"},
-					 	{title:"모델"		, field:"mftco"		 , hozAlign:"left"  , headerHozAlign:"center"},
-					 	{title:"S/N"	, field:"sn"		 , hozAlign:"left"  , headerHozAlign:"center"},
-					 	{title:"사업부"	, field:"bizDeptNm"	 , hozAlign:"left"  , headerHozAlign:"center"},
-					 	{title:"부서"		, field:"deptNm"	 , hozAlign:"left"  , headerHozAlign:"center"},
-					 	{title:"담당자"	, field:"chrgr"		 , hozAlign:"center", headerHozAlign:"center"},
-					 	{title:"자산상태"	, field:"asetStusNm" , hozAlign:"center", headerHozAlign:"center"},
-				 	],
-				});						
-								
-				//페이지 사이즈 변경
-				$(".table-pagenation").on("change", function(e){ 
-					var value = parseInt( $(e.currentTarget).val(), 10); 
-					$("#table").tabulator("setPageSize", value); 
-				});
-				
 				//엑셀 다운로드
 				$(".btn_list_rd").on("click", function(){
-					table.download("xlsx", "AssetStatus.xlsx", {sheetName:"자산현황"});					
-				});
-				
-				//cell값 변경 callback event.
-				table.on("cellEdited", function(cell){
-					var field = cell.getField();					
-					if(field == 'asetType1Nm'){						
-				 		$.each(asetType1, function(i){
-				 			if(cell.getValue() == asetType1[i].codeNm){
-				 				cell.getRow().update({"asetType1":asetType1[i].codeId});		
-				 			}	
-						});
-				 		console.log(cell.getRow().getCell('asetType1').getValue());
-					}
-					
-					//table 전체 row 조회
-					//console.log(cell.getRow().getTable().getData());
+					let url = "/asset/status/information/excelDownload";
+					$.commExcelDown(url, getParams());
 					
 				});
-								
 			});
+			
+			function getCommCode(id, code, level, upperCodeId){				
+				let url = "/common/comm/selectBox";
+				let reqType = 'GET';
+				$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);			
+			}
 
 			function getParams(){
 				return {
+        				"currentPage": $("#jsGrid").jsGrid("option", "pageIndex"),
+        				"numOfRows"  : numOfRows,
         				"asetNo"   	 : $("#asetNo").val(),
     				    "asetType1"	 : $("#asetType1").val(),
     				    "asetType2"	 : $("#asetType2").val(),
@@ -208,13 +223,7 @@
     				    "model"      : $("#model").val(),
     				    "asetStatus" : $("#asetStatus").val(),        				    
         			}
-			}	
-
-			function getCommCode(id, code, level, upperCodeId){				
-				let url = "/common/comm/selectBox";
-				let reqType = 'GET';
-				$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);			
-			}
+			}						
 		</script>	
 	</th:block>
 	
@@ -311,7 +320,7 @@
 				<!-- //list_head -->	
 				
 				<div style="height:580px;overflow:auto !important;">
-					<div id="data-table"></div>
+					<div id="jsGrid"></div>
 				</div>							
 			</div>		
 			<!-- //list -->					

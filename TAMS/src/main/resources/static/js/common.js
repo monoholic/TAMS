@@ -34,7 +34,9 @@
 	});
   };
 
-  //$.commRequestSelectbox = function(url, reqType, selectboxId, codeGrpId, codeLvl, upperCodeId) {
+  /*
+	 args -> 0:url, 1:reqType, 3:selectboxId, 4:codeGrpId, 5:codeLvl, 5:upperCodeId
+  */
   $.commRequestSelectbox = function(...args) {
 		//console.log(args);
 		let params = {
@@ -54,6 +56,23 @@
 				console.log('조회 실패');
 			});
   };
+       
+  $.commRequestComCode = function(...args) {
+  	let params = {
+		"codeGrpId" : args[0],
+		"codeLvl" : args.length > 1 ? args[1]: "", 
+		"upperCodeId" : args.length > 2 ? args[2]: ""
+	}		
+	return new Promise(function(resolve, reject){					
+		$.commRequest("/common/comm/selectBox", "GET", params)
+			.then((res) => {
+				resolve(res.data);				
+			}).catch((error) => {
+				console.log('조회 실패');
+			});										
+	});		
+		 	
+  };         
        
   $.commExcelDown = function(url, params){
 	let exlForm = $('<form id="downForm"></form>');
@@ -90,6 +109,38 @@
 	localStorage.removeItem(key);
   };
 
+
+  $.commGridLocalization = function(){	
+		return {
+		        "ko-kr":{
+		            "pagination":{
+		            	"page_size":"Page Size", 
+		                "page_title":"페이지",
+		                "first":"<<", 
+		                "first_title":"처음 페이지", 
+		                "last":">>",
+		                "last_title":"마지막 페이지",
+		                "prev":"<",
+		                "prev_title":"이전 페이지",
+		                "next":">",
+		                "next_title":"다음 페이지",
+		                "all":"All",
+		            },
+		        },
+		        "en-gb":{
+		            "pagination":{
+		                "first":"First", 
+		                "first_title":"First Page",
+		                "last":"Last",
+		                "last_title":"Last Page",
+		                "prev":"Prev",
+		                "prev_title":"Prev Page",
+		                "next":"Next",
+		                "next_title":"Next Page",
+		            },		
+				},
+		}
+}
 
 }(jQuery));
 
@@ -294,3 +345,5 @@ function openPopup2(popId, url, args, param) {
     $form.submit();	        
     $form.empty();
 }
+
+
