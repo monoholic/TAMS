@@ -103,7 +103,7 @@
     	        
 	          	//조회 버튼
 	    	    $(".btn_srch").on("click",function (){
-	    	    	$("#jsGrid").jsGrid().trigger("loadData");
+	    	    	table.replaceData();
 		        });	          	
 	          	
 				//엔터키
@@ -111,7 +111,7 @@
 	    	        var keycode = (event.keyCode ? event.keyCode : event.which);
 	    	        console.log(event);
 	    	        if(keycode == '13'){
-	    	        	$("#jsGrid").jsGrid().trigger("loadData");
+	    	        	table.replaceData();
 	    	        }
 	    	    }); 	
 				
@@ -120,7 +120,6 @@
 				$.commRequestComCode("AS_CLASS", "1", "")
 				 .then((data) => {
 					 asetType1 = data;
-					 console.log(asetType1);
 				 });
 
 				
@@ -140,9 +139,13 @@
 				 	dataSendParams:{
 				        "page":"currentPage",
 				        "size":"numOfRows"
-				    } ,				 	
+				    } ,							    
 				 	placeholder:"No Data Set",
 				 	index:"asetNo",
+				 	ajaxResponse:function(url, params, res){
+				 		$(".result").text("Results : " + res.condition.totalCount);
+				 		return res;
+				 	},					 	
 				 	columns:[ 
 					 	{title:"자산번호"	, field:"asetNo"	 , hozAlign:"center", headerHozAlign:"center"},
 					 	{title:"자산유형1"	, field:"asetType1Nm", hozAlign:"left"  , headerHozAlign:"center", editor:"select", editorParams:function(cell){
