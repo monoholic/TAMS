@@ -109,6 +109,10 @@
 	localStorage.removeItem(key);
   };
 
+  //화면 조회 파라미터 삭제	
+  $.commAllRemoveSearchParams = function(){
+	localStorage.clear();
+  };
 
   $.commGridLocalization = function(){	
 		return {

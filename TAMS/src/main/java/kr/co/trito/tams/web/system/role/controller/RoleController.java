@@ -58,7 +58,7 @@ public class RoleController {
 	@ResponseBody
 	@ApiOperation(value = "권한관리 화면 / 전체 권한 조회", notes = "권한코드나 권한명으로 권한을 조회한다")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> roleMngList(
 			@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage", required = true) String currentPage,
 			@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
@@ -86,7 +86,7 @@ public class RoleController {
 		SearchCondition condition = new SearchCondition(currentPage, numOfRows, params);
 		int total = roleService.selectCountRole(condition);
 		condition.pageSetup(total);
-
+		
 		List<RoleDto> list = roleService.selectRoleMngList(condition);
 		return responseService.success(condition, list);
 	}
@@ -159,7 +159,7 @@ public class RoleController {
 		@ResponseBody
 		@ApiOperation(value = "권한관리 화면 / 삭제", notes = "등록된 권한을 삭제한다(일괄삭제가능)")
 		@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-				@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+		@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 		public String roleMngDelete( 
 				@ApiParam(value = "메뉴ID", required = true) @RequestParam(value = "items", required = true) List<String> items
 				) { 

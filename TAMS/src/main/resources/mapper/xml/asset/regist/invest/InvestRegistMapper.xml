@@ -22,7 +22,7 @@
 						 , a.inv_reqr
 						 , a.user_nm
 						 , a.user_id
-						 , IFNULL((SELECT qty
+						 , IFNULL((SELECT SUM(qty)
 					 		FROM tb_po_aset B
 					 		WHERE 1 = 1
 					 		AND B.PO_NO = A.PO_NO), 0) as asetQty
@@ -262,7 +262,57 @@
 			) as c
 	</select>
 	
+	<select id="selectCountAsetList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+						SELECT COUNT(*)
+						FROM
+								(
+									SELECT STRAIGHT_JOIN
+									       ROW_NUMBER() OVER(ORDER BY CAST(A.aset_no as int) asc) as rn
+									     , A.aset_no as asetNo
+									     , A.aset_type1 as asetType1
+									     , A.aset_type2 as asetType2
+									     , A.aset_type3 as asetType3
+									     , A.mftco as mftco
+									     , A.model as model
+									     , A.sn as sn
+									     , A.biz_dept_cd as bizDeptCd
+									     , A.dept_cd as deptCd
+									     , A.chrgr as chrgr
+									     , A.aset_stus as asetStus
+									     , C.tag_id as tagId
+									FROM TB_ASET_MAS A
+									INNER JOIN TB_PO_ASET B
+									ON A.aset_no = B.aset_no
+									INNER JOIN TB_TAG_MAS C
+									ON C.aset_no = B.aset_no
+									WHERE 1 = 1
+									AND B.po_no = #{params.poNo}
+								) a
+						LEFT OUTER JOIN tb_com_code c
+						ON  c.use_yn = 'Y'
+						AND c.code_id = a.asetType1
+						LEFT OUTER JOIN tb_com_code d
+						ON  d.use_yn = 'Y'
+						AND d.code_id = a.asetType2
+						LEFT OUTER JOIN tb_com_code e
+						ON  e.use_yn = 'Y'
+						AND e.code_id = a.asetType3
+						LEFT OUTER JOIN tb_dept f
+						ON  f.use_yn = 'Y'
+						AND f.dept_cd = a.bizDeptCd
+						LEFT OUTER JOIN tb_dept g
+						ON  g.use_yn = 'Y'
+						AND g.dept_cd = a.deptCd
+						LEFT OUTER JOIN tb_com_code h
+						ON  h.use_yn = 'Y'
+						AND h.code_id = a.asetStus
+						AND h.code_grp_id = 'AS_STATUS'
+	</select>
+	
 	<select id="selectAsetList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.AsetListDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+			SELECT c.*
+			  FROM			
+					 (
 						SELECT a.asetNo
 					         , c.code_nm as asetType1
 					         , d.code_nm as asetType2
@@ -324,6 +374,7 @@
 						AND h.code_id = a.asetStus
 						AND h.code_grp_id = 'AS_STATUS'
 						WHERE rn BETWEEN #{start} AND #{end}
+					) c
 	</select>
 	
 	<select id="selectInvInqrExcelList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
@@ -360,7 +411,7 @@
 											 , a.inv_reqr
 											 , a.user_nm
 											 , a.user_id
-											 , IFNULL((SELECT qty
+											 , IFNULL((SELECT SUM(qty)
 										 		FROM tb_po_aset B
 										 		WHERE 1 = 1
 										 		AND B.PO_NO = A.PO_NO), 0) as asetQty
@@ -412,11 +463,43 @@
 							LEFT OUTER JOIN TB_DEPT F
 							ON f.use_yn = 'Y'
 							AND f.dept_cd = b.upp_dept_cd
+							WHERE rn BETWEEN #{start} AND #{end}
 							<if test="params.regYn != '' and params.regYn != null">
 								<if test='params.regYn != "N"'>
 									AND B.asetQty = 0
 								</if>
 							</if>
+	</select>
+
+	<select id="selectAsetTypeInfo" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.AsetTypeInfoDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+			WITH aset_tmp as (
+					SELECT a.code_nm as c1
+					     , a.code_id as c2
+					FROM tb_com_code a
+					WHERE a.upp_code_id = #{params.asetType3}
+					ORDER BY 2 ASC		
+			) 
+			
+			SELECT MAX(CASE WHEN rn2 = 1 THEN c1  else null END) as code1
+			     , MAX(CASE WHEN rn2 = 1 THEN c2  else null END) as codeVal1
+			     , MAX(CASE WHEN rn2 = 2 THEN c1  else null END) as code2
+			     , MAX(CASE WHEN rn2 = 2 THEN c2  else null END) as codeVal2
+			     , MAX(CASE WHEN rn2 = 3 THEN c1  else null END) as code3
+			     , MAX(CASE WHEN rn2 = 3 THEN c2  else null END) as codeVal3
+			FROM (
+					SELECT CASE
+								WHEN MOD(rn, 3) = 0 THEN 3
+								ELSE MOD(rn, 3) 
+						   END as rn2
+						 , CEIL(rn / 3) as groupRn
+					     , b.*
+					FROM (
+							SELECT ROW_NUMBER() OVER(ORDER BY c2) as rn 
+							     , a.* 
+							FROM aset_tmp a
+				      ) b
+				 ) c
+			GROUP BY c.groupRn
 	</select>
 
 </mapper>

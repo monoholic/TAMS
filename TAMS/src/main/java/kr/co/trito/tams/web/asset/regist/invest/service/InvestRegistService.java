@@ -10,6 +10,7 @@ import kr.co.trito.tams.web.asset.regist.invest.dto.AsetListDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto;
 import kr.co.trito.tams.web.asset.regist.invest.mapper.InvestRegistMapper;
+import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
 import lombok.RequiredArgsConstructor;
 
@@ -49,10 +50,24 @@ public class InvestRegistService {
 	}
 	
 	/** 
+	 * 자산유형특성정보 조회
+	 * */
+	public List<ComCodeDto> selectAsetTypeInfo(SearchCondition condition) {
+		return mapper.selectAsetTypeInfo(condition);
+	}
+	
+	/** 
 	 * 투자자산등록 리스트 카운트
 	 * */
 	public int selectCountInvest(SearchCondition condition) {
 		return mapper.selectCountInvest(condition);
+	}
+	
+	/** 
+	 * 등록자산목록 리스트 카운트
+	 * */
+	public int selectCountAsetList(SearchCondition condition) {
+		return mapper.selectCountAsetList(condition);
 	}
 	
 	/** 

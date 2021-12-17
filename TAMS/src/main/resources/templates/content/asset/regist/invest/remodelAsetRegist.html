@@ -34,7 +34,8 @@
 	    let menuId = "[[${menuId}]]";
 	    
 	    var status = true;
-	 	
+        var selectedItems = [];
+	 	var insertedItems = [];
 	 	var condition = {};
 	 	
 	    let invData = $.commLoadSearchParams("invData");
@@ -116,27 +117,85 @@
 	                    return d.promise();
 	                },
             },
-	            fields: [
-	            	{ name: "invNo"    , type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.inv.no}]]"    },
-	                { name: "invTtl"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.ttl}]]"   },
-	                { name: "invDt"    , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.dt}]]"    },
-	                { name: "poNo"	   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.no}]]"     },
-	                { name: "mfgdNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.mfgdnm}]]" },
-	                { name: "qty"	   , type: "text", width: 30 , align: "left"  , title: "[[#{screen.text.po.qty}]]"    },
-	                { name: "poAmt"    , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.amt}]]"    },
-	                { name: "deptNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.dept.nm}]]"   },
-	                { name: "userNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.reqr}]]"  },
-	                { name: "invReqr"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.reqr}]]",  visible: false },
-	                { name: "asetQty"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.asetqty}]]",
+	            fields: [{ name : "chk"
+	               	 , align: "center"
+	                	 , width: 20
+	                	 , title: ""
+	                	 , editing: false
+	                	 , sorting: false
+	                	 , filtering: false
+	                	 , itemTemplate: function(value, item) {
+	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox").attr("id", function(){
+	                    	   
+	                    	  return "checkbox" + $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.poNo == item.poNo);
+	                       })
+	                       .attr("checked", function(){
+	                    	  return value || item.checked;
+	                       })
+	                       .on("change", function () {
+	  					  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
+	  					  	 });
+	            		   }
+	                	 , headerTemplate : function ()  { 
+						  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
+		                     .on("change", function (item) {
+		            	    	if(this.checked) { 
+			            	            $('.singleCheckbox').each(function(i) {
+		            	            	$("#checkbox" + i).prop("checked", true).change();
+		            	            });
+		            	        }else {
+		            	            $('.singleCheckbox').each(function(i) { 
+		            	            	$("#checkbox" + i).prop("checked", false).change();
+		            	            });  
+		            	        }
+		    				   });
+					 	 },
+	                },
+	            	{ name: "asetNo"    , type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.aset.no}]]"    },
+	                { name: "asetType1" , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.aset.type1}]]"   },
+	                { name: "asetType2" , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.aset.type2}]]"    },
+	                { name: "asetType3"	, type: "text", width: 100, align: "left"  , title: "[[#{screen.text.aset.type3}]]"     },
+	                { name: "mftco"   	, type: "text", width: 100, align: "left"  , title: "[[#{screen.text.aset.mftco}]]" },
+	                { name: "model"	   	, type: "text", width: 30 , align: "left"  , title: "[[#{screen.text.aset.md}]]"    },
+	                { name: "sn"    	, type: "text", width: 100, align: "left"  , title: "[[#{screen.text.aset.sn}]]"    },
+	                { name: "bizDeptNm" , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.asset.bizDeptCd}]]"   },
+	                { name: "deptNm"   	, type: "text", width: 100, align: "left"  , title: "[[#{screen.text.asset.deptCd}]]"  },
+	                { name: "chrgr"  	, type: "text", width: 100, align: "left"  , title: "[[#{screen.text.asset.chrgr}]]",  visible: false },
+	                { name: "asetQty"  	, type: "text", width: 100, align: "left"  , title: "[[#{screen.text.comm.qty}]]",
 	                  itemTemplate: function(value, item) {
 	                    return '<a href="javascript:void(0);" onclick="openAsetList(' + item.poNo + ');">' + value + '</a>';
 	                  }
-	                },
-	                { name: "noAsetQty", type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.noasetqty}]]"  }
-	            ]
+	                }]
 	        });
 	    	
-	    	
+		    var selectItem = function(item) {
+		    	
+		    	if(!selectedItems.includes(item)){
+			    	selectedItems.push(item);
+		    	}
+		    	
+			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+	             $("#selectAllCheckbox").prop("checked", true);
+	            } else {
+	                $("#selectAllCheckbox").prop("checked", false);
+	            }
+			};
+		     
+		    var unselectItem = function(item) {
+		    	
+			    selectedItems = $.grep(selectedItems, function(i) {
+			    return i !== item;
+			    });
+			    
+			    if(selectedItems.length == 0) {
+			    	$('#selectAllCheckbox').attr('checked', false);
+			    }
+			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+	             	$("#selectAllCheckbox").prop("checked", true);
+		        } else {
+		            $("#selectAllCheckbox").prop("checked", false);
+		        }
+		    };
 	    	
 	    	
 	    	//작업해당하는 투자정보

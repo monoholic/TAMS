@@ -34,11 +34,32 @@
 	    let numOfRows = 10;
 	    let menuId = "[[${menuId}]]";
 	    
-	    var status = true;
-	 	
 	 	var condition = {};
+	 	var prevCondition = {};
 	 	
 	    $(function(){
+	    	
+            if($.commLoadSearchParams("condition") != null){
+            	
+                prevCondition = $.commLoadSearchParams("condition").params;
+                
+    	        if(Object.keys(prevCondition).length != undefined){
+    	        	console.log("성공");
+    	        	console.log(prevCondition);
+    	        	$("#invNo").val(prevCondition.invNo);
+    	        	$("#invTtl").val(prevCondition.invTtl);
+    	        	$("#poNo").val(prevCondition.poNo);
+    	        	$("#mfgdNm").val(prevCondition.mfgdNm);
+    	        	$("#deptNm").val(prevCondition.deptNm);
+    	        	$("#invReqr").val(prevCondition.invReqr);
+    	        	if($.commLoadSearchParams("fromDate") != null){
+	    	        	$("#fromDate").val($.commLoadSearchParams("fromDate"));
+	    	        	$("#toDate").val($.commLoadSearchParams("toDate"));
+    	        	}
+    	        	$("#regYn").val(prevCondition.regYn);
+    	        } 
+            }
+	    	
 	        $("#jsGrid").jsGrid({
 	        	height: "400",
                 width: "100%",
@@ -57,7 +78,7 @@
                 pagerContainer:null,
                 pageLoading: true,
                 pager: "#pager",
-                autoload: status,
+                autoload: true,
                 pageSize: numOfRows,
                 pageButtonCount: 5,
                 loadonce: true,
@@ -79,30 +100,16 @@
 	                loadData: function(filter) {
 	                    var d = $.Deferred();
 	                    
-	                    currentPage = filter.pageIndex;
-	                    
-	                    
 	                    let url = "/asset/regist/invest/investReg/investRegList";
-						let reqType = 'GET';	
-						let data = {
-            				"currentPage"  : filter.pageIndex,
-            				"numOfRows"    : numOfRows,
-            				"invNo"   	   : $("#invNo").val(),
-            				"invTtl"   	   : $("#invTtl").val(),
-            				"poNo"         : $("#poNo").val(),
-            				"mfgdNm"   	   : $("#mfgdNm").val(),
-            				"deptCd"       : $("#deptCd").val(),
-            				"userId"   	   : $("#userId").val(),
-            			    "fromDate"     : $("#fromDate").val().replaceAll("-", ""),
-        				    "toDate"       : $("#toDate").val().replaceAll("-", ""),
-        				    "regYn"	   	   : $("#regYn").val(),
-            				"sortField"    : filter.sortField,
-            				"sortOrder"    : filter.sortOrder
-            			}
-						$.commRequest(url, reqType, data)
+						let reqType = 'POST';
+						let params = getParams();
+	                    params.sortField = filter.sortField;
+	                    params.sortOrder = filter.sortOrder;
+	                    
+						$.commRequest(url, reqType, JSON.stringify(params))
 							.then((res) => {
 								console.log(res);
-								$(".result").text("Results : " + res.condition.totalCount);
+								$(".result").text("Totals : " + res.condition.totalCount);
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
 								currentPage = res.condition.currentPage;
 								condition = res.condition;
@@ -133,7 +140,7 @@
 	                { name: "noAsetQty", type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.noasetqty}]]"  }
 	            ]
 	        });
-	       
+	        
     	    $(".btn_srch").on("click",function (){
     	    	if (validationCheck() == '202') {
 	    	   		$("#jsGrid").jsGrid().trigger("loadData");
@@ -198,24 +205,9 @@
 			       	event.preventDefault();
 			       	
 			       	$(".btn_srch").click();
-			       	
-	                let url = "/asset/regist/invest/investReg/invListExcel";
-					
-					var $form = $('<form id="downForm"></form>'); 
-						$form.attr('action', url); 
-						$form.attr('method', 'post'); 
-						$form.attr('target', '_self'); 
-						
-					var idArr = ['invNo', 'invTtl', 'poNo', 'mfgdNm', 'deptCd', 'userId', 'fromDate', 'toDate', 'regYn'];
-					var inputStr = '';
-					
-					$.each(idArr,function(i){
-						inputStr = $('<input type="hidden" value="'+ $("#" + idArr[i]).val() + '" name="' + idArr[i] +'">');	
-						$form.append(inputStr);
-					});
-					
-						$form.appendTo('body'); 
-						$form.submit();
+			       
+	                let url = "/asset/regist/invest/invListExcel";
+	                $.commExcelDown(url, getParams());
 						
 			});
     	});
@@ -264,10 +256,12 @@
 	    	
 	       	event.preventDefault();
 	       	
-	       	$(".btn_srch").click();
-	       	
 	       	$.commSaveSearchParams("condition", condition);
+	       	$.commSaveSearchParams("fromDate", $("#fromDate").val());
+	       	$.commSaveSearchParams("toDate", $("#toDate").val());
 	       	$.commSaveSearchParams("menuId", "[[${menuId}]]");
+	       	$.commSaveSearchParams("menuNm", "[[${menuNm}]]");
+	       	$.commSaveSearchParams("menuDesc", "[[${menuDesc}]]");
 	       	
             let url = "/asset/regist/invest/regAset";
 			let menuId = "[[${menuId}]]";
@@ -286,6 +280,22 @@
 				
 				$form.submit();
 	    }
+	    
+        function getParams(){
+            return {
+                    "currentPage": $("#jsGrid").jsGrid("option", "pageIndex"),
+    				"numOfRows"    : numOfRows,
+    				"invNo"   	   : $("#invNo").val(),
+    				"invTtl"   	   : $("#invTtl").val(),
+    				"poNo"         : $("#poNo").val(),
+    				"mfgdNm"   	   : $("#mfgdNm").val(),
+    				"deptCd"       : $("#deptCd").val(),
+    				"userId"   	   : $("#userId").val(),
+    			    "fromDate"     : $("#fromDate").val().replaceAll("-", ""),
+				    "toDate"       : $("#toDate").val().replaceAll("-", ""),
+				    "regYn"	   	   : $("#regYn").val()             
+                 }
+         }   
 	    
 	    </script>	
 	</th:block>

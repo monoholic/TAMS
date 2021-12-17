@@ -1,0 +1,292 @@
+﻿<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/popup2">
+<head>
+<meta charset="utf-8" />
+<title>[[#{screen.text.inv.mng.upload.screen.title}]]</title>
+
+	<!-- css -->
+	<th:block layout:fragment="css">
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/jsgrid.css" />
+		<link rel="stylesheet" href="/css/theme.css" />
+	</th:block>
+
+	 <th:block layout:fragment="script">
+	 	<script src="/js/jsgrid/db.js"></script>
+	    <script src="/js/jsgrid/jsgrid.core.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.field.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>
+	 
+		<script>
+		
+		    var excelUpData = new FormData();
+		    
+			var InvestDtoField = [
+					{ name: "rownum"	, type: "number" , width:  30 ,align: "right" , title: "No."
+					 ,itemTemplate: function(value, item) {
+						 //console.log("###");
+		              return $("<span>").attr("id","row_"+item.poNo).text( getIndex(item)   );
+					 }
+					},
+	            	{ name: "asetNo"    	, type: "text"	, width: 80 	, align: "left"  , title: "[[#{screen.text.aset.no}]]"        },
+	                { name: "asetType1"   	, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.aset.type1}]]"     },
+	                { name: "asetType2"   	, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.aset.type2}]]"     },
+	                { name: "asetType3"	   	, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.aset.type3}]]"     },
+	                { name: "mftco"   		, type: "text"	, width: 50		, align: "left"  , title: "[[#{screen.text.aset.mftco}]]" 	  },
+	                { name: "model"	   		, type: "text"	, width: 70 	, align: "left"  , title: "[[#{screen.text.aset.md}]]"        },
+	                { name: "sn"    		, type: "text"	, width: 80		, align: "left"  , title: "[[#{screen.text.aset.sn}]]"        },
+	                { name: "uppDeptNm"   	, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.asset.bizDeptCd}]]"},
+	                { name: "deptNm"   		, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.asset.deptCd}]]"   },
+	                { name: "chrgr"   		, type: "text"	, width: 50		, align: "left"  , title: "[[#{screen.text.asset.chrgr}]]"    },
+	                { name: "tagYn"			, type: "text"	, width: 55		, align: "left"  , title: "[[#{screen.text.aset.tagYn}]]"     },
+	                { name: "asetStus"		, type: "text"	, width: 55		, align: "left"  , title: "[[#{screen.text.aset.asetStus}]]"  },
+					{ name: "chkResult"	, type: "text"   , width: 150 , align: "left"  , title: "[[#{screen.text.inv.mng.upload.valid}]]" 
+					 ,itemTemplate : function(value,item) {
+						 return "<span class='red'>"+value+"</span>";
+					 }
+					},
+				];
+			
+			function getGridBody() {
+				return {
+			        	height: "580",
+			            width: "100%",
+			            data: excelItems, 
+			            autoload: false,
+			            loadonce: false,
+			            updateOnResize: true, 
+			           /*  rowClass:function(item,itemIndex){
+			            	console.log("@@@@ "+item.poNo);
+			            	$(".jsgrid-table").find("#row_"+item.poNo).text(itemIndex+1);
+			            	//return itemIndex;
+			            }, */
+			            fields: InvestDtoField
+			            ,onDataLoaded: rowCount()
+			    	};
+			}
+			
+			function getIndex(item) {
+				var idx= -1;
+				$.each(excelItems, function(index, el){
+					if( item.poNo == el.poNo) idx = index; 
+				});
+				//console.log(item.poNo+" >> idx : "+idx);
+				return idx+1;
+			}
+			
+			//파일 다운로드
+			function excelFormDownload() {
+				
+				event.preventDefault();
+				
+				var fileName = "upload_regAset.xlsx";
+				var orgFileName = "자산일괄업로드양식.xlsx";
+				
+				var downUrl = "/file/download";
+	        	var $form = $('<form></form>'); 
+				$form.attr('action', downUrl); 
+				$form.attr('target','#downTarget'); 
+				$form.attr('method','post'); 
+				$form.appendTo('body'); 
+				var str = $("<input name='fileName' value='"+fileName+"'/>");
+				var str2 = $("<input name='orgFileName' value='"+orgFileName+"'/>");
+				$form.append(str).append(str2);
+				$form.submit(); 		
+			}
+			
+			function excelUploadProcess() {
+				
+				console.log(excelUpData);
+				
+				let url = "/common/invest/readExcel";
+				let reqType = "POST";	
+				$.commRequestFile(url, reqType, excelUpData)
+					.then((res) => {
+						console.log('엑셀 업로드 성공!!');
+						console.log(res);
+						
+						bak.length = 0;
+						$.each(res, function(index,element){ bak.push(element); });
+						
+						showUploadExcelData(res, "#jsGrid");
+					})
+					.catch((error) => {
+						console.log('엑셀 업로드 실패!!');
+					});
+				
+				excelUpData.delete("file");
+				$("[name='excelNm']").val("");
+			
+			
+			}
+			
+			
+			function rowCount() {    
+			    var count = excelItems.length; 
+			    $("#uploadCnt").html(count);
+			}
+			
+			
+			var bak = []; 
+		
+			$(function() {
+				
+				//////////////////////////////////////////////////////////////////
+				$("#jsGrid").jsGrid(getGridBody());				
+				//////////////////////////////////////////////////////////////////
+			
+				$("#addFile").on("click", function(){
+					
+					excelItems.length = 0;
+					
+					console.log("addFile");
+					$("#upFile").click();
+					
+				});
+				
+				$("#upFile").on("change", function(e){
+					var obj = e.target? e.target:e.srcElement;
+					var addFiles = obj.files;
+					excelUpData.append("file",addFiles[0]);
+					$("[name='excelNm']").val(addFiles[0].name);
+					console.log(excelItems);
+					//파일선택후 엑셀업로드 처리한다.
+					excelUploadProcess()
+				});
+				
+				//팝업창 닫기
+				$("#btn_close_pop").on("click",function(){ 
+					window.close();
+				});
+				
+				//업로드된 엑셀 데이터 db에 저장한다...
+				$("#btnSave").on("click",function (){ 
+					
+					let url = "/standard/invest/investMng/investMngSave";
+					let reqType = "POST";
+					
+					if(excelItems.filter(arr => arr.chkFlag == 'Y').length == 0){
+						$.commRequest(url, reqType, JSON.stringify(excelItems))
+							.then((res) => {
+								console.log('저장 성공!!');
+								window.opener.location.reload();
+								window.close();
+							})
+							.catch((error) => {
+								console.log('저장 실패!!');
+							}); 
+					}else{
+						alert("[[#{screen.info.status.error.inv.upload.invalid}]]");
+					}
+		        });
+				
+				$(".btn_download").on("click", function(){
+					excelFormDownload();
+				});
+				
+				
+				$("#errChk").on("change", function(){
+					var tmp = [];
+					if( $(this).is(":checked") ) { 
+						tmp = excelItems.filter(chkFlag);
+						excelItems.length = 0;
+						$.each(tmp, function(index,element){ excelItems.push(element); });
+					} else {
+						excelItems.length = 0;
+						$.each(bak, function(index,element){ excelItems.push(element); });
+					}
+					
+					$("#jsGrid").jsGrid(getGridBody());		
+				});
+				
+
+			});
+			
+			function chkFlag(item) {
+				return item.chkFlag == "Y";
+			}
+			
+		</script>
+	</th:block> 
+
+</head>
+<body >
+
+<div layout:fragment="content">
+
+	<!-- pop_alert -->
+	<div id="pop_wrap" >
+	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
+					<!-- head -->
+					<h3>[[#{screen.text.inv.mng.upload.screen.title}]]
+						 <a href="#;" id="btn_close_pop" class="pop_close" title="[[#{screen.text.comm.close}]]">[[#{screen.text.comm.close}]]</a>
+					</h3>
+					<!-- //head -->
+					<!-- contents -->
+					<div id="contents">
+	
+						<!-- search -->
+						<div class="srch_wrap">
+							<!-- search_form -->
+							<div class="srch_form">
+								<table class="srch_table" >
+									<colgroup>
+											<col width="15%"/>
+											<col width="50%"/>
+											<col width="15%"/>
+									</colgroup>
+									<tr>
+										<th>[[#{screen.text.comm.upload.cnt}]] : <span id="uploadCnt" class="tr">0</span></th>
+										<td valign="top">
+											<table>
+												<tr>
+													<th>[[#{screen.text.comm.upload}]]&nbsp;&nbsp;</th> 
+													<td><input type="text" name="excelNm" id="excelNm" style="width:200px" readOnly > <input type="file" id="upFile" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;"></td>
+													<td>&nbsp;&nbsp;<a href="#;" id="addFile" class="btn_srch">[[#{screen.text.comm.file.search}]]</a></td>
+													<td>&nbsp;&nbsp;<input type="checkbox" id="errChk" >&nbsp;[[#{screen.text.inv.mng.view.invalid}]]</td>
+												</tr>
+											</table>
+										</td>
+										<td align="right">
+											<!-- search_button -->
+												<a href="#;" class="btn_download">[[#{screen.text.comm.download.sample}]]</a>
+												<a href="#;" class="btn_srch" id="btnSave">[[#{screen.text.comm.save}]]</a>
+											<!-- //search_button -->
+										</td>
+									</tr>
+								</table>
+							 </div> 
+							<!-- //search_form -->
+							
+						</div>
+						<!-- //search -->
+
+						<!-- list 1 -->
+						<div id="jsGrid"></div>
+						<!-- //list 1 -->
+	
+					</div>
+					<!-- contents -->
+					<!-- button -->
+					<!-- <div class="pop_button">
+						<p>
+						<a href="#;" id="btn_close_pop" class="btn_list_rd">닫기</a>
+						</p>
+					</div> -->
+					<!-- //button -->
+	</div>
+	<div id="downTarget"></div>
+	<!-- //pop_alert -->
+</div>
+
+</body>
+</html>

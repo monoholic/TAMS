@@ -35,6 +35,15 @@
 	    
 	    $(function(){
 	    	
+            let url = "/common/comm/selectBox";
+			let reqType = 'GET';	
+
+	    	$.commRequestSelectbox(url, reqType, "#bspic", "SITE");
+	    	$.commRequestSelectbox(url, reqType, "#buld", "BUILDING");
+	    	$.commRequestSelectbox(url, reqType, "#floor", "FLOOR");
+	    	$.commRequestSelectbox(url, reqType, "#expDeptCd", "COST_CENTER");
+	    	$.commRequestSelectbox(url, reqType, "#expAccp", "COST_ACCOUNT");
+	    	
 	    	//작업해당하는 투자정보
 			$("#invNo").val(invData.invNo);
 			$("#invTtl").val(invData.invTtl);
@@ -86,6 +95,44 @@
     	        openPopup(popId, url, args);
     	    });
 			
+			// 사용자 팝업 호출 
+    	    $("#openUserPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/userPopup";
+    	        var popId = "userPopup";
+    	        var args = {};
+    	        args.width = 650;
+    	        args.height = 416;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        var param = {};
+ 	        	param.userId = "#userId";
+ 	        	param.userNm = "#userNm";
+    	        
+    	        openPopup2(popId, url, args, param);
+    	    });
+			
+    	  	//공통코드팝업(트리) 호출 
+     	    $("#openDeptPopup1").on("click", function() { 
+     	    // 팝업 호출 url
+    	        var url = "/common/popup/deptTreePopup";
+    	        var popId = "DeptPopup";
+    	        var args = {
+    	        };
+    	        args.width = 500;
+    	        args.height = 450;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        var param = {};
+    	        param.searchType = "BIZ_DEPT";
+ 	        	param.deptCd = "#deptCd1";
+ 	        	param.deptNm = "#deptNm1";
+    	         	  
+ 	           openPopup2(popId, url, args, param);
+     	    });
+			
     	  	//공통코드팝업(트리) 호출 
      	    $("#openDeptPopup").on("click", function() { 
      	    // 팝업 호출 url
@@ -99,34 +146,12 @@
     	        args.resizable = "no";
     	        
     	        var param = {};
-    	        param.id    = "dept";
-    	        param.value = "DEPT";
+    	        param.searchType = "DEPT";
+ 	        	param.deptCd = "#deptCd2";
+ 	        	param.deptNm = "#deptNm2"; 
     	        
-    	        openPopup(popId, url, args, param);
+    	        openPopup2(popId, url, args, param);
      	    });
-     	    
-     	    $("#excelDown").on("click",function() {
-     	    	
-			       	event.preventDefault();
-	                let url = "/aset/regist/invest/invInqr/invListExcel";
-					
-					var $form = $('<form id="downForm"></form>'); 
-						$form.attr('action', url); 
-						$form.attr('method', 'post'); 
-						$form.attr('target', '_self'); 
-						
-					var idArr = ['invNo', 'invTtl', 'poNo', 'mfgdNm', 'deptCd', 'userId', 'fromDate', 'toDate', 'regYn'];
-					var inputStr = '';
-					
-					$.each(idArr,function(i){
-						inputStr = $('<input type="hidden" value="'+ $("#" + idArr[i]).val() + '" name="' + idArr[i] +'">');	
-						$form.append(inputStr);
-					});
-
-						$form.appendTo('body'); 
-						$form.submit();
-						
-			});
      	    
     	    asetTypeList();
     	    
@@ -136,6 +161,7 @@
     	    	
     	    	makeAsetCombo("#asetType2", getAsetType(asetType1))
     	    	makeAsetCombo("#asetType3", "")
+    	    	$("#asetType3").prepend('<option value="">' + "[[#{screen.text.comm.choice}]]" + '</option>');
     	    	$("#asetType2").prepend('<option value="">' + "[[#{screen.text.comm.choice}]]" + '</option>');
     	    	$('#asetType2 option:contains("[[#{screen.text.comm.choice}]]")').prop('selected', true);
     	    });
@@ -149,25 +175,85 @@
     	    	$('#asetType3 option:contains("[[#{screen.text.comm.choice}]]")').prop('selected', true);
     	    });
     	 	
+    		// 자산 유형 선택 2레벨 그리기
+    	    $('#asetType3').on('change', function() {
+    	    	
+    	    	if($(this).val() != ""){
+    	    		
+					let url = "/asset/regist/invest/asetTypeInfo";
+					let reqType = "POST";
+					let data = {
+						"asetType3" : $(this).val()
+					};
+					
+					$.commRequest(url, reqType, JSON.stringify(data))
+					.then((res) => {
+						console.log(res);
+						appendRow(res.data);
+					})
+					.catch((error) => {
+						console.log("[[#{screen.info.status.error.search}]]");
+					});
+					
+    	    	}
+    	    	
+    	    });
+    	 	
     	});
 	    
-		//팝업에서 받은 결과 처리
-		function setResult1(obj) {
+		//사용자팝업(자산담당자)에서 받은 결과 처리
+		function setResult(obj) {
 			$("#userId").val(obj.userId);
 			$("#userNm").val(obj.userNm);
 		}
 		
-		//팝업에서 받은 결과 처리
-		function setResult3(obj) {
-			$("#deptCd").val(obj.deptCd);
-			$("#deptNm").val(obj.deptNm);
-		}
-		
 	    function returnResult(item) {
 			opener.selectAsetList(item);
-			window.close();
+			window.close(); 
 	    }
-	    </script>	
+	    
+	    function appendRow(data){
+	    	var leng = data.length;
+	    	var str = '<colgroup>';
+	    		str += '<col style="width:5%"/>';
+	    		str += '<col style="width:10%"/>';
+	    		str += '<col style="width:15%"/>';
+	    		str += '<col style="width:5%"/>';
+	    		str += '<col style="width:10%"/>';
+	    		str += '<col style="width:15%"/>';
+	    		str += '<col style="width:5%"/>';
+	    		str += '<col style="width:10%"/>';
+	    		str += '<col style="width:15%"/>';
+	    		str = '</colgroup>';
+	    	
+	    	for (var i = 0; i < leng; i++) {
+				str += '<tr><td></td>';
+				str += '<th style="text-align:center;">' + data[i].code1 + '</th>';
+				str += '<td><input type="text" id="' + data[i].codeVal1 + '" style="width:100%;"></td>';
+				str += '<td></td>';
+				if(data[i].codeVal2 != null){
+					str += '<th style="text-align:center;">' + data[i].code2 + '</th>';
+					str += '<td><input type="text" id="' + data[i].codeVal2 + '" style="width:100%;"></td>';
+				}else{
+					str += '<th></th>';
+					str += '<td></td>';
+				}
+				str += '<td></td>';
+				if(data[i].codeVal3 != null){
+					str += '<th style="text-align:center;">' + data[i].code3 + '</th>';
+					str += '<td><input type="text" id="' + data[i].codeVal3 + '" style="width:100%;"></td>';
+				}else{
+					str += '<th></th>';
+					str += '<td></td>';
+				}
+				str += '<td></td>';
+				str += '<td></td></tr>';
+			}
+	    	
+	    	$('#append_table').empty();
+	    	$('#append_table').append(str);
+	    }
+	    </script>
 	</th:block>
 
 	<div layout:fragment="content">
@@ -279,12 +365,14 @@
 								<th style="text-align:center;">[[#{screen.popup.text.asset.type2}]]</th>
 								<td>
 									<select id="asetType2" style="width:100%;">
+										<option value="">[[#{screen.text.comm.choice}]]</option>
 									</select>
 								</td>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.popup.text.asset.type3}]]</th>
 								<td>
 									<select id="asetType3" style="width:100%;">
+										<option value="">[[#{screen.text.comm.choice}]]</option>
 									</select>
 								</td>
 								<td></td>
@@ -303,24 +391,54 @@
 							<tr>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.text.asset.bizDeptCd}]]</th>
-                                <td><input type="text" id="deptNm" onkeyup="enterkey()" style="width:100%;"></td>
+                                <td th:if="${session.MenuRoleCheck.roleId}=='ROLE_ADMIN'">
+									<input type="hidden" id="deptCd1"/>
+									<div class="inqr_popup_btn">
+										<input type="text" id="deptNm1" style="width:100%; border-right: 1px none;" />
+										<a href="#" id="openDeptPopup1" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+									</div>
+								</td>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.text.asset.deptCd}]]</th>
-                                <td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;"></td>
+                                <td th:if="${session.MenuRoleCheck.roleId}=='ROLE_ADMIN'">
+									<input type="hidden" id="deptCd2"/>
+									<div class="inqr_popup_btn">
+										<input type="text" id="deptNm2" style="width:100%; border-right: 1px none;" />
+										<a href="#" id="openDeptPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+									</div>
+								</td>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.text.asset.asetChrgr}]]</th>
-								<td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;"></td>
+								<td>
+									<input type="hidden" id="userId"/>
+									<div class="inqr_popup_btn">
+										<input type="text" id="userNm" style="width:100%; border-right: 1px none;" />
+										<a href="#" id="openUserPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+									</div>
+								</td>
 							</tr>
 							<tr>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.text.aset.bspic}]]</th>
-                                <td><input type="text" id="deptNm" onkeyup="enterkey()" style="width:100%;"></td>
+                                <td>
+	                                <select id="bspic" style="width:100%;">
+	                                	<option value="">[[#{screen.text.comm.choice}]]</option>
+	                                </select>
+                                </td>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.text.aset.buld}]]</th>
-                                <td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;"></td>
+                                <td>
+	                                <select id="buld" style="width:100%;">
+	                                	<option value="">[[#{screen.text.comm.choice}]]</option>
+	                                </select>
+                                </td>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.text.aset.floor}]]</th>
-								<td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;"></td>
+								<td>
+	                                <select id="floor" style="width:100%;">
+	                                	<option value="">[[#{screen.text.comm.choice}]]</option>
+	                                </select>
+                                </td>
 							</tr>
 							<tr>
 								<td></td>
@@ -336,24 +454,32 @@
 							<tr>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.text.aset.expDeptCd}]]</th>
-                                <td><input type="text" id="deptNm" onkeyup="enterkey()" style="width:100%;"></td>
+                                <td>
+	                                <select id="expDeptCd" style="width:100%;">
+	                                	<option value="">선택</option>
+	                                </select>
+                                </td>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.text.aset.expAcct}]]</th>
-                                <td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;"></td>
+                                <td>
+	                                <select id="expAccp" style="width:100%;">
+	                                	<option value="">선택</option>
+	                                </select>
+                                </td>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.text.aset.durYear}]]</th>
-								<td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;"></td>
+								<td><input type="text" id="durYear" onkeyup="enterkey()" style="width:100%;"></td>
 							</tr>
 							<tr>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.text.aset.acqPrc}]]</th>
-                                <td><input type="text" id="deptNm" onkeyup="enterkey()" style="width:100%;"></td>
+                                <td><input type="text" id="arqPrc" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
 								<th style="text-align:center;">[[#{screen.text.aset.svalPrc}]]</th>
-                                <td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;"></td>
+                                <td><input type="text" id="svalPrc" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">[[#{screen.text.aset.dprcPrc}]]</th>
-								<td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;"></td>
+								<th style="text-align:center;">[[#{screen.text.aset.acqDt}]]</th>
+								<td><input type="date" id="acqDt" onkeyup="enterkey()" style="width:100%;"></td>
 							</tr>
 					</table>
 				</div>
@@ -361,7 +487,7 @@
 					<div class="result"><h6>[[#{screen.text.inv.screen.subtitle2}]]</h6></div>
 				</div>
 				<div class="srch_wrap single">
-					<table class="srch_table">
+					<table class="srch_table" id="append_table">
 							<colgroup>
 								<col style="width:5%"/>
 								<col style="width:10%"/>
@@ -373,18 +499,6 @@
 								<col style="width:10%"/>
 								<col style="width:15%"/>
 							</colgroup>
-							<tr>
-								<td></td>
-								<th style="text-align:center;">자산번호1</th>
-								<td><input type="text" id="invNo" onkeyup="enterkey()" style="width:100%;"></td>
-								<td></td>
-								<th style="text-align:center;">자산적요</th>
-								<td><input type="text" id="invTtl" onkeyup="enterkey()" style="width:100%;"></td>
-								<td></td>
-								<th style="text-align:center;"></th>
-								<td></td>
-								<td></td>
-							</tr>
 					</table>		
 				</div>
 			</div>
