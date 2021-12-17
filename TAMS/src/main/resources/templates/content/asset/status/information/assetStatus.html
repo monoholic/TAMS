@@ -174,11 +174,6 @@
 					$("#table").tabulator("setPageSize", value); 
 				});
 				
-				//엑셀 다운로드
-				$(".btn_list_rd").on("click", function(){
-					table.download("xlsx", "AssetStatus.xlsx", {sheetName:"자산현황"});					
-				});
-				
 				//cell값 변경 callback event.
 				table.on("cellEdited", function(cell){
 					var field = cell.getField();					
@@ -308,6 +303,19 @@
 					 	{title:"투자자"	, field:"invReqrNm"	, hozAlign:"center" , headerHozAlign:"center", headerSort:false},
 					 	{title:"처리자"	, field:"poChrgrNm"	, hozAlign:"center" , headerHozAlign:"center", headerSort:false}
 				 	],
+				});					
+				
+				//엑셀 다운로드
+				$("#tab-main-excel").on("click", function(){
+					table.download("xlsx", "AssetStatus.xlsx", {sheetName:"자산현황"});					
+				});				
+				
+				$("#tab-history-excel").on("click", function(){
+					his_table.download("xlsx", "AssetHistory.xlsx", {sheetName:"변경이력"});					
+				});		
+				
+				$("#tab-invest-excel").on("click", function(){
+					inv_table.download("xlsx", "AssetInvest.xlsx", {sheetName:"투자이력"});					
 				});					
 				
 			});
@@ -445,7 +453,7 @@
 					<div class="result">Results : 0,000</div>
 					<!-- list_button -->
 					<div class="button">
-						<a class="btn_list_rd">[[#{screen.btn.excel}]]</a>
+						<a id="tab-main-excel" class="btn_list_rd">[[#{screen.btn.excel}]]</a>
 					</div>
 					<!-- list_button -->
 				</div>
@@ -604,7 +612,7 @@
 							<!-- list_head -->
 							<div class="list_head">
 								<div class="button">
-									<a class="btn_list_rd">엑셀 다운로드</a>
+									<a id="tab-history-excel" class="btn_list_rd">엑셀 다운로드</a>
 								</div>
 							</div>
 							<!-- //list_head -->
@@ -618,7 +626,7 @@
 							<!-- list_head -->
 							<div class="list_head">
 								<div class="button">
-									<a class="btn_list_rd">엑셀 다운로드</a>
+									<a id="tab-invest-excel" class="btn_list_rd">엑셀 다운로드</a>
 								</div>
 							</div>
 							<!-- //list_head -->
