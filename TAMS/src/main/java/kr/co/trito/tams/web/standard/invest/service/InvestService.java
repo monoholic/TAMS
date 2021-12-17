@@ -47,7 +47,7 @@ public class InvestService {
 	}
 	
 	/** 
-	 * TB_PO 정보 등록
+	 * TB_PO 정보 삭제
 	 * */
 	public int deletePoInfo(InvestDto invs){
 		return mapper.deletePoInfo(invs);

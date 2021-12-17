@@ -1,6 +1,7 @@
 package kr.co.trito.tams.web.asset.regist.invest.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -28,9 +29,17 @@ public interface InvestRegistMapper {
 	
 	public int selectCountAsetList(SearchCondition condition);
 	
-	public int saveInvestInfo(InvestDto invs);
+	public int savePoAset(Map<String, Object> param);
 	
-	public int savePoInfo(InvestDto invs);
+	public int saveAsetMas(Map<String, Object> param);
+	
+	public int saveAsetReq(Map<String, Object> param);
+	
+	public int saveAsetDtl(Map<String, Object> param);
+	
+	public int saveAsetDtlReq(Map<String, Object> param);
+	
+	public int selectMaxAsetNo(String poNo);
 	
 	public int deletePoInfo(InvestDto invs);
 }

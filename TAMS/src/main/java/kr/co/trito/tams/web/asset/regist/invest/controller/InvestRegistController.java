@@ -107,7 +107,7 @@ public class InvestRegistController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ModelAndView invListExcel(
-			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
+			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestBody Map<String, Object> params) {
 
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(),
 				params.get("numOfRows").toString(), params);
@@ -189,6 +189,23 @@ public class InvestRegistController {
 		view.setViewName("/content/asset/regist/invest/newAsetRegist");
 
 		return view;
+	}
+
+	/** 신규자산등록(팝업) 저장 */
+	@PostMapping("/saveNewAset")
+	@ResponseBody
+	@ApiOperation(value = "투자자산등록(팝업 : 신규자산 등록) 화면 / 저장버튼", notes = "신규자산을 등록한다")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public String saveNewAset(
+			@ApiParam(value = "필터 / 페이징 값", required = false) @RequestBody List<Map<String, Object>> params,
+			@AuthenticationPrincipal UserDetails userDetail) {
+
+		String code = "202";
+
+		code = investRegistService.registAset(userDetail, params, code);
+
+		return code;
 	}
 
 	/** 신규자산등록(팝업) 화면 */
