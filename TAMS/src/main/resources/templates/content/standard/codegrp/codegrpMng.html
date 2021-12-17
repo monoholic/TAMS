@@ -12,7 +12,6 @@
 	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="/css/jsgrid.css" />
 		<link rel="stylesheet" href="/css/theme.css" />
-		
 	</th:block>
 	
 	<th:block layout:fragment="script">
@@ -38,7 +37,6 @@
 	 	var updatedItems = [];
 	    
 	    $(function(){
-	    	
 	        $("#jsGrid").jsGrid({
 	        	height: "400",
                 width: "100%",
@@ -66,10 +64,7 @@
 	            	var target = args.event.target;
 	            	
 					if(target instanceof HTMLTableCellElement) {
-						// detail form
-						/* alert(JSON.stringify(args)); */
 						showDetailForm(args.item);
-						
 					} else {
 					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
 					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
@@ -103,19 +98,15 @@
 							.then((res) => {
 								$(".result").text("Results : " + res.condition.totalCount);
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
-
 							})
 							.catch((error) => {
 								console.log('조회 실패!!');
 							});						
-	                    
 	                    return d.promise();
 	                },
 
 	            updateItem: function(item) { 
-            		// updatedItems.push(item);
-                	//$("#jsGrid").jsGrid("option", "pageIndex", $("#jsGrid").jsGrid("option", "pageIndex"));
-                	let url = "/standard/codegrp/codegrpMng/codegrpUpdate";
+                	let url = "/standard/codegrp/codegrpMng/codegrpMerge";
                 	let reqType = 'GET';
                 	$.commRequest(url, reqType, item)
                 		.then((res) => {
@@ -129,30 +120,12 @@
                 			console.log(error);
                 		})
                 },
-             	deleteItem: function(item) { 
-        			let url = "/standard/codegrp/codegrpMng/codegrpDelete";
-        			let reqType = 'GET';
-        			$.commRequest(url, reqType, item)
-        				.then((res) => {
-        					console.log(res);
-        					
-        					$("#jsGrid").jsGrid("loadData");
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        				})
-        			
-            	},
              	insertItem: function(item) { 
-             		//insertedItems.push(item);
-        			let url = "/standard/codegrp/codegrpMng/codegrpInsert";
+        			let url = "/standard/codegrp/codegrpMng/codegrpMerge";
         			let reqType = 'GET';
-        			
-        			console.log(item);
         			
         			$.commRequest(url, reqType, item)
         				.then((res) => {
-        					console.log(res);
         					
         					$("#jsGrid").jsGrid("loadData");
         				})
@@ -165,7 +138,7 @@
 	            fields: [
 	            	{  name : "chk"
 	                	 , align: "center"
-	                	 , width: 15
+	                	 , width: 10
 	                	 , title: ""
 	                	 , editing: false
 	                	 , sorting: false
@@ -197,7 +170,6 @@
 		    				   });
 					 	 } ,
 	                },
-	                //{ name: "chk", type: "checkbox", width: 30, readOnly:false , title: "Sel<br><br>" },
 	                { name: "codeGrpId", type: "text", align: "left", width: 40,  title: "[[#{screen.text.code.grp.id}]]" },
 	                { name: "codeGrpNm", type: "text", align: "left", width: 50, readOnly:true , title: "[[#{screen.text.code.grp.nm}]]" },
 	                { name: "codeGrpEngNm", type: "text", align: "left", width: 50, readOnly:true , title: "[[#{screen.text.code.grp.eng.nm}]]" },
@@ -245,24 +217,18 @@
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
 	        });
 
-	        
-	        ////////////////////////////////////////////////////////////////////
     	    $(".btn_add").click(function() {
-    	    	//$("#jsGrid").jsGrid("option", "inserting", "true");
     	    	showDetailForm();
     	    });
 	        
     	    $(".btn_del").click(function() {
-    	    	
     	    	var arr_item = [];
     	    	var items = [];
     	    	
-    	    	// $("#jsGrid").jsGrid("deleteItem",delete_item);
     	    	$.each(selectedItems, function(index,item){
     	    		items.push(item);
     	    	});
     	    	
-    	    	//별도 호출
     	    	let url = "/standard/codegrp/codegrpMng/codegrpDelete";
     			let reqType = 'GET';
     			dataType: 'json';
@@ -283,15 +249,9 @@
     				})
     	    });
     	    
-    	    $(".btn_download").click(function() {
-    	    	//$("#jsGrid").jsGrid().trigger("");
-    	    });
-    	    
     	    $(".btn_srch").on("click",function (){
 	    	   $("#jsGrid").jsGrid().trigger("loadData");
 	        });
-	        
-	        
 	        
 	     	// 팝업창 저장 버튼 처리
             $('.save_btn').on('click', function (e) {
@@ -386,7 +346,6 @@
 		    		 readOnly = false;
 		    		 $(".detail_table").find("#codeGrpId").val(item.codeGrpId);
 		    		 $(".detail_table").find("#codeGrpId").attr("readOnly", true);
-		    		 
 		     		 $(".detail_table").find("#codeGrpNm").val(item.codeGrpNm);
 		     		 $(".detail_table").find("#codeGrpEngNm").val(item.codeGrpEngNm);
 		     		 $(".detail_table").find("#codeGrpDesc").val(item.codeGrpDesc);
@@ -444,7 +403,7 @@
 
 	<div layout:fragment="content">
 		<!-- contents_head -->
-		<div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div>
+		<div class="bc"><span th:text="${menuDesc}"></span></div>
 		<h3><span th:text="${menuNm}"></span></h3>
 		<!-- //contents_head -->
 
@@ -503,8 +462,6 @@
 				</div>
 				<!-- list_button -->
 		</div>
-		<!-- list -->
-		<!-- //search -->
 
 		<!-- list -->
 		<div id="jsGrid"></div>
@@ -529,8 +486,8 @@
 				<!-- detail_table -->
 					<table class="detail_table ">
 						<colgroup>
-							<col style="width:30%" />
-							<col style="width:40%" />
+							<col style="width:25%" />
+							<col style="width:75%" />
 						<col />
 						</colgroup>
 						<tr>

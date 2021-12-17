@@ -14,9 +14,7 @@ public interface CodegrpMapper {
 	
 	public int selectCountCodegrp(SearchCondition condtion);
 	
-	public int codegrpMngInsert(CodegrpDto dto);
-	
-	public int codegrpMngUpdate(CodegrpDto dto);
+	public int codegrpMngMerge(CodegrpDto dto);
 	
 	public int codegrpMngDelete(CodegrpDto dto);
 	

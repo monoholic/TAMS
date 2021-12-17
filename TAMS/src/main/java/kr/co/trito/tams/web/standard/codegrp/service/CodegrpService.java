@@ -25,12 +25,8 @@ public class CodegrpService {
 		return mapper.selectCountCodegrp(condtion);
 	}
 	
-	public int codegrpMngInsert(CodegrpDto dto){
-		return mapper.codegrpMngInsert(dto);
-	}
-	
-	public int codegrpMngUpdate(CodegrpDto dto){
-		return mapper.codegrpMngUpdate(dto);
+	public int codegrpMngMerge(CodegrpDto dto){
+		return mapper.codegrpMngMerge(dto);
 	}
 	
 	public int codegrpMngDelete(CodegrpDto dto){
