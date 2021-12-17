@@ -63,7 +63,7 @@
 		ORDER BY a.sort_odr, a.code_grp_id
    	</select>
    	
-   	<!-- 수정의뢰목록 카운트 -->
+   	<!-- 공통코드그룹관리 카운트 -->
    	<select id="selectCountCodegrp" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
 		SELECT count(*) cnt 
 		  FROM tb_com_code_grp 
@@ -102,23 +102,23 @@
    	<!-- 공통코드그룹관리 등록 및 수정 -->
    	<insert id="codegrpMngMerge" parameterType="kr.co.trito.tams.web.standard.codegrp.dto.CodegrpDto">
    		INSERT INTO tb_com_code_grp
-		       SET code_grp_id = #{codeGrpId}
-		         , code_grp_nm = #{codeGrpNm}
-		         , code_grp_eng_nm = #{codeGrpEngNm}
-		         , code_grp_desc = #{codeGrpDesc}
-		         , sort_odr = #{sortOdr}
-		         , use_yn = #{useYn}
-		         , regr = #{regr}
-		         , reg_dt = current_timestamp()
+		       SET code_grp_id 		= #{codeGrpId}
+		         , code_grp_nm 		= #{codeGrpNm}
+		         , code_grp_eng_nm 	= #{codeGrpEngNm}
+		         , code_grp_desc 	= #{codeGrpDesc}
+		         , sort_odr 		= #{sortOdr}
+		         , use_yn 			= #{useYn}
+		         , regr 			= #{regr}
+		         , reg_dt 			= now()
 		         
 		       ON  DUPLICATE KEY UPDATE
-		           code_grp_nm = #{codeGrpNm}
-		         , code_grp_eng_nm = #{codeGrpEngNm}
-		         , code_grp_desc = #{codeGrpDesc}
-		         , sort_odr = #{sortOdr}
-		         , use_yn = #{useYn}
-		         , updr = #{updr}
-		         , up_dt = current_timestamp()
+		           code_grp_nm 		= #{codeGrpNm}
+		         , code_grp_eng_nm 	= #{codeGrpEngNm}
+		         , code_grp_desc 	= #{codeGrpDesc}
+		         , sort_odr 		= #{sortOdr}
+		         , use_yn 			= #{useYn}
+		         , updr 			= #{updr}
+		         , up_dt 			= now()
 	</insert>
 	
 	<!-- 공통코드그룹관리 삭제 -->   	

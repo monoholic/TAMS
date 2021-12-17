@@ -57,7 +57,7 @@ public class CodegrpController {
 	/* 공통코드 그룹 관리 화면 : 조회 */
 	@GetMapping(value="/codegrpMng/codegrpList")
 	@ResponseBody
-	@ApiOperation(value = " 공통코드 그룹 관리 화면 : 조회", notes = " 공통코드 그룹 관리 화면 : 조회")
+	@ApiOperation(value = " 공통코드그룹관리 화면 : 조회", notes = " 공통코드 그룹 관리 화면 : 조회")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> codegrpMngList(
@@ -72,45 +72,35 @@ public class CodegrpController {
 	/* 공통코드 그룹 관리 화면 : 등록 및 수정 */ 
 	@GetMapping(value="/codegrpMng/codegrpMerge")
 	@ResponseBody
-	@ApiOperation(value = "공통코드 그룹 관리 화면 : 등록 및 수정", notes = "공통코드 그룹 관리 화면 : 등록 및 수정")
+	@ApiOperation(value = "공통코드그룹관리 화면 : 등록 및 수정", notes = "공통코드 그룹 관리 화면 : 등록 및 수정")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String codegrpMngInsert( 
-			@ApiParam(value = "공통코드 그룹 등록 데이터", required = true) @RequestParam Map<String, Object> data,
+	public String codegrpMerge( 
+			@ApiParam(value = "공통코드그룹 등록 및 수정 데이터", required = true) @RequestParam Map<String, Object> items,
 			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
 			) {
 		
 		String code = "202";
 		
-		CodegrpDto dto = new CodegrpDto();
 		UserInfo userInfo = (UserInfo)userDetail;
 		String userId = userInfo.getDto().getUserId();
+
+		items.put("regr", userId);
+		items.put("updr", userId);
 		
-	    dto.setCodeGrpId(data.get("codeGrpId").toString());
-	    dto.setCodeGrpNm(data.get("codeGrpNm").toString());
-	    dto.setCodeGrpEngNm(data.get("codeGrpEngNm").toString());
-	    dto.setCodeGrpDesc(data.get("codeGrpDesc").toString());
-	    dto.setSortOdr(data.get("sortOdr").toString());
-	    dto.setUseYn(data.get("useYn").toString());
-	    dto.setRegr(userId);
-	    dto.setUpdr(userId);
-		
-	    int cnt = codegrpService.codegrpMngMerge(dto);
-	    
+	    int cnt = codegrpService.codegrpMngMerge(items);
 	    if(cnt > 0) code = "200";
-		
 		return code;
 	}
 	
 	/* 공통코드 그룹 화면 : 삭제 */
 	@GetMapping(value="/codegrpMng/codegrpDelete")
 	@ResponseBody
-	@ApiOperation(value = "공통코드 그룹 화면 : 삭제", notes = "공통코드 그룹 화면 : 삭제")
+	@ApiOperation(value = "공통코드그룹관리 화면 : 삭제", notes = "공통코드 그룹 화면 : 삭제")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String codegrpMngDelete( 
-			@ApiParam(value = "공통코드 그룹ID", required = true) @RequestParam(value = "items", required = true) List<String> items
-			) { 
+	public String codegrpDelete( 
+			@ApiParam(value = "공통코드 그룹ID", required = true) @RequestParam(value = "items", required = true) List<String> items) { 
 		
 		String code = "202";
 		

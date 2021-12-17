@@ -1,6 +1,7 @@
 package kr.co.trito.tams.web.standard.code.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,8 @@ public class CodeService {
 		return mapper.selectCountCode(condition);
 	}
 	
-	public int codeMngInsert(CodeDto dto) {
-		return mapper.codeMngInsert(dto);
-	}
-	
-	public int codeMngUpdate(CodeDto dto) {
-		return mapper.codeMngUpdate(dto);
+	public int codeMngMerge(Map<String, Object> data) {
+		return mapper.codeMngMerge(data);
 	}
 	
 	public int codeMngDelete(CodeDto dto) {

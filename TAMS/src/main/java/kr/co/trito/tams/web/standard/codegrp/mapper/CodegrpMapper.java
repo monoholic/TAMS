@@ -1,6 +1,7 @@
 package kr.co.trito.tams.web.standard.codegrp.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -14,7 +15,7 @@ public interface CodegrpMapper {
 	
 	public int selectCountCodegrp(SearchCondition condtion);
 	
-	public int codegrpMngMerge(CodegrpDto dto);
+	public int codegrpMngMerge(Map<String, Object> data);
 	
 	public int codegrpMngDelete(CodegrpDto dto);
 	
