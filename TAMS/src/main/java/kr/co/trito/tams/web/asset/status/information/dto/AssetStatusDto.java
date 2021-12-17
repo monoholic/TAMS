@@ -47,18 +47,30 @@ public class AssetStatusDto {
 	private String deptNm;
 	@ApiModelProperty(value="담장자")
 	private String chrgr;
-	@ApiModelProperty(value="공통코드(사업장)")
+	@ApiModelProperty(value="담장자명")
+	private String chrgrNm;	
+	@ApiModelProperty(value="사업장코드")
 	private String bsplc;
-	@ApiModelProperty(value="공통코드(건물)")
+	@ApiModelProperty(value="사업장명")
+	private String bsplcNm;	
+	@ApiModelProperty(value="건물코드")
 	private String buld;
-	@ApiModelProperty(value="공통코드(층)")
+	@ApiModelProperty(value="건물명")
+	private String buldNm;	
+	@ApiModelProperty(value="층 코드")
 	private String floor;
+	@ApiModelProperty(value="층 명")
+	private String floorNm;	
 	@ApiModelProperty(value="위치")
 	private String loc;
 	@ApiModelProperty(value="비용부서코드")
 	private String expDeptCd;
+	@ApiModelProperty(value="비용부서명")
+	private String expDeptNm;	
 	@ApiModelProperty(value="비용계정")
 	private String expAcct;
+	@ApiModelProperty(value="비용계정명")
+	private String expAcctNm;		
 	@ApiModelProperty(value="내용년수")
 	private String durYear;
 	@ApiModelProperty(value="취득가")
@@ -71,10 +83,12 @@ public class AssetStatusDto {
 	private String acqDt;
 	@ApiModelProperty(value="부외여부")
 	private String asetOutBookYn;
-	@ApiModelProperty(value="공통코드(자산상태)")
+	@ApiModelProperty(value="자산상태 코드")
 	private String asetStus;
-	@ApiModelProperty(value="공통코드(자산상태명)")
+	@ApiModelProperty(value="자산상태명")
 	private String asetStusNm;
+	@ApiModelProperty(value="자산태그")
+	private String tagYn;
 	@ApiModelProperty(value="수정자")
 	private String updr;
 	@ApiModelProperty(value="수정일자")

@@ -109,6 +109,10 @@
 	localStorage.removeItem(key);
   };
 
+  //화면 조회 파라미터 삭제	
+  $.commAllRemoveSearchParams = function(){
+	localStorage.clear();
+  };
 
   $.commGridLocalization = function(){	
 		return {
@@ -140,7 +144,14 @@
 		            },		
 				},
 		}
-}
+  };
+  
+  $.fn.center = function () {
+  	this.css("position","absolute");
+    this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
+    this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
+    return this;
+  }   
 
 }(jQuery));
 

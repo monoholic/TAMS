@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.asset.status.information.dto.AssetHistoryDto;
+import kr.co.trito.tams.web.asset.status.information.dto.AssetInvestDto;
 import kr.co.trito.tams.web.asset.status.information.dto.AssetStatusDto;
 import kr.co.trito.tams.web.asset.status.information.dto.AssetStatusExcelDto;
 import kr.co.trito.tams.web.asset.status.information.mapper.AssetInformationMapper;
@@ -30,4 +32,11 @@ public class AssetInformationService {
 		return mapper.selectAssetStatusExcel(condition);
 	}	
 	
+	public List<AssetHistoryDto> selectAssetHistoryList(String asetNo){
+		return mapper.selectAssetHistoryList(asetNo);
+	}	
+	
+	public List<AssetInvestDto> selectAssetInvestList(String asetNo){
+		return mapper.selectAssetInvestList(asetNo);
+	}			
 }
