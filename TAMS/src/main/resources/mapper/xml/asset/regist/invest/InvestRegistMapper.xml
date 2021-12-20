@@ -93,7 +93,7 @@
 		                 	    , b.po_no 		as poNo
 		                 	    , b.mfgd_nm 	as mfgdNm
 		                 	    , b.qty 		as qty
-		                 	    , b.po_amt     as poAmt
+		                 	    , FORMAT(b.po_amt, 0) as poAmt
 		                 	    , f.dept_nm     as uppDeptNm
 		                 	    , b.upp_dept_cd as uppDeptCd 
 		                 	    , b.dept_nm 	as deptNm

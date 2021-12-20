@@ -12,7 +12,8 @@
 	<th:block layout:fragment="css">	
 	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="/css/theme.css" />
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.7/css/tabulator_bootstrap3.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.7/css/tabulator_bootstrap3.min.css" rel="stylesheet"> 
+		<!--<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.8/css/tabulator_simple.min.css" rel="stylesheet"> -->
 	</th:block>        
         
 	<th:block layout:fragment="script">
@@ -289,7 +290,7 @@
 				let inv_table = new Tabulator("#inv-table", {
 				 	locale:true,
 				    langs: $.commGridLocalization(),								
-				 	height:"95%",
+				 	height:"98%",
 				 	layout:"fitColumns",
 				 	placeholder:"No Data Set",
 				 	columns:[ 
@@ -447,7 +448,7 @@
 				<!-- //search_form -->				
 			</div>	
 			<!-- list -->
-			<div class="list_wrap">
+			<div class="list_wrap" style="height:570px">
 				<!-- list_head -->
 				<div class="list_head">
 					<div class="result">Results : 0,000</div>
@@ -459,9 +460,7 @@
 				</div>
 				<!-- //list_head -->	
 				
-				<div style="height:580px;overflow:auto !important;">
-					<div id="data-table"></div>
-				</div>							
+				<div id="data-table"></div>							
 			</div>		
 			<!-- //list -->					
 		</div>		
