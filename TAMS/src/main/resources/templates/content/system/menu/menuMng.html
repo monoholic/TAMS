@@ -40,7 +40,7 @@
 	    $(function(){
 	    	
 	        $("#jsGrid").jsGrid({
-	        	height: "650",
+	        	height: "600",
                 width: "100%",
                 filtering: false,
                 editing: true,
@@ -403,7 +403,8 @@
 	                 top	 : "10px",
 	                 left	 : "10px",
 	                 width	 : "650px",
-	                 height	 : "450px"
+	                 height	 : "auto",
+	                 border  : "2px solid navy"
 	             }).center().show();
 	    	}else{
 	    		alert("수정은 1개이상 되지 않습니다.");
@@ -489,44 +490,44 @@
 				<!-- detail_table -->
 					<table class="detail_table ">
 						<colgroup>
-						<col style="width:20%" />
-						<col style="width:30%" />
-						<col style="width:20%" />
-						<col style="width:30%" />
+						<col style="width:15%" />
+						<col style="width:35%" />
+						<col style="width:15%" />
+						<col style="width:35%" />
 						<col />
 						</colgroup>
 						<tr>
 							<th>[[#{screen.text.menu.id}]]</th>
-							<td><input type="text" id="menuId" /></td>
+							<td><input type="text" id="menuId" style="width:100%"/></td>
 							<th>[[#{screen.text.menu.nm}]]</th>
-							<td><input type="text" id="menuNm" /></td>
+							<td><input type="text" id="menuNm" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.menu.url}]]</th>
-							<td><input type="text" id="url" /></td>
+							<td><input type="text" id="url" style="width:100%"/></td>
 							<th>[[#{screen.text.menu.desc}]]</th>
-							<td><input type="text" id="menuDesc" /></td>
+							<td><input type="text" id="menuDesc" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.menu.upper.id}]]</th>
-							<td><input type="text" id="uppMenuId" /></td>
+							<td><input type="text" id="uppMenuId" style="width:100%"/></td>
 							<th>[[#{screen.text.menu.level}]]</th>
-							<td><input type="text" id="menuLvl" /></td>
+							<td><input type="text" id="menuLvl" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.menu.ispopup}]]</th>
-							<td><select id="popupYn">
+							<td><select id="popupYn" style="width:100%">
 									<option value="Y">[[#{screen.text.comm.ues}]]</option>
 									<option value="N">[[#{screen.text.comm.unuesd}]]</option>
 								</select>
 							</td>
 							<th>Sort Order</th>
-							<td><input type="text" id="sortOdr" /></td>
+							<td><input type="text" id="sortOdr" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.comm.useyn}]]</th>
-							<td colspan="3">
-								<select id="useYn">
+							<td colspan="1">
+								<select id="useYn" style="width:100%">
 									<option value="Y">[[#{screen.text.comm.ues}]]</option>
 									<option value="N">[[#{screen.text.comm.unuesd}]]</option>
 								</select>

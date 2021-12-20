@@ -39,7 +39,7 @@
         $(function() {
 
             $("#jsGrid").jsGrid({
-                height: "500",
+                height: "400",
                 width: "100%",
                 filtering: false,
                 editing: true,
@@ -376,8 +376,9 @@
                  position: 'absolute',
                  top	 : "10px",
                  left	 : "10px",
-                 width	 : "650px",
-                 height	 : "450px"
+                 width	 : "400px",
+                 height	 : "auto",
+                 border  : "2px solid navy"
              }).center().show();
     	}else{
     		alert("수정은 1개이상 되지 않습니다.");
@@ -463,22 +464,26 @@
 				<!-- //list_head -->
 				<!-- detail_table -->
 					<table class="detail_table">
+					<colgroup>
+						<col width="25%"/>
+						<col width="75%"/>
+					</colgroup>
 						<tr>
 							<th>[[#{screen.text.role.auth.code}]]</th>
-							<td style="width:400px"><input type="text" id="roleId" placeholder="ROLE_" /></td>
+							<td style="width:400px"><input type="text" id="roleId" placeholder="ROLE_" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.role.auth.nm}]]</th>
-							<td><input type="text" id="roleNm" /></td>
+							<td><input type="text" id="roleNm" style="width:100%"/></td>
 						</tr>
 						<tr>
-							<th>[[#{screen.text.role.auth.desc}]]</th>
-							<td><input type="text" id="roleDesc" /></td>
+							<th>[[#{screen.text.role.desc}]]</th>
+							<td><input type="text" id="roleDesc" style="width:100%"/></td>
 						</tr>
 						<tr>
-							<th>[[#{screen.text.role.auth.useyn}]]</th>
+							<th>[[#{screen.text.role.useyn}]]</th>
 							<td>
-								<select id="useYn">
+								<select id="useYn" style="width:100%">
 									<option value="Y">[[#{screen.text.comm.ues}]]</option>
 									<option value="N">[[#{screen.text.comm.unuesd}]]</option>
 								</select>

@@ -56,7 +56,7 @@
 	 	
 	    $(function(){
 	    	$("#jsGrid").jsGrid({
-	        	height: "650",
+	        	height: "600",
                 width: "100%",
                 filtering: false,
                 editing: true,
@@ -581,7 +581,8 @@
 	                 top	 : "10px",
 	                 left	 : "10px",
 	                 width	 : "650px",
-	                 height	 : "450px"
+	                 height	 : "auto",
+	                 border  : "2px solid navy"
 	             });
 		    	 //df = center(df);
 		    	 df.center();
@@ -741,8 +742,8 @@
 							</td>
 							<th>사용여부</th>
 							<td ><select id="useYn" style="width:100%;">
-									<option value="Y">[[#{screen.text.user.ues}]]</option>
-									<option value="N">[[#{screen.text.user.unuesd}]]</option>
+									<option value="Y">[[#{screen.text.user.use}]]</option>
+									<option value="N">[[#{screen.text.user.unused}]]</option>
 								</select>
 							</td>
 						</tr>

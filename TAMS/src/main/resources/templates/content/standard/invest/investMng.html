@@ -46,7 +46,7 @@
 			$.commRequestSelectbox(url, reqType, "#searchType2", "INV_MAS_MNG");
 			
 	        $("#jsGrid").jsGrid({
-	        	height: "650",
+	        	height: "600",
                 width: "100%",
                 filtering: false,
                 editing: false,
@@ -635,71 +635,75 @@
 				<!-- //list_head -->
 				<!-- detail_table -->
 					<table class="detail_table">
+						<colgroup>
+							<col style="width:30%"/>
+							<col style="width:70%"/>
+						</colgroup>
 						<tr>
 							<th>[[#{screen.text.inv.mng.no}]]</th>
-							<td><input type="text" id="invNo"/></td>
+							<td><input type="text" id="invNo" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.inv.mng.nm}]]</th>
-							<td><input type="text" id="invTtl" /></td>
+							<td><input type="text" id="invTtl" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.inv.mng.qty}]]</th>
-							<td><input type="text" id="invQty" /></td>
+							<td><input type="text" id="invQty" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.inv.mng.amt}]]</th>
-							<td><input type="text" id="invAmt" /></td>
+							<td><input type="text" id="invAmt" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.inv.mng.dt}]]</th>
-							<td><input type="date" id="invDt" /></td>
+							<td><input type="date" id="invDt" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.inv.mng.financial.year}]]</th>
-							<td><input type="text" id="actgYear" /></td>
+							<td><input type="text" id="actgYear" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.inv.mng.po.no}]]</th>
-							<td><input type="text" id="poNo" /></td>
+							<td><input type="text" id="poNo" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.inv.mng.item.nm}]]</th>
 							<td>
-							<div class="form_wrap_ico_invest">
-									<input type="text" id="codeNm" name="codeNm"/>&nbsp;&nbsp;<input type="hidden" id="codeCd" name="codeCd"/>&nbsp;
-									<a href="#" id="openCommCodePopup" ><img title="[[#{screen.text.inv.mng.item.nm}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
-							</div>
+								<div style='display:flex'>
+									<input type="text" id="codeNm" name="codeNm" style="width:100%"/><input type="hidden" id="codeCd" name="codeCd"/>
+									<a href="#" id="openCommCodePopup" style="margin-left: 10px;"><img title="[[#{screen.text.inv.mng.item.nm}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+								</div>
 							</td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.inv.mng.po.qty}]]</th>
-							<td><input type="text" id="qty" /></td>
+							<td><input type="text" id="qty" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.inv.mng.po.amt}]]</th>
-							<td><input type="text" id="poAmt" /></td>
+							<td><input type="text" id="poAmt" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.inv.mng.charger}]]</th>
 							<td>
-							<div class="form_wrap_ico_invest">
-									<input type="text" id="userNm" name="userNm"/>&nbsp;&nbsp;<input type="hidden" id="userId" name="userId"/>&nbsp;
-									<a href="#" id="openUserPopup" ><img title="[[#{screen.text.comm.search.user}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
-							</div>
+								<div style='display:flex'>
+									<input type="text" id="userNm" name="userNm" style="width:100%"/><input type="hidden" id="userId" name="userId"/>
+									<a href="#" id="openUserPopup" style="margin-left: 10px;"><img title="[[#{screen.text.comm.search.user}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+								</div>
 							</td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.inv.mng.vendor.nm}]]</th>
-							<td><input type="text" id="vendNm" /></td>
+							<td><input type="text" id="vendNm" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.inv.mng.order.dt}]]</th>
-							<td><input type="date" id="reqDt" /></td>
+							<td><input type="date" id="reqDt" style="width:100%"/></td>
 						</tr>
 						<tr>
 							<th>[[#{screen.text.inv.mng.ship.dt}]]</th>
-							<td><input type="date" id="dlvDt" /></td>
+							<td><input type="date" id="dlvDt" style="width:100%"/></td>
 						</tr>
 					</table>
 				<!-- //detail_table -->
