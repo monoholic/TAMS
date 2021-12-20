@@ -4,7 +4,7 @@
 
 <mapper namespace="kr.co.trito.tams.web.system.bbs.mapper.BbsMapper">
 	
-	<!-- 게시판 관리화면 관련 쿼리문 -->
+	<!-- 공지사항관리 리스트 출력 -->
 	<select id="selectBbsMngList" resultType="kr.co.trito.tams.web.system.bbs.dto.BbsDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
 		SELECT user_id
 		     , bbs_grp_id
@@ -61,6 +61,7 @@
 		ORDER BY bbs_id
 	</select>
 	
+	<!-- 공지사항관리 카운트 -->
 	<select id="selectCountBbsMng" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 
    		SELECT count(*) cnt 
 		FROM TB_COM_BBS
@@ -89,26 +90,7 @@
 	 		</if>
    	</select>
    	
-   	<select id="selectBbsCodeList" resultType="kr.co.trito.tams.web.standard.code.dto.CodeDto" parameterType="String">
-   		WITH RECURSIVE CTE AS ( 
-			SELECT A.code_id
-			     , A.code_nm				   
-		    FROM TB_COM_CODE A
-		    WHERE A.code_grp_id = (SELECT DISTINCT(code_grp_id)
-			                       FROM TB_COM_CODE B
-								   WHERE B.code_grp_id LIKE CONCAT('%', "BBS", '%')
-								     AND use_yn = 'Y')
-		      				AND
-		      			  1 &lt;= (SELECT COUNT(*) cnt
-									  FROM TB_COM_CODE_GRP C
-					                  WHERE C.code_grp_nm LIKE CONCAT('%', "게시", '%')
-					            		AND use_yn = 'Y')
-			    )
-		SELECT code_nm
-		FROM CTE;
-		<!--     &lt;=   ←   <=     -->
-   	</select>
-	
+   	<!-- 공지사항관리 등록 -->
 	<insert id="bbsMngInsert" parameterType="kr.co.trito.tams.web.system.bbs.dto.BbsDto" useGeneratedKeys="true" keyProperty="bbsId">
 		INSERT INTO TB_COM_BBS ( 
 		       user_id
@@ -131,6 +113,7 @@
 		)
 	</insert>
 	
+	<!-- 공지사항관리 수정 -->
 	<update id="bbsMngUpdate" parameterType="kr.co.trito.tams.web.system.bbs.dto.BbsDto">
 		UPDATE TB_COM_BBS         
 		   SET bbs_grp_id = #{bbsGrpId}
@@ -141,11 +124,13 @@
 		 WHERE bbs_id = #{bbsId}              
 	</update>
 	
+	<!-- 공지사항관리 삭제 -->
 	<delete id="bbsMngDelete" parameterType="kr.co.trito.tams.web.system.bbs.dto.BbsDto">
 		DELETE FROM TB_COM_BBS
         WHERE bbs_id = #{bbsId}
 	</delete>
 	
+	<!-- 게시판 상세 출력 -->
 	<select id="selectBbsInfo" resultType="kr.co.trito.tams.web.system.bbs.dto.BbsDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
   	     SELECT BBS_ID
 		      , USER_ID
@@ -161,15 +146,10 @@
 		      , REG_DT
 		   FROM TB_COM_BBS A
 	      WHERE 1=1
-		    AND BBS_ID = #{params.searchText}
+		    AND BBS_ID = #{params.bbsId}
 	</select>
-	<!-- 게시판 관리화면 관련 쿼리문 -->
 	
-	
-	
-	
-	
-	<!-- 게시판 화면 관련 쿼리문-->
+	<!-- 공지사항 리스트 출력 -->
 	<select id="selectBbsList" resultType="kr.co.trito.tams.web.system.bbs.dto.BbsDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
 		SELECT user_id
 		     , bbs_grp_id
@@ -219,6 +199,7 @@
 		ORDER BY bbs_id
 	</select>
 	
+	<!-- 공지사항 카운트 -->
 	<select id="selectCountBbs" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 
    		SELECT count(*) cnt 
 		FROM TB_COM_BBS
@@ -240,11 +221,10 @@
 	 		</if>
    	</select>
    	
+   	<!-- 조회수 추가 -->
    	<update id="updateViewCnt" parameterType="kr.co.trito.tams.web.system.bbs.dto.BbsDto">
    		UPDATE TB_COM_BBS         
 		   SET view_cnt = view_cnt + 1
 		 WHERE bbs_id = #{bbsId}
    	</update>
-	
-	<!-- 게시판 화면 관련 쿼리문-->
 </mapper>

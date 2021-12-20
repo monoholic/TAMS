@@ -1,6 +1,7 @@
 package kr.co.trito.tams.web.asset.change.modify.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,17 +9,17 @@ import org.springframework.stereotype.Service;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
 import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasExcelDto;
-import kr.co.trito.tams.web.asset.change.modify.mapper.ReqMasMapper;
+import kr.co.trito.tams.web.asset.change.modify.mapper.AssetModifyMapper;
 import kr.co.trito.tams.web.common.dto.AsetMasDto;
 import kr.co.trito.tams.web.standard.code.dto.CodeDto;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class ReqMasService {
+public class AssetModifyService {
 	
 	@Autowired
-	ReqMasMapper mapper;
+	AssetModifyMapper mapper;
 	
 	public int selectCountRequestList(SearchCondition condition) {
 		return mapper.selectCountRequestList(condition);
@@ -32,16 +33,12 @@ public class ReqMasService {
 		return mapper.selectReqExcelList(condition);
 	}
 	
-	public int requestListInsert(ReqMasDto dto) {
-		return mapper.requestListInsert(dto);				
+	public int requestListInsert(Map<String, Object> items) {
+		return mapper.requestListInsert(items);				
 	}
 	
 	public int requestListDelete(ReqMasDto dto) {
 		return mapper.requestListDelete(dto);
-	}
-	
-	public List<CodeDto> selectReqStusList(String email) {
-		return mapper.selectReqStusList(email);
 	}
 	
 	public List<ReqMasDto> selectRequestRegist(SearchCondition condition) {

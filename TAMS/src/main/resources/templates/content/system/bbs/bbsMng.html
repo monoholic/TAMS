@@ -86,16 +86,12 @@
 		            autoload: false,
 		            loadonce: false,
 		            updateOnResize: true, 
-		            /* rowClick:function(args) { 
-		            	fileDownload(args.item);
-		            }, */
 		            fields: attachGridField
 		            ,onDataLoaded: rowCount()
 		    	};
 		}
 	 	
 	 	function addFile(gbn) {
-	 		
 	 		alert(gbn);
 	 		
 			var addFiles;
@@ -128,6 +124,8 @@
 		}
 		
 	    $(function(){
+	    	// 공지사항 그룹
+		 	getCommCode("#bbsGrpId", "BBS", "1", "");
 	    	
 	        $("#jsGrid").jsGrid({
 	        	height: "400",
@@ -237,7 +235,6 @@
 		    				   });
 					 	 } ,
 	                },
-	                //{ name: "chk", type: "checkbox", width: 30, readOnly:false , title: "Sel<br><br>" },
 	                { name: "bbsId", type: "number", align: "center", width: 25,  title: "[[#{screen.text.bbs.id}]]" },
 	                { name: "userId", type: "text", align: "center", width: 25, readOnly:true , title: "[[#{screen.text.comm.user.id}]]" },
 	                { name: "bbsGrpId", type: "text", align: "left", width: 35, readOnly:true , title: "[[#{screen.text.bbs.group}]]" },
@@ -286,10 +283,7 @@
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
 	        });
 
-	        
-	        ////////////////////////////////////////////////////////////////////
     	    $(".btn_add").click(function() {
-    	    	//$("#jsGrid").jsGrid("option", "inserting", "true");
     	    	showDetailForm();
     	    });
 	        
@@ -342,7 +336,9 @@
 	                attachData.append("bbsTtl", $("#bbsTtl").val());
 	                attachData.append("bbsGrpId", $("#bbsGrpId option:selected").text());
 					var markupStr = $('#summernote').summernote('code');
+					attachData.append("bbsDp", 1);
 					attachData.append("bbsCn", markupStr);
+					attachData.append("viewCnt", 0);
 					attachData.append("bbsId", $("#bbsId").val());
 					
 					console.log($("#bbsId").val());
@@ -441,26 +437,7 @@
 	    		]
 	        });
 
-			$(document).ready(function(){                                                                    
-			 	let url = '/system/bbs/bbsMng/codeList';                                                      
-			 	let reqType = 'POST';                                                                        
-			 	let data = {                                                                                 
-			 		"email" : ""                                                                             
-			 	};                                                                                           
-			 	$.commRequest(url, reqType, JSON.stringify(data))                                            
-			 		.then((res) => {                                                                         
-			 			$.each(res.data, function(i){                                                        
-			 				var codeGrpList = res.data[i];                                                  
-			 				$("#bbsGrpId").append('<option value="">' + codeGrpList.codeNm+ '</option>');
-			 			})
-			 		})
-			 		.catch((error) => {                                                                      
-			 			alert('조회 실패!!');                                                                  
-			 		});
-			});
-			
 			$("#addFile").on("click", function(){
-				
 				$("#upFile").click();
 			});
 			
@@ -647,7 +624,6 @@
 		}
 	    
 	    function reloadFileGrid() {
-			
 			//신규 추가 파일에 id값 세팅(삭제시 필요)
 			var len = fileItems.length;
 			for(var i=0; i<len; i++) {
@@ -679,6 +655,13 @@
 			attachData.delete("bbsCn");
 			
 			reloadFileGrid();
+		}
+	  	
+	  	// 공통코드 호출
+		function getCommCode(id, code, level, upperCodeId){				
+			let url = "/common/comm/selectBox";
+			let reqType = 'GET';
+			$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);			
 		}
 	  	
 		// 유효성 검사
@@ -803,7 +786,7 @@
 					</tr>
 									
 					<tr>
-						<th style="text-align:center;">[[#{screen.text.bbs.group}]]</th>
+						<th style="text-align:center;">[[#{screen.text.bbs.title}]]</th>
 						<td colspan="5">
 							<input id="bbsId" type="hidden">
 							<input id="bbsTtl" style="width:100%" type="text" >

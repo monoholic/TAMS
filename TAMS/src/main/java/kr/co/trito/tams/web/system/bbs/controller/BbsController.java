@@ -60,7 +60,7 @@ public class BbsController {
 	@Autowired
 	BbsService bbsService;
 
-	/* 게시판 관리 화면 */
+	/** 공지사항 관리 화면 */
 	@PostMapping("/bbsMng")
 	public ModelAndView bbsMngView(HttpServletRequest request) {
 		
@@ -75,7 +75,7 @@ public class BbsController {
 		return view;
 	}
 	
-	/* 게시판 화면 */
+	/** 공지사항 화면 */
 	@PostMapping("/bbsList")
 	public ModelAndView bbsMngList(HttpServletRequest request) {
 		
@@ -90,7 +90,7 @@ public class BbsController {
 		return view;
 	}
 	
-	/* 게시판 상세 화면 */
+	/** 공지사항 상세 화면 */
 	@PostMapping("/detailBbs")
 	public ModelAndView detailBbs(HttpServletRequest request) {
 		
@@ -102,7 +102,7 @@ public class BbsController {
 		bbsService.updateViewCnt(dto);
 		
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("searchText", bbsId);
+		params.put("bbsId", bbsId);
 		
 		SearchCondition condition = new SearchCondition("0","0", params);
 		dto = bbsService.selectbbsInfo(condition);
@@ -116,89 +116,42 @@ public class BbsController {
 		return view;
 	}
 	
-	/* 공통코드 관리 화면 : 공통코드 그룹 조회 */
-	@PostMapping("/bbsMng/codeList")
-	@ResponseBody
-	public ResponseEntity<? extends Response> bbsCodeList(String str) { 
-		
-		List<CodeDto> list = bbsService.selectBbsCodeList("");
-		return responseService.success(list);
-	}
-	
-	/* 게시판 관리 화면 : 조회 */
+	/** 공지사항관리 화면 : 조회 */
 	@GetMapping(value="/bbsMng/bbsMngList")
 	@ResponseBody
-	@ApiOperation(value = "게시판 관리 화면 : 조회", notes = "게시판 관리 화면 : 조회")
+	@ApiOperation(value = "공지사항관리 화면 : 조회", notes = "공지사항관리 화면 : 조회")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> bbsMngList(
-				@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage",required = true) String currentPage,
-				@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
-				@ApiParam(value = "검색 조건", required = false) @RequestParam(value = "searchText", required = false) String searchText,
-				@ApiParam(value = "검색항목 선택", required = false) @RequestParam(value = "searchOption",required = false) String searchOption,
-				@ApiParam(value = "삭제 구분", required = false) @RequestParam(value = "useYnOption",required = false) String delYnOption,
-				@ApiParam(value = "정렬 필드", required = false) @RequestParam(value = "sortField", required = false) String sortField,
-				@ApiParam(value = "정렬 타입", required = false) @RequestParam(value = "sortOrder", required = false) String sortOrder
-            ) { 
+			@ApiParam(value = "검색 조건 파리미터 Dto", required = true) @RequestParam Map<String, Object> params) { 
 
-		if (StringUtils.isEmpty(currentPage) || StringUtils.isEmpty(numOfRows))
-		throw new IllegalArgumentException("Request parameter error.");
-		
-		Map<String, Object> params = new HashMap<>();
-		
-		if (!StringUtils.isEmpty(searchText))
-		params.put("searchText", searchText);
-		
-		if (!StringUtils.isEmpty(searchOption))
-		params.put("searchOption", searchOption);
-		
-		if (!StringUtils.isEmpty(delYnOption))
-		params.put("delYnOption", delYnOption);
-		
-		if (!StringUtils.isEmpty(sortField))
-		params.put("sortField", sortField);
-		
-		if (!StringUtils.isEmpty(sortOrder))
-		params.put("sortOrder", sortOrder);
-		
-		SearchCondition condition = new SearchCondition(currentPage, numOfRows, params);
-		int total = bbsService.selectCountBbsMng(condition);
-		condition.pageSetup(total);
-	    
+		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);
+		condition.pageSetup(bbsService.selectCountBbsMng(condition));
 		List<BbsDto> list = bbsService.selectBbsMngList(condition);
 		return responseService.success(condition, list);
 	}
 	
-	/* 게시판 관리 화면 : 등록 */  
+	/** 공지사항관리 화면 : 등록 */  
 	@PostMapping(value="/bbsMng/bbsInsert")
 	@ResponseBody
-	@ApiOperation(value = "게시판 관리 화면 : 등록", notes = "게시판 관리 화면 : 등록")
+	@ApiOperation(value = "공지사항관리 화면 : 등록", notes = "공지사항관리 화면 : 등록")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String bbsMngInsert(
 			@ApiParam(value = "파일정보", required = true)  MultipartFile[] files,
-			@ApiParam(value = "게시글 제목", required = true) @RequestParam(value = "bbsTtl", required = true) String bbsTtl,
-			@ApiParam(value = "게시글 그룹", required = true) @RequestParam(value = "bbsGrpId", required = true) String bbsGrpId,
-			@ApiParam(value = "게시글 내용", required = true) @RequestParam(value = "bbsCn", required = true) String bbsCn,
-			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
-			) { 
+			@ApiParam(value = "공지사항관리 등록 데이터", required = true) @RequestParam Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
 		
 		String code = "202";
 		
+		BbsDto dto = new BbsDto();
 		UserInfo userInfo = (UserInfo)userDetail;
 		String userId = userInfo.getDto().getUserId();
 		
-		BbsDto dto = new BbsDto();
+		items.put("regr", userId);
+		items.put("userId", userId);
 		
-		dto.setBbsTtl(bbsTtl);
-		dto.setBbsCn(bbsCn);
-		dto.setBbsDp("1");
-		dto.setBbsGrpId(bbsGrpId);
-		dto.setUserId(userId);
-		dto.setViewCnt("0");
-		dto.setRegr(userId);
-		 
-		int cnt = bbsService.bbsMngInsert(dto);  
+		int cnt = bbsService.bbsMngInsert(items);  
 		
 		if(files != null) {
 			List<FileDto> list = Arrays.asList(files)
@@ -209,9 +162,7 @@ public class BbsController {
 			for(FileDto f : list) {
 		    	 f.setRfncKey1(String.valueOf(dto.getBbsId()));
 		    	 f.setUseYn("Y");
-		    	  
 		    	 log.error(f.toString());
-		    	  
 		    	 commonService.saveFiles(f);
 		    }
 		}
@@ -221,19 +172,16 @@ public class BbsController {
 		return code;
 	}
 	
-	/* 게시판 관리 화면 : 수정 */
+	/** 공지사항관리 화면 : 수정 */
 	@PostMapping(value="/bbsMng/bbsUpdate")
 	@ResponseBody
-	@ApiOperation(value = "게시판 관리 화면 : 수정", notes = "게시판 관리 화면 : 수정")
+	@ApiOperation(value = "공지사항관리 화면 : 수정", notes = "공지사항관리 화면 : 수정")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String bbsMngUpdate(
 			@ApiParam(value = "파일정보", required = false) @RequestParam(value="files", required=false)MultipartFile[] files,
 			@ApiParam(value = "삭제파일정보", required = false) @RequestParam(value="delFiles", required=false)String delFiles,
-			@ApiParam(value = "게시판 ID", required = true) @RequestParam(value = "bbsId", required = true) String bbsId,
-			@ApiParam(value = "게시판 제목", required = true) @RequestParam(value = "bbsTtl", required = true) String bbsTtl,
-			@ApiParam(value = "게시판 그룹", required = true) @RequestParam(value = "bbsGrpId", required = true) String bbsGrpId,
-			@ApiParam(value = "게시판 내용", required = true) @RequestParam(value = "bbsCn", required = true) String bbsCn,
+			@ApiParam(value = "공지사항관리 수정 데이터", required = true) @RequestParam Map<String, Object> items,
 			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
 			) { 
 		String code = "202";
@@ -241,72 +189,61 @@ public class BbsController {
 		UserInfo userInfo = (UserInfo)userDetail;
 		String userId = userInfo.getDto().getUserId(); 
 		
-		BbsDto dto = new BbsDto();
-		dto.setBbsId(bbsId);
-		dto.setBbsTtl(bbsTtl);
-		dto.setBbsCn(bbsCn);
-		dto.setBbsGrpId(bbsGrpId);
-		dto.setUpdr(userId);
+		items.put("updr", userId);
 		
 		if( files != null && files.length > 0 ) {
 		      
 		      //첨부파일 업로드
 		      List<FileDto> list = Arrays.asList(files)
-						.stream()
-						.map(file -> fileController.upload(file))
-						.collect(Collectors.toList());
+					  .stream()
+					  .map(file -> fileController.upload(file))
+					  .collect(Collectors.toList());
 		      
 		      //첨부파일 정보 저장
 		      for( FileDto f : list) {
-		    	  
-		    	  f.setRfncKey1(String.valueOf(bbsId));
+		    	  f.setRfncKey1(String.valueOf(items.get("bbsId").toString()));
 		    	  f.setUseYn("Y");
-		    	  
 		    	  log.error(f.toString());
 		    	  commonService.saveFiles(f);
 		      }
-		      
 	      }
 		
-		  //파일 삭제처리 - use_yn = 'N'
+		//파일 삭제처리 - use_yn = 'N'
 		if( delFiles != null && !"".equals(delFiles) ) {
 		  
 		    List<LinkedHashMap>  array = null;
-		    try {
-		  	  JSONParser parser = new JSONParser(delFiles);
-		  	  array = (List<LinkedHashMap> )parser.parse();
 		    
-		      for(int i=0;i<array.size();i++){
-		    	  LinkedHashMap map = array.get(i);
-		    	  log.error(map.get("id").toString());
+		    try {
+		    	JSONParser parser = new JSONParser(delFiles);
+		    	array = (List<LinkedHashMap> )parser.parse();
+		    
+		    for(int i=0;i<array.size();i++){
+		    	LinkedHashMap map = array.get(i);
+		    	log.error(map.get("id").toString());
 		    	  
-		    	  FileDto dFile = new FileDto();
-		    	  dFile.setFileId(Long.parseLong(map.get("id").toString()));
-		    	  
-  	  	  	      commonService.deleteFiles(dFile);
-	
-		      }
-
-		    } catch (Exception e) {
-		  	  e.printStackTrace();
+		    	FileDto dFile = new FileDto();
+		    	dFile.setFileId(Long.parseLong(map.get("id").toString()));
+  	  	  	    commonService.deleteFiles(dFile);
 		    }
-
-	      }  
+		    } catch (Exception e) {
+		    	e.printStackTrace();
+		    }
+	    }  
 			
-		int cnt = bbsService.bbsMngUpdate(dto);
+		int cnt = bbsService.bbsMngUpdate(items);
 		if( cnt > 0) code = "200";
 		
 		return code;
 	}
 	
-	/* 공통코드 그룹 화면 : 삭제 */
+	/** 공지사항관리 화면 : 삭제 */
 	@GetMapping(value="/bbsMng/bbsDelete")
 	@ResponseBody
-	@ApiOperation(value = "게시판 관리 화면 : 삭제", notes = "게시판 관리 화면 : 삭제")
+	@ApiOperation(value = "공지사항관리 화면 : 삭제", notes = "공지사항관리 화면 : 삭제")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String bbsMngDelete( 
-			@ApiParam(value = "공통코드 그룹ID", required = true) @RequestParam(value = "items", required = true) List<String> items
+			@ApiParam(value = "공지사항 ID", required = true) @RequestParam(value = "items", required = true) List<String> items
 			) { 
 		
 		String code = "202";
@@ -322,59 +259,30 @@ public class BbsController {
 				cnt++;
 		}
 		
-		if(cnt > 0) 
-			code = "200";
+		if(cnt > 0) code = "200";
 		
 		return code;
 	}
 	
-	/* 게시판 화면 : 조회 */
+	/** 공지사항 화면 : 조회 */
 	@GetMapping(value="/bbsMng/bbsList")
 	@ResponseBody
-	@ApiOperation(value = "게시판 화면 : 조회", notes = "게시판 화면 : 조회")
+	@ApiOperation(value = "공지사항 화면 : 조회", notes = "공지사항 화면 : 조회")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> bbsList(
-				@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage",required = true) String currentPage,
-				@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
-				@ApiParam(value = "검색 조건", required = false) @RequestParam(value = "searchText", required = false) String searchText,
-				@ApiParam(value = "검색항목 선택", required = false) @RequestParam(value = "searchOption",required = false) String searchOption,
-				@ApiParam(value = "삭제 구분", required = false) @RequestParam(value = "useYnOption",required = false) String delYnOption,
-				@ApiParam(value = "정렬 필드", required = false) @RequestParam(value = "sortField", required = false) String sortField,
-				@ApiParam(value = "정렬 타입", required = false) @RequestParam(value = "sortOrder", required = false) String sortOrder
-            ) { 
+			@ApiParam(value = "검색 조건 파리미터 Dto", required = true) @RequestParam Map<String, Object> params) { 
 
-		if (StringUtils.isEmpty(currentPage) || StringUtils.isEmpty(numOfRows))
-		throw new IllegalArgumentException("Request parameter error.");
-		
-		Map<String, Object> params = new HashMap<>();
-		
-		if (!StringUtils.isEmpty(searchText))
-		params.put("searchText", searchText);
-		
-		if (!StringUtils.isEmpty(searchOption))
-		params.put("searchOption", searchOption);
-		
-		if (!StringUtils.isEmpty(delYnOption))
-		params.put("delYnOption", delYnOption);
-		
-		if (!StringUtils.isEmpty(sortField))
-		params.put("sortField", sortField);
-		
-		if (!StringUtils.isEmpty(sortOrder))
-		params.put("sortOrder", sortOrder);
-		
-		SearchCondition condition = new SearchCondition(currentPage, numOfRows, params);
-		int total = bbsService.selectCountBbs(condition);
-		condition.pageSetup(total);
-	    
+		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);
+		condition.pageSetup(bbsService.selectCountBbs(condition));
 		List<BbsDto> list = bbsService.selectBbsList(condition);
 		return responseService.success(condition, list);
 	}
 	
-	/** 게시판 조회 */
+	
 	@PostMapping("/bbsMng/bbsView")
-	public ResponseEntity<? extends Response> bbsView(@ApiParam(value = "검색 조건(게시판ID)", required = true) @RequestBody(required = true) String searchText) {
+	public ResponseEntity<? extends Response> bbsView(
+			@ApiParam(value = "검색 조건(게시판ID)", required = true) @RequestBody(required = true) String searchText) {
 		
 		Map<String, Object> params = new HashMap<>();
 		Map<String, Object> result = new HashMap<>();

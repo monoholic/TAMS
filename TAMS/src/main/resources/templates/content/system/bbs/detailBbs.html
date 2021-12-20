@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>[[#{screen.text.bbs.screen.title}]]</title>
+	    <title>게시판 관리</title>
 	</head>
         
 	<!-- css -->
@@ -48,24 +48,6 @@
 	    
 	    var addCnt = 0;
 	    var rowIdx = 0;
-	    
-	 	$(document).ready(function(){                                                                    
-		 	let url = '/system/bbs/bbsMng/codeList';                                                      
-		 	let reqType = 'POST';                                                                        
-		 	let data = {                                                                                 
-		 		"email" : ""                                                                             
-		 	};                                                                                           
-		 	$.commRequest(url, reqType, JSON.stringify(data))                                            
-		 		.then((res) => {                                                                         
-		 			$.each(res.data, function(i){                                                        
-		 				var codeGrpList = res.data[i];                                                  
-		 				$("#bbsGrpId").append('<option value="">' + codeGrpList.codeNm+ '</option>');
-		 			})
-		 		})
-		 		.catch((error) => {                                                                      
-		 			alert('조회 실패!!');                                                                  
-		 		});
-		 });
 	 	
 	 	function rowCount() {    
 		    var count = fileItems.length; 
@@ -111,17 +93,17 @@
 		}
 	 	
 	 	var attachGridField = [
-			{ name: "chk"	, type: "checkbox" , width: 30  , title: "[[#{screen.text.comm.choice}]]"
+			{ name: "chk"	, type: "checkbox" , width: 30  , title: "선택"
 			 ,itemTemplate: function(value, item) {
 				 return '<input type="checkbox" name="add_file" value="'+item.name+'" gbn="'+item.gbn+'" id="'+item.id+'" >';
 			 }	
 			},
-			{ name: "name"	, type: "text"     , width: 200 , align: "left", title: "[[#{screen.text.comm.file.nm}]]"
+			{ name: "name"	, type: "text"     , width: 200 , align: "left", title: "파일명"
 			 ,itemTemplate: function(value, item) {
 				 return '<span style="cursor:hand;" onclick="fileDownload(\''+item.gbn+'\',\''+item.realName+'\',\''+item.name+'\')">'+item.name+'</span>';
 			 }
 			},
-			{ name: "size"	, type: "number"   , width: 100 , align: "center" , title: "[[#{screen.text.comm.file.size}]]"
+			{ name: "size"	, type: "number"   , width: 100 , align: "center" , title: "파일사이즈"
 			 ,itemTemplate: function(value, item) {
 				 return '<span>'+ bytesToSize(item.size) +'</span>';
 			 }
@@ -129,7 +111,7 @@
 		];
 	 	
 	 	function fileDownload(gbn, realName, name) { 
-			 if( gbn == "undefined" && confirm("[[#{screen.info.status.file.download.yn}]]") ) {
+			 if( gbn == "undefined" && confirm("다운로드 하시겠습니까?") ) {
 			      
 	           	//파일 다운로드
 	           	var $form = $('<form></form>'); 
@@ -285,7 +267,7 @@
     					$('.btn_srch').click();
     				})
     				.catch((error) => {
-    					alert("[[#{screen.info.status.error.occur}]]");
+    					alert("오류가 발생했습니다");
     					console.log(error);
     				})
     			
@@ -388,7 +370,7 @@
             
             //web editor 설정
             $("#summernote").summernote({
-	            placeholder: '[[#{screen.info.status.error.input.content}]]',
+	            placeholder: '내용을 작성하세요',
 	            height: 150,
 	            maxHeight: 300,
 	            minHeigth: 300,
@@ -433,13 +415,13 @@
 		    	
 	    		$("#fileGrid2").jsGrid(getGridBody());
 	    		
-		    	let title = "[[#{screen.text.bbs.insert.title}]]";
+		    	let title = "게시글 등록";
 		    	 var readOnly = false;
 		    	 
 		    	 save_mode = "update";
 		    	 
 		    	 if( item != null ) {
-		    		 title = "[[#{screen.text.bbs.update.title}]]";
+		    		 title = "게시글 수정";
 		    		 
 		    		 readOnly = false;
 		    		 
@@ -492,7 +474,7 @@
 	                 height	 : "700px"
 	             }).center().show();
 	    	}else{
-	    		alert("[[#{screen.info.status.modify.just.one}]]");
+	    		alert("수정은 1개이상 되지 않습니다.");
 	    	}
 	    }
 	    
@@ -506,7 +488,7 @@
 
 	<div layout:fragment="content">
 		<!-- contents_head -->
-		<div class="bc">Home &gt; [[#{screen.text.bbs.nm}]]
+		<div class="bc">Home &gt; 공지사항
 		</div>
 		<h3><span id="bbs_GrpId" th:text="${bbsDto.bbsGrpId}"></span></h3>
 		<!-- //contents_head -->
@@ -519,8 +501,8 @@
 					<a class="btn_saveall">일괄 저장</a>
 					<a class="btn_del">메뉴 삭제</a>
 					-->
-					<a class="btn_update">[[#{screen.btn.update}]]</a>
-					<a class="btn_del">[[#{screen.btn.list}]]</a>
+					<a class="btn_update">수정</a>
+					<a class="btn_del">삭제</a>
 					<a class="btn_back">목록</a>
 				</div>
 		</div>
@@ -529,10 +511,10 @@
 			<span id="bbs_Id" th:text="${bbsDto.bbsId}" style="display:none;"></span>
 			
 			<h4><span id="bbs_Ttl" th:text="${bbsDto.bbsTtl}"></span></h4>
-			<div class="view_write">[[#{screen.text.comm.regr}]] : <span id="user_Id" th:text="${bbsDto.userId}"></span></div>
+			<div class="view_write">작성자 : <span id="user_Id" th:text="${bbsDto.userId}"></span></div>
 			<dl class="view_info">
-				<dt>[[#{screen.text.comm.regdt}]] :</dt><dd><span id="reg_Dt" th:text="${bbsDto.regDt}"></span></dd>
-				<dt>[[#{screen.text.bbs.view.cnt}]] :</dt><dd><span id="view_Cnt" th:text="${bbsDto.viewCnt}"></span></dd>
+				<dt>등록일 :</dt><dd><span id="reg_Dt" th:text="${bbsDto.regDt}"></span></dd>
+				<dt>조회수:</dt><dd><span id="view_Cnt" th:text="${bbsDto.viewCnt}"></span></dd>
 			</dl>
 			<div id="bbs_Cn" class="view_article" style="padding:20px 0px 50px 0px;">
 				<th:block th:utext="${bbsDto.bbsCn}"></th:block>
@@ -549,8 +531,8 @@
 					<h6><span id="head_title" ></span></h6>
 					<!-- list_button -->
 					<div class="button">
-						<a class="btn_list save_btn">[[#{screen.btn.save}]]</a>
-						<a class="btn_list close_btn">[[#{screen.btn.close}]]</a>
+						<a class="btn_list save_btn">저장</a>
+						<a class="btn_list close_btn">닫기</a>
 					</div>
 					<!-- list_button -->
 				</div>
@@ -565,41 +547,41 @@
 					</colgroup>
 					
 					<tr>
-						<th style="text-align:center;">[[#{screen.text.bbs.group}]]</th>
+						<th style="text-align:center;">게시글 그룹</th>
 						<td>
 							<select id="bbsGrpId" style="width:100%">
-								<option selected value="">[[#{screen.text.comm.select.search.condition}]]</option>
+								<option selected value="">검색항목 선택</option>
 							</select>
 						</td>
 					</tr>
 									
 					<tr>
-						<th style="text-align:center;">[[#{screen.text.bbs.title}]]</th>
+						<th style="text-align:center;">제목</th>
 						<td colspan="5">
 							<input id="bbsId" type="hidden">
 							<input id="bbsTtl" style="width:100%" type="text" >
 						</td>
 					</tr>
 					<tr>
-						<th style="text-align:center;">[[#{screen.text.bbs.content}]]</th>
+						<th style="text-align:center;">게시글 내용</th>
 						<td>
 							<textarea id="summernote" class="bbsCn" th:text="${bbsDto.bbsCn}"></textarea>
 						</td>
 					</tr>
 					<tr>
-						<th style="text-align:center;">[[#{screen.text.comm.file}]]</th>
+						<th style="text-align:center;">첨부파일</th>
 						<td>
 							<table>
 								<tr>
 									<td width="55%">
 										<input type="file" id="upFile" style="display:none;">
-											<a id="addFile" class="btn_file_srch">[[#{screen.text.comm.file.search}]]</a>
-											<a id="delFile" class="btn_list">[[#{screen.text.comm.file.delete}]]</a>
-											<label for="totalSize" >[[#{screen.text.comm.file.total.size}]]</label> :
+											<a id="addFile" class="btn_file_srch">파일찾기</a>
+											<a id="delFile" class="btn_list">파일삭제</a>
+											<label for="totalSize" >총 파일크기</label> :
 										<input type="text" name="totalSize" id="totalSize" readonly style="width:50px;">
 									</td>
 									<td>
-										<div id="dragFile" class="box_form" style="cursor:pointer;text-align:center;" >[[#{screen.text.comm.file.drag.text}]]</div>
+										<div id="dragFile" class="box_form" style="cursor:pointer;text-align:center;" >파일을 여기에 끌어다 놓으세요.</div>
 									</td>
 								</tr>
 								<tr>
@@ -609,8 +591,6 @@
 								</tr>
 							</table>							
 						</td>
-						
-						
 					</tr>
 				</table>
 			</div>

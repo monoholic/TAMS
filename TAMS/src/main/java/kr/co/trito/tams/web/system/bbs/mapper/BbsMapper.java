@@ -1,6 +1,7 @@
 package kr.co.trito.tams.web.system.bbs.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -20,11 +21,9 @@ public interface BbsMapper {
 	
 	public int selectCountBbs(SearchCondition condition);
 	
-	public List<CodeDto> selectBbsCodeList(String email);
+	public int bbsMngInsert(Map<String, Object> items);
 	
-	public int bbsMngInsert(BbsDto dto);
-	
-	public int bbsMngUpdate(BbsDto dto);
+	public int bbsMngUpdate(Map<String, Object> items);
 	
 	public int bbsMngDelete(BbsDto dto);
 	

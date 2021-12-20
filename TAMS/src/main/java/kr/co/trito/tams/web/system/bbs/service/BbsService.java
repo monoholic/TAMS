@@ -1,6 +1,7 @@
 package kr.co.trito.tams.web.system.bbs.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,16 +39,12 @@ public class BbsService {
 		return mapper.selectCountBbs(condition);
 	}
 	
-	public List<CodeDto> selectBbsCodeList(String email) {
-		return mapper.selectBbsCodeList(email);
+	public int bbsMngInsert(Map<String, Object> items) {
+		return mapper.bbsMngInsert(items);
 	}
 	
-	public int bbsMngInsert(BbsDto dto) {
-		return mapper.bbsMngInsert(dto);
-	}
-	
-	public int bbsMngUpdate(BbsDto dto) {
-		return mapper.bbsMngUpdate(dto);
+	public int bbsMngUpdate(Map<String, Object> items) {
+		return mapper.bbsMngUpdate(items);
 	}
 	
 	public int bbsMngDelete(BbsDto dto) {

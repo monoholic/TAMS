@@ -36,24 +36,6 @@
 	 	var insertedItems = [];
 	 	var updatedItems = [];
 	    
-	 	$(document).ready(function(){                                                                    
-		 	let url = '/system/bbs/bbsMng/codeList';                                                      
-		 	let reqType = 'POST';                                                                        
-		 	let data = {
-		 		"email" : ""                                                                             
-		 	};                                                                                           
-		 	$.commRequest(url, reqType, JSON.stringify(data))                                            
-		 		.then((res) => {                                                                         
-		 			$.each(res.data, function(i){                                                        
-		 				var codeGrpList = res.data[i];                                                  
-		 				$("#bbsGrpId").append('<option value="">' + codeGrpList.codeNm+ '</option>');
-		 			})
-		 		})
-		 		.catch((error) => {                                                                      
-		 			alert('조회 실패!!');                                                                  
-		 		});
-		 });
-	 	
 	    $(function(){
 	    	
 	        $("#jsGrid").jsGrid({

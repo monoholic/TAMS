@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>자산정보수정</title>
+	    <title>[[#{screen.text.modify.screen.title2}]]</title>
 	</head>
         
 	<!-- css -->
@@ -75,10 +75,6 @@
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
 	        });
 
-    	    $(".btn_add").click(function() {
-    	    	showDetailForm();
-    	    });
-    	    
 	        // 상단 삭제 버튼
 			$(".btn_del1").click(function() {
 	  	    	
@@ -92,12 +88,12 @@
 	  			$.commRequest(url, reqType, data)
 	  				.then((res) => {
 	  					console.log(res);
-	  					alert("삭제 되었습니다!");
+	  					alert("[[#{screen.info.status.delete.success}]]");
 	  					selectedItems = [];
 	  					$('.btn_srch').click();
 	  				})
 	  				.catch((error) => {
-	  					alert("오류가 발생했습니다");
+	  					alert("[[#{screen.info.status.error.occur}]]");
 	  					console.log(error);
 	  				})
     	    });
@@ -123,12 +119,12 @@
 	  			$.commRequest(url, reqType, data)
 	  				.then((res) => {
 	  					console.log(res);
-	  					alert("삭제 되었습니다!");
+	  					alert("[[#{screen.info.status.delete.success}]]");
 	  					selectedItems = [];
 	  					$('.btn_srch').click();
 	  				})
 	  				.catch((error) => {
-	  					alert("오류가 발생했습니다");
+	  					alert("[[#{screen.info.status.error.occur}]]");
 	  					console.log(error);
 	  				})
     	    });
@@ -142,52 +138,23 @@
 	        });
 	        
 	     	// 팝업창 저장 버튼 처리
-            $('.save_btn').on('click', function (e) {
+            $('.btn_save').on('click', function (e) {
                 
-            	if (validationCheck() == '202') {
-	            	e.preventDefault();
+            	e.preventDefault();
+                
+                var insert_item = {};
+                	insert_item.reqNo  = $("#reqNo").val();
+	                insert_item.reqNm  = $("#reqNm").val();
+	                insert_item.reqRsn = $("#reqRsn").val();
 	                
-	                var insert_item = {};
-	                	insert_item.reqNo       = $(".detail_table").find("#reqNo").val();
-		                insert_item.reqType 	= $(".detail_table").find("#reqType").val();
-		                insert_item.reqNm 	    = $(".detail_table").find("#reqNm").val();
-		                insert_item.reqtr 	    = $(".detail_table").find("#reqtr").val();
-		                insert_item.appvDocId 	= $(".detail_table").find("#appvDocId").val();
-		                insert_item.reqRsn 	    = $(".detail_table").find("#reqRsn").val();
-		                insert_item.reqStus 	= $(".detail_table").find("#reqStus").val();
-		                insert_item.movePupos 	= $(".detail_table").find("#movePupos").val();
-		                insert_item.moveDt 	    = $(".detail_table").find("#moveDt").val();
-		                insert_item.tkoutScheYn = $(".detail_table").find("#tkoutScheYn").val();
-		                insert_item.tkoutScheDt = $(".detail_table").find("#tkoutScheDt").val();
-		                insert_item.tkoutYn 	= $(".detail_table").find("#tkoutYn").val();
-		                insert_item.tkoutDt 	= $(".detail_table").find("#tkoutDt").val();
-		                insert_item.rtkinYn 	= $(".detail_table").find("#rtkinYn").val();
-		                insert_item.rtKinDt 	= $(".detail_table").find("#rtKinDt").val();
-		                insert_item.prgsDcontYn = $(".detail_table").find("#prgsDcontYn").val();
-		                
-			        var action = "";
-			        
-			    	if(save_mode == "insert") {
-			    		action = "insertItem";
-			    	}else if(save_mode == "update") {
-			    		action = "updateItem";
-			    	}
-	    			
-	    			$("#jsGrid").jsGrid(action, insert_item);
-	                
-		    		clearDetailForm();
-	                $(this).parents("#detailForm").hide();
-	                save_mode = "";
-	          	}
+	                console.log("++++" + selectedItems);
+    			$("#jsGrid").jsGrid(action, updateItem);
+                
+	    		clearDetailForm();
+                $(this).parents("#detailForm").hide();
+                save_mode = "";
             });
 	     	
-    	  	//수정 버튼
-    	    $(".btn_update").click(function() {
-    	    	var items = $("#jsGrid").jsGrid("option", "data");
-    	    	var item = items.filter(arr => arr.codeId == selectedItems[0].codeId);
-    	    	showDetailForm(item[0]);
-    	    });
-          	
           	//리셋 버튼
     	    $(".btn_reset").click(function() {
     	    	$("#req_no").val("");
@@ -304,7 +271,6 @@
     	});
     	
     	function selectAsetList(obj) {
-    		
     		var asetNoChk = [];
     		
     		// 자산번호 비교
@@ -316,7 +282,7 @@
     			if(!asetNoChk.includes(el.asetNo))
     				(asetList).push(el);
     			else
-    				alert("이미 선택된 자산입니다.");
+    				alert("[[#{screen.info.status.error.modify.dup.asset}]]");
     		});
     		
     		jsGridLoad();
@@ -356,7 +322,7 @@
 		 		})
 		 		
 		 		.catch((error) => {                                                                      
-		 			alert('조회 실패!!');                                                                  
+		 			alert('[[#{screen.info.status.error.search}]]');                                                                  
 		 		});
 		};
 		
@@ -364,7 +330,7 @@
 			console.log('--------------- jsGridLoad ------------------');
 	 		
 	 		 $("#jsGrid").jsGrid({
-		        	height: "600",
+		        	height: "400",
 	                width: "100%",
 	                filtering: false,
 	                editing: true,
@@ -401,7 +367,7 @@
 		            }, */
 		            pagerContainerClass: "paginate",
 		            deleteConfirm: function(item) {
-		                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
+		                return "\""+item.menuNm+"("+menuId+")"+"\""+ '[[#{screen.info.status.delete.yn}]]';
 		            },
 		            controller:  {
 		                loadData: function(filter) {
@@ -438,7 +404,7 @@
 									d.resolve({data : res.data2, itemsCount: res.condition.totalCount});
 								})
 								.catch((error) => {
-									console.log('메뉴조회 실패!!');
+									console.log('[[#{screen.info.status.error.search}]]');
 								});						
 		                    
 		                    return d.promise();
@@ -452,7 +418,7 @@
 		                			console.log(res);
 		                			unselectItem(item);
 		                			
-		                			alert("수정이 완료되었습니다.");
+		                			alert("[[#{screen.info.status.update.success}]]");
 		                			selectedItems = [];
 		                			$("#jsGrid").jsGrid("loadData");
 		                		})
@@ -461,22 +427,7 @@
 		                		})
 		                },
 		                
-		                deleteItem: function(item) { 
-		        			let url = "/asset/update/reqmas/reqmasDelete";
-		        			let reqType = 'GET';
-		        			$.commRequest(url, reqType, item)
-		        				.then((res) => {
-		        					console.log(res);
-		        					
-		        					$("#jsGrid").jsGrid("loadData");
-		        				})
-		        				.catch((error) => {
-		        					console.log(error);
-		        				})
-		            	},
-		                
 		             	insertItem: function(item) { 
-		             		//insertedItems.push(item);
 		        			let url = "/asset/update/reqmas/reqmasInsert";
 		        			let reqType = 'GET';
 		        			
@@ -490,12 +441,6 @@
 		        					console.log(error);
 		        				})
 		            	},
-		            	onItemEditing: function(args) {
-		            		// cancel editing of the row of item with field 'ID' = 0
-		            		if(args.item.ID === 0) {
-		            			args.cancel = true;
-		            	    }
-	            		}
 	           		},
 		            fields: [
 		            	{  	   name : "chk"
@@ -509,14 +454,14 @@
 		                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
 		                       .prop("checked", $.inArray(item.firstName, selectedItems) > -1)
 		                       .on("change", function () {
-		  					  	 $(this).is(":checked") ? selectItem($(this).parent().next().text()) : unselectItem($(this).parent().next().text());
+		  					  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
 		  					  	 });
 		            		   }
 		                	 , headerTemplate : function ()  { 
 							  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
 			                     .on("change", function (item) {
 			             	    	selectedItems = [];
-			            	    	if(this.checked) { // check select status
+			            	    	if(this.checked) {
 			            	            $('.singleCheckbox').each(function() { 
 			            	                this.checked = true;   
 			            	                selectItem($(this).parent().next().text());           
@@ -532,16 +477,16 @@
 			    				   });
 						 	 } ,
 		                },
-		                { name: "asetNo", type: "text", width: 35 ,align: "left", title: "자산번호", editing: false},
-		                { name: "asetType1", type:"select", width: 35, align:"left", title:"자산유형1", items:asetArr1, valueField :"Id", textField : "Nm"},
-		                { name: "asetType2", type:"select", width: 35, align:"left", title:"자산유형2", items:asetArr2, valueField :"Id", textField : "Nm"},
-						{ name: "asetType3", type:"select", width: 35, align:"left", title:"자산유형3", items:asetArr3, valueField :"Id", textField : "Nm"},
-						{ name: "mftco"	    , type: "text", width: 30 ,align: "left", title: "메이커"},
-						{ name: "model"	    , type: "text", width: 40 ,align: "left", title: "모델"},
-						{ name: "sn"     	, type: "text", width: 30 ,align: "left", title: "S/N"},
-						{ name: "bizDeptNm"	, type: "text", width: 40 ,align: "left", title: "사업부",editing: false},
-						{ name: "deptNm"    , type: "text", width: 40 ,align: "left", title: "부서", editing: false},
-						{ name: "chrgr"	    , type: "text", width: 30 ,align: "left", title: "담당자", editing: false,
+		                { name: "asetNo",    type:"text",   width: 35 ,align: "left", title:"[[#{screen.text.modify.asetno}]]", 	 editing: false},
+		                { name: "asetType1", type:"select", width: 35, align: "left", title:"[[#{screen.text.modify.asset.type1}]]", items:asetArr1, valueField :"Id", textField : "Nm"},
+		                { name: "asetType2", type:"select", width: 35, align: "left", title:"[[#{screen.text.modify.asset.type2}]]", items:asetArr2, valueField :"Id", textField : "Nm"},
+						{ name: "asetType3", type:"select", width: 35, align: "left", title:"[[#{screen.text.modify.asset.type3}]]", items:asetArr3, valueField :"Id", textField : "Nm"},
+						{ name: "mftco", 	 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.manufacture}]]"},
+						{ name: "model", 	 type:"text",   width: 40 ,align: "left", title:"[[#{screen.text.modify.asset.model}]]"},
+						{ name: "sn", 		 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.sn}]]"},
+						{ name: "bizDeptNm", type:"text",   width: 40 ,align: "left", title:"[[#{screen.text.modify.asset.biz.dept}]]", editing: false},
+						{ name: "deptNm", 	 type:"text",   width: 40 ,align: "left", title:"[[#{screen.text.modify.asset.dept}]]",	    editing: false},
+						{ name: "chrgr", 	 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.charger}]]",  editing: false,
 							itemTemplate : function(value, item) {
 							let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
 							
@@ -569,9 +514,9 @@
 	 	}
 	 	
 	    //선택 버튼클릭시 
-	    function selectItem(obj) {
+	    function selectItems(obj) {
 			console.log(obj);
-			opener.setResult(obj); //부모창에 구현
+			opener.setResult(obj);
 			window.close();
 	    }
 	    
@@ -632,21 +577,16 @@
 	</th:block>
 
 	<div layout:fragment="content">
-		<!-- contents_head -->
-		<div class="bc">Home &gt; <span> 자산변동 > 자산수정의뢰작성</span></div>
-		<h3><span>자산수정의뢰작성</span></h3><br>
-		<!-- //contents_head -->
-
-		<!-- search -->
+		<h3><span>[[#{screen.text.modify.screen.title3}]]</span></h3><br>
 		
 		<div class="list_head">
 			<div class="list_head">
-				<div><h6>의뢰정보</h6></div>
+				<div><h6>[[#{screen.text.modify.screen.title4}]]</h6></div>
 			</div>
 			<div class="button">
-				<a class="btn_add">저장</a>
-				<a class="btn_del1">삭제</a>
-				<a class="btn_">결재상신</a>
+				<a class="btn_save">[[#{screen.text.comm.save}]]</a>
+				<a class="btn_del1">[[#{screen.btn.delete}]]</a>
+				<a class="btn_">[[#{screen.text.comm.approve}]]</a>
 			</div>
 		</div>
 		
@@ -666,35 +606,35 @@
 				</colgroup>
 				<tr>
 					<td><input id="req_no" type="hidden" th:value="${reqNo}"></td>
-						<th style="text-align:center;">의뢰구분</th>
+						<th style="text-align:center;">[[#{screen.text.modify.type}]]</th>
 						<td><input type="text" id="reqType" style="width:100%;" readonly></td>
 					<td></td>
-						<th style="text-align:center;">의뢰번호</th>
+						<th style="text-align:center;">[[#{screen.text.modify.no}]]</th>
 						<td><input type="text" id="reqNo" style="width:100%;" readonly></td>
 					<td></td> 
-						<th style="text-align:center;">의뢰일시</th>
+						<th style="text-align:center;">[[#{screen.text.modify.dt}]]</th>
 						<td><input type="date" id="reqDt" style="width:100%;" readonly></td>
 					<td></td>
 				</tr>
 				<tr>
 					<td></td>
-					<th style="text-align:center;">의뢰부서</th>
+					<th style="text-align:center;">[[#{screen.text.modify.dept}]]</th>
 					<td>
 						<input type="text" style=" width:100%" id="deptNm" readonly/>
 					</td>
 					<td></td>
-					<th style="text-align:center;">의뢰자</th>
+					<th style="text-align:center;">[[#{screen.text.modify.reqtr}]]</th>
 					<td>
 						<input type="text" style="width:100%" id="reqtr" readonly/>
 					</td>
 					<td></td>
-					<th style="text-align:center;">의뢰명</th>
+					<th style="text-align:center;">[[#{screen.text.modify.nm}]]</th>
 						<td><input type="text" id="reqNm" style="width:100%;"></td>
 					<td></td>
 				</tr>
 				<tr>
 					<td></td>
-					<th style="text-align:center;">의뢰사유</th>
+					<th style="text-align:center;">[[#{screen.text.modify.rsn}]]</th>
 					<td colspan="1"><input type="text" id="reqRsn" style="width:100%;"/></td>
 					<td></td>
 				</tr>
@@ -703,14 +643,14 @@
 		</div><br>
 		
 		<div class="list_head">
-			<div><h6>대상자산정보</h6></div>
+			<div><h6>[[#{screen.text.modify.screen.title5}]]</h6></div>
 			<div class="result">Results : 0,000</div>
 		</div>
 			
 		<div class="list_head">
 			<div class="button">
-				<a class="btn_" id="openAsetMasPopup">자산 추가</a>
-				<a class="btn_del2">삭제</a>
+				<a class="btn_" id="openAsetMasPopup">[[#{screen.text.comm.add.asset}]]</a>
+				<a class="btn_del2">[[#{screen.btn.delete}]]</a>
 			</div>
 		</div>
 		<div id="jsGrid"></div>

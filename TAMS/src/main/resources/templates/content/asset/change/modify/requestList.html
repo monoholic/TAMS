@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>자산정보수정</title>
+	    <title>[[#{screen.text.modify.screen.title}]]</title>
 	</head>
         
 	<!-- css -->
@@ -30,7 +30,6 @@
 	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
 		
 	    <script>
-	    
 	    let numOfRows = 30;
 	    var status = true;
         var selectedItems = [];
@@ -38,30 +37,12 @@
 	 	var updatedItems = [];
 	 	var codeGrpMngList = [];
 	 	
-		// 공통코드(의뢰상태) 조회                                                                                   
-		$(document).ready(function(){                                                                    
-			let url = '/asset/update/reqmas/selectReqStusList';
-			let reqType = 'POST';                                                                        
-			let data = {                                                                                 
-				"email" : ""                                                                             
-			};                                                                                           
-			$.commRequest(url, reqType, JSON.stringify(data))                                            
-				.then((res) => {                                                                         
-					$.each(res.data, function(i){                                                        
-						var reqStusList = res.data[i];
-						
-						$("#reqStus").append('<option value="'+ reqStusList.codeId +'">' + reqStusList.codeNm +'</option>');
-						$("#req_stus").append('<option value="'+ reqStusList.codeId +'">' + reqStusList.codeNm +'</option>');
-					})
-				})
-				.catch((error) => {                                                                      
-					alert('메뉴조회 실패!!');                                                                  
-				});
-		});
-		
 	    $(function(){
+	    	getCommCode("#req_stus", "APPR_STATUS", "1", "");
+	    	getCommCode("#reqStus", "APPR_STATUS", "1", "");
+	    	getCommCode("#reqType", "REQ_TYPE", "1", "");
 	        $("#jsGrid").jsGrid({
-	        	height: "600",
+	        	height: "400",
                 width: "100%",
                 filtering: false,
                 editing: true,
@@ -98,7 +79,7 @@
 	            }, 
 	            pagerContainerClass: "paginate",
 	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
+	                return "\""+item.menuNm+"("+menuId+")"+"\""+ '[[#{screen.info.status.delete.yn}]]';
 	            },
 	            controller:  {
 	                loadData: function(filter) {
@@ -130,7 +111,7 @@
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
 							})
 							.catch((error) => {
-								console.log('메뉴조회 실패!!');
+								console.log('[[#{screen.info.status.error.search}]]');
 							});						
 	                    
 	                    return d.promise();
@@ -143,7 +124,6 @@
 	        			
 	        			$.commRequest(url, reqType, item)
 	        				.then((res) => {
-	        					console.log(res);
 	        					
 	        					$("#jsGrid").jsGrid("loadData");
 	        				})
@@ -155,7 +135,7 @@
 	            fields: [
 	            	{  	   name : "chk"
 	                	 , align: "center"
-	                	 , width: 10
+	                	 , width: 5
 	                	 , title: ""
 	                	 , editing: false
 	                	 , sorting: false
@@ -171,7 +151,7 @@
 						  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
 		                     .on("change", function (item) {
 		             	    	selectedItems = [];
-		            	    	if(this.checked) { // check select status
+		            	    	if(this.checked) { 
 		            	            $('.singleCheckbox').each(function() { 
 		            	                this.checked = true;   
 		            	                selectItem($(this).parent().next().text());           
@@ -187,14 +167,14 @@
 		    				   });
 					 	 } ,
 	                },
-	                { name: "reqNo", type: "text", align: "center", width: 10,  title: "의뢰 번호" },
-	                { name: "reqTypeNm", type: "text", align: "left", width: 25,  title: "의뢰구분" },
-	                { name: "reqNm", type: "text", align: "left", width: 80,  title: "의뢰명" },
-	                { name: "reqtrDept", type: "text", align: "left", width: 25, readOnly:true , title: "의뢰자 부서" },
-	                { name: "reqtr", type: "text", align: "left", width: 10, readOnly:true , title: "의뢰자" },
-	                { name: "reqDt", type: "text", align: "center", width: 10, readOnly:true , title: "의뢰일자" },
-	                { name: "reqStusNm", type: "text", align: "left", width: 15, readOnly:true , title: "의뢰 상태" },
-	                { name: "asetCnt", type: "text", align: "right", width: 10, readOnly:true , title: "자산 수" }
+	                { name: "reqNo", 	 type: "text", align: "center", width: 25,  title: "[[#{screen.text.modify.no}]]"},
+	                { name: "reqTypeNm", type: "text", align: "center", width: 25,  title: "[[#{screen.text.modify.type}]]"},
+	                { name: "reqNm", 	 type: "text", align: "left", 	width: 120, title: "[[#{screen.text.modify.nm}]]"},
+	                { name: "reqtrDept", type: "text", align: "center", width: 25,  title: "[[#{screen.text.modify.dept}]]"},
+	                { name: "reqtr", 	 type: "text", align: "center", width: 15,  title: "[[#{screen.text.modify.reqtr}]]"},
+	                { name: "reqDt", 	 type: "text", align: "center", width: 15,  title: "[[#{screen.text.modify.dt}]]"},
+	                { name: "reqStusNm", type: "text", align: "center", width: 25,  title: "[[#{screen.text.modify.stus}]]"},
+	                { name: "asetCnt", 	 type: "text", align: "right", 	width: 15,  title: "[[#{screen.text.modify.asetcnt}]]"}
 	            ]
 	        });
 	        
@@ -251,12 +231,12 @@
 	  			$.commRequest(url, reqType, data)
 	  				.then((res) => {
 	  					console.log(res);
-	  					alert("삭제 되었습니다!");
+	  					alert("[[#{screen.info.status.delete.success}]]");
 	  					selectedItems = [];
 	  					$('.btn_srch').click();
 	  				})
 	  				.catch((error) => {
-	  					alert("오류가 발생했습니다");
+	  					alert("[[#{screen.info.status.error.occur}]]");
 	  					console.log(error);
 	  				})
     	    });
@@ -272,22 +252,11 @@
 	            	e.preventDefault();
 	                
 	                var insert_item = {};
-	                	insert_item.reqNo       = $(".detail_table").find("#reqNo").val();
 		                insert_item.reqType 	= $(".detail_table").find("#reqType").val();
 		                insert_item.reqNm 	    = $(".detail_table").find("#reqNm").val();
 		                insert_item.reqtr 	    = $(".detail_table").find("#reqtr").val();
-		                insert_item.appvDocId 	= $(".detail_table").find("#appvDocId").val();
-		                insert_item.reqRsn 	    = $(".detail_table").find("#reqRsn").val();
 		                insert_item.reqStus 	= $(".detail_table").find("#reqStus").val();
-		                insert_item.movePupos 	= $(".detail_table").find("#movePupos").val();
-		                insert_item.moveDt 	    = $(".detail_table").find("#moveDt").val();
-		                insert_item.tkoutScheYn = $(".detail_table").find("#tkoutScheYn").val();
-		                insert_item.tkoutScheDt = $(".detail_table").find("#tkoutScheDt").val();
-		                insert_item.tkoutYn 	= $(".detail_table").find("#tkoutYn").val();
-		                insert_item.tkoutDt 	= $(".detail_table").find("#tkoutDt").val();
-		                insert_item.rtkinYn 	= $(".detail_table").find("#rtkinYn").val();
-		                insert_item.rtKinDt 	= $(".detail_table").find("#rtKinDt").val();
-		                insert_item.prgsDcontYn = $(".detail_table").find("#prgsDcontYn").val();
+		                insert_item.reqRsn 	    = $(".detail_table").find("#reqRsn").val();
 		                
 			        var action = "";
 			        
@@ -311,7 +280,7 @@
     	    	$("#req_nm").val("");
     	    	$("#deptCd1").val("");
     	    	$("#deptNm1").val("");
-    	    	$("#deptCd1").val("");
+    	    	$("#deptCd2").val("");
     	    	$("#deptNm2").val("");
     	    	$("#Reqtr").val("");
     	    	$("#aset_no").val("");
@@ -393,23 +362,9 @@
 	    
 	    // DetailForm 초기화
 	    function clearDetailForm() {
-    	    $(".detail_table").find("#reqNo").val("");
-    		$(".detail_table").find("#reqType").val("");
    			$(".detail_table").find("#reqNm").val("");
     		$(".detail_table").find("#reqtr").val("");
-    		$(".detail_table").find("#reqtrDept").val("");
-    		$(".detail_table").find("#appvDocId").val("");
     		$(".detail_table").find("#reqRsn").val("");
-    		$(".detail_table").find("#reqStus").val("");
-    		$(".detail_table").find("#movePupos").val("");
-    		$(".detail_table").find("#moveDt").val("");
-    		$(".detail_table").find("#tkoutScheYn").val("");
-    		$(".detail_table").find("#tkoutScheDt").val("");
-    		$(".detail_table").find("#tkoutYn").val("");
-    		$(".detail_table").find("#tkoutDt").val("");
-    		$(".detail_table").find("#rtkinYn").val("");
-    		$(".detail_table").find("#rtKinDt").val("");
-    		$(".detail_table").find("#prgsDcontYn").val("");
 	    }
 	    
 	    let save_mode = "";
@@ -417,39 +372,16 @@
 	    		
 	    	if(selectedItems.length <= 1){
 		    	
-		    	let title = "의뢰 작성";
+		    	let title = "[[#{screen.text.modify.insert.title}]]";
 		    	 var readOnly = false;
-		    	 
-		    	 if( item != null ) {
-		    		 title = "의뢰정보 수정";
-		    		 save_mode = "update";
-	 				 
-		    		 readOnly = false;
-	 				 
-		    		 $(".detail_table").find("#reqNo").val(item.reqNo);
-		    		 $(".detail_table").find("#reqNo").attr("readOnly", true);    
-		    		 $(".detail_table").find("#reqType").val(item.reqType);
-		     		 $(".detail_table").find("#reqNm").val(item.reqNm);
-		     		 $(".detail_table").find("#reqtr").val(item.reqtr);
-		     		 $(".detail_table").find("#reqtrDept").val(item.reqtrDept);
-		     		 $(".detail_table").find("#appvDocId").val(item.appvDocId);
-		     		 $(".detail_table").find("#reqRsn").val(item.reqRsn);
-		     		 $(".detail_table").find("#reqStus").val(item.reqStus);
-		     		 $(".detail_table").find("#movePupos").val(item.movePupos);
-		     		 $(".detail_table").find("#moveDt").val(item.moveDt);
-		     		 $("#tkoutScheYn").val(item.tkoutScheYn);
-		     		 $(".detail_table").find("#tkoutScheDt").val(item.tkoutScheDt);
-		     		 $("#tkoutYn").val(item.tkoutYn);
-		     		 $(".detail_table").find("#tkoutDt").val(item.tkoutDt);
-		     		 $("#rtkinYn").val(item.rtkinYn);
-		     		 $(".detail_table").find("#rtKinDt").val(item.rtKinDt);
-		     		 $("#prgsDcontYn").val(item.prgsDcontYn);
-		     		 
-		    	 } else {
-		    		 save_mode = "insert";
-		    		 $(".detail_table").find("#reqNo").attr("readOnly", true);
-		    	 }
-		    	 
+		    	
+	    		 save_mode = "insert";
+	    		 $(".detail_table").find("#reqNo").attr("readOnly", true);
+	    		 $(".detail_table").find("#reqType").val("MO");
+	    		 $("#reqType option").not(":selected").attr("disabled", true);
+	    		 $(".detail_table").find("#reqStus").val("TMP");
+	    		 $("#reqStus option").not(":selected").attr("disabled", true);
+	    		 
 		    	 $(".list_head").find("#head_title").html(title);
 		    	
 		    	 //상세 팝업 호출
@@ -457,11 +389,11 @@
 	                 position: 'absolute',
 	                 top	 : "10px",
 	                 left	 : "10px",
-	                 width	 : "350px",
+	                 width	 : "450px",
 	                 height	 : "450px"
 	             }).center().show();
 	    	}else{
-	    		alert("수정은 1개이상 되지 않습니다.");
+	    		alert("[[#{screen.info.status.modify.just.one}]]");
 	    	}
 	    }
 	    
@@ -480,24 +412,6 @@
 	    function validationCheck() {
 	    	let code = '202';
 			
-			if($("#reqType").val() == "") {
-				alert("의뢰구분을 선택해 주세요.");
-				$("#reqType").focus();
-				code = '200';
-			}else if($("#reqNm").val() == "") {
-				alert("의뢰명을 입력해 주세요.");
-				$("#reqNm").focus();
-				code = '200';
-			}else if($("#reqtr").val() == "") {
-				alert("의뢰자 아이디를 선택해 주세요.");
-				$("#codeLvl").focus();
-				code = '200';
-			}else if($("#reqStus").val() == "") {
-				alert("의뢰상태를 선택해 주세요.");
-				$("#reqStus").focus();
-				code = '200';
-			}
-			
 			return code;
 	    }
 	 	
@@ -514,6 +428,13 @@
 			
 			$form.submit();
 	    }
+	 	
+	 	// 공통코드 호출
+	    function getCommCode(id, code, level, upperCodeId){				
+			let url = "/common/comm/selectBox";
+			let reqType = 'GET';
+			$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);			
+		}
 	    
 	 	// 엑셀 다운로드
 		$(function(){
@@ -527,7 +448,7 @@
 					$form.attr('method', 'post'); 
 					$form.attr('target', '_self');
 					
-				var idArr = ['req_no', 'fromDate', 'toDate', 'req_nm', 'dept_cd1', 'dept_cd2', 'Reqtr', 'aset_no', 'req_stus'];
+				var idArr = ['req_no', 'fromDate', 'toDate', 'req_nm', 'deptCd1', 'deptCd2', 'Reqtr', 'aset_no', 'req_stus'];
 				var inputStr = '';
 				
 				$.each(idArr,function(i){
@@ -564,56 +485,56 @@
 				</colgroup>
 				<tr>
 					<td></td>
-						<th style="text-align:center;">의뢰번호</th>
+						<th style="text-align:center;">[[#{screen.text.modify.no}]]</th>
 						<td><input type="text" id="req_no" onkeyup="enterkey()" style="width:100%;"></td>
 					<td></td>
-						<th style="text-align:center;">의뢰일자</th>
+						<th style="text-align:center;">[[#{screen.text.modify.dt}]]</th>
 						<td class="aset_td"><input type="date" id="fromDate" style="width:100%;"><input type="date" id="toDate" style="width:100%;"></td>
 					<td></td>
-						<th style="text-align:center;">의뢰명</th>
+						<th style="text-align:center;">[[#{screen.text.modify.nm}]]</th>
 						<td><input type="text" id="req_nm" onkeyup="enterkey()" style="width:100%;"></td>
 					<td></td>
 				</tr>
 				<tr>
 					<td></td>
-					<th style="text-align:center;">사업부</th>
+					<th style="text-align:center;">[[#{screen.text.modify.bizDeptCd}]]</th>
 					<td>
 						<div style='display:flex'>
 							<input type="text" style="width:100%" id="deptNm1" readonly/>
 							<input type="hidden" style="width:100%" id="deptCd1" />
-							<a href="#" id="openDeptPopup1" style="margin-left: 10px;"><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+							<a href="#" id="openDeptPopup1" style="margin-left: 10px;"><img title="사업부 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 						</div>
 					</td>
 					<td></td>
-					<th style="text-align:center;">부서</th>
+					<th style="text-align:center;">[[#{screen.text.modify.dept}]]</th>
 					<td>
 						<div style='display:flex'>
 							<input type="text" style="width:100%" id="deptNm2" readonly/>
 							<input type="hidden" style="width:100%" id="deptCd2" />
-							<a href="#" id="openDeptPopup2" style="margin-left: 10px;"><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+							<a href="#" id="openDeptPopup2" style="margin-left: 10px;"><img title="부서 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 						</div>
 					</td>
 					<td></td>
-					<th style="text-align:center;">의뢰자</th>
+					<th style="text-align:center;">[[#{screen.text.modify.reqtr}]]</th>
 						<td><input type="text" id="Reqtr" onkeyup="enterkey()" style="width:100%;"></td>
 					<td></td>
 				</tr>
 				<tr>
 					<td></td>
-					<th style="text-align:center;">자산번호</th>
+					<th style="text-align:center;">[[#{screen.text.modify.asetno}]]</th>
 					<td><input type="text" id="aset_no" onkeyup="enterkey()" style="width:100%;"/></td>
 					<td></td>
-					<th style="text-align:center;">의뢰상태</th>
+					<th style="text-align:center;">[[#{screen.text.modify.stus}]]</th>
 					<td>
 						<select id="req_stus" style="width:100%;">
-							<option value="">선택</option>
+							<option value="">[[#{screen.text.comm.choice}]]</option>
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<td class="search" colspan="10 ">
-						<a href="#;" class="btn_reset">초기화</a>
-						<a href="#;" class="btn_srch">검색</a>
+						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 					</td>
 				</tr>
 			</table>
@@ -623,9 +544,9 @@
 				<div class="result">Results : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
-					<a class="btn_add">의뢰작성</a>
-					<a class="btn_del">삭제</a>
-					<a class="btn_excelDown">엑셀 다운로드</a>
+					<a class="btn_add">[[#{screen.text.modify.insert.title}]]</a>
+					<a class="btn_del">[[#{screen.btn.delete}]]</a>
+					<a class="btn_excelDown">[[#{screen.btn.excel}]]</a>
 				</div>
 				<!-- list_button -->
 		</div>
@@ -646,8 +567,8 @@
 					<h6><span id="head_title" ></span></h6>
 					<!-- list_button -->
 					<div class="button">
-						<a class="btn_list save_btn">저장</a>
-						<a class="btn_list close_btn">닫기</a>
+						<a class="btn_list save_btn">[[#{screen.text.comm.save}]]</a>
+						<a class="btn_list close_btn">[[#{screen.text.comm.close}]]</a>
 					</div>
 					<!-- list_button -->
 				</div>
@@ -655,27 +576,26 @@
 				<!-- detail_table -->
 					<table class="detail_table ">
 						<colgroup>
-							<col style="width:25%" />
-							<col style="width:75%" />
+							<col style="width:20%" />
+							<col style="width:80%" />
 						<col />
 						<tr>
-							<th>의뢰번호</th>
-							<td><input type="text" style="width:100%;" id="reqNo" placeholder="---------------자동생성---------------" /></td>
+							<th>[[#{screen.text.modify.no}]]</th>
+							<td><input type="text" style="width:100%;" id="reqNo" placeholder="-------------------------자동생성-------------------------" /></td>
 						</tr>
 						<tr>
-							<th>의뢰구분</th>
+							<th>[[#{screen.text.modify.type}]]</th>
 							<td>
 								<select id="reqType" style="width:100%;">
-									<option value="">선택</option>
 								</select>
 							</td>
 						</tr>
 						<tr>
-							<th>의뢰명</th>
+							<th>[[#{screen.text.modify.nm}]]</th>
 							<td><input type="text" style="width:100%" id="reqNm" /></td>
 						</tr>
 						<tr>
-							<th>의뢰자</th>
+							<th>[[#{screen.text.modify.reqtr}]]</th>
 							<td>
 								<div style='display:flex'>
 									<input type="text" style="width:100%" id="reqtr" readonly/>
@@ -684,15 +604,14 @@
 							</td>
 						</tr>
 						<tr>
-							<th>의뢰 상태</th>
+							<th>[[#{screen.text.modify.stus}]]</th>
 							<td>
 								<select id="reqStus" style="width:100%;">
-									<option value="">선택</option>
 								</select>
 							</td>
 						</tr>
 						<tr>
-							<th>의뢰 사유</th>
+							<th>[[#{screen.text.modify.rsn}]]</th>
 							<td><input type="text" style="width:100%" id="reqRsn" /></td>
 						</tr>
 					</table>

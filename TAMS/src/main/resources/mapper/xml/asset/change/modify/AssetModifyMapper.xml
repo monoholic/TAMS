@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.co.trito.tams.web.asset.change.modify.mapper.ReqMasMapper">
+<mapper namespace="kr.co.trito.tams.web.asset.change.modify.mapper.AssetModifyMapper">
 
 	<!-- 수정의뢰목록 리스트 출력 -->
    	<select id="selectRequestList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
@@ -77,37 +77,37 @@
 			 FROM TB_REQ_MAS a
 			 INNER JOIN tb_user b
 			    ON a.reqtr = b.user_id
-			 <if test="params.userId != null">
+			 <if test="params.userId != ''">
 				WHERE 1=1
 				AND (reqtr = #{params.userId} OR 
 		       		dept_cd = (SELECT dept_cd FROM tb_user WHERE user_id = #{params.userId}))
 	     	 </if>
 	     ) AS A
 	     WHERE 1=1
-	     	<if test="params.reqNo != null">
+	     	<if test="params.reqNo != ''">
 				AND (req_no LIKE CONCAT('%', #{params.reqNo}, '%'))
 		 	</if>
-		 	<if test="params.fromDate != null and (params.toDate !=null)">
+		 	<if test="params.fromDate != '' and (params.toDate !='')">
 				AND (req_dt between #{params.fromDate} and #{params.toDate})
 	 		</if>
-	 		<if test="params.reqNm != null">
+	 		<if test="params.reqNm != ''">
 				AND (req_nm LIKE CONCAT('%', #{params.reqNm}, '%'))
 		 	</if>
-		 	<if test="params.deptCd1 != null">
+		 	<if test="params.deptCd1 != ''">
 				AND (dept_cd LIKE CONCAT(#{params.deptCd1}, '%'))
 		 	</if>
-		 	<if test="params.deptCd2 != null">
+		 	<if test="params.deptCd2 != ''">
 				AND (dept_cd LIKE CONCAT(#{params.deptCd2}, '%'))
 		 	</if>
-		 	<if test="params.reqtr != null">
+		 	<if test="params.reqtr != ''">
 				AND (reqtr LIKE CONCAT('%', #{params.reqtr}, '%'))
 		 	</if>
-		 	<if test="params.asetNo != null">
+		 	<if test="params.asetNo != ''">
 				AND ((SELECT req_no
 					   FROM tb_aset_req
 					  WHERE aset_no = #{params.asetNo}) = req_no)
 		 	</if>
-		 	<if test="params.reqStus != null">
+		 	<if test="params.reqStus != ''">
 				AND (req_stus LIKE CONCAT('%', #{params.reqStus}, '%'))
 		 	</if>
 		 	
@@ -129,7 +129,7 @@
 	  		     , req_stus
 			 FROM TB_REQ_MAS
 			 WHERE 1=1
-			 <if test="params.userId != null">
+			 <if test="params.userId != ''">
 	     		AND reqtr = #{params.userId}
 	     		OR (SELECT dept_cd
 	  				  FROM tb_user
@@ -139,38 +139,38 @@
 	     	 </if>
 	     ) AS A
 	     WHERE 1=1
-	     	<if test="params.reqNo != null">
+	     	<if test="params.reqNo != ''">
 				AND (req_no LIKE CONCAT('%', #{params.reqNo}, '%'))
 		 	</if>
-		 	<if test="params.fromDate != null and (params.toDate !=null)">
+		 	<if test="params.fromDate != '' and (params.toDate !='')">
 				AND (req_dt between #{params.fromDate} and #{params.toDate})
 	 		</if>
-	 		<if test="params.reqNm != null">
+	 		<if test="params.reqNm != ''">
 				AND (req_nm LIKE CONCAT('%', #{params.reqNm}, '%'))
 		 	</if>
-		 	<if test="params.deptCd1 != null">
+		 	<if test="params.deptCd1 != ''">
 				AND (dept_cd LIKE CONCAT(#{params.deptCd1}, '%'))
 		 	</if>
-		 	<if test="params.deptCd2 != null">
+		 	<if test="params.deptCd2 != ''">
 				AND (dept_cd LIKE CONCAT(#{params.deptCd2}, '%'))
 		 	</if>
-		 	<if test="params.reqtr != null">
+		 	<if test="params.reqtr != ''">
 				AND (reqtr LIKE CONCAT('%', #{params.reqtr}, '%'))
 		 	</if>
-		 	<if test="params.asetNo != null">
+		 	<if test="params.asetNo != ''">
 				AND ((SELECT req_no
 					   FROM tb_aset_req
 					  WHERE aset_no = #{params.asetNo}) = req_no)
 		 	</if>
-		 	<if test="params.reqStus != null">
+		 	<if test="params.reqStus != ''">
 				AND (req_stus LIKE CONCAT('%', #{params.reqStus}, '%'))
 		 	</if>
    	</select>
    	
    	<!-- 수정의뢰목록 작성 -->
    	<insert id="requestListInsert" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" useGeneratedKeys="true" keyProperty="req_no">
-   		INSERT INTO tb_req_mas (req_type, req_nm, req_dt, reqtr, appv_doc_id, req_rsn, req_stus, move_pupos, move_dt, tkout_sche_yn, tkout_sche_dt, tkout_yn, tkout_dt, rtkin_yn, rtkin_dt, prgs_dcont_yn, regr, reg_dt)
-   		VALUES (#{reqType}, #{reqNm}, current_timestamp(),  #{reqtr},  #{appvDocId},  #{reqRsn},  #{reqStus},  #{movePupos},  #{moveDt},  #{tkoutScheYn},  #{tkoutScheDt},  #{tkoutYn},  #{tkoutDt},  #{rtkinYn},  #{rtKinDt}, #{prgsDcontYn} , #{regr} , current_timestamp())
+   		INSERT INTO tb_req_mas (req_type, req_nm, req_dt, reqtr, req_rsn, req_stus, regr, reg_dt)
+   		VALUES (#{reqType}, #{reqNm}, current_timestamp(),  #{reqtr}, #{reqRsn}, #{reqStus}, #{regr} , current_timestamp())
    	</insert>
    	
    	<!-- 수정의뢰목록 삭제 -->
@@ -179,13 +179,6 @@
 		FROM TB_REQ_MAS
         WHERE req_no = #{reqNo}
 	</delete>
-   	
-   	<!-- 공통코드(의뢰상태) 조회 -->
-   	<select id="selectReqStusList" resultType="kr.co.trito.tams.web.standard.code.dto.CodeDto" parameterType="String">
-	   	SELECT code_id, code_nm
-		FROM tb_com_code
-		WHERE code_grp_id="APPR_STATUS"
-   	</select>
    	
    	<!-- 자산수정의뢰작성 조회 -->
    	<select id="selectRequestRegist" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
@@ -311,44 +304,43 @@
 	  		         WHERE user_id = #{params.userId}) AS dept_cd
 			 FROM TB_REQ_MAS
 			 WHERE 1=1
-			 <if test="params.userId != null">
+			 <if test="params.userId != ''">
 	     		AND reqtr = #{params.userId} <!-- 접속한 아이디 비교 -->
 	     		<!-- 작성한 사용자의 부서코드와 또 다른 접속자의 코드가 일치하면 조회. -->
 	     		OR (SELECT dept_cd
 	  				  FROM tb_user
 	  		         WHERE user_id = #{params.userId}) = (SELECT dept_cd
 			  				      							FROM tb_user
-			  		             						   WHERE user_id= reqtr)
+			  		             						   WHERE user_id= Reqtr)
 	     	 </if>
 	     ) AS A
 	     WHERE 1=1
-	     	<if test="params.reqNo != null">
-				AND (req_no LIKE CONCAT('%', #{params.reqNo}, '%'))
+	     	<if test="params.req_no != ''">
+				AND (req_no LIKE CONCAT('%', #{params.req_no}, '%'))
 		 	</if>
-		 	<if test="params.fromDate != null and (params.toDate !=null)">
+		 	<if test="params.fromDate != '' and (params.toDate !='')">
 				AND (req_dt between #{params.fromDate} and #{params.toDate})
 	 		</if>
-	 		<if test="params.reqNm != null">
-				AND (req_nm LIKE CONCAT('%', #{params.reqNm}, '%'))
+	 		<if test="params.req_nm != ''">
+				AND (req_nm LIKE CONCAT('%', #{params.req_nm}, '%'))
 		 	</if>
-		 	<if test="params.deptCd1 != null">
+		 	<if test="params.deptCd1 != ''">
 				AND (dept_cd LIKE CONCAT(#{params.deptCd1}, '%'))
 		 	</if>
-		 	<if test="params.deptCd2 != null">
+		 	<if test="params.deptCd2 != ''">
 				AND (dept_cd LIKE CONCAT(#{params.deptCd2}, '%'))
 		 	</if>
-		 	<if test="params.reqtr != null">
-				AND (reqtr LIKE CONCAT('%', #{params.reqtr}, '%'))
+		 	<if test="params.Reqtr != ''">
+				AND (reqtr LIKE CONCAT('%', #{params.Reqtr}, '%'))
 		 	</if>
-		 	<if test="params.asetNo != null">
+		 	<if test="params.req_no != ''">
 				AND ((SELECT req_no
 					   FROM tb_aset_req
-					  WHERE aset_no = #{params.asetNo}) = req_no)
+					  WHERE aset_no = #{params.aset_no}) = req_no)
 		 	</if>
-		 	<if test="params.reqStus != null">
-				AND (req_stus LIKE CONCAT('%', #{params.reqStus}, '%'))
+		 	<if test="params.req_stus != ''">
+				AND (req_stus LIKE CONCAT('%', #{params.req_stus}, '%'))
 		 	</if>
-		 	
 	  	 ORDER BY req_no
    	</select>
 </mapper>

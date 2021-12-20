@@ -15,7 +15,7 @@ import lombok.Setter;
 @Getter
 @ApiModel("게시판 정보")
 public class BbsDto {
-	@ApiModelProperty(value="게시글 ID") //
+	@ApiModelProperty(value="게시글 ID")
 	private String bbsId;
 	@ApiModelProperty(value="사용자 ID")
 	private String userId;
