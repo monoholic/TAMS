@@ -116,7 +116,7 @@
             			}
 						$.commRequest(url, reqType, data)
 							.then((res) => {
-								$(".result").text("Results : " + res.condition.totalCount);
+								$(".result").text("Totals : " + res.condition.totalCount);
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
 							})
 							.catch((error) => {
@@ -655,7 +655,7 @@
 		</div>
 		<!-- //search -->
 		<div class="list_head">
-				<div class="result">Results : 0,000</div>
+				<div class="result">Totals : 0,000</div>
 				
 				<!-- [button cud ] -->
 				<header th:replace="layout/fragments/button_cud :: buttonCudFragment"></header>
