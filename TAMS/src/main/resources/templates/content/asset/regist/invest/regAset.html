@@ -32,7 +32,6 @@
 	    
 	    // 공통코드(자산유형 1레벨 출력)
 	    let numOfRows = 15;
-	    var status = true;
         var selectedItems = [];
 	 	var insertedItems = [];
 	 	var updatedItems = [];
@@ -58,7 +57,7 @@
                 pagerContainer:null,
                 pageLoading: true,
                 pager: "#pager",
-                autoload: status,
+                autoload: true,
                 pageSize: numOfRows,
                 pageButtonCount: 5,
                 loadonce: true,
@@ -71,19 +70,13 @@
 	                loadData: function(filter) {
 	                    var d = $.Deferred();
 	                    
-	                    currentPage = filter.pageIndex;
-	                    
-	                    
 	                    let url = "/asset/regist/invest/regAset/regAsetList";
-						let reqType = 'GET';	
-						let data = {
-            				"currentPage"  : filter.pageIndex,
-            				"numOfRows"    : numOfRows,
-            				"poNo"         : "[[${poNo}]]",
-            				"sortField"    : filter.sortField,
-            				"sortOrder"    : filter.sortOrder
-            			}
-						$.commRequest(url, reqType, data)
+						let reqType = 'POST';
+						let params = getParams();
+	                    params.sortField = filter.sortField;
+	                    params.sortOrder = filter.sortOrder;
+	                    
+						$.commRequest(url, reqType, JSON.stringify(params))
 							.then((res) => {
 								console.log(res);
 								$(".result").text("Totals : " + res.condition.totalCount);
@@ -112,18 +105,18 @@
 	                },
             },
 	            fields: [
-	            	{ name: "asetNo"    	, type: "text"	, width: 100 	, align: "left"  , title: "자산번호"   },
-	                { name: "asetType1"   	, type: "text"	, width: 70		, align: "left"  , title: "자산유형1"  },
-	                { name: "asetType2"   	, type: "text"	, width: 70		, align: "left"  , title: "자산유형2"  },
-	                { name: "asetType3"	   	, type: "text"	, width: 70		, align: "left"  , title: "자산유형3"  },
-	                { name: "mftco"   		, type: "text"	, width: 30		, align: "left"  , title: "제조사" 	 },
-	                { name: "model"	   		, type: "text"	, width: 70 	, align: "left"  , title: "모델"      },
-	                { name: "sn"    		, type: "text"	, width: 80		, align: "left"  , title: "S/N"      },
-	                { name: "uppDeptNm"   	, type: "text"	, width: 70		, align: "left"  , title: "사업부" 	 },
-	                { name: "deptNm"   		, type: "text"	, width: 70		, align: "left"  , title: "부서" 	     },
-	                { name: "chrgr"   		, type: "text"	, width: 50		, align: "left"  , title: "담당자"     },
-	                { name: "tagYn"			, type: "text"	, width: 50		, align: "left"  , title: "태깅여부"    },
-	                { name: "asetStus"		, type: "text"	, width: 50		, align: "left"  , title: "등록상태"    }
+	            	{ name: "asetNo"    	, type: "text"	, width: 80 	, align: "left"  , title: "[[#{screen.text.aset.no}]]"        },
+	                { name: "asetType1"   	, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.aset.type1}]]"     },
+	                { name: "asetType2"   	, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.aset.type2}]]"     },
+	                { name: "asetType3"	   	, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.aset.type3}]]"     },
+	                { name: "mftco"   		, type: "text"	, width: 50		, align: "left"  , title: "[[#{screen.text.aset.mftco}]]" 	  },
+	                { name: "model"	   		, type: "text"	, width: 70 	, align: "left"  , title: "[[#{screen.text.aset.md}]]"        },
+	                { name: "sn"    		, type: "text"	, width: 80		, align: "left"  , title: "[[#{screen.text.aset.sn}]]"        },
+	                { name: "uppDeptNm"   	, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.asset.bizDeptCd}]]"},
+	                { name: "deptNm"   		, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.asset.deptCd}]]"   },
+	                { name: "chrgr"   		, type: "text"	, width: 50		, align: "left"  , title: "[[#{screen.text.asset.chrgr}]]"    },
+	                { name: "tagYn"			, type: "text"	, width: 55		, align: "left"  , title: "[[#{screen.text.aset.tagYn}]]"     },
+	                { name: "asetStus"		, type: "text"	, width: 55		, align: "left"  , title: "[[#{screen.text.aset.asetStus}]]"  },
 	            ]
 	        });
 	        
@@ -139,18 +132,18 @@
     	        var url = "/asset/regist/invest/newAsetReg";
     	        var popId = "newAsetRegist";
     	        var args = {};
-    	        args.width = 1350;
-    	        args.height = 650;
+    	        args.width = 900;
+    	        args.height = 620;
     	        args.fullscreen = "no";
     	        args.resizable = "no";
     	        
     	        var param = {};
-    	        param.id    = "poNo";
-    	        param.value = "[[${poNo}]]";
+    	        param.menuId = $.commLoadSearchParams("menuId");
+    	        param.poNo = "[[${poNo}]]";
     	        
     	        $.commSaveSearchParams("invData", invData);
     	        
-    	        openPopup(popId, url, args);
+    	        openPopup2(popId, url, args, param);
     	    });
 			
 			// 개조자산 선택
@@ -172,39 +165,61 @@
     	        
     	        openPopup(popId, url, args);
     	    });
+			
+			// 일괄 업로드 팝업 
+    	    $("#openRegAsetPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/asset/regist/invest/popup/regAsetUploadPopup";
+    	        var popId = "regAsetPopup";
+    	        var args = {};
+    	        args.width = 1200;
+    	        args.height = 710;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        openPopup(popId, url, args);
+    	    });
      	    
+			// 엑셀다운
      	    $("#excelDown").on("click",function() {
      	    	
 			       	event.preventDefault();
-	                let url = "/aset/regist/invest/invInqr/invListExcel";
+	                let url = "/asset/regist/invest/regAsetListExcel";
 					
 					var $form = $('<form id="downForm"></form>'); 
 						$form.attr('action', url); 
 						$form.attr('method', 'post'); 
 						$form.attr('target', '_self'); 
 						
-					var idArr = ['invNo', 'invTtl', 'poNo', 'mfgdNm', 'deptCd', 'userId', 'fromDate', 'toDate', 'regYn'];
-					var inputStr = '';
-					
-					$.each(idArr,function(i){
-						inputStr = $('<input type="hidden" value="'+ $("#" + idArr[i]).val() + '" name="' + idArr[i] +'">');	
+					var inputStr = $('<input type="hidden" value="'+ "[[${poNo}]]" + '" name="poNo">');
 						$form.append(inputStr);
-					});
-
+						inputStr = $('<input type="hidden" value="'+ $("#jsGrid").jsGrid("option", "pageIndex") + '" name="currentPage">');
+						$form.append(inputStr);
+						inputStr = $('<input type="hidden" value="'+ numOfRows + '" name="numOfRows">');
+						$form.append(inputStr);
+						
 						$form.appendTo('body'); 
 						$form.submit();
 						
 			});
      	    
+     	    // 뒤로가기
      	    $("#investBack").on("click",function() {
      	    	
 			       	event.preventDefault();
+			       	
 	                let url = "/asset/regist/invest/investReg";
 					
 					var $form = $('<form></form>'); 
 						$form.attr('action', url); 
 						$form.attr('method', 'post'); 
 						$form.attr('target', '_self'); 
+						inputStr = $('<input type="hidden" value="'+ $.commLoadSearchParams("menuId") + '" name="menuId">');	
+						$form.append(inputStr);
+						inputStr = $('<input type="hidden" value="'+ $.commLoadSearchParams("menuNm") + '" name="menuNm">');	
+						$form.append(inputStr);
+						inputStr = $('<input type="hidden" value="'+ $.commLoadSearchParams("menuDesc") + '" name="menuDesc">');	
+						$form.append(inputStr);
 						$form.appendTo('body'); 
 						$form.submit();
 						
@@ -215,6 +230,15 @@
 			opener.selectAsetList(item);
 			window.close();
 	    }
+	    
+        function getParams(){
+            return {
+                    "currentPage": $("#jsGrid").jsGrid("option", "pageIndex"),
+    				"numOfRows"    : numOfRows,
+    				"poNo"         : "[[${poNo}]]"      
+                 }
+         }
+        
 	    </script>	
 	</th:block>
 
@@ -248,34 +272,34 @@
 							</colgroup>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">투자번호</th>
+								<th style="text-align:center;">[[#{screen.text.inv.no}]]</th>
 								<td><input type="text" id="invNo" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">투자명</th>
+								<th style="text-align:center;">[[#{screen.text.inv.ttl}]]</th>
 								<td><input type="text" id="invTtl" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">PO번호</th>
+								<th style="text-align:center;">[[#{screen.text.po.no}]]</th>
 								<td><input type="text" id="poNo" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
 							</tr>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">품명</th>
+								<th style="text-align:center;">[[#{screen.text.po.mfgdnm}]]</th>
 								<td><input type="text" id="mfgdNm" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">수량</th>
+								<th style="text-align:center;">[[#{screen.text.comm.qty}]]</th>
 								<td><input type="text" id="qty" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">사업부</th>
+								<th style="text-align:center;">[[#{screen.text.asset.bizDeptCd}]]</th>
                                 <td><input type="text" id="uppDeptNm" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
 							</tr>
 							<tr>
 								<td></td>
-								<th style="text-align:center;">부서</th>
+								<th style="text-align:center;">[[#{screen.text.asset.deptCd}]]</th>
                                 <td><input type="text" id="deptNm" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
-								<th style="text-align:center;">담당자</th>
+								<th style="text-align:center;">[[#{screen.text.asset.chrgr}]]</th>
                                 <td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>
 								<th style="text-align:center;">전체/완료/미완료</th>
@@ -295,7 +319,7 @@
 						<div class="button">
 							<a class="btn_sel" id="newAsetRegist">신규자산 등록</a>
 							<a class="btn_sel" id="remodelAsetRegist">개조자산 선택</a>
-							<a class="btn_sel" id="excelDown">일괄 업로드</a>
+							<a class="btn_sel" id="openRegAsetPopup">일괄 업로드</a>
 							<a class="btn_sel" id="excelDown">엑셀 다운로드</a>
 						</div>
 						<!-- list_button -->

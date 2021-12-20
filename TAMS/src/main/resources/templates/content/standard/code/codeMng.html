@@ -30,7 +30,6 @@
 	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
 		
 	    <script>
-	    
 	    let numOfRows = 30;
 	    var status = true;
         var selectedItems = [];
@@ -38,9 +37,9 @@
 	 	var updatedItems = [];
 	 	var codeGrpMngList = [];
 	 	
-		 // 공통코드 그룹 출력                                                                                    
-		 $(document).ready(function(){                                                                    
-		 	let url = '/standard/code/codeGrpList';                                                      
+		// 공통코드 그룹 출력                                                                                    
+		$(document).ready(function(){                                                                    
+			let url = '/standard/code/codeGrpList';                                                      
 		 	let reqType = 'POST';                                                                        
 		 	let data = {                                                                                 
 		 		"email" : ""                                                                             
@@ -49,16 +48,15 @@
 		 		.then((res) => {                                                                         
 		 			$.each(res.data, function(i){                                                        
 		 				var codeGrpList = res.data[i];                                                  
-		 				$("#codeGrpId").append('<option value="">' + codeGrpList.codeGrpId+ '</option>');
+		 				$("#codeGrpId").append('<option value='+codeGrpList.codeGrpId+'>'+codeGrpList.codeGrpId+'</option>');
 		 			})
 		 		})
 		 		.catch((error) => {                                                                      
 		 			alert('[[#{screen.info.status.error.occur}]]');                                                                  
 		 		});
-		 });
+		});
 	 	
 	    $(function(){
-	    	
 	        $("#jsGrid").jsGrid({
 	        	height: "600",
                 width: "100%",
@@ -86,8 +84,6 @@
 	            	var target = args.event.target;
 	            	
 					if(target instanceof HTMLTableCellElement) {
-						// detail form
-						/* alert(JSON.stringify(args)); */
 						showDetailForm(args.item);
 						
 					} else {
@@ -133,9 +129,7 @@
 	                },
 
 	            updateItem: function(item) { 
-            		// updatedItems.push(item);
-                	//$("#jsGrid").jsGrid("option", "pageIndex", $("#jsGrid").jsGrid("option", "pageIndex"));
-                	let url = "/standard/code/codeMng/codeUpdate";
+                	let url = "/standard/code/codeMng/codeMerge";
                 	let reqType = 'GET';
                 	$.commRequest(url, reqType, item)
                 		.then((res) => {
@@ -150,24 +144,9 @@
                 			console.log(error);
                 		})
                 },
-             	deleteItem: function(item) { 
-        			let url = "/standard/code/codeMng/codeDelete";
-        			let reqType = 'GET';
-        			$.commRequest(url, reqType, item)
-        				.then((res) => {
-        					console.log(res);
-        					unselectItem(item);
-        					
-        					$("#jsGrid").jsGrid("loadData");
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        				})
-        			
-            	},
+
              	insertItem: function(item) { 
-             		//insertedItems.push(item);
-        			let url = "/standard/code/codeMng/codeInsert";
+        			let url = "/standard/code/codeMng/codeMerge";
         			let reqType = 'GET';
         			
         			$.commRequest(url, reqType, item)
@@ -239,13 +218,7 @@
             	
 	        });
 	        
-	        // 여기 확인..
 		    var selectItem = function(item) {
-		    	
-/* 		    	$.each(item, function(i){
-	 				selectedItems.push(item[i]);                                                 
-	 			}) */
-	        	
 		    	if(!selectedItems.includes(item))
 			    	selectedItems.push(item);
 		    	
@@ -276,9 +249,7 @@
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
 	        });
 
-	        ////////////////////////////////////////////////////////////////////
     	    $(".btn_add").click(function() {
-    	    	//$("#jsGrid").jsGrid("option", "inserting", "true");
     	    	showDetailForm();
     	    });
 	        
@@ -287,18 +258,9 @@
     	    	var arr_item = [];
     	    	var items = [];
     	    	
-    	    	// $("#jsGrid").jsGrid("deleteItem",delete_item);
-    	    	/* $.each(selectedItems, function(index,item){
-    	    		items.push(item);
-    	    	}); */
-    	    	
-    	    	//별도 호출
     	    	let url = "/standard/code/codeMng/codeDelete";
     			let reqType = 'POST';
     			dataType: 'json';
-    			/* let data={
-    				"items": selectedItems
-    			} */
     			
     			$.commRequest(url, reqType, JSON.stringify(selectedItems))
     				.then((res) => {
@@ -313,17 +275,11 @@
     				})
     	    });
     	    
-    	    $(".btn_download").click(function() {
-    	    	//$("#jsGrid").jsGrid().trigger("");
-    	    });
-    	    
     	    $(".btn_srch").on("click",function (){
 	    	   $("#jsGrid").jsGrid().trigger("loadData");
 	        });
 	        
-	     	// 팝업창 저장 버튼 처리
             $('.save_btn').on('click', function (e) {
-                
             	if (validationCheck() == '202') {
 	            	e.preventDefault();
 	                
@@ -347,10 +303,8 @@
 			        
 			    	if(save_mode == "insert") {
 			    		action = "insertItem";
-			    		//insertedItems.push(insert_item); --일괄
 			    	}else if(save_mode == "update") {
 			    		action = "updateItem";
-			    		//updatedItems.push(insert_item); --일괄
 			    	}
 	    			
 	    			$("#jsGrid").jsGrid(action, insert_item);
@@ -375,8 +329,6 @@
     	    	$("#useYnOption option:eq(0)").prop("selected",true);
     	    });
 	     	
-          	// #codeGrpId option:eq("+ find_idx +")").prop("selected",true);
-          	
 	     	// 팝업창 닫기 버튼 처리
             $('.close_btn').on('click', function (e) {
                 e.preventDefault();
@@ -437,10 +389,8 @@
 	 				 
 		    		 $(".detail_table").find("#codeId").val(item.codeId);
 		    		 $(".detail_table").find("#codeId").attr("readOnly", true);    
-		    		 
-		    		 $("#codeGrpId option:contains("+item.codeGrpId+")").prop("selected", true);
+		    		 $(".detail_table").find("#codeGrpId").val(item.codeGrpId);
 		    		 $("#codeGrpId option").not(":selected").attr("disabled", true);
-
 		     		 $(".detail_table").find("#codeNm").val(item.codeNm);
 		     		 $(".detail_table").find("#codeEngNm").val(item.codeEngNm);
 		     		 $(".detail_table").find("#uppCodeId").val(item.uppCodeId);
@@ -451,7 +401,6 @@
 		     		 $(".detail_table").find("#resv2").val(item.resv2);
 		     		 $(".detail_table").find("#resv3").val(item.resv3);
 		     		 $(".detail_table").find("#useYn").val(item.useYn);
-
 		    	 } else {
 		    		 save_mode = "insert";
 		    		 $(".detail_table").find("#codeId").attr("readOnly", false);
@@ -556,11 +505,6 @@
 				<div class="result">Results : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
-					<!-- 				
-					<a class="btn_add">메뉴 등록</a>
-					<a class="btn_saveall">일괄 저장</a>
-					<a class="btn_del">메뉴 삭제</a>
-					-->
 					<a class="btn_add">[[#{screen.btn.insert}]]</a>
 					<a class="btn_update">[[#{screen.btn.update}]]</a>
 					<a class="btn_del">[[#{screen.btn.delete}]]</a>
@@ -593,10 +537,10 @@
 				<!-- detail_table -->
 					<table class="detail_table ">
 						<colgroup>
-							<col style="width:25%" />
-							<col style="width:25%" />
-							<col style="width:25%" />
-							<col style="width:25%" />
+							<col style="width:20%" />
+							<col style="width:30%" />
+							<col style="width:20%" />
+							<col style="width:30%" />
 						<col />
 						<tr>
 							<th>[[#{screen.text.code.id}]]</th>

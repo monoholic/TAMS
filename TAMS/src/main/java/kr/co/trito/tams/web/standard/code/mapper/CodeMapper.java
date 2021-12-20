@@ -1,6 +1,7 @@
 package kr.co.trito.tams.web.standard.code.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -16,9 +17,7 @@ public interface CodeMapper {
 	
 	public int selectCountCode(SearchCondition condition);
 	
-	public int codeMngInsert(CodeDto dto);
-	
-	public int codeMngUpdate(CodeDto dto);
+	public int codeMngMerge(Map<String, Object> data);
 	
 	public int codeMngDelete(CodeDto dto);
 }

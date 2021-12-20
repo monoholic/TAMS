@@ -1,6 +1,7 @@
 package kr.co.trito.tams.web.standard.codegrp.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,8 @@ public class CodegrpService {
 		return mapper.selectCountCodegrp(condtion);
 	}
 	
-	public int codegrpMngInsert(CodegrpDto dto){
-		return mapper.codegrpMngInsert(dto);
-	}
-	
-	public int codegrpMngUpdate(CodegrpDto dto){
-		return mapper.codegrpMngUpdate(dto);
+	public int codegrpMngMerge(Map<String, Object> data){
+		return mapper.codegrpMngMerge(data);
 	}
 	
 	public int codegrpMngDelete(CodegrpDto dto){

@@ -99,7 +99,9 @@
 					$form.attr('method', 'post');
 					
 					$form.appendTo('body'); 
-					 
+					
+					$.commAllRemoveSearchParams();
+					
 					var menuIdStr 	= $('<input type="hidden" value="'+menuId+'" name="menuId">'); 
 					var menuNmStr 	= $('<input type="hidden" value="'+menuNm+'" name="menuNm">'); 
 					var menuDescStr= $('<input type="hidden" value="'+menuDesc+'" name="menuDesc">'); 
