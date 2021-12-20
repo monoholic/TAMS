@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -337,6 +339,9 @@ public class CommonController {
 		InvestDto dto = new InvestDto();
 		
 		result = excelReader.readFileToList(multipartFile, dto::row);
+		result = result.stream()
+				 	.filter(d -> d.getIsNull().equals("N"))
+				 	.collect(Collectors.toList());
 		
 		//첫번째 열 헤더 제거...??!!
 		result.remove(0);
