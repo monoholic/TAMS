@@ -33,8 +33,8 @@ public class AssetModifyService {
 		return mapper.selectReqExcelList(condition);
 	}
 	
-	public int requestListInsert(Map<String, Object> items) {
-		return mapper.requestListInsert(items);				
+	public int requestListInsert(Map<String, Object> data) {
+		return mapper.requestListInsert(data);				
 	}
 	
 	public int requestListDelete(ReqMasDto dto) {
@@ -48,4 +48,12 @@ public class AssetModifyService {
 	public List<AsetMasDto> selectAsetReqList(SearchCondition condition) {
 		return mapper.selectAsetReqList(condition);
 	}
+	
+	public int requestRegUpdate1(Map<String, Object> data) {
+		return mapper.requestRegUpdate1(data);
+	};
+	
+	public int requestRegUpdate2(String item) {
+		return mapper.requestRegUpdate2(item);
+	};
 }

@@ -28,4 +28,9 @@ public interface AssetModifyMapper {
 	public List<ReqMasDto> selectRequestRegist(SearchCondition condition);
 	
 	public List<AsetMasDto> selectAsetReqList(SearchCondition condition);
+	
+	
+	public int requestRegUpdate1(Map<String, Object> data);
+	
+	public int requestRegUpdate2(String item);
 }

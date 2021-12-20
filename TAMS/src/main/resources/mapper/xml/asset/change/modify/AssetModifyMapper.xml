@@ -343,4 +343,27 @@
 		 	</if>
 	  	 ORDER BY req_no
    	</select>
+   	
+   	<!-- 자산수정의뢰작성 화면 : 의뢰정보 수정 -->
+   	<update id="requestRegUpdate1" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto">
+   		UPDATE tb_req_mas     
+		   SET req_nm  = #{reqNm}
+		     , req_rsn = #{reqRsn}
+		 WHERE req_no = #{reqNo}
+   	</update>
+   	
+   	<!-- 자산수정의뢰작성 화면 : 대상자산정보 수정 -->
+   	<update id="requestRegUpdate2" parameterType="kr.co.trito.tams.web.common.dto.AsetMasDto">
+   		UPDATE tb_aset_req     
+		   SET aset_type1  = #{asetType1}
+		     , aset_type2  = #{asetType2}
+		     , aset_type3  = #{asetType3}
+		     , mftco	   = #{mftco}
+		     , model	   = #{model}
+		     , sn		   = #{sn}
+		     <!-- , chrgr	   = #{chrgr} -->
+		 WHERE aset_no = #{asetNo} 
+		   AND req_no = #{reqNo} 
+   	</update>
+   	
 </mapper>

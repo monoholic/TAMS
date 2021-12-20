@@ -162,7 +162,7 @@ public class AssetModifyController {
 		return code;
 	}
 	
-	/** 사용자 관리 화면 : 조회 - 엑셀다운 */ 
+	/** 자산정보수정 화면 : 조회 - 엑셀다운 */ 
 	@PostMapping(value="/requestListExcel")
 	@ApiOperation(value = "자산정보수정 화면 : 조회 - 엑셀다운", notes = "자산정보수정 화면 : 조회 - 엑셀다운")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
@@ -184,7 +184,7 @@ public class AssetModifyController {
 	} 	
 	
 	
-	// 엑셀 다운로드용 데이터 생성 
+	/** 엑셀 다운로드용 데이터 생성 */  
 	private Map<String, Object> makeExcelData(List<ReqMasExcelDto> list) {
 		Map<String, Object> map = new HashMap<>();
 		map.put(ExcelConstant.FILE_NAME, "자산의뢰 리스트");
@@ -224,6 +224,44 @@ public class AssetModifyController {
 		List<AsetMasDto> list2 = reqmasService.selectAsetReqList(condition);
 		
 		return responseService.success(condition, list, list2);
+	}
+	
+	/** 자산수정 의뢰작성 화면 : 수정 */  
+	@GetMapping(value="/requestRegUpdate")
+	@ResponseBody
+	@ApiOperation(value = "자산수정 의뢰작성 화면 : 수정", notes = "자산수정 의뢰작성 화면 : 수정")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public String requestRegUpdate(
+			@ApiParam(value = "자산수정의뢰작성 화면 수정 데이터", required = true) @RequestParam Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
+			) { 
+		
+		String code = "202";
+		
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
+		
+		items.put("regr", userId);
+		 
+		int cnt1 = reqmasService.requestRegUpdate1(items);
+		
+		/*
+		 UPDATE tb_aset_req     
+		   SET aset_type1  = #{asetType1}
+		     , aset_type2  = #{asetType2}
+		     , aset_type3  = #{asetType3}
+		     , mftco	   = #{mftco}
+		     , model	   = #{model}
+		     , sn		   = #{sn}
+		     <!-- , chrgr	   = #{chrgr} -->
+		 WHERE aset_no = #{asetNo} 
+		   AND req_no = #{reqNo} 
+		 */
+		
+		if(cnt1 > 0) code = "200";
+		
+		return code;
 	}
 }
 

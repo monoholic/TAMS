@@ -44,32 +44,33 @@
 	 	
 	 	var asetList = [];
 	 	
-	    $(function(){
+	 	var selectItem = function(item) {
+	    	if(!selectedItems.includes(item)) {
+		   		selectedItems.push(item);
+	    	}
 	    	
-	        var selectItem = function(item) {
-		    	if(!selectedItems.includes(item))
-			    selectedItems.push(item);
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             $("#selectAllCheckbox").prop("checked", true);
-	         } else {
-	             $("#selectAllCheckbox").prop("checked", false);
-	         }
-			};
-		     
-		    var unselectItem = function(item) {
-			    selectedItems = $.grep(selectedItems, function(i) {
-			    return i !== item;
-			    });
-			    if(selectedItems.length == 0) {
-			    	$('#selectAllCheckbox').attr('checked', false);
-			    }
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             $("#selectAllCheckbox").prop("checked", true);
-	         } else {
-	             $("#selectAllCheckbox").prop("checked", false);
-	         }
-		    };
-	        
+		    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+             $("#selectAllCheckbox").prop("checked", true);
+         } else {
+             $("#selectAllCheckbox").prop("checked", false);
+         }
+		};
+	     
+	    var unselectItem = function(item) {
+		    selectedItems = $.grep(selectedItems, function(i) {
+		    return i !== item;
+		    });
+		    if(selectedItems.length == 0) {
+		    	$('#selectAllCheckbox').attr('checked', false);
+		    }
+		    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+             $("#selectAllCheckbox").prop("checked", true);
+         } else {
+             $("#selectAllCheckbox").prop("checked", false);
+         }
+	    };
+	 	
+	    $(function(){
 	        $("#pager").on("change", function() {
 	            var page = parseInt($(this).val(), 10);
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
@@ -137,50 +138,25 @@
 	    	   $("#jsGrid").jsGrid().trigger("loadData");
 	        });
 	        
-	     	// 팝업창 저장 버튼 처리
+	     	// 저장 버튼 처리
             $('.btn_save').on('click', function (e) {
                 
             	e.preventDefault();
                 
+		    	action = "updateItem";
+            	
                 var insert_item = {};
                 	insert_item.reqNo  = $("#reqNo").val();
 	                insert_item.reqNm  = $("#reqNm").val();
 	                insert_item.reqRsn = $("#reqRsn").val();
+	                insert_item.asetList = asetList;
 	                
-	                console.log("++++" + selectedItems);
-    			$("#jsGrid").jsGrid(action, updateItem);
+    			$("#jsGrid").jsGrid(action, insert_item);
                 
-	    		clearDetailForm();
                 $(this).parents("#detailForm").hide();
                 save_mode = "";
             });
 	     	
-          	//리셋 버튼
-    	    $(".btn_reset").click(function() {
-    	    	$("#req_no").val("");
-    	    	$("#fromDate").val("");
-    	    	$("#toDate").val("");
-    	    	$("#req_nm").val("");
-    	    	$("#dept_cd1").val("");
-    	    	$("#dept_nm1").val("");
-    	    	$("#dept_cd2").val("");
-    	    	$("#dept_nm2").val("");
-    	    	$("#Reqtr").val("");
-    	    	$("#aset_no").val("");
-    	    	$("#req_stus option:eq(0)").prop("selected",true);
-    	    });
-	     	
-	     	// 팝업창 닫기 버튼 처리
-            $('.close_btn').on('click', function (e) {
-                e.preventDefault();
-                clearDetailForm();
-                $(this).parents("#detailForm").hide();
-                selectedItems = [];
-            });
-	     	
-            //drag 활성화
-	     	$("#detailForm").draggable();
-            
             //팝업 가운데로 띄우기
             jQuery.fn.center = function () {
                 this.css("position","absolute");
@@ -189,43 +165,6 @@
                 return this;
             }
             
-            //공통코드팝업(트리) 호출 
-     	    $("#openDeptPopup1").on("click", function() { 
-     	       // 팝업 호출 url
-    	        var url = "/common/popup/deptTreePopup";
-    	        var popId = "DeptPopup";
-    	        var args = {
-    	        };
-    	        args.width = 500;
-    	        args.height = 450;
-    	        args.fullscreen = "no";
-    	        args.resizable = "no";
-    	        
-    	        var param = {};
-    	        param.id    = "bizDept";
-    	        param.value = "BIZ_DEPT";
-    	        
-    	        openPopup(popId, url, args, param);
-     	    });
-    	  	
-     	    $("#openDeptPopup2").on("click", function() { 
-        	    // 팝업 호출 url
-       	        var url = "/common/popup/deptTreePopup";
-       	        var popId = "DeptPopup";
-       	        var args = {
-       	        };
-       	        args.width = 500;
-       	        args.height = 450;
-       	        args.fullscreen = "no";
-       	        args.resizable = "no";
-       	        
-       	     	var param = {};
- 	        	param.id    = "dept";
- 	        	param.value = "DEPT";
-       	        
-       	        openPopup(popId, url, args, param);
-        	});
-     	    
 			// 사용자 팝업 호출
 	        $("#openUserPopup").on("click", function() { 
 		        // 팝업 호출 url
@@ -264,7 +203,6 @@
   				console.log(">>>>>> step 1 asetArr1 " + asetArr1.length);  				
   				await asetTypeList();
   				await jsGridLoad();
-  				//await asetTypeSel();
   				})();			
 	        /*-------------------------------------------------------------------------*/
 	        
@@ -411,7 +349,7 @@
 		                },
 		                
 			            updateItem: function(item) { 
-		                	let url = "/asset/update/reqmas/reqmasUpdate";
+		                	let url = "/asset/update/reqmas/requestRegUpdate";
 		                	let reqType = 'GET';
 		                	$.commRequest(url, reqType, item)
 		                		.then((res) => {
@@ -426,21 +364,6 @@
 		                			console.log(error);
 		                		})
 		                },
-		                
-		             	insertItem: function(item) { 
-		        			let url = "/asset/update/reqmas/reqmasInsert";
-		        			let reqType = 'GET';
-		        			
-		        			$.commRequest(url, reqType, item)
-		        				.then((res) => {
-		        					console.log(res);
-		        					
-		        					$("#jsGrid").jsGrid("loadData");
-		        				})
-		        				.catch((error) => {
-		        					console.log(error);
-		        				})
-		            	},
 	           		},
 		            fields: [
 		            	{  	   name : "chk"
@@ -462,16 +385,13 @@
 			                     .on("change", function (item) {
 			             	    	selectedItems = [];
 			            	    	if(this.checked) {
-			            	            $('.singleCheckbox').each(function() { 
-			            	                this.checked = true;   
-			            	                selectItem($(this).parent().next().text());           
+			            	    		$('.singleCheckbox').each(function() { 
+			            	                $(this).prop("checked", true).change();
 			            	            });			         
 			            	        }else {
-			            	        	
-			            	            $('.singleCheckbox').each(function() { 
-			            	                this.checked = false;      
-			            	                unselectItem(item);
-			            	            });  
+			            	        	$('.singleCheckbox').each(function() { 
+			            	            	$(this).prop("checked", false).change();
+			            	            }); 
 			            	            selectedItems = [];
 			            	        }
 			    				   });
