@@ -244,6 +244,8 @@
 
 	<div layout:fragment="content">
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
+		<!-- contents -->
+		<div id="contents">
 			<!-- contents_head -->
 			<!-- <div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div> -->
 			<h3><span>등록자산목록</span></h3>
@@ -252,81 +254,68 @@
 					<a class="btn_sel" id="investBack">뒤로가기</a>
 				</div>
 			</div>
-			<!-- //contents_head -->
-			<!-- contents -->
-			<div id="contents">
-				<div class="srch_wrap">
-					<!-- search_form -->
-					<div class="srch_wrap single">
-						<table class="srch_table">
-							<colgroup>
-								<col style="width:5%"/>
-								<col style="width:10%"/>
-								<col style="width:15%"/>
-								<col style="width:5%"/>
-								<col style="width:10%"/>
-								<col style="width:15%"/>
-								<col style="width:5%"/>
-								<col style="width:10%"/>
-								<col style="width:15%"/>
-							</colgroup>
-							<tr>
-								<td></td>
-								<th style="text-align:center;">[[#{screen.text.inv.no}]]</th>
-								<td><input type="text" id="invNo" onkeyup="enterkey()" style="width:100%;"></td>
-								<td></td>
-								<th style="text-align:center;">[[#{screen.text.inv.ttl}]]</th>
-								<td><input type="text" id="invTtl" onkeyup="enterkey()" style="width:100%;"></td>
-								<td></td>
-								<th style="text-align:center;">[[#{screen.text.po.no}]]</th>
-								<td><input type="text" id="poNo" onkeyup="enterkey()" style="width:100%;"></td>
-								<td></td>
-							</tr>
-							<tr>
-								<td></td>
-								<th style="text-align:center;">[[#{screen.text.po.mfgdnm}]]</th>
-								<td><input type="text" id="mfgdNm" onkeyup="enterkey()" style="width:100%;"></td>
-								<td></td>
-								<th style="text-align:center;">[[#{screen.text.comm.qty}]]</th>
-								<td><input type="text" id="qty" onkeyup="enterkey()" style="width:100%;"></td>
-								<td></td>
-								<th style="text-align:center;">[[#{screen.text.asset.bizDeptCd}]]</th>
-                                <td><input type="text" id="uppDeptNm" onkeyup="enterkey()" style="width:100%;"></td>
-								<td></td>
-							</tr>
-							<tr>
-								<td></td>
-								<th style="text-align:center;">[[#{screen.text.asset.deptCd}]]</th>
-                                <td><input type="text" id="deptNm" onkeyup="enterkey()" style="width:100%;"></td>
-								<td></td>
-								<th style="text-align:center;">[[#{screen.text.asset.chrgr}]]</th>
-                                <td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;"></td>
-								<td></td>
-								<th style="text-align:center;">전체/완료/미완료</th>
-								<td>
-								    <div id="asetStatusQty">
-										<input type="text" id="all" onkeyup="enterkey()" style="width:100%;">
-										<input type="text" id="cpt" onkeyup="enterkey()" style="width:100%;">
-										<input type="text" id="icpt" onkeyup="enterkey()" style="width:100%;">
-									</div>
-								</td>
-							</tr>
-						</table>
-					 </div>
+			<!-- //contents_head -->			
+			<!-- search -->
+			<div class="srch_wrap">
+				<!-- search_form -->
+				<div class="srch_form">
+					<table class="srch_table">
+						<colgroup>
+							<col width="10%"/>
+							<col width="20%"/>
+							<col width="10%"/>
+							<col width="20%"/>
+							<col width="10%"/>
+							<col width="20%"/>
+						</colgroup>
+						<tr>
+							<th>[[#{screen.text.inv.no}]]</th>
+							<td><input type="text" id="invNo" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+							<th>[[#{screen.text.inv.ttl}]]</th>
+							<td><input type="text" id="invTtl" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+							<th>[[#{screen.text.po.no}]]번호</th>
+							<td><input type="text" id="poNo" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.po.mfgdnm}]]</th>
+							<td><input type="text" id="mfgdNm" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+							<th>[[#{screen.text.comm.qty}]]</th>
+							<td><input type="text" id="qty" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+							<th>[[#{screen.text.asset.bizDeptCd}]]</th>
+							<td><input type="text" id="uppDeptNm" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.asset.deptCd}]]</th>
+							<td><input type="text" id="deptNm" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+							<th>[[#{screen.text.asset.chrgr}]]</th>
+							<td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+							<th>전체/완료/미완료</th>
+							<td>
+							    <div id="asetStatusQty">
+									<input type="text" id="all" onkeyup="enterkey()" style="width:100%;" readOnly>
+									<input type="text" id="cpt" onkeyup="enterkey()" style="width:100%;" readOnly>
+									<input type="text" id="icpt" onkeyup="enterkey()" style="width:100%;" readOnly>
+								</div>
+							</td>							
+						</tr>
+					</table>
 				</div>
-					<div class="list_head">
-						<div class="result">Totals : 0,000</div>
-						<div class="button">
-							<a class="btn_sel" id="newAsetRegist">신규자산 등록</a>
-							<a class="btn_sel" id="remodelAsetRegist">개조자산 선택</a>
-							<a class="btn_sel" id="openRegAsetPopup">일괄 업로드</a>
-							<a class="btn_sel" id="excelDown">엑셀 다운로드</a>
-						</div>
-						<!-- list_button -->
-					</div>
-					<div id="jsGrid"></div>
+				<!-- //search_form -->
 			</div>
-			
-			<div id="excelDownTarget"></div>
-		</div>			
+			<!-- //search -->			
+	
+			<div class="list_head">
+				<div class="result">Totals : 0,000</div>
+				<div class="button">
+					<a class="btn_sel" id="newAsetRegist">신규자산 등록</a>
+					<a class="btn_sel" id="remodelAsetRegist">개조자산 선택</a>
+					<a class="btn_sel" id="openRegAsetPopup">일괄 업로드</a>
+					<a class="btn_sel" id="excelDown">엑셀 다운로드</a>
+				</div>
+				<!-- list_button -->
+			</div>
+			<div id="jsGrid"></div>
+		</div>		
+		<div id="excelDownTarget"></div>
+	</div>			
 </html>
