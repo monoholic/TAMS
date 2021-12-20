@@ -14,23 +14,19 @@ import kr.co.trito.tams.web.standard.codegrp.dto.CodegrpDto;
 @Mapper
 public interface ReqMasMapper {
 	
-	public int selectCountReqInqr(SearchCondition condtion);
+	public int selectCountRequestList(SearchCondition condtion);
 	
-	public List<ReqMasDto> selectReqInqrList(SearchCondition condition);
+	public List<ReqMasDto> selectRequestList(SearchCondition condition);
 	
-	public List<ReqMasExcelDto> selectReqInqrExcelList(SearchCondition condition);
+	public List<ReqMasExcelDto> selectReqExcelList(SearchCondition condition);
 	
-	public int reqInqrInsert(ReqMasDto dto);
+	public int requestListInsert(ReqMasDto dto);
 	
-	public int reqInqrUpdate(ReqMasDto dto);
-	
-	public int reqInqrDelete(ReqMasDto dto);
-	
-	public List<CodeDto> selectReqTypeList(String email);
+	public int requestListDelete(ReqMasDto dto);
 	
 	public List<CodeDto> selectReqStusList(String email);
 
-	public List<ReqMasDto> selectReqInqrPopup(SearchCondition condition);
+	public List<ReqMasDto> selectRequestRegist(SearchCondition condition);
 	
 	public List<AsetMasDto> selectAsetReqList(SearchCondition condition);
 }

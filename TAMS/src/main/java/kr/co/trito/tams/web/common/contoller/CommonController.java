@@ -536,7 +536,8 @@ public class CommonController {
 	public ResponseEntity<? extends Response> asetMasPopupList(
 				@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage",required = true) String currentPage,
 				@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
-				@ApiParam(value = "검색 조건(메뉴ID, 메뉴명)", required = false) @RequestParam(value = "searchText", required = false) String searchText,
+				@ApiParam(value = "자산 번호", required = false) @RequestParam(value = "asetNo", required = false) String asetNo,
+				@ApiParam(value = "자산 상태", required = false) @RequestParam(value = "reqStus", required = false) String reqStus,
 				@ApiParam(value = "시작일", required = false) @RequestParam(value = "fromDate", required = false) String fromDate,
 				@ApiParam(value = "종료일", required = false) @RequestParam(value = "toDate", required = false) String toDate,
 				@ApiParam(value = "자산유형1", required = false) @RequestParam(value = "asetType1", required = false) String asetType1,
@@ -554,9 +555,11 @@ public class CommonController {
 		
 		Map<String, Object> params = new HashMap<>();
 		
-		if (!StringUtils.isEmpty(searchText))
-		params.put("searchText", searchText);
+		if (!StringUtils.isEmpty(asetNo))
+		params.put("asetNo", asetNo);
 		
+		if (!StringUtils.isEmpty(reqStus))
+		params.put("reqStus", reqStus);
 		
 		if (!StringUtils.isEmpty(fromDate))
 		params.put("fromDate", fromDate);

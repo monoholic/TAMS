@@ -38,26 +38,6 @@
 	 	var updatedItems = [];
 	 	var codeGrpMngList = [];
 	 	
-		// 공통코드(의뢰구분) 조회                                                                                   
-		$(document).ready(function(){                                                                    
-			let url = '/asset/update/reqmas/selectReqTypeList';                                                      
-			let reqType = 'POST';                                                                        
-			let data = {                                                                                 
-				"email" : ""                                                                             
-			};                                                                                           
-			$.commRequest(url, reqType, JSON.stringify(data))                                            
-				.then((res) => {                                                                         
-					$.each(res.data, function(i){                                                        
-						var reqTypeList = res.data[i];
-						
-						$("#reqType").append('<option value="'+ reqTypeList.codeId +'">' + reqTypeList.codeNm +'</option>');
-					})
-				})
-				.catch((error) => {                                                                      
-					alert('메뉴조회 실패!!');                                                                  
-				});
-		});
-	 	
 		// 공통코드(의뢰상태) 조회                                                                                   
 		$(document).ready(function(){                                                                    
 			let url = '/asset/update/reqmas/selectReqStusList';
@@ -107,10 +87,7 @@
 	            	var target = args.event.target;
 	            	
 					if(target instanceof HTMLTableCellElement) {
-						// detail form
-						/* alert(JSON.stringify(args)); */
-						// showDetailForm(args.item);
-						reqInqrMngView(args.item)
+						reqRegistView(args.item)
 					} else {
 					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
 					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
@@ -128,7 +105,7 @@
 	                    var d = $.Deferred();
 	                    
 	                    currentPage = filter.pageIndex; 
-	                    let url = "/asset/update/reqmas/reqInqrList";
+	                    let url = "/asset/update/reqmas/requestList";
 						let reqType = 'GET';	
 						let data = {
             				"currentPage"  : filter.pageIndex,
@@ -138,8 +115,8 @@
             				"fromDate"     : $("#fromDate").val(),
         				    "toDate"       : $("#toDate").val(),
         				    "reqNm"        : $("#req_nm").val(),
-        				    "deptCd1"      : $("#dept_cd1").val(),
-        				    "deptCd2"      : $("#dept_cd2").val(),
+        				    "deptCd1"      : $("#deptCd1").val(),
+        				    "deptCd2"      : $("#deptCd2").val(),
         				    "reqtr"        : $("#Reqtr").val(),
         				    "asetNo" 	   : $("#aset_no").val(),
         				    "reqStus" 	   : $("#req_stus option:selected").val(),
@@ -158,42 +135,10 @@
 	                    
 	                    return d.promise();
 	                },
-	                
-		            updateItem: function(item) { 
-	                	let url = "/asset/update/reqmas/reqmasUpdate";
-	                	let reqType = 'GET';
-	                	$.commRequest(url, reqType, item)
-	                		.then((res) => {
-	                			console.log(res);
-	                			unselectItem(item);
-	                			
-	                			alert("수정이 완료되었습니다.");
-	                			selectedItems = [];
-	                			$("#jsGrid").jsGrid("loadData");
-	                		})
-	                		.catch((error) => {
-	                			console.log(error);
-	                		})
-	                },
-	                
-	                deleteItem: function(item) { 
-	        			let url = "/asset/update/reqmas/reqmasDelete";
-	        			let reqType = 'GET';
-	        			$.commRequest(url, reqType, item)
-	        				.then((res) => {
-	        					console.log(res);
-	        					
-	        					$("#jsGrid").jsGrid("loadData");
-	        				})
-	        				.catch((error) => {
-	        					console.log(error);
-	        				})
-	        			
-	            	},
-	                
-	             	insertItem: function(item) { 
+
+	                insertItem: function(item) { 
 	             		//insertedItems.push(item);
-	        			let url = "/asset/update/reqmas/reqmasInsert";
+	        			let url = "/asset/update/reqmas/requestListInsert";
 	        			let reqType = 'GET';
 	        			
 	        			$.commRequest(url, reqType, item)
@@ -282,9 +227,7 @@
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
 	        });
 
-	        ////////////////////////////////////////////////////////////////////
     	    $(".btn_add").click(function() {
-    	    	//$("#jsGrid").jsGrid("option", "inserting", "true");
     	    	showDetailForm();
     	    });
     	    
@@ -293,13 +236,12 @@
 	  	    	var arr_item =  [];
 	  	    	var items = [];
 	  	    	
-	  	    	// $("#jsGrid").jsGrid("deleteItem",delete_item);
 	  	    	$.each(selectedItems, function(index,item){
 	  	    		items.push(item);
 	  	    	});
 	  	    	
 	  	    	//별도 호출
-	  	    	let url = "/aset/update/reqmas/reqmasDelete";
+	  	    	let url = "/asset/update/reqmas/requestListDelete";
 	  			let reqType = 'GET';
 	  			dataType: 'json';
 	  			let data={
@@ -317,10 +259,6 @@
 	  					alert("오류가 발생했습니다");
 	  					console.log(error);
 	  				})
-    	    });
-    	    
-    	    $(".btn_download").click(function() {
-    	    	//$("#jsGrid").jsGrid().trigger("");
     	    });
     	    
     	    $(".btn_srch").on("click",function (){
@@ -353,14 +291,8 @@
 		                
 			        var action = "";
 			        
-			        
-			        
 			    	if(save_mode == "insert") {
 			    		action = "insertItem";
-			    		//insertedItems.push(insert_item); --일괄
-			    	}else if(save_mode == "update") {
-			    		action = "updateItem";
-			    		//updatedItems.push(insert_item); --일괄
 			    	}
 	    			
 	    			$("#jsGrid").jsGrid(action, insert_item);
@@ -371,30 +303,21 @@
 	          	}
             });
 	     	
-    	  	//수정 버튼
-    	    $(".btn_update").click(function() {
-    	    	var items = $("#jsGrid").jsGrid("option", "data");
-    	    	var item = items.filter(arr => arr.codeId == selectedItems[0].codeId);
-    	    	showDetailForm(item[0]);
-    	    });
-          	
           	//리셋 버튼
     	    $(".btn_reset").click(function() {
     	    	$("#req_no").val("");
     	    	$("#fromDate").val("");
     	    	$("#toDate").val("");
     	    	$("#req_nm").val("");
-    	    	$("#dept_cd1").val("");
-    	    	$("#dept_nm1").val("");
-    	    	$("#dept_cd2").val("");
-    	    	$("#dept_nm2").val("");
+    	    	$("#deptCd1").val("");
+    	    	$("#deptNm1").val("");
+    	    	$("#deptCd1").val("");
+    	    	$("#deptNm2").val("");
     	    	$("#Reqtr").val("");
     	    	$("#aset_no").val("");
     	    	$("#req_stus option:eq(0)").prop("selected",true);
     	    });
 	     	
-          	// #codeGrpId option:eq("+ find_idx +")").prop("selected",true);
-          	
 	     	// 팝업창 닫기 버튼 처리
             $('.close_btn').on('click', function (e) {
                 e.preventDefault();
@@ -425,12 +348,11 @@
     	        args.fullscreen = "no";
     	        args.resizable = "no";
     	        
-    	        openPopup(popId, url, args);
+    	        openPopup2(popId, url, args);
     	    });
             
-            //공통코드팝업(트리) 호출 
+            // 공통코드팝업(사업부) 호출 
      	    $("#openDeptPopup1").on("click", function() { 
-     	       // 팝업 호출 url
     	        var url = "/common/popup/deptTreePopup";
     	        var popId = "DeptPopup";
     	        var args = {
@@ -441,12 +363,14 @@
     	        args.resizable = "no";
     	        
     	        var param = {};
-    	        param.id    = "bizDept";
-    	        param.value = "BIZ_DEPT";
-    	        
-    	        openPopup(popId, url, args, param);
+    	        param.searchType = "BIZ_DEPT";
+ 	        	param.deptCd = "#deptCd1";
+ 	        	param.deptNm = "#deptNm1";
+    	         	  
+ 	           openPopup2(popId, url, args, param);
      	    });
     	  	
+     		// 공통코드팝업(부서) 호출
      	    $("#openDeptPopup2").on("click", function() { 
         	    // 팝업 호출 url
        	        var url = "/common/popup/deptTreePopup";
@@ -458,14 +382,16 @@
        	        args.fullscreen = "no";
        	        args.resizable = "no";
        	        
-       	     	var param = {};
- 	        	param.id    = "dept";
- 	        	param.value = "DEPT";
+       	     	var param = {}; 	        	
+    	        param.searchType = "DEPT";
+ 	        	param.deptCd = "#deptCd2";
+ 	        	param.deptNm = "#deptNm2"; 	        	
        	        
-       	        openPopup(popId, url, args, param);
+ 	        	openPopup2(popId, url, args, param);
         	});
     	});
 	    
+	    // DetailForm 초기화
 	    function clearDetailForm() {
     	    $(".detail_table").find("#reqNo").val("");
     		$(".detail_table").find("#reqType").val("");
@@ -531,8 +457,8 @@
 	                 position: 'absolute',
 	                 top	 : "10px",
 	                 left	 : "10px",
-	                 width	 : "650px",
-	                 height	 : "500px"
+	                 width	 : "350px",
+	                 height	 : "450px"
 	             }).center().show();
 	    	}else{
 	    		alert("수정은 1개이상 되지 않습니다.");
@@ -548,17 +474,6 @@
 	    // 사용자 선택 팝업에서 받은 결과 처리
 	    function setResult(obj) {
 			$("#reqtr").val(obj.userId);
-		}
-	    
-	    function setResult3(obj) {
-			if(obj.deptCd.length <= 6) {
-				$("#dept_cd1").val(obj.deptCd);
-				$("#dept_nm1").val(obj.deptNm);
-			}
-			else{
-				$("#dept_cd2").val(obj.deptCd);
-				$("#dept_nm2").val(obj.deptNm);
-			}
 		}
 	    
 	 	// 유효성 검사
@@ -586,28 +501,10 @@
 			return code;
 	    }
 	 	
-	   // 자산수정 의뢰작성
-	   /* function reqInqrMngView(item) { 
-	        // 팝업 호출 url
-	        var url = "/asset/update/reqmas/reqInqrPopupView";
-	        var popId = "ReqInqrMng";
-	        var args = {};
-	        args.width = 1350;
-	        args.height = 600;
-	        args.fullscreen = "no";
-	        args.resizable = "no";
-	        
-	        var param = {};
-	        
-	        param.id = "reqNo";
-	        param.value = item.reqNo;
-	        
-	        openPopup(popId, url, args, param);
-	    }; */
-	 	
-	    function reqInqrMngView(item) {
+	 	// 자산수정 의뢰작성 이동
+	    function reqRegistView(item) {
 	    	var $form = $('<form id="form"></form>'); 
-			$form.attr('action', "/asset/update/reqmas/reqInqrPopupView"); 
+			$form.attr('action', "/asset/update/reqmas/requestRegistView"); 
 			$form.attr('method', 'post'); 
 			$form.appendTo('body');
 			
@@ -623,7 +520,7 @@
 			$(".btn_excelDown").on("click", function(){
 				
 		       	event.preventDefault();
-                let url = "/asset/update/reqmas/reqInqrExcel";
+                let url = "/asset/update/reqmas/requestListExcel";
 				
 				var $form = $('<form id="downForm"></form>'); 
 					$form.attr('action', url); 
@@ -681,20 +578,22 @@
 					<td></td>
 					<th style="text-align:center;">사업부</th>
 					<td>
-						<input type="text" style="width:100%" id="dept_nm1" readonly/>
-						<input type="hidden" style="width:100%" id="dept_cd1" />
+						<div style='display:flex'>
+							<input type="text" style="width:100%" id="deptNm1" readonly/>
+							<input type="hidden" style="width:100%" id="deptCd1" />
+							<a href="#" id="openDeptPopup1" style="margin-left: 10px;"><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+						</div>
 					</td>
-					<td>
-						<a href="#" id="openDeptPopup1" style="margin-left: 10px;"><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
-					</td>
+					<td></td>
 					<th style="text-align:center;">부서</th>
 					<td>
-						<input type="text" style="width:100%" id="dept_nm2" readonly/>
-						<input type="hidden" style="width:100%" id="dept_cd2" />
+						<div style='display:flex'>
+							<input type="text" style="width:100%" id="deptNm2" readonly/>
+							<input type="hidden" style="width:100%" id="deptCd2" />
+							<a href="#" id="openDeptPopup2" style="margin-left: 10px;"><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+						</div>
 					</td>
-					<td>
-						<a href="#" id="openDeptPopup2" style="margin-left: 10px;"><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
-					</td>
+					<td></td>
 					<th style="text-align:center;">의뢰자</th>
 						<td><input type="text" id="Reqtr" onkeyup="enterkey()" style="width:100%;"></td>
 					<td></td>
@@ -756,15 +655,15 @@
 				<!-- detail_table -->
 					<table class="detail_table ">
 						<colgroup>
-							<col style="width:20%" />
-							<col style="width:30%" />
-							<col style="width:20%" />
-							<col style="width:30%" />
+							<col style="width:25%" />
+							<col style="width:75%" />
 						<col />
 						<tr>
-							<th style="text-align: center;">의뢰번호</th>
-							<td><input type="text" style="width:100%;" id="reqNo" /></td>
-							<th style="text-align: center;">의뢰구분</th>
+							<th>의뢰번호</th>
+							<td><input type="text" style="width:100%;" id="reqNo" placeholder="---------------자동생성---------------" /></td>
+						</tr>
+						<tr>
+							<th>의뢰구분</th>
 							<td>
 								<select id="reqType" style="width:100%;">
 									<option value="">선택</option>
@@ -772,16 +671,20 @@
 							</td>
 						</tr>
 						<tr>
-							<th style="text-align: center;">의뢰명</th>
-							<td colspan="4"><input type="text" style="width:100%" id="reqNm" /></td>
+							<th>의뢰명</th>
+							<td><input type="text" style="width:100%" id="reqNm" /></td>
 						</tr>
 						<tr>
-							<th style="text-align: center;">의뢰자</th>
-							<td class="aset_td">
-								<input type="text" style="width:100%" id="reqtr" readonly/>
-								<a href="#" id="openUserPopup" ><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+							<th>의뢰자</th>
+							<td>
+								<div style='display:flex'>
+									<input type="text" style="width:100%" id="reqtr" readonly/>
+									<a href="#" id="openUserPopup" ><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+								</div>
 							</td>
-							<th style="text-align: center;">의뢰 상태</th>
+						</tr>
+						<tr>
+							<th>의뢰 상태</th>
 							<td>
 								<select id="reqStus" style="width:100%;">
 									<option value="">선택</option>
@@ -789,62 +692,8 @@
 							</td>
 						</tr>
 						<tr>
-							<th style="text-align: center;">의뢰 사유</th>
-							<td colspan="4"><input type="text" style="width:100%" id="reqRsn" /></td>
-						</tr>
-						<tr>
-							<th style="text-align: center;">이동 목적</th>
-							<td><input type="text" style="width:100%" id="movePupos" /></td>
-							<th style="text-align: center;">이동일자</th>
-							<td><input type="date" style="width:100%" id="moveDt" /></td>
-						</tr>
-						<tr>
-							<th style="text-align: center;">결재문서 ID</th>
-							<td><input type="text" style="width:100%" id="appvDocId"/></td>
-							<th style="text-align: center;">진행중단여부</th>
-							<td>
-								<select id="prgsDcontYn" style="width:100%">
-									<option value="">선택</option>
-									<option value="Y">사용</option>
-									<option value="N">미사용</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<th style="text-align: center;">반출예정 여부</th>
-							<td>
-								<select id="tkoutScheYn" style="width:100%">
-									<option value="">선택</option>
-									<option value="Y">사용</option>
-									<option value="N">미사용</option>
-								</select>
-							</td>
-							<th style="text-align: center;">반출 예정일자</th>
-							<td><input type="date" style="width:100%" id="tkoutScheDt" /></td>
-						</tr>
-						<tr>
-							<th style="text-align: center;">반출 여부</th>
-							<td>
-								<select id="tkoutYn" style="width:100%">
-									<option value="">선택</option>
-									<option value="Y">사용</option>
-									<option value="N">미사용</option>
-								</select>
-							</td>
-							<th style="text-align: center;">반출일자</th>
-							<td><input type="date" style="width:100%" id="tkoutDt" /></td>
-						</tr>
-						<tr>
-							<th style="text-align: center;">재반입 여부</th>
-							<td>
-								<select id="rtkinYn" style="width:100%">
-									<option value="">선택</option>
-									<option value="Y">사용</option>
-									<option value="N">미사용</option>
-								</select>
-							</td>
-							<th style="text-align: center;">재반입일자</th>
-							<td><input type="date" style="width:100%" id="rtKinDt" /></td>
+							<th>의뢰 사유</th>
+							<td><input type="text" style="width:100%" id="reqRsn" /></td>
 						</tr>
 					</table>
 				<!-- //detail_table -->

@@ -62,42 +62,33 @@ public class ReqMasController {
 	BCryptPasswordEncoder encoder;
 	
 	/** 자산정보수정 화면 */
-	@PostMapping("/reqInqrView")
-	public ModelAndView reqInqrView(@RequestParam(value="menuId"  , required=true) String menuId
+	@PostMapping("/requestListView")
+	public ModelAndView requestListView(@RequestParam(value="menuId"  , required=true) String menuId
 			                      , @RequestParam(value="menuNm"  , required=true) String menuNm
 			                      , @RequestParam(value="menuDesc", required=true) String menuDesc) {
 		ModelAndView view = new ModelAndView();
 		view.addObject("menuId"  , menuId);
 		view.addObject("menuNm"  , menuNm);
 		view.addObject("menuDesc", menuDesc);
-		view.setViewName("/content/asset/change/modify/reqInqr");
+		view.setViewName("/content/asset/change/modify/requestList");
 		return view;
 	}
 	
 	/** 자산수정 의뢰작성 화면 */
-	@PostMapping("/reqInqrPopupView")
+	@PostMapping("/requestRegistView")
 	@ResponseBody
-	public ModelAndView reqInqrMngView(HttpServletRequest request) {
+	public ModelAndView requestRegistView(HttpServletRequest request) {
 		
 		ModelAndView view = new ModelAndView();
 		
 		String reqNo = request.getParameter("reqNo");
 		
 		view.addObject("reqNo", reqNo);
-		view.setViewName("/content/asset/change/modify/reqInqrPopup");
+		view.setViewName("/content/asset/change/modify/requestRegist");
 		return view;
 	}
 	
-	/** 자산정보수정 화면 : 공통코드(의뢰구분) 조회 */
-	@PostMapping("/selectReqTypeList")
-	@ResponseBody
-	public ResponseEntity<? extends Response> reqTypeList(String str) { 
-		
-		List<CodeDto> list = reqmasService.selectReqTypeList("");
-		return responseService.success(list);
-	}
-	
-	/** 자산정보수정 화면 : 공통코드(의뢰구분) 조회 */
+	/** 자산정보수정 화면 : 공통코드(의뢰상태) 조회 */
 	@PostMapping("/selectReqStusList")
 	@ResponseBody
 	public ResponseEntity<? extends Response> selectReqStusList(String str) { 
@@ -107,12 +98,12 @@ public class ReqMasController {
 	}
 	
 	/** 자산정보수정 화면 : 조회 */
-	@GetMapping(value="/reqInqrList")
+	@GetMapping(value="/requestList")
 	@ResponseBody
 	@ApiOperation(value = "자산정보수정 화면 : 조회", notes = "자산정보수정 화면 : 조회")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> reqInqrList(
+	public ResponseEntity<? extends Response> requestList(
 		@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage",required = true) String currentPage,
 		@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
 		@ApiParam(value = "의뢰번호", required = false) @RequestParam(value = "reqNo", required = false) String reqNo,
@@ -173,21 +164,21 @@ public class ReqMasController {
 		params.put("sortOrder", sortOrder);
 		
 		SearchCondition condition = new SearchCondition(currentPage, numOfRows, params);
-		int total = reqmasService.selectCountReqInqr(condition);
+		int total = reqmasService.selectCountRequestList(condition);
 		condition.pageSetup(total);
 		
-		List<ReqMasDto> list = reqmasService.selectReqInqrList(condition);
+		List<ReqMasDto> list = reqmasService.selectRequestList(condition);
 		
 		return responseService.success(condition, list);
 	}
 	
 	/** 자산정보수정 화면 : 등록 */  
-	@GetMapping(value="/reqmasInsert")
+	@GetMapping(value="/requestListInsert")
 	@ResponseBody
 	@ApiOperation(value = "자산정보수정 화면 : 등록", notes = "자산정보수정 화면 : 등록")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String reqmasInsert(
+	public String requestListInsert(
 			@ApiParam(value = "공통코드(의뢰구분)", required = true) @RequestParam(value = "reqType", required = true) String reqType,
 			@ApiParam(value = "의뢰명", required = true) @RequestParam(value = "reqNm", required = true) String reqNm,
 			@ApiParam(value = "의뢰자", required = true) @RequestParam(value = "reqtr", required = true) String reqtr,
@@ -238,74 +229,7 @@ public class ReqMasController {
 	    dto.setPrgsDcontYn(prgsDcontYn);
 		dto.setRegr(userId);
 		 
-		int cnt = reqmasService.reqInqrInsert(dto); 
-		
-		if( cnt > 0)
-			code = "200";
-		
-		return code;
-	}
-	
-	/** 자산정보수정 화면 : 수정 */ 
-	@GetMapping(value="/reqmasUpdate")
-	@ResponseBody
-	@ApiOperation(value = "자산정보수정 화면 : 수정", notes = "자산정보수정 화면 : 수정")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String reqmasUpdate(
-			@ApiParam(value = "의뢰번호", required = true) @RequestParam(value = "reqNo", required = true) String reqNo,
-			@ApiParam(value = "공통코드(의뢰구분)", required = true) @RequestParam(value = "reqType", required = true) String reqType,
-			@ApiParam(value = "의뢰명", required = true) @RequestParam(value = "reqNm", required = true) String reqNm,
-			@ApiParam(value = "의뢰자", required = true) @RequestParam(value = "reqtr", required = true) String reqtr,
-			@ApiParam(value = "결재문서 ID", required = true) @RequestParam(value = "appvDocId", required = true) String appvDocId,
-			@ApiParam(value = "의뢰사유", required = true) @RequestParam(value = "reqRsn", required = true) String reqRsn,
-			@ApiParam(value = "공통코드(의뢰상태)", required = true) @RequestParam(value = "reqStus", required = true) String reqStus,
-			@ApiParam(value = "이동목적", required = true) @RequestParam(value = "movePupos", required = true) String movePupos,
-			@ApiParam(value = "이동일자", required = true) @RequestParam(value = "moveDt", required = true) String moveDt,
-			@ApiParam(value = "반출예정여부", required = true) @RequestParam(value = "tkoutScheYn", required = true) String tkoutScheYn,
-			@ApiParam(value = "반출예정일자", required = true) @RequestParam(value = "tkoutScheDt", required = true) String tkoutScheDt,
-			@ApiParam(value = "반출여부", required = true) @RequestParam(value = "tkoutYn", required = true) String tkoutYn,
-			@ApiParam(value = "반출일자", required = true) @RequestParam(value = "tkoutDt", required = true) String tkoutDt,
-			@ApiParam(value = "재반입여부", required = true) @RequestParam(value = "rtkinYn", required = true) String rtkinYn,
-			@ApiParam(value = "재반입일자", required = true) @RequestParam(value = "rtKinDt", required = true) String rtKinDt,
-			@ApiParam(value = "진행중단여부", required = true) @RequestParam(value = "prgsDcontYn", required = true) String prgsDcontYn,
-			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
-			) { 
-		
-		String code = "202";
-		
-		UserInfo userInfo = (UserInfo)userDetail;
-		String userId = userInfo.getDto().getUserId();
-		
-		ReqMasDto dto = new ReqMasDto();
-		
-		if (StringUtils.isNotEmpty(reqNo)) 
-			dto.setReqNo(reqNo);
-		
-		if (StringUtils.isNotEmpty(reqType)) 
-			dto.setReqType(reqType);
-		
-	    if (StringUtils.isNotEmpty(reqNm)) 
-	    	dto.setReqNm(reqNm);
-	    
-	    if (StringUtils.isNotEmpty(reqtr)) 
-	    	dto.setReqtr(reqtr);
-	    
-	    dto.setAppvDocId(appvDocId);
-	    dto.setReqRsn(reqRsn);
-	    dto.setReqStus(reqStus);
-	    dto.setMovePupos(movePupos);
-	    dto.setMoveDt(moveDt);
-	    dto.setTkoutScheYn(tkoutScheYn);
-	    dto.setTkoutScheDt(tkoutScheDt);
-	    dto.setTkoutYn(tkoutYn);
-	    dto.setTkoutDt(tkoutDt);
-	    dto.setRtkinYn(rtkinYn);
-	    dto.setRtKinDt(rtKinDt);
-	    dto.setPrgsDcontYn(prgsDcontYn);
-		dto.setUpdr(userId);
-		 
-		int cnt = reqmasService.reqInqrUpdate(dto); 
+		int cnt = reqmasService.requestListInsert(dto); 
 		
 		if( cnt > 0)
 			code = "200";
@@ -314,12 +238,12 @@ public class ReqMasController {
 	}
 	
 	/** 자산정보수정 화면 : 삭제 */
-	@GetMapping(value="/reqmasDelete")
+	@GetMapping(value="/requestListDelete")
 	@ResponseBody
 	@ApiOperation(value = "자산정보수정 화면 : 삭제", notes = "자산정보수정 화면 : 삭제")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String reqmasDelete( 
+	public String requestListDelete( 
 			@ApiParam(value = "의뢰 번호", required = true) @RequestParam(value = "items", required = true) List<String> items
 			) { 
 		
@@ -332,7 +256,7 @@ public class ReqMasController {
 			
 			dto.setReqNo(reqNo);
 			
-			if( reqmasService.reqInqrDelete(dto) > 0 )
+			if( reqmasService.requestListDelete(dto) > 0 )
 				cnt++;
 		}
 		
@@ -343,7 +267,7 @@ public class ReqMasController {
 	}
 	
 	// 사용자 관리 화면 : 조회 - 엑셀다운 
-	@PostMapping(value="/reqInqrExcel")
+	@PostMapping(value="/requestListExcel")
 	@ApiOperation(value = "자산정보수정 화면 : 조회 - 엑셀다운", notes = "자산정보수정 화면 : 조회 - 엑셀다운")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
@@ -352,8 +276,8 @@ public class ReqMasController {
 			@ApiParam(value = "시작일", required = false) @RequestParam(value = "fromDate", required = false) String fromDate,
 			@ApiParam(value = "종료일", required = false) @RequestParam(value = "toDate", required = false) String toDate,
 			@ApiParam(value = "의뢰명", required = false) @RequestParam(value = "req_nm", required = false) String req_nm,
-			@ApiParam(value = "사업부 코드", required = false) @RequestParam(value = "dept_cd1", required = false) String dept_cd1,
-			@ApiParam(value = "부서 코드", required = false) @RequestParam(value = "dept_cd2", required = false) String dept_cd2,
+			@ApiParam(value = "사업부 코드", required = false) @RequestParam(value = "deptCd1", required = false) String deptCd1,
+			@ApiParam(value = "부서 코드", required = false) @RequestParam(value = "deptCd2", required = false) String deptCd2,
 			@ApiParam(value = "의뢰자", required = false) @RequestParam(value = "Reqtr", required = false) String Reqtr,
 			@ApiParam(value = "자산번호", required = false) @RequestParam(value = "aset_no", required = false) String aset_no,
 			@ApiParam(value = "의뢰상태", required = false) @RequestParam(value = "req_stus", required = false) String req_stus,
@@ -380,11 +304,11 @@ public class ReqMasController {
 		if (!StringUtils.isEmpty(req_nm))
 		params.put("reqNm", req_nm);
 		
-		if (!StringUtils.isEmpty(dept_cd1))
-		params.put("deptCd1", dept_cd1);
+		if (!StringUtils.isEmpty(deptCd1))
+		params.put("deptCd1", deptCd1);
 		
-		if (!StringUtils.isEmpty(dept_cd2))
-		params.put("deptCd2", dept_cd2);
+		if (!StringUtils.isEmpty(deptCd2))
+		params.put("deptCd2", deptCd2);
 		
 		if (!StringUtils.isEmpty(Reqtr))
 		params.put("reqtr", Reqtr);
@@ -396,15 +320,33 @@ public class ReqMasController {
 		params.put("reqStus", req_stus);
 		
 		SearchCondition condition = new SearchCondition("0", "0", params);
-		int total = reqmasService.selectCountReqInqr(condition);
-		System.out.println(total);
+		int total = reqmasService.selectCountRequestList(condition);
 		condition.pageSetup(total);
 		
-		List<ReqMasExcelDto> list = reqmasService.selectReqInqrExcelList(condition);
+		List<ReqMasExcelDto> list = reqmasService.selectReqExcelList(condition);
+		
+		
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println(params);
+		System.out.println(userId);
+		
+		System.out.println(total);
 		
 		System.out.println(list);
 		
-		return new ModelAndView("excelXlsxView",makeExcelData(list)) ;
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		
+		
+		return new ModelAndView("excelXlsxView", makeExcelData(list)) ;
 	} 	
 	
 	
@@ -430,12 +372,12 @@ public class ReqMasController {
 	}
 	
 	/** 자산수정 의뢰작성 화면 : 조회 */
-	@GetMapping(value="/reqInqrPopup")
+	@GetMapping(value="/requestRegist")
 	@ResponseBody
 	@ApiOperation(value = "자산수정 의뢰작성 화면 : 조회", notes = "자산수정 의뢰작성 화면 : 조회")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> reqInqrList(
+	public ResponseEntity<? extends Response> requestRegist(
 		@ApiParam(value = "조회 페이지 번호", required = true) @RequestParam(value = "currentPage",required = true) String currentPage,
 		@ApiParam(value = "페이지별 조회 출력수", required = true) @RequestParam(value = "numOfRows", required = true) String numOfRows,
 		@ApiParam(value = "의뢰번호", required = false) @RequestParam(value = "reqNo", required = false) String reqNo,
@@ -454,13 +396,11 @@ public class ReqMasController {
 		if (!StringUtils.isEmpty(reqNo))
 			params.put("reqNo", reqNo);
 		
-		// System.out.println("@@@@" + userId);
-		
 		SearchCondition condition = new SearchCondition("0", "0", params);
-		int total = reqmasService.selectCountReqInqr(condition);
+		int total = reqmasService.selectCountRequestList(condition);
 		condition.pageSetup(total);
 		
-		List<ReqMasDto> list = reqmasService.selectReqInqrPopup(condition);
+		List<ReqMasDto> list = reqmasService.selectRequestRegist(condition);
 		List<AsetMasDto> list2 = reqmasService.selectAsetReqList(condition);
 		
 		return responseService.success(condition, list, list2);

@@ -45,7 +45,7 @@ public class CodeController {
 	@Autowired
 	CodeService codeService;
 	
-	/* 공통코드관리 화면 */
+	/** 공통코드관리 화면 */
 	@PostMapping("/codeMng")
 	public ModelAndView codeMngView(HttpServletRequest request) {
 		
@@ -60,7 +60,7 @@ public class CodeController {
 		return view;
 	}
 	
-	/* 공통코드관리 화면 : 공통코드 그룹 조회 */
+	/** 공통코드관리 화면 : 공통코드 그룹 조회 */
 	@PostMapping("/codeGrpList")
 	@ResponseBody
 	public ResponseEntity<? extends Response> codeGrplist(String str) { 
@@ -69,7 +69,7 @@ public class CodeController {
 		return responseService.success(list);
 	}
 	
-	/* 공통코드관리 화면 : 조회 */
+	/** 공통코드관리 화면 : 조회 */
 	@GetMapping(value="/codeMng/codeList")
 	@ResponseBody
 	@ApiOperation(value = "공통코드 관리 화면 : 조회", notes = "공통코드 관리 화면 : 조회")
@@ -84,14 +84,14 @@ public class CodeController {
 		return responseService.success(condition, list);
 	}
 	
-	/* 공통코드관리 화면 : 등록 */  
+	/** 공통코드관리 화면 : 등록 및 수정 */  
 	@GetMapping(value="/codeMng/codeMerge")
 	@ResponseBody
-	@ApiOperation(value = "공통코드 관리 화면 : 등록", notes = "공통코드 관리 화면 : 등록")
+	@ApiOperation(value = "공통코드 관리 화면 : 등록 및 수정", notes = "공통코드 관리 화면 : 등록 및 수정")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String codeMerge(
-			@ApiParam(value = "공통코드관리 등록 데이터", required = true) @RequestParam Map<String, Object> items,
+			@ApiParam(value = "공통코드관리 등록 및 수정 데이터", required = true) @RequestParam Map<String, Object> items,
 			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
 		
 		String code = "202";
@@ -109,7 +109,7 @@ public class CodeController {
 		return code;
 	}
 	
-	/* 공통코드 화면 : 삭제 */
+	/** 공통코드 화면 : 삭제 */
 	@PostMapping(value="/codeMng/codeDelete")
 	@ResponseBody
 	@ApiOperation(value = "공통코드 화면 : 삭제", notes = "공통코드 화면 : 삭제")

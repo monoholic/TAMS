@@ -167,6 +167,7 @@
 				 , up_dt       = now()
 	</insert>
 	
+	<!-- 공통코드관리 삭제 -->
 	<delete id="codeMngDelete" parameterType="kr.co.trito.tams.web.standard.code.dto.CodeDto">
 		DELETE 
 		FROM tb_com_code 
