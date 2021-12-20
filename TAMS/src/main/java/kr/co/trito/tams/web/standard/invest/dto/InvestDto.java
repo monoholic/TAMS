@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.Row;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import jdk.internal.org.jline.utils.Log;
 import kr.co.trito.tams.comm.util.file.excel.ExcelDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 @Builder
 @AllArgsConstructor
@@ -21,6 +23,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @ApiModel("공통코드")
+@Slf4j
 public class InvestDto extends ExcelDto {
 	@ApiModelProperty(value="투자번호")
 	private String invNo;
@@ -60,6 +63,9 @@ public class InvestDto extends ExcelDto {
 	private String chkResult;
 	@ApiModelProperty(value="유효성 상태")
 	private String chkFlag;
+	@ApiModelProperty(value="Null Check")
+	private String isNull;	
+	
 	//@ApiModelProperty(value="등록일자")
 	//private String regDt;
 	//@ApiModelProperty(value="등록자")
@@ -77,66 +83,79 @@ public class InvestDto extends ExcelDto {
     	CellType Cell = null;
     	Cell cell = null;
     	
-    	if(row.getCell(0) != null)
-    	inv.setInvNo 	(row.getCell(0).getStringCellValue());
-    	inv.setInvTtl 	(row.getCell(1).getStringCellValue());
-    	if(row.getCell(2) != null) {
-    		cell = row.getCell(2);
-    		cell.setCellType(Cell.STRING);
-    		inv.setInvDt	(cell.getStringCellValue());
+    	int numberOfCells = row.getPhysicalNumberOfCells();
+    	
+    	
+    	if (numberOfCells > 0) {
+	    	
+	    	if(row.getCell(0) != null) 
+	    		inv.setInvNo 	(row.getCell(0).getStringCellValue());
+	    	
+	    	if(row.getCell(1) != null)
+	    		inv.setInvTtl 	(row.getCell(1).getStringCellValue());
+	    	
+	    	if(row.getCell(2) != null) {
+	    		cell = row.getCell(2);
+	    		cell.setCellType(Cell.STRING);
+	    		inv.setInvDt	(cell.getStringCellValue());
+	    	}
+	    	if(row.getCell(3) != null) {
+	    		cell = row.getCell(3);
+	    		cell.setCellType(Cell.STRING);
+	    		inv.setInvQty	(cell.getStringCellValue());
+	    	}
+	    	if(row.getCell(4) != null) {
+	    		cell = row.getCell(4);
+	    		cell.setCellType(Cell.STRING);
+	    		inv.setInvAmt	(cell.getStringCellValue());
+	    	}
+	    	if(row.getCell(5) != null) {
+	    		cell = row.getCell(5);
+	    		cell.setCellType(Cell.STRING);
+	    		inv.setActgYear	(cell.getStringCellValue());
+	    	}
+	    	if(row.getCell(6) != null) {
+	    		cell = row.getCell(6);
+	    		cell.setCellType(Cell.STRING);
+	    		inv.setPoNo	(cell.getStringCellValue());    		
+	    	}
+			inv.setMfgdNm	(row.getCell(7).getStringCellValue());
+			if(row.getCell(8) != null) {
+	    		cell = row.getCell(8);
+	    		cell.setCellType(Cell.STRING);
+	    		inv.setQty	(cell.getStringCellValue()); 
+			}
+			if(row.getCell(9) != null) {
+				cell = row.getCell(9);
+				cell.setCellType(Cell.STRING);
+				inv.setPoAmt	(cell.getStringCellValue()); 
+			}
+			if(row.getCell(10) != null) {
+	    		cell = row.getCell(10);
+	    		cell.setCellType(Cell.STRING);
+	    		inv.setInvReqr	(cell.getStringCellValue()); 
+			}
+			if(row.getCell(11) != null) {
+	    		cell = row.getCell(11);
+	    		cell.setCellType(Cell.STRING);
+	    		inv.setVendNm	(cell.getStringCellValue());			
+			}
+			if(row.getCell(12) != null)	{
+	    		cell = row.getCell(12);
+	    		cell.setCellType(Cell.STRING);
+	    		inv.setReqDt	(cell.getStringCellValue());
+			}
+			if(row.getCell(13) != null)	{
+	    		cell = row.getCell(13);
+	    		cell.setCellType(Cell.STRING);
+	    		inv.setDlvDt	(cell.getStringCellValue());			
+			}
+			
+			inv.setIsNull("N");
+    	}else {
+    		inv.setIsNull("Y");
     	}
-    	if(row.getCell(3) != null) {
-    		cell = row.getCell(3);
-    		cell.setCellType(Cell.STRING);
-    		inv.setInvQty	(cell.getStringCellValue());
-    	}
-    	if(row.getCell(4) != null) {
-    		cell = row.getCell(4);
-    		cell.setCellType(Cell.STRING);
-    		inv.setInvAmt	(cell.getStringCellValue());
-    	}
-    	if(row.getCell(5) != null) {
-    		cell = row.getCell(5);
-    		cell.setCellType(Cell.STRING);
-    		inv.setActgYear	(cell.getStringCellValue());
-    	}
-    	if(row.getCell(6) != null) {
-    		cell = row.getCell(6);
-    		cell.setCellType(Cell.STRING);
-    		inv.setPoNo	(cell.getStringCellValue());    		
-    	}
-		inv.setMfgdNm	(row.getCell(7).getStringCellValue());
-		if(row.getCell(8) != null) {
-    		cell = row.getCell(8);
-    		cell.setCellType(Cell.STRING);
-    		inv.setQty	(cell.getStringCellValue()); 
-		}
-		if(row.getCell(9) != null) {
-			cell = row.getCell(9);
-			cell.setCellType(Cell.STRING);
-			inv.setPoAmt	(cell.getStringCellValue()); 
-		}
-		if(row.getCell(10) != null) {
-    		cell = row.getCell(10);
-    		cell.setCellType(Cell.STRING);
-    		inv.setInvReqr	(cell.getStringCellValue()); 
-		}
-		if(row.getCell(11) != null) {
-    		cell = row.getCell(11);
-    		cell.setCellType(Cell.STRING);
-    		inv.setVendNm	(cell.getStringCellValue());			
-		}
-		if(row.getCell(12) != null)	{
-    		cell = row.getCell(12);
-    		cell.setCellType(Cell.STRING);
-    		inv.setReqDt	(cell.getStringCellValue());
-		}
-		if(row.getCell(13) != null)	{
-    		cell = row.getCell(13);
-    		cell.setCellType(Cell.STRING);
-    		inv.setDlvDt	(cell.getStringCellValue());			
-		}
-		
+    	
 		//inv.setInvRegrNm(row.getCell(9).getStringCellValue());
     	
         return inv;

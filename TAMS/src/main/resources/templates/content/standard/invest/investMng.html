@@ -30,7 +30,7 @@
 		
 	    <script>
 	    
-	    let numOfRows = 20;
+	    let numOfRows = 18;
 	    let pageIdx = 1;
 	    var status = true;
         var selectedItems = [];
@@ -237,9 +237,18 @@
     	    	var items = [];
     	    	
     	    	//$("#jsGrid").jsGrid("deleteItem",delete_item);
-    	    	$.each(selectedItems, function(index,item){
+    	    	$.each(selectedItems, function(index,item){    	    		
+    	    		if(item.poAsetYn == 'Y') {
+    	    			alert('[[#{screen.info.status.error.inv.has.registered.item}]]');
+    	    			return false;
+    	    		}    	    		
     	    		items.push(item);
     	    	});
+    	    	
+    	    	if(items.length == 0){
+    	    		alert('[[#{screen.info.status.error.inv.no.selected.item}]]');
+    	    		return;
+    	    	}
     	    	
      	    	//별도 호출
     	    	let url = "/standard/invest/investMng/investMngDelete";
@@ -290,9 +299,10 @@
 			    		sub_item.invDt	 	=   $(".detail_table").find("#invDt").val().replaceAll("-", "");
 			    		sub_item.deptNm	 	=   $(".detail_table").find("#deptNm").val();
 			    		sub_item.invReqr	=   $(".detail_table").find("#userId").val();
-			    		sub_item.poAsetYn	=   $(".detail_table").find("#poAsetYn").val();
-			    		sub_item.regDt	 	=   $(".detail_table").find("#regDt").val();
-			    	
+			    		sub_item.vendNm		=   $(".detail_table").find("#vendNm").val();
+			    		sub_item.reqDt	 	=   $(".detail_table").find("#reqDt").val();
+			    		sub_item.dlvDt	 	=   $(".detail_table").find("#dlvDt").val();
+			    		
 			    		insert_item.push(sub_item);
 			    		
 			        var action = "insertItem";
@@ -373,7 +383,7 @@
     	        var url = "/common/popup/invUploadPopup";
     	        var popId = "invUpPopup";
     	        var args = {};
-    	        args.width = 1200;
+    	        args.width = 1600;
     	        args.height = 710;
     	        args.fullscreen = "no";
     	        args.resizable = "no";
@@ -390,7 +400,7 @@
             });
     	    
     	    $("#poNo").on("input", function() {
-                $(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+                $(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[-]/g,''));
             });
     	    
     	    $("#qty").on("input", function() {
@@ -416,8 +426,9 @@
 			 $(".detail_table").find("#deptNm").val("");
 	 		 $(".detail_table").find("#userNm").val("");
 	 		 $(".detail_table").find("#userId").val("");
-	 		 $(".detail_table").find("#poAsetYn").val("");
-	 		 $(".detail_table").find("#regDt").val("");
+	 		 $(".detail_table").find("#vendNm").val("");
+	 		 $(".detail_table").find("#reqDt").val("");
+	 		 $(".detail_table").find("#dlvDt").val("");
 	    }
 		
 	    let save_mode = "";
@@ -462,7 +473,8 @@
 	                 top	 : "10px",
 	                 left	 : "10px",
 	                 width	 : "450px",
-	                 height	 : "450px"
+	                 height	 : "602px",
+	                 border:"2px solid navy"
 	             }).center().show();
 	    }
 	    
@@ -486,31 +498,6 @@
 		        }
 	        }
 	    }
-	    
-		//팝업호출 공통함수
-		function openPopup(popId, url, args) {
-			
-	        var options;
-			
-			var width 	= args.width;
-	        var height 	= args.height;
-	        var fullscreen = args.fullscreen;
-	        if( fullscreen == null || fullscreen == "" ) fullscreen = "no";
-	        var resizeable = args.resizeable;
-	        if( resizeable == null || resizeable == "" ) full = "no";
-	        
-	        var sTop  = Math.max(0, (($(window).height() - height) / 2) + $(window).scrollTop()) + "px";
-	        var sLeft = Math.max(0, (($(window).width() - width) / 2) + $(window).scrollLeft()) + "px";
-	        
-	        options = "";
-	        options += "position=absolute";
-	        options += ",top="+sTop+", left="+sLeft+", height="+height+"px, width="+width+"px";
-	        options += ",fullscreen="+fullscreen+", resizeable="+resizeable;
-	        
-	        var child;
-	        child = window.open(url, popId, options);
-	        
-		}
 		
 		//팝업에서 받은 결과 처리
 		function setResult(obj) {

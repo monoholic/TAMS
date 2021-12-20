@@ -71,7 +71,7 @@
 					 , b.req_dt
 					 , b.dlv_dt
 			 		 , d.user_nm
-					 , a.reg_dt
+					 , b.reg_dt
 				FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
 				WHERE 1 = 1
 				AND A.inv_no = B.inv_no
@@ -91,7 +91,7 @@
 			ORDER BY ${params.sortField} ${params.sortOrder}
 		</when>
 		<otherwise>
-			ORDER BY poNo asc
+			ORDER BY reg_dt desc, inv_no, po_no asc
 		</otherwise>
 		</choose>
 	</select>
@@ -102,8 +102,8 @@
                 VALUES
                 ( #{invNo}
                 , #{invTtl}
-                , CAST(#{invQty} as int)
-                , CAST(#{invAmt} as int)
+                , CAST(REPLACE(#{invQty}, ',', '') as int)
+                , CAST(REPLACE(#{invAmt}, ',', '') as int)
                 , #{actgYear}
                 , #{invDt}
                 , #{regr}
@@ -112,8 +112,8 @@
                 ON DUPLICATE KEY
                 UPDATE INV_TTL = #{invTtl}
                      , INV_DT = #{invDt}
-                     , INV_QTY = CAST(#{invQty} as int)
-                     , INV_AMT = CAST(#{invAmt} as int)
+                     , INV_QTY = CAST(REPLACE(#{invQty}, ',', '') as int)
+                     , INV_AMT = CAST(REPLACE(#{invAmt}, ',', '') as int)
                      , INV_REQR = #{regr}
                      , UPDR = #{updr}
                      , UP_DT = now()
@@ -126,21 +126,21 @@
                 ( #{poNo}
                 , #{invNo}
                 , #{mfgdNm}
-                , CAST(#{qty} as int)
-                , CAST(#{poAmt} as int)
+                , CAST(REPLACE(#{qty}, ',', '') as int)
+                , CAST(REPLACE(#{poAmt}, ',', '') as int)
                 , #{regr} 
                 , #{vendNm}
-                , #{reqDt}
-                , #{dlvDt}
+                , REPLACE(#{reqDt}, '-', '')
+                , REPLACE(#{dlvDt}, '-', '')
                 , #{regr} )
                 ON DUPLICATE KEY
                 UPDATE PO_CHRGR = #{regr}
                      , MFGD_NM = #{mfgdNm}
-                     , QTY = CAST(#{qty} as int)
-                     , PO_AMT = CAST(#{poAmt} as int)
+                     , QTY = CAST(REPLACE(#{qty}, ',', '') as int)
+                     , PO_AMT = CAST(REPLACE(#{poAmt}, ',', '') as int)
                      , VEND_NM = #{vendNm}
-                     , REQ_DT = #{reqDt}
-                     , DLV_DT = #{dlvDt}
+                     , REQ_DT = REPLACE(#{reqDt}, '-', '')
+                     , DLV_DT = REPLACE(#{dlvDt}, '-', '')
                      , UPDR = #{updr}
                      , UP_DT = now()
 	</insert>
