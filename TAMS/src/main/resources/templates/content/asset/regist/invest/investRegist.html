@@ -31,7 +31,7 @@
 		
 	    <script>
 	    // 공통코드(자산유형 1레벨 출력)
-	    let numOfRows = 10;
+	    let numOfRows = 13;
 	    let menuId = "[[${menuId}]]";
 	    
 	 	var condition = {};
@@ -94,7 +94,7 @@
 	            }, 
 	            pagerContainerClass: "paginate",
 	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
+	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
 	            },
 	            controller:  {
 	                loadData: function(filter) {
@@ -122,22 +122,22 @@
 	                },
             },
 	            fields: [
-	            	{ name: "invNo"    , type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.inv.no}]]"    },
-	                { name: "invTtl"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.ttl}]]"   },
-	                { name: "invDt"    , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.dt}]]"    },
-	                { name: "poNo"	   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.no}]]"     },
-	                { name: "mfgdNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.mfgdnm}]]" },
-	                { name: "qty"	   , type: "text", width: 30 , align: "left"  , title: "[[#{screen.text.po.qty}]]"    },
-	                { name: "poAmt"    , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.po.amt}]]"    },
+	            	{ name: "invNo"    , type: "text", width: 70 , align: "center"  , title: "[[#{screen.text.inv.no}]]"    },
+	                { name: "invTtl"   , type: "text", width: 170, align: "left"  , title: "[[#{screen.text.inv.ttl}]]"   },
+	                { name: "invDt"    , type: "text", width: 80, align: "center"  , title: "[[#{screen.text.inv.dt}]]"    },
+	                { name: "poNo"	   , type: "text", width: 80, align: "center"  , title: "[[#{screen.text.po.no}]]"     },
+	                { name: "mfgdNm"   , type: "text", width: 130, align: "left"  , title: "[[#{screen.text.po.mfgdnm}]]" },
+	                { name: "qty"	   , type: "text", width: 50 , align: "right"  , title: "[[#{screen.text.po.qty}]]"    },
+	                { name: "poAmt"    , type: "text", width: 80, align: "right"  , title: "[[#{screen.text.po.amt}]]"    },
 	                { name: "deptNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.dept.nm}]]"   },
-	                { name: "userNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.reqr}]]"  },
-	                { name: "invReqr"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.reqr}]]",  visible: false },
-	                { name: "asetQty"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.asetqty}]]",
+	                { name: "userNm"   , type: "text", width: 80, align: "center"  , title: "[[#{screen.text.inv.reqr}]]"  },
+	                { name: "invReqr"  , type: "text", width: 80, align: "right"  , title: "[[#{screen.text.inv.reqr}]]",  visible: false },
+	                { name: "asetQty"  , type: "text", width: 80, align: "right"  , title: "[[#{screen.text.inv.asetqty}]]",
 	                  itemTemplate: function(value, item) {
 	                    return '<a href="javascript:void(0);" onclick="openAsetList(' + item.poNo + ');">' + value + '</a>';
 	                  }
 	                },
-	                { name: "noAsetQty", type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.noasetqty}]]"  }
+	                { name: "noAsetQty", type: "text", width: 80, align: "right"  , title: "[[#{screen.text.inv.noasetqty}]]"  }
 	            ]
 	        });
 	        
@@ -379,8 +379,8 @@
 							</tr>
 							<tr>
 								<td class="search" colspan="10 ">
-									<a href="#;" class="btn_reset">Reset</a>
-									<a href="#;" class="btn_srch">Search</a>
+									<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+									<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 								</td>
 							</tr>
 						</table>

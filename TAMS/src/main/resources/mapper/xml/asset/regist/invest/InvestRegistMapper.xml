@@ -124,7 +124,7 @@
 		                 				 		WHERE 1 = 1
 		                 				 		AND B.PO_NO = A.PO_NO), 0) as asetQty
 		                 				  FROM (
-		                 							SELECT ROW_NUMBER() OVER(ORDER BY CAST(b.po_no AS int) DESC) as rn
+		                 							SELECT ROW_NUMBER() OVER(ORDER BY CAST(b.inv_no AS int) DESC) as rn
 		                 							  	 , a.inv_no
 		                 								 , a.inv_ttl
 		                 								 , b.po_no
@@ -183,7 +183,7 @@
 		                   		ORDER BY ${params.sortField} ${params.sortOrder}
 		                   	</when>
 		                   	<otherwise>
-		                   		ORDER BY c.poNo DESC
+		                   		ORDER BY c.invNo DESC
 		                   	</otherwise>
 		                   </choose>
 	</select>
