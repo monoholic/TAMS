@@ -6,12 +6,21 @@
 	
 	<select id="selectCountInvest" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
 		SELECT COUNT(*)
-		FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
-		WHERE 1 = 1
-		AND A.inv_no = B.inv_no
-		AND D.use_yn = 'Y'
-		AND A.inv_reqr = D.user_id
-		AND D.dept_cd = E.dept_cd
+		FROM (
+				SELECT a.inv_no
+					 , a.inv_ttl				
+					 , e.dept_nm
+					 , b.po_no
+					 , b.mfgd_nm
+			 		 , d.user_nm as inv_reqr
+				FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
+				WHERE 1 = 1
+				AND A.inv_no = B.inv_no
+				AND D.use_yn = 'Y'
+				AND A.inv_reqr = D.user_id
+				AND D.dept_cd = E.dept_cd		
+		) a
+		WHERE 1=1 
 		<if test="params.searchType != 'none'">
 		AND ${params.searchType} LIKE CONCAT('%', #{params.searchText}, '%')
 		</if>
@@ -24,17 +33,17 @@
 		SELECT a.inv_no 	as invNo
 			 , a.inv_ttl 	as invTtl
 			 , date_format(a.inv_dt, '%Y-%m-%d') as invDt
-			 , IFNULL(a.inv_qty, 0) as invQty
-	 		 , IFNULL(a.inv_amt, 0) as invAmt
+			 , FORMAT(a.inv_qty, 0) as invQty
+	 		 , FORMAT(a.inv_amt, 0) as invAmt
 			 , a.actg_year  as actgYear
 			 , a.po_no 		as poNo
 			 , a.mfgd_nm 	as mfgdNm
 			 , a.qty 		as qty
-			 , a.po_amt     as poAmt
+			 , FORMAT(a.po_amt, 0) as poAmt
 			 , a.dept_nm 	as deptNm
 			 , a.vend_nm    as vendNm
-			 , a.req_dt     as reqDt
-			 , a.dlv_dt     as dlvDt
+			 , date_format(a.req_dt, '%Y-%m-%d') as reqDt
+			 , date_format(a.dlv_dt, '%Y-%m-%d') as dlvDt
 			 , a.inv_reqr 	as invReqr
 			 , a.user_nm 	as userNm
 			 , (SELECT CASE 
@@ -43,7 +52,7 @@
 			 	FROM TB_PO_ASET
 			 	WHERE po_no = a.po_no
 			   ) 			as poAsetYn
-			 , a.reg_dt 	as regDt
+			 , date_format(a.reg_dt, '%Y-%m-%d') as regDt
 		FROM (
 				SELECT ROW_NUMBER() OVER(ORDER BY CAST(a.inv_no AS int)) as rn
 				  	 , a.inv_no
