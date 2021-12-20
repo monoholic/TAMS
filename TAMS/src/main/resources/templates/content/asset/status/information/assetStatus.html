@@ -123,7 +123,7 @@
 				 });
 
 				
-				//grid
+				//grid(Main List)
 				let table = new Tabulator("#data-table", {
 				 	locale:true,
 				    langs: $.commGridLocalization(),								
@@ -174,11 +174,6 @@
 					$("#table").tabulator("setPageSize", value); 
 				});
 				
-				//엑셀 다운로드
-				$(".btn_list_rd").on("click", function(){
-					table.download("xlsx", "AssetStatus.xlsx", {sheetName:"자산현황"});					
-				});
-				
 				//cell값 변경 callback event.
 				table.on("cellEdited", function(cell){
 					var field = cell.getField();					
@@ -195,7 +190,134 @@
 					//console.log(cell.getRow().getTable().getData());
 					
 				});
+					
+				//row click
+				table.on("rowClick", function(e, row){	
+					var rowData = row.getData();
+					
+					//console.log(rowData);
+					
+					$("#detAsetNo").text(rowData.asetNo);
+					$("#detAsetNm").text(rowData.asetNm);
+					$("#detAsetType1Nm").text(rowData.asetType1Nm);
+					$("#detAsetType2Nm").text(rowData.asetType2Nm);
+					$("#detAsetType3Nm").text(rowData.asetType3Nm);
+					$("#detMftco").text(rowData.mftco);
+					$("#detModel").text(rowData.model);
+					$("#detSn").text(rowData.sn);
+					$("#detBizDeptNm").text(rowData.bizDeptNm);
+					$("#detDeptNm").text(rowData.deptNm);
+					$("#detChrgrNm").text(rowData.chrgrNm);
+					$("#detBsplcNm").text(rowData.bsplcNm);
+					$("#detBuldNm").text(rowData.buldNm);
+					$("#detFloorNm").text(rowData.floorNm);
+					$("#detLoc").text(rowData.loc);
+					$("#detTagYn").text(rowData.tagYn);
+					$("#detExpDeptNm").text(rowData.expDeptNm);
+					$("#detExpAcctNm").text(rowData.expAcctNm);
+					$("#detDurYear").text(rowData.durYear);
+					$("#detAcqPrc").text(rowData.acqPrc);					
+					$("#detSvalPrc").text(rowData.svalPrc);
+					$("#detAcqDt").text(rowData.acqDt);
+					
+					showDetailForm('#detailForm');
+					
+					//변경이력 조회
+					$.commRequest("/asset/status/information/assetHistoryList", "GET", {asetNo:rowData.asetNo})
+					.then((res) => {
+						his_table.setData(res.data)				
+					})
+					.catch((error) => {
+						console.log('변경이력 조회 실패');
+					});
+					
+					//투자이력 조회
+					$.commRequest("/asset/status/information/assetInvestList", "GET", {asetNo:rowData.asetNo})
+					.then((res) => {
+						inv_table.setData(res.data)				
+					})
+					.catch((error) => {
+						console.log('투자이력 조회 실패');
+					});					
+					
+				});		
 								
+				//상세팝업 Tab 이벤트
+				$(".tabs li a").on("click", function(){
+					const num = $(".tabs li a").index($(this));
+					
+					$(".tabs li").removeClass("on");
+					$('.tabs li:eq(' + num + ')').addClass("on");
+
+					if(num == 0){
+						$('#tab-asset').css('display', 'block');	
+						$('#tab-history').css('display', 'none');
+						$('#tab-invest').css('display', 'none');
+					}else if(num ==1){
+						$('#tab-asset').css('display', 'none');
+						$('#tab-history').css('display', 'block');
+						$('#tab-invest').css('display', 'none');
+					}else{
+						$('#tab-asset').css('display', 'none');
+						$('#tab-history').css('display', 'none');
+						$('#tab-invest').css('display', 'block');						
+					}
+				});
+								
+				let his_table = new Tabulator("#his-table", {
+				 	locale:true,
+				    langs: $.commGridLocalization(),								
+				 	height:"95%",
+				 	layout:"fitColumns",
+				 	placeholder:"No Data Set",					 	
+				 	columns:[ 
+					 	{title:"작업구분"	, field:"reqTypeNm"	  , hozAlign:"center" , headerHozAlign:"center", headerSort:false},
+					 	{title:"발생일자"	, field:"reqDt"       , hozAlign:"center" , headerHozAlign:"center", headerSort:false},
+					 	{title:"의뢰번호"	, field:"reqNo"       , hozAlign:"center" , headerHozAlign:"center", headerSort:false},
+					 	{title:"의뢰상태"	, field:"reqStusNm"   , hozAlign:"center" , headerHozAlign:"center", headerSort:false},
+					 	{title:"의뢰자"	, field:"reqtrNm"	  , hozAlign:"center" , headerHozAlign:"center", headerSort:false},
+					 	{title:"자산상태"	, field:"asetStusNm"  , hozAlign:"left"   , headerHozAlign:"center", headerSort:false},
+					 	{title:"사업부"	, field:"bizDeptNm"	  , hozAlign:"left"   , headerHozAlign:"center", headerSort:false},
+					 	{title:"부서"	    , field:"deptNm"	  , hozAlign:"left"   , headerHozAlign:"center", headerSort:false},
+					 	{title:"담당자"	, field:"chrgrNm"	  , hozAlign:"left"   , headerHozAlign:"center", headerSort:false},
+					 	{title:"자산유형1"	, field:"asettype1Nm" , hozAlign:"left"   , headerHozAlign:"center", headerSort:false},
+					 	{title:"자산유형2"	, field:"asettype2Nm" , hozAlign:"left"   , headerHozAlign:"center", headerSort:false},
+					 	{title:"자산유형3"	, field:"asettype3Nm" , hozAlign:"left"   , headerHozAlign:"center", headerSort:false},
+				 	],
+				});						
+				
+				let inv_table = new Tabulator("#inv-table", {
+				 	locale:true,
+				    langs: $.commGridLocalization(),								
+				 	height:"95%",
+				 	layout:"fitColumns",
+				 	placeholder:"No Data Set",
+				 	columns:[ 
+					 	{title:"투자구분"	, field:"newYn"	  	, hozAlign:"center" , headerHozAlign:"center", headerSort:false},
+					 	{title:"발생일자"	, field:"invDt"     , hozAlign:"center" , headerHozAlign:"center", headerSort:false},
+					 	{title:"투자번호"	, field:"invNo"     , hozAlign:"center" , headerHozAlign:"center", headerSort:false},
+					 	{title:"투자명" 	, field:"invTtl"   	, hozAlign:"left" 	, headerHozAlign:"center", headerSort:false},
+					 	{title:"PO번호"	, field:"poNo"	  	, hozAlign:"center"	, headerHozAlign:"center", headerSort:false},
+					 	{title:"품명"		, field:"mfgdNm"  	, hozAlign:"left"   , headerHozAlign:"center", headerSort:false},
+					 	{title:"수량"	  	, field:"qty"	  	, hozAlign:"center" , headerHozAlign:"center", headerSort:false},
+					 	{title:"투자자"	, field:"invReqrNm"	, hozAlign:"center" , headerHozAlign:"center", headerSort:false},
+					 	{title:"처리자"	, field:"poChrgrNm"	, hozAlign:"center" , headerHozAlign:"center", headerSort:false}
+				 	],
+				});					
+				
+				//엑셀 다운로드
+				$("#tab-main-excel").on("click", function(){
+					table.download("xlsx", "AssetStatus.xlsx", {sheetName:"자산현황"});					
+				});				
+				
+				$("#tab-history-excel").on("click", function(){
+					his_table.download("xlsx", "AssetHistory.xlsx", {sheetName:"변경이력"});					
+				});		
+				
+				$("#tab-invest-excel").on("click", function(){
+					inv_table.download("xlsx", "AssetInvest.xlsx", {sheetName:"투자이력"});					
+				});					
+				
 			});
 
 			function getParams(){
@@ -218,6 +340,30 @@
 				let reqType = 'GET';
 				$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);			
 			}
+			
+			function showDetailForm(element) {				
+				//let assetNo = row.getCell('asetNo').getValue();				
+		    	let df = $(element).css({
+		    		position: 'absolute',
+	                top:"10px",	                 
+	                width:"1400px",
+	                height:"600px",
+	                border:"2px solid navy"
+	            });
+		    	
+		    	df.center();
+		    	df.css({top:"100px"});
+	            df.show();								
+			}
+			
+		    function closePopup(element){
+		    	$(element).hide();		    	
+				$(".tabs li").removeClass("on");
+				$('.tabs li:eq(0)').addClass("on");
+				$('#tab-asset').css('display', 'block');	
+				$('#tab-history').css('display', 'none');
+				$('#tab-invest').css('display', 'none');
+			}			
 		</script>	
 	</th:block>
 	
@@ -307,7 +453,7 @@
 					<div class="result">Results : 0,000</div>
 					<!-- list_button -->
 					<div class="button">
-						<a class="btn_list_rd">[[#{screen.btn.excel}]]</a>
+						<a id="tab-main-excel" class="btn_list_rd">[[#{screen.btn.excel}]]</a>
 					</div>
 					<!-- list_button -->
 				</div>
@@ -318,7 +464,184 @@
 				</div>							
 			</div>		
 			<!-- //list -->					
-					
 		</div>		
+		
+		<!-- detail popup -->
+		<div id="detailForm" class="list_head" style="position:absoulte;z-index:1;display:none;">
+			<!-- container -->
+			<div id="container" style="height:555px;">	
+				<!-- contents -->
+				<div id="contents">			
+					<!-- contents_head -->
+					<h3>자산현황 - 자산정보 상세조회</h3>	
+				
+					<div class="list_head">
+						<!-- list_button -->
+						<div class="button">
+							<a class="btn_list close_btn" onClick="javascript:closePopup('#detailForm')">닫기</a>
+						</div>
+						<!-- list_button -->
+					</div>
+						
+					<!-- //contents_head -->					
+					<!-- tab -->
+					<div id="tab" style="overflow:auto !important;display:block;">
+						<ul class="tabs">
+							<li class="on"><a href="#">자산정보</a></li>
+							<li><a href="#">변경이력</a></li>
+							<li><a href="#">투자이력</a></li>
+						</ul>							
+					</div>
+					<!-- //tab -->
+					
+					<!-- 내용 -->
+					<div id="tab-asset" class="list_wrap">
+						<!-- list_head -->
+						<div class="list_head">
+							<h6>자산 기본정보</h6>
+						</div>
+						<!-- //list_head -->
+						<!-- detail_table -->
+						<table class="detail_table form_s">
+							<colgroup>
+							<col style="width:12%" />
+							<col style="width:20%" />
+							<col style="width:12%" />
+							<col style="width:20%" />
+							<col style="width:12%" />
+							<col />
+							</colgroup>
+							<tr>
+								<th>자산번호</th>
+								<td id="detAsetNo"></td>
+								<th>자산적요</th>
+								<td id="detAsetNm" colspan="3" />
+							</tr>
+							<tr>
+								<th>자산유형1</th>
+								<td id="detAsetType1Nm" />
+								<th>자산유형2</th>
+								<td id="detAsetType2Nm" />
+								<th>자산유형3</th>
+								<td id="detAsetType3Nm" />
+							</tr>
+							<tr>
+								<th>메이커</th>
+								<td id="detMftco" />
+								<th>모델</th>
+								<td id="detModel" />
+								<th>시리얼번호</th>
+								<td id="detSn" />
+							</tr>
+							<tr>
+								<th>사업부</th>
+								<td id="detBizDeptNm" />
+								<th>부서</th>
+								<td id="detDeptNm" />
+								<th>자산담당자</th>
+								<td id="detChrgrNm" />
+							</tr>
+							<tr>
+								<th>사업장</th>
+								<td id="detBsplcNm" />
+								<th>건물</th>
+								<td id="detBuldNm" />
+								<th>층</th>
+								<td id="detFloorNm" />
+							</tr>
+							<tr>
+								<th>세부위치</th>
+								<td id="detLoc" colspan="3" />
+								<th>자산태그</th>
+								<td id="detTagYn" />
+							</tr>
+							<tr>
+								<th>비용부서</th>
+								<td id="detExpDeptNm" />
+								<th>계정</th>
+								<td id="detExpAcctNm" />
+								<th>내용연수</th>
+								<td id="detDurYear" />
+							</tr>
+							<tr>
+								<th>취득가</th>
+								<td id="detAcqPrc" />
+								<th>잔존가</th>
+								<td id="detSvalPrc" />
+								<th>취득일자</th>
+								<td id="detAcqDt" />
+							</tr>
+						</table>
+						<!-- //detail_table -->
+						<p class="space10"></p>
+							<!-- list -->
+							<div class="list_wrap">
+								<!-- list_head -->
+
+								<div class="list_head">
+									<h6>자산 유형 특성정보</h6>
+								</div>
+								<!-- //list_head -->
+
+								<!-- detail_table -->
+								<table class="detail_table form_s">
+									<colgroup>
+									<col style="width:12%" />
+									<col style="width:20%" />
+									<col style="width:12%" />
+									<col style="width:20%" />
+									<col style="width:12%" />
+									<col style="width:20%" />										
+									</colgroup>
+									<tr>
+										<th>크기</th>
+										<td>28인치</td>
+										<th>타입</th>
+										<td>LED</td>
+										<th>타입</th>
+										<td>LED</td>											
+									</tr>
+								</table>
+								<!-- //detail_table -->
+							</div>
+							<!-- //list -->							
+					</div>	
+					
+					<div id="tab-history" style="height:400px;overflow:auto !important;display:none;">
+						<div id="tab-asset" class="list_wrap">
+							<!-- list_head -->
+							<div class="list_head">
+								<div class="button">
+									<a id="tab-history-excel" class="btn_list_rd">엑셀 다운로드</a>
+								</div>
+							</div>
+							<!-- //list_head -->
+											
+							<div id="his-table"></div>
+						</div>
+					</div>
+					
+					<div id="tab-invest" style="height:400px;overflow:auto !important;display:none;">
+						<div id="tab-asset" class="list_wrap">
+							<!-- list_head -->
+							<div class="list_head">
+								<div class="button">
+									<a id="tab-invest-excel" class="btn_list_rd">엑셀 다운로드</a>
+								</div>
+							</div>
+							<!-- //list_head -->
+											
+							<div id="inv-table"></div>
+						</div>
+					</div>									
+					<!-- //내용 -->					
+					
+				</div>		
+				<!-- contents -->
+			</div>
+			<!-- //container -->			
+		</div>
+		<!-- //detail popup -->		
+	
 	</div>	        
 </html>        

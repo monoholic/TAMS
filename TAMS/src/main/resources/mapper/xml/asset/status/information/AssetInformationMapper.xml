@@ -43,96 +43,134 @@
    
    	<!-- 자산현황 -->
 	<select id="selectAssetStatusList" resultType="kr.co.trito.tams.web.asset.status.information.dto.AssetStatusDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 
-		SELECT a.*
-		     , b.code_nm as asetType1Nm
-		     , c.code_nm as asetType2Nm
-		     , d.code_nm as asetType3Nm
-		     , e.dept_nm as bizDeptNm
-		     , f.dept_nm as deptNm
-			FROM (
-			   		SELECT aset_no 		    AS asetNo
-						 , aset_nm 		    AS asetNm
-						 , aset_type1 	    AS asetType1
-						 , aset_type2 	    AS asetType2
-						 , aset_type3 	    AS asetType3
-						 , mftco 			AS mftco
-						 , model 			AS model
-						 , sn 			    AS sn
-						 , biz_dept_cd 	    AS bizDeptCd  
-						 , dept_cd 		    AS deptCd
-						 , chrgr			AS chrgr
-						 , bsplc 			AS bsplc
-						 , buld 			AS buld
-						 , floor 			AS floor
-						 , loc 			    AS loc
-						 , exp_dept_cd 	    AS expDeptCd
-						 , exp_acct 		AS expAcct
-						 , dur_year 		AS durYear
-						 , acq_prc 		 	AS acqPrc
-						 , sval_prc 		AS svalPrc
-						 , dprc_prc 		AS dprcPrc
-						 , acq_dt 		  	AS acqDt
-						 , aset_out_book_yn AS asetOutBookYn
-						 , aset_stus		AS asetStus
-						 , ( SELECT B.code_nm 
-						     FROM TB_COM_CODE B
-						     WHERE B.code_grp_id = "AS_STATUS" 
-							 AND B.code_id = A.aset_stus ) AS asetStusNm
-						 , updr 			AS updr
-						 , up_dt 			AS upDt
-						 , regr 			AS regr
-						 , reg_dt 		    AS regDt 			
-						 , ROW_NUMBER() OVER(ORDER BY A.aset_no) AS rn
-					FROM tb_aset_mas A
-					WHERE 1=1 
-					<if test="params.asetNo != ''">
-						AND a.aset_no LIKE CONCAT('%', #{params.asetNo}, '%')
-				 	</if>
-			 		<if test="params.asetType1 != 'ALL'">
-						AND a.aset_type1 = #{params.asetType1}
-			 		</if>
-			 		<if test="params.asetType2 != 'ALL'">
-						AND a.aset_type2 = #{params.asetType2}
-			 		</if>
-			 		<if test="params.asetType3 != 'ALL'">
-						AND a.aset_type3 = #{params.asetType3}
-			 		</if>
-			 		<if test="params.bizDeptCd != ''">
-						AND a.biz_dept_cd = #{params.bizDeptCd}
-			 		</if>	 		
-			 		<if test="params.deptCd != ''">
-						AND a.dept_cd = #{params.deptCd}
-			 		</if>
-			 		<if test="params.chrgr != ''">
-						AND a.chrgr LIKE CONCAT('%', #{params.chrgr}, '%') 
-			 		</if>
-			 		<if test="params.mftco != ''">
-						AND a.mftco LIKE CONCAT('%', #{params.mftco}, '%') 
-			 		</if>
-			 		<if test="params.model != ''">
-						AND a.model LIKE CONCAT('%', #{params.model}, '%') 
-			 		</if>
-			 		<if test="params.asetStatus != 'ALL'">
-						AND a.aset_stus = #{params.asetStatus}
-			 		</if>	 	
-					ORDER BY asetNo				 		
-		) AS a
-		LEFT OUTER JOIN tb_com_code b
-		  ON a.asetType1 = b.code_id
-		 AND b.use_yn = 'Y'
-		LEFT OUTER JOIN tb_com_code c
-		  ON a.asetType2 = c.code_id
-		 AND c.use_yn = 'Y'
-		LEFT OUTER JOIN tb_com_code d
-		  ON a.asetType3 = d.code_id
-		 AND d.use_yn = 'Y' 	
-		LEFT OUTER JOIN tb_dept e
-		  ON a.bizDeptCd = e.dept_cd 
-		 AND e.use_yn = 'Y'	  
-		LEFT OUTER JOIN tb_dept f
-		  ON a.deptCd = f.dept_cd 
-		 AND f.use_yn = 'Y'	  		 
-		WHERE rn BETWEEN #{start} AND #{end}
+		SELECT *
+		FROM (
+				SELECT a.*
+				     , b.code_nm as asetType1Nm
+				     , c.code_nm as asetType2Nm
+				     , d.code_nm as asetType3Nm
+				     , e.dept_nm as bizDeptNm
+				     , f.dept_nm as deptNm
+				     , g.code_nm as bsplcNm
+				     , h.code_nm as buldNm				     
+				     , i.code_nm as floorNm	
+				     , j.code_nm as expAcctNm
+				     , k.dept_nm as expDeptNm
+				     , l.user_nm as chrgrNm
+				     , case
+				     	when (select count(*) cnt from tb_tag_mas x where x.aset_no = a.asetNo) > 0 then 'Y'
+				     	else 'N'
+				       end as tagYn			     
+					FROM (
+					   		SELECT aset_no 		    AS asetNo
+								 , aset_nm 		    AS asetNm
+								 , aset_type1 	    AS asetType1
+								 , aset_type2 	    AS asetType2
+								 , aset_type3 	    AS asetType3
+								 , mftco 			AS mftco
+								 , model 			AS model
+								 , sn 			    AS sn
+								 , biz_dept_cd 	    AS bizDeptCd  
+								 , dept_cd 		    AS deptCd
+								 , chrgr			AS chrgr
+								 , bsplc 			AS bsplc
+								 , buld 			AS buld
+								 , floor 			AS floor
+								 , loc 			    AS loc
+								 , exp_dept_cd 	    AS expDeptCd
+								 , exp_acct 		AS expAcct
+								 , dur_year 		AS durYear
+								 , FORMAT(acq_prc, 0) AS acqPrc
+								 , FORMAT(sval_prc, 0) AS svalPrc
+								 , FORMAT(dprc_prc, 0) AS dprcPrc
+								 , DATE_FORMAT(acq_dt,'%Y-%m-%d') AS acqDt
+								 , aset_out_book_yn AS asetOutBookYn
+								 , aset_stus		AS asetStus
+								 , ( SELECT B.code_nm 
+								     FROM TB_COM_CODE B
+								     WHERE B.code_grp_id = "AS_STATUS" 
+									 AND B.code_id = A.aset_stus ) AS asetStusNm
+								 , updr 			AS updr
+								 , up_dt 			AS upDt
+								 , regr 			AS regr
+								 , reg_dt 		    AS regDt 			
+								 , ROW_NUMBER() OVER(ORDER BY A.aset_no) AS rn
+							FROM tb_aset_mas A
+							WHERE 1=1 
+							<if test="params.asetNo != ''">
+								AND a.aset_no LIKE CONCAT('%', #{params.asetNo}, '%')
+						 	</if>
+					 		<if test="params.asetType1 != 'ALL'">
+								AND a.aset_type1 = #{params.asetType1}
+					 		</if>
+					 		<if test="params.asetType2 != 'ALL'">
+								AND a.aset_type2 = #{params.asetType2}
+					 		</if>
+					 		<if test="params.asetType3 != 'ALL'">
+								AND a.aset_type3 = #{params.asetType3}
+					 		</if>
+					 		<if test="params.bizDeptCd != ''">
+								AND a.biz_dept_cd = #{params.bizDeptCd}
+					 		</if>	 		
+					 		<if test="params.deptCd != ''">
+								AND a.dept_cd = #{params.deptCd}
+					 		</if>
+					 		<if test="params.chrgr != ''">
+								AND a.chrgr LIKE CONCAT('%', #{params.chrgr}, '%') 
+					 		</if>
+					 		<if test="params.mftco != ''">
+								AND a.mftco LIKE CONCAT('%', #{params.mftco}, '%') 
+					 		</if>
+					 		<if test="params.model != ''">
+								AND a.model LIKE CONCAT('%', #{params.model}, '%') 
+					 		</if>
+					 		<if test="params.asetStatus != 'ALL'">
+								AND a.aset_stus = #{params.asetStatus}
+					 		</if>	 	
+							ORDER BY asetNo				 		
+				) AS a
+				LEFT OUTER JOIN tb_com_code b
+				  ON a.asetType1 = b.code_id
+				 AND b.use_yn = 'Y'
+				 AND b.code_grp_id = 'AS_CLASS'				 
+				LEFT OUTER JOIN tb_com_code c
+				  ON a.asetType2 = c.code_id
+				 AND c.use_yn = 'Y'
+				 AND c.code_grp_id = 'AS_CLASS'				 
+				LEFT OUTER JOIN tb_com_code d
+				  ON a.asetType3 = d.code_id
+				 AND d.use_yn = 'Y' 	
+				 AND d.code_grp_id = 'AS_CLASS'				 
+				LEFT OUTER JOIN tb_dept e
+				  ON a.bizDeptCd = e.dept_cd 
+				 AND e.use_yn = 'Y'	  
+				LEFT OUTER JOIN tb_dept f
+				  ON a.deptCd = f.dept_cd 
+				 AND f.use_yn = 'Y'
+				LEFT OUTER JOIN tb_com_code g
+				  ON a.bsplc = g.code_id
+				 AND g.use_yn = 'Y'
+				 AND g.code_grp_id = 'SITE'				 
+				LEFT OUTER JOIN tb_com_code h
+				  ON a.buld = h.code_id
+				 AND h.use_yn = 'Y'
+				 AND h.code_grp_id = 'BUILDING'
+				LEFT OUTER JOIN tb_com_code i
+				  ON a.floor = i.code_id
+				 AND i.use_yn = 'Y'
+				 AND i.code_grp_id = 'FLOOR'
+				LEFT OUTER JOIN tb_com_code j
+				  ON a.expAcct = j.code_id
+				 AND j.use_yn = 'Y'			
+				 AND j.code_grp_id = 'COST_ACCOUNT'	 
+				LEFT OUTER JOIN tb_dept k
+				  ON a.expDeptCd = k.dept_cd 
+				 AND k.use_yn = 'Y'
+				LEFT OUTER JOIN tb_user l
+				  ON a.chrgr = l.user_id 
+				 AND l.use_yn = 'Y'				 
+				WHERE rn BETWEEN #{start} AND #{end}
+		 ) c				
    	</select>
 	
    	<!-- 자산현황 -->
@@ -235,4 +273,90 @@
 		WHERE rn BETWEEN #{start} AND #{end}
    	</select>	
 	
+   	<!-- 자산이력 -->
+	<select id="selectAssetHistoryList" resultType="kr.co.trito.tams.web.asset.status.information.dto.AssetHistoryDto"> 
+		select b.*
+		from  (
+				select c.code_nm as reqTypeNm
+				     , date_format(b.req_dt, '%Y-%m-%d') as reqDt
+				     , lpad(a.req_no, '10', 0) as reqNo
+				     , d.code_nm as reqStusNm
+				     , e.user_nm as reqtrNm
+				     , f.code_nm as asetStusNm
+				     , g.dept_nm as bizDeptNm
+				     , h.dept_nm as deptNm
+				     , i.user_nm as chrgrNm
+				     , j.code_nm as asettype1Nm
+				     , k.code_nm as asettype2Nm
+				     , l.code_nm as asettype3Nm
+				from tb_aset_req a
+				inner join tb_req_mas b
+				  on a.req_no = b.req_no
+				inner join tb_com_code c
+				  on b.req_type = c.code_id
+				 and c.code_grp_id = 'REQ_TYPE'   
+				left outer join tb_com_code d
+				  on b.req_stus = d.code_id
+				  and d.use_yn = 'Y'    
+				  and d.code_grp_id = 'APPR_STATUS'  
+				left outer join tb_user e
+				  on b.reqtr = e.user_id  
+				left outer join tb_com_code f
+				  on a.aset_stus = f.code_id
+				 and f.use_yn = 'Y'
+				 and f.code_grp_id = 'AS_STATUS'    
+				left outer join tb_dept g
+				  on a.biz_dept_cd = g.dept_cd
+				 and g.use_yn = 'Y'
+				left outer join tb_dept h
+				  on a.dept_cd = h.dept_cd
+				 and h.use_yn = 'Y'     
+				left outer join tb_user i
+				  on a.chrgr = i.user_id
+				 and i.use_yn = 'Y' 
+				left outer join tb_com_code j
+				  on a.aset_type1 = j.code_id
+				 and j.use_yn = 'y'
+				 and j.code_grp_id = 'AS_CLASS'		
+				left outer join tb_com_code k
+				  on a.aset_type2 = k.code_id
+				 and k.use_yn = 'y'
+				 and k.code_grp_id = 'AS_CLASS' 
+				left outer join tb_com_code l
+				  on a.aset_type3 = l.code_id
+				 and l.use_yn = 'y'
+				 and l.code_grp_id = 'AS_CLASS'  
+				where aset_no = #{asetNo}
+			 ) b   		
+   	</select>
+   	
+   	<!-- 투자이력 -->
+	<select id="selectAssetInvestList" resultType="kr.co.trito.tams.web.asset.status.information.dto.AssetInvestDto"> 
+		select b.*
+		from (
+				select case
+						when a.new_yn = 'Y' then '신규'
+				        else '개조'
+				       end as newYn         
+				     , date_format(c.inv_dt, '%Y-%m-%d') as invDt
+				     , c.inv_no as invNo
+				     , c.inv_ttl as invTtl
+				     , b.po_no as poNo
+				     , b.mfgd_nm as mfgdNm
+				     , b.qty
+				     , d.user_nm as invReqrNm
+				     , e.user_nm as poChrgrNm
+				from tb_po_aset a
+				inner join tb_po b
+				  on a.po_no = b.po_no
+				inner join tb_inv_mas c
+				  on b.inv_no = c.inv_no
+				left outer join tb_user d
+				  on c.inv_reqr = d.user_id
+				left outer join tb_user e
+				  on b.po_chrgr = e.user_id          
+				where a.aset_no = #{asetNo} 
+		     ) b			
+   	</select>	   	
+   		
 </mapper>

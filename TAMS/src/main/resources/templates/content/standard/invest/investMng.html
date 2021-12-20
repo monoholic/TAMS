@@ -12,7 +12,7 @@
 	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="/css/jsgrid.css" />
 		<link rel="stylesheet" href="/css/theme.css" />
-		
+		<link rel="stylesheet" href="/css/style2.css" />
 	</th:block>
 	
 	<th:block layout:fragment="script">
@@ -171,28 +171,28 @@
 		    				   });
 					 	 },
 	                },
-	            	{ name: "invNo"   , type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.inv.mng.no}]]" },
-	                { name: "invTtl"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.mng.nm}]]"  },
-	                { name: "invDt"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.mng.dt}]]" },
-	                { name: "invQty"  , type: "text", width: 50, align: "left"  , title: "[[#{screen.text.inv.mng.qty}]]"  },
-	                { name: "invAmt"  , type: "text", width: 70, align: "left"  , title: "[[#{screen.text.inv.mng.amt}]]"  },
-	                { name: "actgYear", type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.inv.mng.financial.year}]]" },
-	                { name: "poNo"	  , type: "text", width: 70, align: "left"  , title: "[[#{screen.text.inv.mng.po.no}]]"  },
+	            	{ name: "invNo"   , type: "text", width: 70 , align: "center"  , title: "[[#{screen.text.inv.mng.no}]]" },
+	                { name: "invTtl"  , type: "text", width: 140, align: "left"  , title: "[[#{screen.text.inv.mng.nm}]]"  },
+	                { name: "invDt"   , type: "text", width: 70, align: "center"  , title: "[[#{screen.text.inv.mng.dt}]]" },
+	                { name: "invQty"  , type: "text", width: 50, align: "right"  , title: "[[#{screen.text.inv.mng.qty}]]"  },
+	                { name: "invAmt"  , type: "text", width: 80, align: "right"  , title: "[[#{screen.text.inv.mng.amt}]]"  },
+	                { name: "actgYear", type: "text", width: 70 , align: "center"  , title: "[[#{screen.text.inv.mng.financial.year}]]" },
+	                { name: "poNo"	  , type: "text", width: 70, align: "center"  , title: "[[#{screen.text.inv.mng.po.no}]]"  },
 	                { name: "mfgdNm"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.mng.item.nm}]]" 	   },
-	                { name: "qty"	  , type: "text", width: 50 , align: "left"  , title: "[[#{screen.text.inv.mng.po.qty}]]"  },
-	                { name: "poAmt"	  , type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.inv.mng.po.amt}]]"  },
+	                { name: "qty"	  , type: "text", width: 50 , align: "right"  , title: "[[#{screen.text.inv.mng.po.qty}]]"  },
+	                { name: "poAmt"	  , type: "text", width: 80 , align: "right"  , title: "[[#{screen.text.inv.mng.po.amt}]]"  },
 	                { name: "deptNm"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.mng.dept}]]" 	   },
-	                { name: "userNm"  , type: "text", width: 50, align: "left"  , title: "[[#{screen.text.inv.mng.charger}]]"   },
+	                { name: "userNm"  , type: "text", width: 70, align: "center"  , title: "[[#{screen.text.inv.mng.charger}]]"   },
 	                { name: "invReqr" , type: "text", width: 50, align: "left"  , title: "[[#{screen.text.inv.mng.charger.id}]]", visible: false },
-	                { name: "vendNm"  , type: "text", width: 60, align: "left"  , title: "[[#{screen.text.inv.mng.vendor.nm}]]"   },
-	                { name: "reqDt"   , type: "text", width: 60, align: "left"  , title: "[[#{screen.text.inv.mng.order.dt}]]"},
-	                { name: "dlvDt"   , type: "text", width: 50, align: "left"  , title: "[[#{screen.text.inv.mng.ship.dt}]]"   },
-	                { name: "poAsetYn", type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.mng.asset.regist.yn}]]"  },
-	                { name: "regDt"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.comm.regdt}]]"  },
+	                { name: "vendNm"  , type: "text", width: 80, align: "left"  , title: "[[#{screen.text.inv.mng.vendor.nm}]]"   },
+	                { name: "reqDt"   , type: "text", width: 70, align: "center"  , title: "[[#{screen.text.inv.mng.order.dt}]]"},
+	                { name: "dlvDt"   , type: "text", width: 70, align: "center"  , title: "[[#{screen.text.inv.mng.ship.dt}]]"   },
+	                { name: "poAsetYn", type: "text", width: 50, align: "center"  , title: "[[#{screen.text.inv.mng.asset.regist.yn}]]"  },
+	                { name: "regDt"   , type: "text", width: 70, align: "center"  , title: "[[#{screen.text.comm.regdt}]]"  },
 	            ]
 	        });
 	        
-		    var selectItem = function(item) {
+		    var selectItem = function(item) { 
 		    	
 		    	if(!selectedItems.includes(item)){
 			    	selectedItems.push(item);
@@ -585,27 +585,27 @@
 		<!-- search -->
 		<div class="srch_wrap single">
 			<table class="srch_table">
-			<colgroup>
-					<col width="10%"/>
-					<col width="20%"/>
-					<col width="15%"/>
-					<col width="20%"/>
-					<col width="15%"/>
-					<col width=""/>
-			</colgroup>
+				<colgroup>
+						<col width="6%"/>
+						<col width="10%"/>
+						<col width="6%"/>
+						<col width="10%"/>
+						<col width="58%"/>
+						<col width="10%"/>
+				</colgroup>
 				<tr>
 					<td>
-						<select id="searchType" onkeyup="enterkey()">
+						<select id="searchType">
 							<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
 						</select>
 					</td>
-					<td><input id="searchTxt" type="text" placeholder="검색어를 입력해주세요."></input></td>
+					<td><input id="searchTxt" type="text" placeholder="검색어를 입력해주세요." onkeyup="enterkey()"></input></td>
 					<td>
-						<select id="searchType2" onkeyup="enterkey()">
+						<select id="searchType2">
 							<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
 						</select>
 					</td>
-					<td><input id="searchTxt2" type="text" placeholder="검색어를 입력해주세요."></input></td>
+					<td><input id="searchTxt2" type="text" placeholder="검색어를 입력해주세요." onkeyup="enterkey()"></input></td>
 					<td class="search" colspan="3">
 						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
 						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>

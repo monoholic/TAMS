@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,6 +29,8 @@ import kr.co.trito.tams.comm.util.file.excel.ExcelConstant;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.asset.status.information.dto.AssetHistoryDto;
+import kr.co.trito.tams.web.asset.status.information.dto.AssetInvestDto;
 import kr.co.trito.tams.web.asset.status.information.dto.AssetStatusDto;
 import kr.co.trito.tams.web.asset.status.information.dto.AssetStatusExcelDto;
 import kr.co.trito.tams.web.asset.status.information.service.AssetInformationService;
@@ -50,7 +51,7 @@ public class AssetInfomationController {
 	
 	@PostMapping("assetStatus")
 	public ModelAndView assetStatusView(Authentication authentication, HttpServletRequest request) {
-	
+		
 		ModelAndView view = new ModelAndView();
 		view.addObject("menuId", request.getParameter("menuId"));
 		view.addObject("menuNm", request.getParameter("menuNm"));
@@ -61,8 +62,7 @@ public class AssetInfomationController {
 		view.setViewName("/content/asset/status/information/assetStatus");		
 		
 		return view;
-	}	
-	
+	}		
 	
 	@GetMapping(value="/assetStatusList")
 	@ResponseBody
@@ -78,6 +78,30 @@ public class AssetInfomationController {
 		return responseService.success(condition, list);
 	}	
 	
+	@GetMapping(value="/assetHistoryList")
+	@ResponseBody
+	@ApiOperation(value = "자산이력 조회", notes = "자산이력 조회")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> assetHistoryList(			
+				@ApiParam(value = "자산번호", required = true) @RequestParam(value="asetNo", required=true) String asetNo) {
+		
+		List<AssetHistoryDto> list =  assetInformationService.selectAssetHistoryList(asetNo);		
+		return responseService.success(list);
+	}		
+	
+	@GetMapping(value="/assetInvestList")
+	@ResponseBody
+	@ApiOperation(value = "투자이력 조회", notes = "투자이력 조회")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> assetInvestList(			
+				@ApiParam(value = "자산번호", required = true) @RequestParam(value="asetNo", required=true) String asetNo) {
+		
+		List<AssetInvestDto> list =  assetInformationService.selectAssetInvestList(asetNo);		
+		return responseService.success(list);
+	}	
+	
 	@PostMapping(value="/excelDownload")
 	@ApiOperation(value = "엑셀 다운로드", notes = "자산현황 리스트 엑셀 다운로드")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
@@ -88,7 +112,6 @@ public class AssetInfomationController {
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);			
 		condition.pageSetup(assetInformationService.selectAssetStatusCount(condition));		
 		List<AssetStatusExcelDto> list = assetInformationService.selectAssetStatusExcel(condition);				
-
 
 		List<List<String>> rows = new ArrayList<List<String>>();
 		
