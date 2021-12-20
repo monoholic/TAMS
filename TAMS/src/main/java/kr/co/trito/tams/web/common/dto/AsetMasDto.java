@@ -23,10 +23,16 @@ public class AsetMasDto {
 	private String asetNm;
 	@ApiModelProperty(value="공통코드(자산유형1)")
 	private String asetType1;
+	@ApiModelProperty(value="공통코드명(자산유형1)")
+	private String asetTypeNm1;
 	@ApiModelProperty(value="공통코드(자산유형2)")
 	private String asetType2;
+	@ApiModelProperty(value="공통코드명(자산유형1)")
+	private String asetTypeNm2;
 	@ApiModelProperty(value="공통코드(자산유형3)")
 	private String asetType3;
+	@ApiModelProperty(value="공통코드명(자산유형1)")
+	private String asetTypeNm3;
 	@ApiModelProperty(value="제조사")
 	private String mftco;
 	@ApiModelProperty(value="모델")

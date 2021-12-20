@@ -20,40 +20,32 @@ public class ReqMasService {
 	@Autowired
 	ReqMasMapper mapper;
 	
-	public int selectCountReqInqr(SearchCondition condition) {
-		return mapper.selectCountReqInqr(condition);
+	public int selectCountRequestList(SearchCondition condition) {
+		return mapper.selectCountRequestList(condition);
 	}
 	
-	public List<ReqMasDto> selectReqInqrList(SearchCondition condition){
-		return mapper.selectReqInqrList(condition);
+	public List<ReqMasDto> selectRequestList(SearchCondition condition){
+		return mapper.selectRequestList(condition);
 	}
 	
-	public List<ReqMasExcelDto> selectReqInqrExcelList(SearchCondition condition) {
-		return mapper.selectReqInqrExcelList(condition);
+	public List<ReqMasExcelDto> selectReqExcelList(SearchCondition condition) {
+		return mapper.selectReqExcelList(condition);
 	}
 	
-	public int reqInqrInsert(ReqMasDto dto) {
-		return mapper.reqInqrInsert(dto);				
+	public int requestListInsert(ReqMasDto dto) {
+		return mapper.requestListInsert(dto);				
 	}
 	
-	public int reqInqrUpdate(ReqMasDto dto) {
-		return mapper.reqInqrUpdate(dto);
-	}
-	
-	public int reqInqrDelete(ReqMasDto dto) {
-		return mapper.reqInqrDelete(dto);
-	}
-	
-	public List<CodeDto> selectReqTypeList(String email) {
-		return mapper.selectReqTypeList(email);
+	public int requestListDelete(ReqMasDto dto) {
+		return mapper.requestListDelete(dto);
 	}
 	
 	public List<CodeDto> selectReqStusList(String email) {
 		return mapper.selectReqStusList(email);
 	}
 	
-	public List<ReqMasDto> selectReqInqrPopup(SearchCondition condition) {
-		return mapper.selectReqInqrPopup(condition);
+	public List<ReqMasDto> selectRequestRegist(SearchCondition condition) {
+		return mapper.selectRequestRegist(condition);
 	}
 	
 	public List<AsetMasDto> selectAsetReqList(SearchCondition condition) {

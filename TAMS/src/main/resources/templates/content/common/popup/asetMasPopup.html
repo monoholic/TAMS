@@ -90,13 +90,13 @@
 	                    
 	                    currentPage = filter.pageIndex;
 	                    
-	                    
 	                    let url = "/common/popup/asetMasPopupList";
 						let reqType = 'GET';	
 						let data = {
             				"currentPage"  : filter.pageIndex,
             				"numOfRows"    : numOfRows,
-            				"searchText"   : $("#asetNo").val(),
+            				"asetNo"       : $("#asetNo").val(),
+            				"reqStus"      : $("#reqStus").text(),
             			    "fromDate"     : $("#fromDate").val(),
         				    "toDate"       : $("#toDate").val(),
         				    "asetType1"	   : $("#asetType1").val(),
@@ -153,17 +153,17 @@
 		    				   });
 					 	 } ,
 	                },
-	                { name: "asetNo"	, type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.no}]]"},
-					{ name: "asetType1"	, type: "text"   , width: 150 ,align: "center", title: "[[#{screen.popup.text.asset.type1}]]"},
-					{ name: "asetType2"	, type: "text"   , width: 150 ,align: "center", title: "[[#{screen.popup.text.asset.type2}]]"},
-					{ name: "asetType3"	, type: "text"   , width: 150 ,align: "center", title: "[[#{screen.popup.text.asset.type3}]]"},
-					{ name: "mftco"		, type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.manufacture}]]"	},
-					{ name: "model"		, type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.model}]]"	},
-					{ name: "sn"		, type: "number" , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.sn}]]"},
-					{ name: "bizDeptCd"	, type: "date"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.biz.dept}]]"},
-					{ name: "deptCd"	, type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.dept}]]"},
-					{ name: "chrgr"		, type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.charger}]]"},
-					{ name: "asetStusNm", type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.status}]]"}
+	                { name: "asetNo"	 , type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.no}]]"},
+					{ name: "asetTypeNm1", type: "text"   , width: 150 ,align: "center", title: "[[#{screen.popup.text.asset.type1}]]"},
+					{ name: "asetTypeNm2", type: "text"   , width: 150 ,align: "center", title: "[[#{screen.popup.text.asset.type2}]]"},
+					{ name: "asetTypeNm3", type: "text"   , width: 150 ,align: "center", title: "[[#{screen.popup.text.asset.type3}]]"},
+					{ name: "mftco"		 , type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.manufacture}]]"},
+					{ name: "model"		 , type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.model}]]"	},
+					{ name: "sn"		 , type: "number" , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.sn}]]"},
+					{ name: "bizDeptNm"	 , type: "date"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.biz.dept}]]"},
+					{ name: "deptNm"	 , type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.dept}]]"},
+					{ name: "chrgr"		 , type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.charger}]]"},
+					{ name: "asetStusNm" , type: "text"   , width: 100 ,align: "center", title: "[[#{screen.popup.text.asset.status}]]"}
 	            ]
 	        });
 	        
@@ -239,7 +239,6 @@
     	    	$('#asetType3 option:contains("[[#{screen.text.comm.choice}]]")').prop('selected', true);
     	    });
     	 	
-    	 	
     	  	//공통코드팝업(트리) 호출 
      	    $("#openDeptPopup1").on("click", function() { 
      	    // 팝업 호출 url
@@ -279,8 +278,8 @@
  	        	openPopup2(popId, url, args, param);
         	});
      	    
+     	    // 선택 버튼
      	    $("#btn_sel").on("click",function() {
-     		    //console.log(selectedItems);
      		  	returnResult(selectedItems);
      		  	
 			});
@@ -358,6 +357,7 @@
 
 	<!-- pop_alert -->
 	<div id="pop_wrap" >
+		<span id="reqStus" th:text="${param.reqStus}" style="display:none;"></span>
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
 			<!-- head -->
 			<h3>[[#{screen.popup.text.asset.screen.title}]]
@@ -419,16 +419,22 @@
 								<td></td>
 								<th style="text-align:center;">[[#{screen.popup.text.asset.biz.dept}]]</th>
 								<td>
-									<input type="hidden" id="deptCd1"/>
-									<input type="text" id="deptNm1" style="width:100%;" readonly/>
+									<div style='display:flex'>
+										<input type="hidden" id="deptCd1"/>
+										<input type="text" id="deptNm1" style="width:100%;" readonly/>
+										<a href="#" id="openDeptPopup1" style="margin-left: 10px;"><img title="[[#{screen.text.comm.search.user}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+									</div>	
 								</td>
-								<td style="text-align:center;"><a href="#" id="openDeptPopup1" ><img title="[[#{screen.text.comm.search.user}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a></td>
+								<td></td>
 								<th style="text-align:center;">[[#{screen.popup.text.asset.dept}]]</th>
 								<td>
-									<input type="hidden" id="deptCd2"/>
-									<input type="text" id="deptNm2" style="width:100%;" readonly/>
+									<div style='display:flex'>
+										<input type="hidden" id="deptCd2"/>
+										<input type="text" id="deptNm2" style="width:100%;" readonly/>
+										<a href="#" id="openDeptPopup2" style="margin-left: 10px;"><img title="[[#{screen.text.comm.search.user}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+									</div>
 								</td>
-								<td style="text-align:center;"><a href="#" id="openDeptPopup2" ><img title="[[#{screen.text.comm.search.user}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a></td>
+								<td></td>
 								<th style="text-align:center;">[[#{screen.popup.text.asset.charger}]]</th>
 								<td><input type="text" id="chrgr" onkeyup="enterkey()" style="width:100%;"></td>
 								<td></td>

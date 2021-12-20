@@ -317,13 +317,31 @@
 			   		SELECT aset_no 		    AS asetNo
 						 , aset_nm 		    AS asetNm
 						 , aset_type1 	    AS asetType1
+						 , ( SELECT code_nm
+						 	 FROM tb_com_code
+						 	 WHERE code_grp_id = "AS_CLASS"
+						 	 AND A.aset_type1 = code_id) AS asetTypeNm1
 						 , aset_type2 	    AS asetType2
+						 , ( SELECT code_nm
+						 	 FROM tb_com_code
+						 	 WHERE code_grp_id = "AS_CLASS"
+						 	 AND A.aset_type2 = code_id) AS asetTypeNm2
 						 , aset_type3 	    AS asetType3
+						 , ( SELECT code_nm
+						 	 FROM tb_com_code
+						 	 WHERE code_grp_id = "AS_CLASS"
+						 	 AND A.aset_type3 = code_id) AS asetTypeNm3
 						 , mftco 			AS mftco
 						 , model 			AS model
 						 , sn 			    AS sn
 						 , biz_dept_cd 	    AS bizDeptCd  
+						 , ( SELECT dept_nm
+						     FROM tb_dept
+                             WHERE biz_dept_cd = dept_cd ) AS bizDeptNm  
 						 , dept_cd 		    AS deptCd
+						 , ( SELECT dept_nm
+						     FROM tb_dept
+                             WHERE A.dept_cd = dept_cd ) AS deptNm
 						 , chrgr			AS chrgr
 						 , bsplc 			AS bsplc
 						 , buld 			AS buld
@@ -348,9 +366,9 @@
 						 , reg_dt 		    AS regDt 			
 						 , ROW_NUMBER() OVER(ORDER BY A.aset_no) AS rn
 					FROM tb_aset_mas A
-					WHERE 1=1 
-						<if test="params.searchText != null">
-							AND ( aset_no LIKE CONCAT('%', #{params.searchText}, '%'))
+					WHERE 1=1
+						<if test="params.asetNo != null">
+							AND ( aset_no LIKE CONCAT('%', #{params.asetNo}, '%'))
 					 	</if>
 				 		<if test="params.fromDate != null and (params.toDate !=null)">
 							AND ( reg_dt between #{params.fromDate} and #{params.toDate} )
@@ -371,7 +389,10 @@
 							AND ( dept_cd = #{params.deptCd2} )
 				 		</if>
 				 		<if test="params.chrgr != null">
-							AND ( chrgr = #{params.chrgr} )
+							AND ( chrgr LIKE CONCAT('%', #{params.chrgr}, '%'))
+				 		</if>
+				 		<if test="params.reqStus != null">
+				 			AND ( aset_stus = #{params.reqStus} )
 				 		</if>
 		) AS A
 		WHERE rn BETWEEN #{start} AND #{end}
@@ -405,7 +426,10 @@
 				AND ( dept_cd = #{params.deptCd2} )
 	 		</if>
 	 		<if test="params.chrgr != null">
-				AND ( chrgr = #{params.chrgr} )
+				AND ( chrgr LIKE CONCAT('%', #{params.chrgr}, '%'))
+	 		</if>
+	 		<if test="params.reqStus != null">
+	 			AND ( aset_stus = #{params.reqStus} )
 	 		</if>
 	</select>
 	

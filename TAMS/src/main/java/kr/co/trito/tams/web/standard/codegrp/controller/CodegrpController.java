@@ -41,7 +41,7 @@ public class CodegrpController {
 	@Autowired
 	CodegrpService codegrpService;
 	
-	/* 공통코드 그룹 관리 화면 */
+	/** 공통코드 그룹 관리 화면 */
 	@PostMapping("/codegrpMng")
 	public ModelAndView codegrpMngView(HttpServletRequest request) {
 		
@@ -54,7 +54,7 @@ public class CodegrpController {
 		return view;
 	}
 	
-	/* 공통코드 그룹 관리 화면 : 조회 */
+	/** 공통코드 그룹 관리 화면 : 조회 */
 	@GetMapping(value="/codegrpMng/codegrpList")
 	@ResponseBody
 	@ApiOperation(value = " 공통코드그룹관리 화면 : 조회", notes = " 공통코드 그룹 관리 화면 : 조회")
@@ -69,7 +69,7 @@ public class CodegrpController {
 		return responseService.success(condition, list);
 	}
 	
-	/* 공통코드 그룹 관리 화면 : 등록 및 수정 */ 
+	/** 공통코드 그룹 관리 화면 : 등록 및 수정 */ 
 	@GetMapping(value="/codegrpMng/codegrpMerge")
 	@ResponseBody
 	@ApiOperation(value = "공통코드그룹관리 화면 : 등록 및 수정", notes = "공통코드 그룹 관리 화면 : 등록 및 수정")
@@ -93,7 +93,7 @@ public class CodegrpController {
 		return code;
 	}
 	
-	/* 공통코드 그룹 화면 : 삭제 */
+	/** 공통코드 그룹 화면 : 삭제 */
 	@GetMapping(value="/codegrpMng/codegrpDelete")
 	@ResponseBody
 	@ApiOperation(value = "공통코드그룹관리 화면 : 삭제", notes = "공통코드 그룹 화면 : 삭제")
