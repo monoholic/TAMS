@@ -456,4 +456,4 @@ input#userPw{
 /*추가 by tommy*/
 #container-pop{position:relative;background:#f4f5f7;padding:10px 10px 15px 10px;}
 #container-pop #contents{width:auto;margin:0 0 0 0px;padding:0 20px 15px 20px;border:0px solid #d6d6d6;border-radius:0px;background:#fff;}
-
+#container-pop h3 .pop_close{display:block;position:absolute;top:10px;right:7px;width:18px;height:18px;background:url(../images/common/btn_pop_close.gif) no-repeat;text-indent:-1000em;}

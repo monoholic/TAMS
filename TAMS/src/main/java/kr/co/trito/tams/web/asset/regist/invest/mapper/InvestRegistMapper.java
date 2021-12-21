@@ -23,7 +23,7 @@ public interface InvestRegistMapper {
 	
 	public List<InvestExcelDto> selectInvInqrExcelList(SearchCondition condition);	
 	
-	public List<ComCodeDto> selectAsetTypeInfo(SearchCondition condition);
+	public List<ComCodeDto> selectAsetTypeInfo(String asetType);
 	
 	public int selectCountInvest(SearchCondition condition);
 	
@@ -39,7 +39,7 @@ public interface InvestRegistMapper {
 	
 	public int saveAsetDtlReq(Map<String, Object> param);
 	
-	public int selectMaxAsetNo(String poNo);
+	public int selectMaxAsetNo();
 	
 	public int deletePoInfo(InvestDto invs);
 }
