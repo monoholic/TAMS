@@ -236,8 +236,16 @@
 			
 		  //선택 버튼클릭시 
 		  function selectItem(obj) {
-			 console.log(obj);
-			  opener.setResult(obj); //부모창에 구현
+			  
+			  console.log(obj);
+			  
+			  if(typeof(opener.setResult) == "undefined") {
+				  $($("#userId").text(), opener.document).val(obj.userId);
+				  $($("#userNm").text(), opener.document).val(obj.userNm);				  
+			  }else{
+				  opener.setResult(obj); //부모창에 구현	  
+			  }
+			  
 			  window.close();
 		  }
 			
@@ -265,6 +273,10 @@
 
 	<!-- pop_alert -->
 	<div id="pop_wrap" >
+		
+		<span id="userId" th:text="${param.userId}" style="display:none;"></span>
+		<span id="userNm" th:text="${param.userNm}" style="display:none;"></span>	
+	
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
 					<!-- head -->
 					<h3>[[#{screen.popup.text.user.screen.title}]]
