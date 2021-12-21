@@ -138,12 +138,7 @@
 	   		       	
 					$.commRequest("/asset/regist/invest/saveNewAset", "POST", JSON.stringify(data))
 						.then((res) => {
-							console.log(res);
-							if(res == '202'){
-								alert("[[#{screen.info.status.save.success}]]");
-							}else{
-								alert("[[#{screen.info.status.error.occur}]]");
-							}
+							alert("[[#{screen.info.status.save.success}]]");
 						}).catch((error) => {
 							console.log("[[#{screen.info.status.error.search}]]");
 						});    					
