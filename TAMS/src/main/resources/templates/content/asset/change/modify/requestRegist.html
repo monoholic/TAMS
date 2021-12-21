@@ -268,7 +268,7 @@
 			console.log('--------------- jsGridLoad ------------------');
 	 		
 	 		 $("#jsGrid").jsGrid({
-		        	height: "400",
+		        	height: "550",
 	                width: "100%",
 	                filtering: false,
 	                editing: true,
@@ -290,7 +290,7 @@
 	                pageButtonCount: 5,
 	                loadonce: true,
 	                updateOnResize: true,
-		            /* rowClick: function(args) {
+		            rowClick: function(args) {
 		            	var target = args.event.target;
 		            	
 						if(target instanceof HTMLTableCellElement) {
@@ -302,7 +302,7 @@
 							  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
 							});
 						}
-		            }, */
+		            },
 		            pagerContainerClass: "paginate",
 		            deleteConfirm: function(item) {
 		                return "\""+item.menuNm+"("+menuId+")"+"\""+ '[[#{screen.info.status.delete.yn}]]';
@@ -410,7 +410,7 @@
 							itemTemplate : function(value, item) {
 							let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
 							
-							var chrgrStr = '<input type="text" style="width:100%" readonly value='+item.chrgr+'>'
+							var chrgrStr = '<input type="text" style="width:100%" readonly value='+value+'>'
 							
 		                    var str = $("<a href='#' id='openUserPopup'><img title='의뢰자 검색' class='ico_search' alt='Search' src='/images/common/ico_search.png'></a></div>")
 		                    .click(function(e) {
@@ -511,54 +511,38 @@
 		</div>
 		
 		<div class="srch_wrap single">
-			<table class="srch_table" style="margin-top: 15px">
+			<input id="req_no" type="hidden" th:value="${reqNo}">
+			<table class="srch_table">
 				<colgroup>
-					<col style="width:5%"/>
-					<col style="width:10%"/>
-					<col style="width:15%"/>
-					<col style="width:5%"/>
-					<col style="width:10%"/>
-					<col style="width:15%"/>
-					<col style="width:5%"/>
-					<col style="width:10%"/>
-					<col style="width:15%"/>
-					<col style="width:5%"/>
+					<col width="10%"/>
+					<col width="20%"/>
+					<col width="15%"/>
+					<col width="20%"/>
+					<col width="15%"/>
+					<col width=""/>
 				</colgroup>
 				<tr>
-					<td><input id="req_no" type="hidden" th:value="${reqNo}"></td>
-						<th style="text-align:center;">[[#{screen.text.modify.type}]]</th>
-						<td><input type="text" id="reqType" style="width:100%;" readonly></td>
-					<td></td>
-						<th style="text-align:center;">[[#{screen.text.modify.no}]]</th>
-						<td><input type="text" id="reqNo" style="width:100%;" readonly></td>
-					<td></td> 
-						<th style="text-align:center;">[[#{screen.text.modify.dt}]]</th>
-						<td><input type="date" id="reqDt" style="width:100%;" readonly></td>
-					<td></td>
+					
+					<th>[[#{screen.text.modify.type}]]</th>
+					<td><input type="text" id="reqType" style="width:100%;" readonly></td>
+					<th>[[#{screen.text.modify.no}]]</th>
+					<td><input type="text" id="reqNo" style="width:100%;" readonly></td>
+					<th >[[#{screen.text.modify.dt}]]</th>
+					<td><input type="date" id="reqDt" style="width:100%;" readonly></td>
 				</tr>
 				<tr>
-					<td></td>
-					<th style="text-align:center;">[[#{screen.text.modify.dept}]]</th>
-					<td>
-						<input type="text" style=" width:100%" id="deptNm" readonly/>
-					</td>
-					<td></td>
-					<th style="text-align:center;">[[#{screen.text.modify.reqtr}]]</th>
-					<td>
-						<input type="text" style="width:100%" id="reqtr" readonly/>
-					</td>
-					<td></td>
-					<th style="text-align:center;">[[#{screen.text.modify.nm}]]</th>
-						<td><input type="text" id="reqNm" style="width:100%;"></td>
-					<td></td>
+					<th>[[#{screen.text.modify.dept}]]</th>
+					<td><input type="text" style=" width:100%" id="deptNm" readonly/></td>
+					<th>[[#{screen.text.modify.reqtr}]]</th>
+					<td><input type="text" style="width:100%" id="reqtr" readonly/></td>
+					<th>[[#{screen.text.modify.nm}]]</th>
+					<td><input type="text" id="reqNm" style="width:100%;"></td>
 				</tr>
 				<tr>
-					<td></td>
-					<th style="text-align:center;">[[#{screen.text.modify.rsn}]]</th>
-					<td colspan="1"><input type="text" id="reqRsn" style="width:100%;"/></td>
-					<td></td>
+					<th>[[#{screen.text.modify.rsn}]]</th>
+					<td><input type="text" id="reqRsn" style="width:100%;"/></td>
+					<td colspan="2"></td>
 				</tr>
-				<tr><td></td></tr>
 			</table>
 		</div><br>
 		

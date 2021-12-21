@@ -187,7 +187,7 @@ public class AssetModifyController {
 	/** 엑셀 다운로드용 데이터 생성 */  
 	private Map<String, Object> makeExcelData(List<ReqMasExcelDto> list) {
 		Map<String, Object> map = new HashMap<>();
-		map.put(ExcelConstant.FILE_NAME, "자산의뢰 리스트");
+		map.put(ExcelConstant.FILE_NAME, "수정의뢰목록 리스트");
 		map.put(ExcelConstant.HEAD, Arrays.asList("의뢰번호", "의뢰구분", "의뢰명", "의뢰자 부서", "의뢰자", "의뢰일자", "의뢰상태", "자산 수"));
 		
 		ObjectMapper objectMapper = new ObjectMapper();

@@ -128,7 +128,7 @@
 		 	getCommCode("#bbsGrpId", "BBS", "1", "");
 	    	
 	        $("#jsGrid").jsGrid({
-	        	height: "600",
+	        	height: "400",
                 width: "100%",
                 filtering: false,
                 editing: true,
@@ -235,22 +235,21 @@
 		    				   });
 					 	 } ,
 	                },
-	                { name: "bbsId", type: "number", align: "center", width: 25,  title: "[[#{screen.text.bbs.id}]]" },
-	                { name: "userId", type: "text", align: "center", width: 25, readOnly:true , title: "[[#{screen.text.comm.user.id}]]" },
-	                { name: "bbsGrpId", type: "text", align: "left", width: 35, readOnly:true , title: "[[#{screen.text.bbs.group}]]" },
-	                { name: "bbsDp", type: "text", align: "right", width: 20, readOnly:true , title: "[[#{screen.text.bbs.level}]]" },
-	                { name: "bbsTtl", type: "number", align: "left", width: 110, title: "[[#{screen.text.bbs.title}]]" },
-	                { name: "viewCnt", type: "number", align: "center", width: 15, title: "[[#{screen.text.bbs.view.cnt}]]" },
-	                { name: "delYn", type: "select", width: 20 ,align: "center"
+	                { name:"bbsId",    type:"number", align:"center", width:25,  title:"[[#{screen.text.bbs.id}]]"},
+	                { name:"bbsTtl",   type:"number", align:"left",   width:150, title:"[[#{screen.text.bbs.title}]]"},
+	                { name:"bbsGrpId", type:"text",   align:"left",   width:35,  readOnly:true, title:"[[#{screen.text.bbs.group}]]"},
+	                { name:"bbsDp",    type:"text",   align:"center", width:15,  readOnly:true, title:"[[#{screen.text.bbs.level}]]"},
+	                { name:"viewCnt",  type:"number", align:"center", width:20,  title:"[[#{screen.text.bbs.view.cnt}]]"},
+	                { name:"delYn",    type:"select", align:"center", width:20
 	                	   , items: [
 			                    { Name: "[[#{screen.text.comm.delete.yes}]]",  Id: "Y"},
 			                    { Name: "[[#{screen.text.comm.delete.no}]]", Id: "N"},
 			                  ],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "[[#{screen.text.bbs.delete.yn}]]" },
-	                { name: "updr", type: "text", align: "left", width: 20, title: "[[#{screen.text.comm.updr}]]" },
-	                { name: "upDt", type: "text", align: "center", width: 30, title: "[[#{screen.text.comm.updt}]]" },
-	                { name: "regr", type: "text", align: "left", width: 20, title: "[[#{screen.text.comm.regr}]]" },
-	                { name: "regDt", type: "text", align: "center", width: 30, title: "[[#{screen.text.comm.regdt}]]" },
+	                  valueField: "Id", textField: "Name", autoSelect:true, selectedIndex:-1, title:"[[#{screen.text.bbs.delete.yn}]]"},
+	                { name:"updr",  type:"text", align:"center", width:20, title:"[[#{screen.text.comm.updr}]]"},
+	                { name:"upDt",  type:"text", align:"center", width:30, title:"[[#{screen.text.comm.updt}]]"},
+	                { name:"regr",  type:"text", align:"center", width:20, title:"[[#{screen.text.comm.regr}]]"},
+	                { name:"regDt", type:"text", align:"center", width:30, title:"[[#{screen.text.comm.regdt}]]"},
 	            ]
 	        });
 	        
@@ -694,34 +693,23 @@
 		<!-- search -->
 		<div class="srch_wrap single">
 			<table class="srch_table">
-			<colgroup>
-					<col width="10%"/>
-					<col width="20%"/>
-					<col width="15%"/>
-					<col width="20%"/>
-					<col width="15%"/>
-					<col width="15%"/>
-			</colgroup>
 				<tr>
 					<td>
-						<select id="searchOption" style="width:90%;">
-							<option value="">[[#{screen.text.comm.select.search.condition}]]</option>
-							<option value="bbs_grp_id">[[#{screen.text.bbs.group}]]</option>
-							<option value="bbs_ttl">[[#{screen.text.bbs.title}]]</option>
-						</select>
-					</td>	
-					<td>
-						<input id="searchText" type="text" onkeyup="enterkey()" style="width:90%; margin:10px;">
+						<div style="display: flex; align-items: stretch;">
+							<select id="searchOption">
+								<option value="">[[#{screen.text.comm.select.search.condition}]]</option>
+								<option value="bbs_grp_id">[[#{screen.text.bbs.group}]]</option>
+								<option value="bbs_ttl">[[#{screen.text.bbs.title}]]</option>
+							</select>
+							<input id="searchText" type="text" onkeyup="enterkey()" placeholder="검색어를 입력해주세요." style="margin-left: 5px;">
+							<select id="delYnOption" style="margin-left: 5px;">
+								<option value="">[[#{screen.text.bbs.delete.sel}]]</option>
+								<option value="Y">[[#{screen.text.comm.delete.yes}]]</option>
+								<option value="N">[[#{screen.text.comm.delete.no}]]</option>
+							</select>
+						</div>
 					</td>
-					
-					<td>
-						<select id="delYnOption" style="width:40%;">
-							<option value="">[[#{screen.text.bbs.delete.yn}]]</option>
-							<option value="Y">[[#{screen.text.comm.delete.yes}]]</option>
-							<option value="N">[[#{screen.text.comm.delete.no}]]</option>
-						</select>
-					</td>
-					
+					<td></td>
 					<td class="search" colspan="3">
 						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
 						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>

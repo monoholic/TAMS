@@ -616,6 +616,7 @@
 					$form.attr('action', url); 
 					$form.attr('method', 'post'); 
 					$form.attr('target', '_self'); 
+					
 				var searchTextStr 	= $('<input type="hidden" value="'+$("#searchText").val()+'" name="searchText">'); 
 					$form.append(searchTextStr);
 					$form.appendTo('body'); 
@@ -635,34 +636,31 @@
 		<!-- search -->
 		<div class="srch_wrap single">
 			<table class="srch_table">
-			<colgroup>
+				<colgroup>
 					<col width="15%"/>
-					<col width="20%"/>
 					<col width="15%"/>
-					<col width="20%"/>
-					<col width="15%"/>
-					<col width=""/>
-			</colgroup>
+					<col width="70%"/>
+				</colgroup>
 				<tr>
-					<td><label for="searchText" class="menu_label">사용자 명</label></td>
-					<td><input id="searchText" type="text" style="width:100%; margin:10px;" onkeyup="enterkey()"></td>
-					<td class="search" colspan="3">
-					<!-- [button search] -->
-					<header th:replace="layout/fragments/button_srch :: buttonSrchFragment"></header>
+					<td>
+						<div style="display: flex; align-items: stretch;">
+							<label for="searchText" class="menu_label" style="margin-top: 3px;">[[#{screen.text.user.nm}]]</label>
+							<input id="searchText" type="text" onkeyup="enterkey()" placeholder="검색어를 입력해주세요.">
+						</div>
+					</td>
+					<td class="search" colspan="4">
+						<!-- [button search] -->
+						<header th:replace="layout/fragments/button_srch :: buttonSrchFragment"></header>
 					</td>
 				</tr>
 			</table>
 		</div>
-		<!-- //search -->
+		
 		<div class="list_head">
-				<div class="result">Totals : 0,000</div>
-				
-				<!-- [button cud ] -->
-				<header th:replace="layout/fragments/button_cud :: buttonCudFragment"></header>
-				
+			<div class="result">Totals : 0,000</div>
+			<!-- [button cud ] -->
+			<header th:replace="layout/fragments/button_cud :: buttonCudFragment"></header>
 		</div>
-		<!-- list -->
-		<!-- //search -->
 
 		<!-- list -->
 		<div id="jsGrid"></div>
@@ -678,83 +676,80 @@
 	
 		<!-- detail popup -->
 		<div id="detailForm" class="list_head" style="position:absoulte;z-index:1;display:none;">
-		  <div id="container">
-			  
-		        <!-- list_head -->
+			<div id="container">
 				<div class="list_head">
 					<h6><span id="head_title" ></span></h6>
 					<!-- list_button -->
 					<div class="button">
-						<a class="btn_list save_btn">저장</a>
-						<a class="btn_list close_btn">닫기</a>
+						<a class="btn_list save_btn">[[#{screen.text.comm.save}]]</a>
+						<a class="btn_list close_btn">[[#{screen.text.comm.close}]]</a>
 					</div>
 					<!-- list_button -->
 				</div>
 				<!-- //list_head -->
+				
 				<!-- detail_table -->
-					<table class="detail_table ">
-						<colgroup>
+				<table class="detail_table ">
+					<colgroup>
 						<col style="width:20%" />
 						<col style="width:30%" />
 						<col style="width:20%" />
 						<col style="width:30%" />
-						<col />
-						</colgroup>
-						<tr>
-							<th>사용자ID</th>
-							<td><input type="text" id="userId" style="width:100%;"/></td>
-							<th>사용자명</th>
-							<td><input type="text" id="userNm" style="width:100%;"/></td>
-						</tr>
-						<tr>
-							<th>비밀번호</th>
-							<td><input type="password" id="userPw" style="width:100%;"/></td>
-							
-							<th>비밀번호 확인</th>
-							<td><input type="password" id="passRe" style="width:100%;"/></td>
-						</tr>
-						<tr>
-							<th>직급</th>
-							<td ><select id="clpstNm" style="width:100%;">
-									<option value="">선택</option>
-								</select>
-							</td>
-							<th>부서코드</th>
-							<td>
-								<div class="form_wrap_ico">
-									<input type="text" id="deptNm" style="width:40%;" readOnly/>&nbsp;<input type="text" id="deptCd" style="width:50%;" readOnly />
-									<a href="#" id="openModalPopup" ><img title="[[#{screen.text.user.img.dept}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<th>이메일</th>
-							<td><input type="text" id="email" style="width:100%;"/></td>
-							<th>전화번호</th>
-							<td><input type="text" id="telno" style="width:100%;"/></td>
-						</tr>
-						<tr>
-							<th>성별</th>
-							<td><select id="sex" style="width:100%;">
-									<option value="M">[[#{screen.text.user.male}]]</option>
-									<option value="F">[[#{screen.text.user.female}]]</option>
-								</select>
-							</td>
-							<th>사용여부</th>
-							<td ><select id="useYn" style="width:100%;">
-									<option value="Y">[[#{screen.text.user.use}]]</option>
-									<option value="N">[[#{screen.text.user.unused}]]</option>
-								</select>
-							</td>
-						</tr>
-					</table>
+					</colgroup>
+					<tr>
+						<th>[[#{screen.text.user.id}]]</th>
+						<td><input type="text" id="userId" style="width:100%;"/></td>
+						<th>[[#{screen.text.user.nm}]]</th>
+						<td><input type="text" id="userNm" style="width:100%;"/></td>
+					</tr>
+					<tr>
+						<th>[[#{screen.text.user.pw}]]</th>
+						<td><input type="password" id="userPw" style="width:100%;"/></td>
+						
+						<th>[[#{screen.text.user.pw.check}]]</th>
+						<td><input type="password" id="passRe" style="width:100%;"/></td>
+					</tr>
+					<tr>
+						<th>[[#{screen.text.user.clpst}]]</th>
+						<td>
+							<select id="clpstNm" style="width:100%;">
+								<option value="">[[#{screen.text.comm.choice}]]</option>
+							</select>
+						</td>
+						<th>[[#{screen.text.user.dept}]]</th>
+						<td>
+							<div class="form_wrap_ico">
+								<input type="text" id="deptNm" style="width:40%;" readOnly/>&nbsp;<input type="text" id="deptCd" style="width:50%;" readOnly />
+								<a href="#" id="openModalPopup" ><img title="[[#{screen.text.user.img.dept}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th>[[#{screen.text.user.email}]]</th>
+						<td><input type="text" id="email" style="width:100%;"/></td>
+						<th>[[#{screen.text.user.telno}]]</th>
+						<td><input type="text" id="telno" style="width:100%;"/></td>
+					</tr>
+					<tr>
+						<th>[[#{screen.text.user.sex}]]</th>
+						<td>
+							<select id="sex" style="width:100%;">
+								<option value="M">[[#{screen.text.user.male}]]</option>
+								<option value="F">[[#{screen.text.user.female}]]</option>
+							</select>
+						</td>
+						<th>[[#{screen.text.user.useyn}]]</th>
+						<td >
+							<select id="useYn" style="width:100%;">
+								<option value="Y">[[#{screen.text.user.use}]]</option>
+								<option value="N">[[#{screen.text.user.unused}]]</option>
+							</select>
+						</td>
+					</tr>
+				</table>
 				<!-- //detail_table -->
-				 
 	     	</div>
      	</div>
-     	
      	<div id="excelDownTarget"></div>
-	
 	</div>
-	
 </html>

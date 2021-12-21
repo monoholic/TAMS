@@ -279,20 +279,19 @@
 		<!-- search -->
 		<div class="srch_wrap single">
 			<table class="srch_table">
-			<colgroup>
-					<col width="10%"/>
-					<col width="20%"/>
+				<colgroup>
 					<col width="15%"/>
-					<col width="20%"/>
 					<col width="15%"/>
-					<col width=""/>
-			</colgroup>
+					<col width="70%"/>
+				</colgroup>
 				<tr>
-					<td><label for="searchText" class="menu_label">[[#{screen.text.role.menu.auth.group}]]</label></td>
 					<td>
-						<select id="searchType" onkeyup="enterkey()">
-							<option value="none">[[#{screen.text.comm.select.auth.group}]]</option>
-						</select>
+						<div style="display: flex; align-items: stretch;">
+							<label for="searchText" class="menu_label" style="margin-top: 3px;">[[#{screen.text.role.menu.auth.group}]]</label>
+							<select id="searchType" onkeyup="enterkey()">
+								<option value="none">[[#{screen.text.comm.select.auth.group}]]</option>
+							</select>
+						</div>
 					</td>
 					<td class="search" colspan="3">
 						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>

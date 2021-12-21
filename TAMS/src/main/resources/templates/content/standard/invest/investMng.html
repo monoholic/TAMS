@@ -572,27 +572,19 @@
 		<!-- search -->
 		<div class="srch_wrap single">
 			<table class="srch_table">
-				<colgroup>
-						<col width="6%"/>
-						<col width="10%"/>
-						<col width="6%"/>
-						<col width="10%"/>
-						<col width="58%"/>
-						<col width="10%"/>
-				</colgroup>
 				<tr>
 					<td>
-						<select id="searchType">
-							<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
-						</select>
+						<div style="display: flex; align-items: stretch;">
+							<select id="searchType">
+								<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
+							</select>
+							<input id="searchTxt" type="text" placeholder="검색어를 입력해주세요." onkeyup="enterkey()" style="margin-left: 5px;">
+							<select id="searchType2" style="margin-left: 20px;">
+								<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
+							</select>
+							<input id="searchTxt2" type="text" placeholder="검색어를 입력해주세요." onkeyup="enterkey()" style="margin-left: 5px;">
+						</div>
 					</td>
-					<td><input id="searchTxt" type="text" placeholder="검색어를 입력해주세요." onkeyup="enterkey()"></input></td>
-					<td>
-						<select id="searchType2">
-							<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
-						</select>
-					</td>
-					<td><input id="searchTxt2" type="text" placeholder="검색어를 입력해주세요." onkeyup="enterkey()"></input></td>
 					<td class="search" colspan="3">
 						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
 						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>

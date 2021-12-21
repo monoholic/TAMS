@@ -184,15 +184,15 @@
 	            	                unselectItem(item);
 	            	            });  
 	            	            selectedItems = [];
-	            	        }
-	    				   });
-				 	 } ,
+	            	        	}
+	    					});
+				 		} ,
                 	},
-                	{name : "roleId", index:"role_id", type: "disabled", width: 40, title: "[[#{screen.text.role.auth.code}]]"},
-                	{name : "roleNm", index:"role_nm", type: "text", width: 70, title: "[[#{screen.text.role.auth.nm}]]"},
-                	{name : "roleDesc", index:"role_desc", type: "text", width: 150, title: "[[#{screen.text.role.desc}]]"},
-                	{name : "useYn", index:"use_yn", type: "text", width: 40, title: "[[#{screen.text.role.useyn}]]", sorting: false},
-                	{name : "regDt", index:"reg_dt", type: "text", width: 70, title: "[[#{screen.text.comm.regdt}]]"},
+                	{name : "roleId",   index:"role_id",   type: "disabled", width: 40,  align: "left",   title: "[[#{screen.text.role.auth.code}]]"},
+                	{name : "roleNm",   index:"role_nm",   type: "text",     width: 70,  align: "left",   title: "[[#{screen.text.role.auth.nm}]]"},
+                	{name : "roleDesc", index:"role_desc", type: "text",     width: 200, align: "left",   title: "[[#{screen.text.role.desc}]]"},
+                	{name : "useYn",    index:"use_yn",    type: "text",     width: 15,  align: "center", title: "[[#{screen.text.role.useyn}]]", sorting: false},
+                	{name : "regDt",    index:"reg_dt",    type: "text",     width: 30,  align: "center", title: "[[#{screen.text.comm.regdt}]]"},
                 ]
             });
         
@@ -405,24 +405,18 @@
 		<!-- search -->
 		<div class="srch_wrap single">
 			<table class="srch_table">
-			<colgroup>
-					<col width="10%"/>
-					<col width="20%"/>
-					<col width="15%"/>
-					<col width="20%"/>
-					<col width="15%"/>
-					<col width=""/>
-			</colgroup>
 				<tr>
 					<td>
-						<select id="searchType">
-							<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
-							<option value="role_id">[[#{screen.text.role.auth.code}]]</option>
-							<option value="role_nm">[[#{screen.text.role.auth.nm}]]</option>
-						</select>
+						<div style="display: flex; align-items: stretch;">
+							<select id="searchType">
+								<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
+								<option value="role_id">[[#{screen.text.role.auth.code}]]</option>
+								<option value="role_nm">[[#{screen.text.role.auth.nm}]]</option>
+							</select>
+							<input id="searchText" type="text" placeholder="검색어를 입력해주세요." onkeyup="enterkey()" style="margin-left: 5px;">
+						</div>
 					</td>
-					<td><input id="searchText" type="text" style="width:100%; margin:10px;" onkeyup="enterkey()"></td>
-					<td class="search" colspan="3">
+					<td class="search" colspan="4">
 						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
 						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 					</td>

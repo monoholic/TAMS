@@ -182,34 +182,34 @@
 		            	                this.checked = false;      
 		            	                unselectItem(item);
 		            	            });  
-		            	            selectedItems = [];
-		            	        }
-		    				   });
-					 	 } ,
-	                	},
-	                { name: "menuId", type: "number", width: 40, readOnly:true , title: "[[#{screen.text.menu.id}]]" },
-	                { name: "menuNm", type: "text", width: 100 ,align: "left"  , title: "[[#{screen.text.role.auth.nm}]]" },
-	                { name: "url", type: "text", width: 120 ,align: "left"  , title: "[[#{screen.text.role.auth.url}]]" },
-	                { name: "menuDesc", type: "text", width: 120 ,align: "left"  , title: "[[#{screen.text.menu.desc}]]" },
-	                { name: "uppMenuId", type: "number", width: 40   , title: "[[#{screen.text.menu.upper.id}]]" },
-	                { name: "lvl", type: "number", width: 20  , title: "[[#{screen.text.menu.level}]]" },
-	                { name: "useYn", type: "select", width: 40 ,align: "center"
-	                	   , items: [
-			                    { Name: "[[#{screen.text.comm.ues}]]",  Id: "Y"},
-			                    { Name: "[[#{screen.text.comm.unuesd}]]", Id: "N"},
-			                  ],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "[[#{screen.text.comm.useyn}]]" }
+		            	        	selectedItems = [];
+		            	    	}
+		    				});
+						} ,
+	                },
+	                { name: "menuId",    type: "number", width: 25,  align: "center", readOnly:true , title: "[[#{screen.text.menu.id}]]"},
+	                { name: "menuNm",    type: "text",   width: 100, align: "left",   title: "[[#{screen.text.menu.nm}]]"},
+	                { name: "url",       type: "text",   width: 120, align: "left",   title: "[[#{screen.text.menu.url}]]"},
+	                { name: "menuDesc",  type: "text",   width: 120, align: "left",   title: "[[#{screen.text.menu.desc}]]"},
+	                { name: "uppMenuId", type: "number", width: 25,  align: "center", title: "[[#{screen.text.menu.upper.id}]]"},
+	                { name: "lvl",       type: "number", width: 20,  align: "center", title: "[[#{screen.text.menu.level}]]"},
+	                { name: "useYn",     type: "select", width: 40,  align: "center"
+                		, items: [
+		                	{ Name: "[[#{screen.text.comm.ues}]]",  Id: "Y"},
+		                	{ Name: "[[#{screen.text.comm.unuesd}]]", Id: "N"},
+		            	],
+	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1, title: "[[#{screen.text.comm.useyn}]]"}
 	                ,{ name: "popupYn", type: "select", width: 40 ,align: "center"
-	                	   , items: [
-			                    { Name: "[[#{screen.text.comm.ues}]]",  Id: "Y"},
-			                    { Name: "[[#{screen.text.comm.unuesd}]]", Id: "N"},
-			                  ],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "[[#{screen.text.menu.ispopup}]]" }
-	                ,{ name: "sortOdr", type: "number", align: "center", width: 40, title: "[[#{screen.text.menu.sort}]]" }
-	                ,{ name: "regr", type: "text", width: 60, align: "center"  , readOnly:true, title: "[[#{screen.text.comm.regr}]]" }
-	                ,{ name: "regDt", type: "date", width: 80, align: "center", readOnly:true  , title: "[[#{screen.text.comm.regdt}]]" }
-	                ,{ name: "updr", type: "text", width: 60, align: "center", readOnly:true  , title: "[[#{screen.text.comm.updr}]]" }
-	                ,{ name: "upDt", type: "date", width: 80, align: "center", readOnly:true  , title: "[[#{screen.text.comm.updt}]]" }
+	                	, items: [
+			            	{ Name: "[[#{screen.text.comm.ues}]]",  Id: "Y"},
+			            	{ Name: "[[#{screen.text.comm.unuesd}]]", Id: "N"},
+			        	],
+	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "[[#{screen.text.menu.ispopup}]]"},
+	                { name: "sortOdr", type: "number", width: 20, align: "center", title: "[[#{screen.text.menu.sort}]]"},
+	                { name: "regr",    type: "text",   width: 35, align: "center", readOnly:true, title: "[[#{screen.text.comm.regr}]]"},
+	                { name: "regDt",   type: "date",   width: 45, align: "center", readOnly:true, title: "[[#{screen.text.comm.regdt}]]"},
+	                { name: "updr",    type: "text",   width: 35, align: "center", readOnly:true, title: "[[#{screen.text.comm.updr}]]"},
+	                { name: "upDt",    type: "date",   width: 45, align: "center", readOnly:true, title: "[[#{screen.text.comm.updt}]]"}
 	            ]
 	        });
 	        
@@ -435,20 +435,21 @@
 		<!-- search -->
 		<div class="srch_wrap single">
 			<table class="srch_table">
-			<colgroup>
-					<col width="10%"/>
-					<col width="20%"/>
+				<colgroup>
 					<col width="15%"/>
-					<col width="20%"/>
 					<col width="15%"/>
-					<col width=""/>
-			</colgroup>
+					<col width="70%"/>
+				</colgroup>
 				<tr>
-					<td><label for="searchText" class="menu_label">[[#{screen.text.role.menu.nm}]]</label></td>
-					<td><input id="searchText" type="text" style="width:100%; margin:10px;" onkeyup="enterkey()"></td>
-					<td class="search" colspan="3">
-						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
-						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
+					<td>
+						<div style="display: flex; align-items: stretch;">
+							<label for="searchText" class="menu_label" style="margin-top: 3px;">[[#{screen.text.role.menu.nm}]]</label>
+							<input id="searchText" type="text" onkeyup="enterkey()" placeholder="검색어를 입력해주세요.">
+						</div>
+					</td>
+					<td class="search" colspan="4">
+						<!-- [button search] -->
+						<header th:replace="layout/fragments/button_srch :: buttonSrchFragment"></header>
 					</td>
 				</tr>
 			</table>

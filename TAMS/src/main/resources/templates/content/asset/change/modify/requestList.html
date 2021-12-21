@@ -42,7 +42,7 @@
 	    	getCommCode("#reqStus", "APPR_STATUS", "1", "");
 	    	getCommCode("#reqType", "REQ_TYPE", "1", "");
 	        $("#jsGrid").jsGrid({
-	        	height: "400",
+	        	height: "550",
                 width: "100%",
                 filtering: false,
                 editing: true,
@@ -471,34 +471,30 @@
 
 		<!-- search -->
 		<div class="srch_wrap single">
-			<table class="srch_table" style="margin-top: 15px">
+			<table class="srch_table">
 				<colgroup>
-					<col style="width:5%"/>
-					<col style="width:10%"/>
-					<col style="width:15%"/>
-					<col style="width:5%"/>
-					<col style="width:10%"/>
-					<col style="width:15%"/>
-					<col style="width:5%"/>
-					<col style="width:10%"/>
-					<col style="width:15%"/>
-					<col style="width:5%"/>
+					<col width="10%"/>
+					<col width="20%"/>
+					<col width="15%"/>
+					<col width="20%"/>
+					<col width="15%"/>
+					<col width=""/>
 				</colgroup>
 				<tr>
-					<td></td>
-						<th style="text-align:center;">[[#{screen.text.modify.no}]]</th>
-						<td><input type="text" id="req_no" onkeyup="enterkey()" style="width:100%;"></td>
-					<td></td>
-						<th style="text-align:center;">[[#{screen.text.modify.dt}]]</th>
-						<td class="aset_td"><input type="date" id="fromDate" style="width:100%;"><input type="date" id="toDate" style="width:100%;"></td>
-					<td></td>
-						<th style="text-align:center;">[[#{screen.text.modify.nm}]]</th>
-						<td><input type="text" id="req_nm" onkeyup="enterkey()" style="width:100%;"></td>
-					<td></td>
+					<th>[[#{screen.text.modify.no}]]</th>
+					<td><input type="text" id="req_no" onkeyup="enterkey()" style="width:100%;"></td>
+					<th>[[#{screen.text.modify.dt}]]</th>
+					<td>
+						<div style='display:flex'>
+							<input type="date" id="fromDate" style="width:100%">
+							<input type="date" id="toDate" style="width:100%">
+						</div>
+					</td>
+					<th>[[#{screen.text.modify.nm}]]</th>
+					<td><input type="text" id="req_nm" onkeyup="enterkey()" style="width:100%;"></td>
 				</tr>
 				<tr>
-					<td></td>
-					<th style="text-align:center;">[[#{screen.text.modify.bizDeptCd}]]</th>
+					<th>[[#{screen.text.modify.bizDeptCd}]]</th>
 					<td>
 						<div style='display:flex'>
 							<input type="text" style="width:100%" id="deptNm1" readonly/>
@@ -506,8 +502,7 @@
 							<a href="#" id="openDeptPopup1" style="margin-left: 10px;"><img title="사업부 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 						</div>
 					</td>
-					<td></td>
-					<th style="text-align:center;">[[#{screen.text.modify.dept}]]</th>
+					<th>[[#{screen.text.modify.dept}]]</th>
 					<td>
 						<div style='display:flex'>
 							<input type="text" style="width:100%" id="deptNm2" readonly/>
@@ -515,30 +510,25 @@
 							<a href="#" id="openDeptPopup2" style="margin-left: 10px;"><img title="부서 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 						</div>
 					</td>
-					<td></td>
-					<th style="text-align:center;">[[#{screen.text.modify.reqtr}]]</th>
-						<td><input type="text" id="Reqtr" onkeyup="enterkey()" style="width:100%;"></td>
-					<td></td>
+					<th>[[#{screen.text.modify.reqtr}]]</th>
+					<td><input type="text" id="Reqtr" onkeyup="enterkey()" style="width:100%;"></td>
 				</tr>
 				<tr>
-					<td></td>
-					<th style="text-align:center;">[[#{screen.text.modify.asetno}]]</th>
+					<th>[[#{screen.text.modify.asetno}]]</th>
 					<td><input type="text" id="aset_no" onkeyup="enterkey()" style="width:100%;"/></td>
-					<td></td>
-					<th style="text-align:center;">[[#{screen.text.modify.stus}]]</th>
+					<th>[[#{screen.text.modify.stus}]]</th>
 					<td>
 						<select id="req_stus" style="width:100%;">
 							<option value="">[[#{screen.text.comm.choice}]]</option>
 						</select>
 					</td>
-				</tr>
-				<tr>
-					<td class="search" colspan="10 ">
-						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
-						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
-					</td>
+					<td colspan="2"></td>
 				</tr>
 			</table>
+			<div class="button">
+				<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+				<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>										
+			</div>
 		</div>
 		<!-- //search -->
 		<div class="list_head">
