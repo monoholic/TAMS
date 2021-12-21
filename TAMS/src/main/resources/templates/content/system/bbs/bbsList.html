@@ -65,7 +65,6 @@
 	            	var target = args.event.target;
 	            	
 					if(target instanceof HTMLTableCellElement) {
-						// detail bbs
 						showDetailBbs(args.item);
 					} else {
 					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
@@ -113,7 +112,7 @@
 	            fields: [
 	                { name: "bbsId",   type: "number", align: "center", width: 20,  title: "[[#{screen.text.bbs.no}]]" },
 	                { name: "bbsTtl",  type: "text",   align: "left",   width: 200, title: "[[#{screen.text.bbs.title}]]" },
-	                { name: "userId",  type: "text",   align: "center",   width: 20,  title: "[[#{screen.text.comm.regr}]]" },
+	                { name: "userId",  type: "text",   align: "center", width: 20,  title: "[[#{screen.text.comm.regr}]]" },
 	                { name: "regDt",   type: "text",   align: "center", width: 30,  title: "[[#{screen.text.comm.regdt}]]" },
 	                { name: "viewCnt", type: "number", align: "center", width: 15,  title: "[[#{screen.text.bbs.view.cnt}]]" },
 	            ]

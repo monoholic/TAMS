@@ -27,9 +27,7 @@
 	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
 	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
 	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
-		
 	    <script>
-	    
 	    let numOfRows = 30;
 	    var status = true;
         var selectedItems = [];
@@ -260,21 +258,19 @@
 	            	e.preventDefault();
 	            	
 	                var insert_item = {};
-		                insert_item.codeGrpId 	= $(".detail_table").find("#codeGrpId").val().toUpperCase();
-			    		insert_item.codeGrpNm 	= $(".detail_table").find("#codeGrpNm").val();
+		                insert_item.codeGrpId 	 = $(".detail_table").find("#codeGrpId").val().toUpperCase();
+			    		insert_item.codeGrpNm 	 = $(".detail_table").find("#codeGrpNm").val();
 			    		insert_item.codeGrpEngNm = $(".detail_table").find("#codeGrpEngNm").val();
-			    		insert_item.codeGrpDesc = $(".detail_table").find("#codeGrpDesc").val();
-			    		insert_item.sortOdr 	= $(".detail_table").find("#sortOdr").val();
-			    		insert_item.useYn 		= $(".detail_table").find("#useYn").val();
+			    		insert_item.codeGrpDesc  = $(".detail_table").find("#codeGrpDesc").val();
+			    		insert_item.sortOdr 	 = $(".detail_table").find("#sortOdr").val();
+			    		insert_item.useYn 		 = $(".detail_table").find("#useYn").val();
 			    		
 			        var action = "";
 			        
 			    	if(save_mode == "insert") {
 			    		action = "insertItem";
-			    		//insertedItems.push(insert_item); --일괄
 			    	}else if(save_mode == "update") {
 			    		action = "updateItem";
-			    		//updatedItems.push(insert_item); --일괄
 			    	}
 	    			
 	    			$("#jsGrid").jsGrid(action, insert_item);
@@ -398,7 +394,6 @@
 			
 			return code;
 	    }
-	    
 	    </script>	
 	</th:block>
 
@@ -420,7 +415,7 @@
 								<option value="code_grp_nm">[[#{screen.text.code.grp.nm}]]</option>
 								<option value="code_grp_desc">[[#{screen.text.code.grp.desc}]]</option>
 							</select>
-							<input id="searchText" type="text" onkeyup="enterkey()" placeholder="검색어를 입력해주세요." style="margin-left: 5px;">
+							<input id="searchText" type="text" onkeyup="enterkey()" placeholder="검색어를 입력해주세요." style="margin-left:5px;">
 							<select id="useYnOption" style="margin-left: 5px;">
 								<option value="">[[#{screen.text.comm.useyn}]]</option>
 								<option value="Y">[[#{screen.text.comm.ues}]]</option>
@@ -438,19 +433,14 @@
 		</div>
 		<!-- //search -->
 		<div class="list_head">
-				<div class="result">Totals : 0,000</div>
-				<!-- list_button -->
-				<div class="button">
-					<!-- 				
-					<a class="btn_add">메뉴 등록</a>
-					<a class="btn_saveall">일괄 저장</a>
-					<a class="btn_del">메뉴 삭제</a>
-					-->
-					<a class="btn_add">[[#{screen.btn.insert}]]</a>
-					<a class="btn_update">[[#{screen.btn.update}]]</a>
-					<a class="btn_del">[[#{screen.btn.delete}]]</a>
-				</div>
-				<!-- list_button -->
+			<div class="result">Totals : 0,000</div>
+			<!-- list_button -->
+			<div class="button">
+				<a class="btn_add">[[#{screen.btn.insert}]]</a>
+				<a class="btn_update">[[#{screen.btn.update}]]</a>
+				<a class="btn_del">[[#{screen.btn.delete}]]</a>
+			</div>
+			<!-- list_button -->
 		</div>
 
 		<!-- list -->
@@ -511,10 +501,7 @@
 						</tr>
 					</table>
 				<!-- //detail_table -->
-				 
 	     	</div>
      	</div>
-	
 	</div>
-	
 </html>

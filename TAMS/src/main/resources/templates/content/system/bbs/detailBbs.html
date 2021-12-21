@@ -34,6 +34,24 @@
 	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
 	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
 		
+		<script th:inline="javascript">
+	        function fileData(){
+	 	    	let files = [[${files}]];
+	 	    	
+	 	        $.each(files, function(index, item){
+	 	        	var f = {};
+	 	        	f.name = item.orgFileNm;
+	 	        	f.realName = item.fileNm;
+	 	        	f.size = item.fileSize;
+	 	        	f.id   = item.fileId;
+	 				
+	  				fileItems.push(f);                                              
+	  			})
+	  			
+	  			reloadFileGrid();
+	 		}
+		</script>
+		
 	    <script th:inline="javascript">
 	    let numOfRows = 10;
 	    var status = true;
@@ -68,28 +86,9 @@
 		            autoload: false,
 		            loadonce: false,
 		            updateOnResize: true, 
-		            /* rowClick:function(args) { 
-		            	fileDownload(args.item);
-		            }, */
-		            fields: attachGridField
-		            ,onDataLoaded: rowCount()
+		            fields: attachGridField,
+		            onDataLoaded: rowCount()
 		    	};
-		}
-	 	
-	 	function fileData(){	 	
-	    	let files = [[${files}]];
-	        
-	        $.each(files, function(index, item){
-	        	var f = {};
-	        	f.name = item.orgFileNm;
-	        	f.realName = item.fileNm;
-	        	f.size = item.fileSize;
-	        	f.id   = item.fileId;
-				
- 				fileItems.push(f);                                              
- 			})
- 			
- 			reloadFileGrid();
 		}
 	 	
 	 	var attachGridField = [
@@ -165,6 +164,8 @@
 	   	}
 	    	
 	    $(function(){
+	    	// 공지사항 그룹
+	    	getCommCode("#bbsGrpId", "BBS", "1", "");
 	    	
 	    	fileData();
 	    	
@@ -246,8 +247,6 @@
 				$("#upFile").prop("files", e.originalEvent.dataTransfer.files);
 				addFile("Drop");
 			});
-			
-	        ////////////////////////////////////////////////////////////////////
 	        
     	    $(".btn_del").click(function() {
     	    	
@@ -370,7 +369,7 @@
             
             //web editor 설정
             $("#summernote").summernote({
-	            placeholder: '내용을 작성하세요',
+	            placeholder: '[[#{screen.text.bbs.note.placeholder}]]',
 	            height: 150,
 	            maxHeight: 300,
 	            minHeigth: 300,
@@ -384,16 +383,18 @@
 	    		    ['height', ['height']],
 	    		    ['table', ['table']],
 	    		    ['insert', ['link', 'hr']],
-	    		    // ['insert', ['link', 'picture', 'hr']],
-	    		    // ['view', ['fullscreen', 'codeview']],
 	    		    ['help', ['help']]
 	    		  ]
 	        });
             $('#summernote').summernote('focus');
-            
-            //drag 활성화
-	     	/* $("#detailForm").draggable(); */
     	});
+	    
+	 	// 공통코드 호출
+		function getCommCode(id, code, level, upperCodeId){				
+			let url = "/common/comm/selectBox";
+			let reqType = 'GET';
+			$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);			
+		}
 	    
 	    function reloadFileGrid() {
 			
@@ -475,7 +476,7 @@
 	                 border  : "2px solid navy"
 	             }).center().show();
 	    	}else{
-	    		alert("수정은 1개이상 되지 않습니다.");
+	    		alert("[[#{screen.info.status.modify.just.one}]");
 	    	}
 	    }
 	    
@@ -489,7 +490,7 @@
 
 	<div layout:fragment="content">
 		<!-- contents_head -->
-		<div class="bc">Home &gt; 공지사항
+		<div class="bc">Home &gt; [[#{screen.text.bbs.nm}]]
 		</div>
 		<h3><span id="bbs_GrpId" th:text="${bbsDto.bbsGrpId}"></span></h3>
 		<!-- //contents_head -->
@@ -497,14 +498,9 @@
 		<div class="list_head">
 				<!-- list_button -->
 				<div class="button">
-					<!-- 				
-					<a class="btn_add">메뉴 등록</a>
-					<a class="btn_saveall">일괄 저장</a>
-					<a class="btn_del">메뉴 삭제</a>
-					-->
-					<a class="btn_update">수정</a>
-					<a class="btn_del">삭제</a>
-					<a class="btn_back">목록</a>
+					<a class="btn_update">[[#{screen.btn.update}]]</a>
+					<a class="btn_del">[[#{screen.btn.delete}]]</a>
+					<a class="btn_back">[[#{screen.btn.list}]]</a>
 				</div>
 		</div>
 		
@@ -514,8 +510,8 @@
 			<h4><span id="bbs_Ttl" th:text="${bbsDto.bbsTtl}"></span></h4>
 			<div class="view_write">작성자 : <span id="user_Id" th:text="${bbsDto.userId}"></span></div>
 			<dl class="view_info">
-				<dt>등록일 :</dt><dd><span id="reg_Dt" th:text="${bbsDto.regDt}"></span></dd>
-				<dt>조회수:</dt><dd><span id="view_Cnt" th:text="${bbsDto.viewCnt}"></span></dd>
+				<dt>[[#{screen.text.comm.regdt}]] :</dt><dd><span id="reg_Dt" th:text="${bbsDto.regDt}"></span></dd>
+				<dt>[[#{screen.text.bbs.view.cnt}]]:</dt><dd><span id="view_Cnt" th:text="${bbsDto.viewCnt}"></span></dd>
 			</dl>
 			<div id="bbs_Cn" class="view_article" style="padding:20px 0px 50px 0px;">
 				<th:block th:utext="${bbsDto.bbsCn}"></th:block>
@@ -532,8 +528,8 @@
 					<h6><span id="head_title" ></span></h6>
 					<!-- list_button -->
 					<div class="button">
-						<a class="btn_list save_btn">저장</a>
-						<a class="btn_list close_btn">닫기</a>
+						<a class="btn_list save_btn">[[#{screen.text.comm.save}]]</a>
+						<a class="btn_list close_btn">[[#{screen.text.comm.close}]]</a>
 					</div>
 					<!-- list_button -->
 				</div>
@@ -548,41 +544,41 @@
 					</colgroup>
 					
 					<tr>
-						<th style="text-align:center;">게시글 그룹</th>
+						<th style="text-align:center;">[[#{screen.text.bbs.group}]]</th>
 						<td>
 							<select id="bbsGrpId" style="width:100%">
-								<option selected value="">검색항목 선택</option>
+								<option selected value="">[[#{screen.text.bbs.groupSel}]]</option>
 							</select>
 						</td>
 					</tr>
 									
 					<tr>
-						<th style="text-align:center;">제목</th>
+						<th style="text-align:center;">[[#{screen.text.bbs.title}]]</th>
 						<td colspan="5">
 							<input id="bbsId" type="hidden">
 							<input id="bbsTtl" style="width:100%" type="text" >
 						</td>
 					</tr>
 					<tr>
-						<th style="text-align:center;">게시글 내용</th>
+						<th style="text-align:center;">[[#{screen.text.bbs.content}]]</th>
 						<td>
 							<textarea id="summernote" class="bbsCn" th:text="${bbsDto.bbsCn}"></textarea>
 						</td>
 					</tr>
 					<tr>
-						<th style="text-align:center;">첨부파일</th>
+						<th style="text-align:center;">[[#{screen.text.comm.file}]]</th>
 						<td>
 							<table>
 								<tr>
 									<td width="55%">
 										<input type="file" id="upFile" style="display:none;">
-											<a id="addFile" class="btn_file_srch">파일찾기</a>
-											<a id="delFile" class="btn_list">파일삭제</a>
-											<label for="totalSize" >총 파일크기</label> :
+											<a id="addFile" class="btn_file_srch">[[#{screen.text.comm.file.search}]]</a>
+											<a id="delFile" class="btn_list">[[#{screen.text.comm.file.delete}]]</a>
+											<label for="totalSize" >[[#{screen.text.comm.file.size}]]</label> :
 										<input type="text" name="totalSize" id="totalSize" readonly style="width:50px;">
 									</td>
 									<td>
-										<div id="dragFile" class="box_form" style="cursor:pointer;text-align:center;" >파일을 여기에 끌어다 놓으세요.</div>
+										<div id="dragFile" class="box_form" style="cursor:pointer;text-align:center;" >[[#{screen.text.comm.file.drag.text}]]</div>
 									</td>
 								</tr>
 								<tr>

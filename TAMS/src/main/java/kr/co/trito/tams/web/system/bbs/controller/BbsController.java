@@ -102,7 +102,7 @@ public class BbsController {
 		bbsService.updateViewCnt(dto);
 		
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("bbsId", bbsId);
+		params.put("searchText", bbsId);
 		
 		SearchCondition condition = new SearchCondition("0","0", params);
 		dto = bbsService.selectbbsInfo(condition);

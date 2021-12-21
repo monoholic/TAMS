@@ -126,18 +126,12 @@
 	                    return d.promise();
 	                },
 	            updateItem: function(item) { 
-            		//updatedItems.push(item);
             		pageIdx = $("#jsGrid").jsGrid("option", "pageIndex");
-                	//$("#jsGrid").jsGrid("option", "pageIndex", $("#jsGrid").jsGrid("option", "pageIndex"));
                 	let url = "/system/user/usermng/userupdate";
                 	let reqType = 'post';
-                	/* let userInfo = {
-                		"userInfo":JSON.stringify(item)
-                	};  */ 
                 	$.commRequest(url, reqType, JSON.stringify(item))
                 		.then((res) => {
                 			console.log(res);
-                			//$(".save_btn").click();
                 			alert("[[#{screen.info.status.update.success}]]");
                 			$("#jsGrid").jsGrid("loadData");
                 		})
@@ -161,10 +155,6 @@
              	insertItem: function(item) { 
         		    let url = "/system/user/usermng/userinsert";
         		    let reqType = 'POST';
-        		    /* let data = {
-                   		"userInfo":	JSON.stringify(item)
-                   	}; */
-        		    //console.log(">>>>>> "+JSON.stringify(item));
         		    $.commRequest(url, reqType, JSON.stringify(item))
         		    	.then((res) => {
         		    		console.log(res);
@@ -233,19 +223,6 @@
 	                { name: "regdt", type: "date", width: 80, align: "center", readOnly:true  , title: "[[#{screen.text.comm.regdt}]]" },
 	                { name: "updr", type: "text", width: 60, align: "center", readOnly:true  , title: "[[#{screen.text.comm.updr}]]" },
 	                { name: "updt", type: "date", width: 80, align: "center", readOnly:true  , title: "[[#{screen.text.comm.updt}]]" }
-	                /*
-	                ,
-	                { name: "Country", type: "select", items: db.countries, valueField: "Id", textField: "Name" },
-	                { name: "Married", type: "checkbox", title: "Is Married", sorting: false },
-	                */
-	                /*
-	                ,
-	                {   type: "control"
-	                   ,updateButton: false
-	                   ,deleteButton: false
-	                   ,inserting: false
-	                }
-	                */
 	            ]
 	        });
 	    	
@@ -281,10 +258,7 @@
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
 	        });
 
-	        
-	        ////////////////////////////////////////////////////////////////////
     	    $(".btn_add").click(function() {
-    	    	//$("#jsGrid").jsGrid("option", "inserting", "true");
     	    	showDetailForm();
     	    });
 	        
@@ -292,7 +266,6 @@
     	    	
     	    	var items = [];
     	    	
-    	    	//$("#jsGrid").jsGrid("deleteItem",delete_item);
    	    		var gridDatas = $("#jsGrid").jsGrid("option", "data");
     	    	$.each(selectedItems, function(index,item){
     	    		$.each(gridDatas, function(idx,rowItem){
@@ -306,9 +279,6 @@
     	    	let url = "/system/user/usermng/userdelete";
     			let reqType = 'POST';
     			dataType: 'json';
-    			/* let data={
-    				"items": items.join(",")
-    			} */
     			$.commRequest(url, reqType, JSON.stringify(items))
     				.then((res) => {
     					console.log(res);
@@ -321,10 +291,6 @@
     				})
     	    	
     	    	
-    	    });
-    	    
-    	    $(".btn_download").click(function() {
-    	    	//$("#jsGrid").jsGrid().trigger("");
     	    });
     	    
 	        $(".btn_srch").on("click",function (){
@@ -363,14 +329,12 @@
 		    		var invalidCnt = 0;
 		    		var invalidMsg = "";
 		    		for(var i=0; i<required.length; i++) {
-		    			//console.log(required[i]+" @@@ "+insert_item[required[i]]);
 		    			if( insert_item[required[i]] == "" || insert_item[required[i]] == null ) {
 		    				invalidMsg += requiredStr[i]+"[[#{screen.info.status.required.input}]] \n";
 		    				invalidCnt++;
 		    			}
 		    		}
 		    		
-		    		// console.log(invalidMsg);
 		    		if( invalidCnt > 0 ) {
 		    			alert(invalidMsg);
 		    			return false;
@@ -385,10 +349,8 @@
 		        var action = "";
 		    	if(save_mode == "insert") {
 		    		action = "insertItem";
-		    		//insertedItems.push(insert_item); --일괄
 		    	}else if(save_mode == "update") {
 		    		action = "updateItem";
-		    		//updatedItems.push(insert_item); --일괄
 		    	}
     	
     			$("#jsGrid").jsGrid(action, insert_item);
@@ -488,28 +450,11 @@
     	    $("#openModalPopup").on("click", function() { 
     	        // 팝업 호출 url
     	        var url = "/common/popup/deptPopup";
-    	       
-    	        
-    	        //var child;
-    	        //child = window.open(url, "_blank", "height:650, width:400"); //선언과 초기화 동시에 해도 됨
-    	        
     	        
     	        // 팝업 호출
     	        $(".modal-body").load(url, function() {
     	        	
     	        	var modal =  $(".modal-body");
-    	        	//modal.attr("style","position:'absolute'");
-    	        	//modal.attr("style","width:'650px'");
-    	        	//modal.attr("style","top:'400px'");
-    	        	//modal.attr("style","top:'50%'");
-    	        	//modal.attr("style","left:'50%'");
-    	        	//modal.attr("style","-webkit-transform:'translate(-50%, -50%)'");
-    	        	//modal.attr("style","-moz-transform:'translate(-50%, -50%)'");
-    	        	//modal.attr("style","-ms-transform:'translate(-50%, -50%)'");
-    	        	//modal.attr("style","-o-transform:'translate(-50%, -50%)'");
-    	        	//modal.attr("style","transform:'translate(-50%, -50%)'");
-    	        	//modal.center();
-    	        	//modal = center(modal);
     	        	modal.center();
     	        	
     	            $("#ModalPopup").css( "style", "width:'100%'" );
@@ -518,8 +463,6 @@
     	            $("#ModalPopup").css( "style", "left:'0px'" );
     	            $("#ModalPopup").css( "zIndex", 999 );
     	            $("#ModalPopup").show(); 
-    	            //$("#ModalPopup").css("display","block"); 
-    	            
     	        }); 
     	        
     	    });
@@ -596,7 +539,6 @@
 	    function setResult(rst){ 
 	    	$(".detail_table #deptCd").val(rst.deptCd);
 	    	$(".detail_table #deptNm").val(rst.deptNm);
-			//console.log("resut : "+JSON.stringify(rst));
 		}
 		
 		//모달 팝업 닫기

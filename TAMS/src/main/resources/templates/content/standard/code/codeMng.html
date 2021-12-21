@@ -133,7 +133,6 @@
                 	let reqType = 'GET';
                 	$.commRequest(url, reqType, item)
                 		.then((res) => {
-                			console.log(res);
                 			unselectItem(item);
                 			
                 			alert("[[#{screen.info.status.update.success}]]");
@@ -151,8 +150,6 @@
         			
         			$.commRequest(url, reqType, item)
         				.then((res) => {
-        					console.log(res);
-        					
         					$("#jsGrid").jsGrid("loadData");
         				})
         				.catch((error) => {
@@ -173,11 +170,11 @@
 	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
 	                       .prop("checked", $.inArray(item.firstName, selectedItems) > -1)
 	                       .on("change", function () {
-	  					  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
-	  					  	 });
+	  					  		$(this).is(":checked") ? selectItem(item) : unselectItem(item);
+	  					  		});
 	            		   }
 	                	 , headerTemplate : function ()  { 
-						  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
+						  	return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
 		                     .on("change", function (item) {
 		             	    	selectedItems = [];
 		            	    	if(this.checked) { // check select status
@@ -186,15 +183,14 @@
 		            	                selectItem($(this).parent().next().text());           
 		            	            });			         
 		            	        }else {
-		            	        	
 		            	            $('.singleCheckbox').each(function() { 
 		            	                this.checked = false;      
 		            	                unselectItem(item);
-		            	            });  
+		            	        	});  
 		            	            selectedItems = [];
-		            	        }
-		    				   });
-					 	 } ,
+		            	    	}
+		    				});
+						} ,
 	                },
 	                { name:"codeId",    type:"text",   align:"left",   width:35,  title:"[[#{screen.text.code.id}]]"},
 	                { name:"codeGrpId", type:"text",   align:"left",   width:40,  title:"[[#{screen.text.code.grp.id}]]"},
@@ -264,7 +260,6 @@
     			
     			$.commRequest(url, reqType, JSON.stringify(selectedItems))
     				.then((res) => {
-    					console.log(res);
     					selectedItems = [];
     					alert("[[#{screen.info.status.delete.success}]]");
     					$('.btn_srch').click();
@@ -493,16 +488,15 @@
 		</div>
 		<!-- //search -->
 		<div class="list_head">
-				<div class="result">Totals : 0,000</div>
-				<!-- list_button -->
-				<div class="button">
-					<a class="btn_add">[[#{screen.btn.insert}]]</a>
-					<a class="btn_update">[[#{screen.btn.update}]]</a>
-					<a class="btn_del">[[#{screen.btn.delete}]]</a>
-				</div>
-				<!-- list_button -->
+			<div class="result">Totals : 0,000</div>
+			<!-- list_button -->
+			<div class="button">
+				<a class="btn_add">[[#{screen.btn.insert}]]</a>
+				<a class="btn_update">[[#{screen.btn.update}]]</a>
+				<a class="btn_del">[[#{screen.btn.delete}]]</a>
+			</div>
+			<!-- list_button -->
 		</div>
-		<!-- list -->
 		<!-- //search -->
 
 		<!-- list -->
@@ -579,10 +573,7 @@
 						</tr>
 					</table>
 				<!-- //detail_table -->
-				 
 	     	</div>
      	</div>
-	
 	</div>
-	
 </html>

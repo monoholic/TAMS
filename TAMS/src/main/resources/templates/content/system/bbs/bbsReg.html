@@ -9,13 +9,10 @@
         
 	<!-- css -->
 	<th:block layout:fragment="css">
-		
 		<link rel="stylesheet" href="/css/style.css" />
-	
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="/css/jsgrid.css" />
 		<link rel="stylesheet" href="/css/theme.css" />
-			
 	</th:block>
 	
 	<th:block layout:fragment="script">
@@ -24,7 +21,6 @@
 		<link href="/js/summernote/summernote-lite.css" rel="stylesheet">
 		<script src="/js/summernote/summernote-lite.js"></script>
 		<script src="/js/summernote/lang/summernote-ko-KR.min.js"></script>
-
 		<script src="/js/jsgrid/db.js"></script>
 		<script src="/js/jsgrid/jsgrid.core.js"></script>
 		<script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
@@ -36,12 +32,7 @@
 		<script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
 		<script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
 		<script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
-		
-			
-
-    	
 	    <script>
-	        
 	    	var save_mode = "INS";
 	        
 		    var attachData = new FormData();
@@ -52,22 +43,22 @@
 		    
 		    var rowIdx = 0;
 			var attachGridField = [
-					{ name: "chk"	, type: "checkbox" , width: 30  , title: "[[#{screen.text.comm.choice}]]"
-					 ,itemTemplate: function(value, item) { 
-						 return '<input type="checkbox" name="add_file" value="'+item.name+'" gbn="'+item.gbn+'" id="'+item.id+'" >';
-					 }	
-					},
-					{ name: "name"	, type: "text"     , width: 200 , align: "left", title: "[[#{screen.text.comm.file.nm}]]"
-					 ,itemTemplate: function(value, item) {
-						 return '<span style="cursor:hand;" onclick="fileDownload(\''+item.gbn+'\',\''+item.realName+'\',\''+item.name+'\')">'+item.name+'</span>';
-					 }
-					},
-					{ name: "size"	, type: "number"   , width: 100 , align: "right" , title: "[[#{screen.text.comm.file.size}]]"
-					 ,itemTemplate: function(value, item) {
-						 return '<span>'+ bytesToSize(item.size) +'</span>';
-					 }
-					},
-				];
+				{ name: "chk"	, type: "checkbox" , width: 30  , title: "[[#{screen.text.comm.choice}]]"
+			 		,itemTemplate: function(value, item) { 
+				 	return '<input type="checkbox" name="add_file" value="'+item.name+'" gbn="'+item.gbn+'" id="'+item.id+'" >';
+			 		}	
+				},
+				{ name: "name"	, type: "text"     , width: 200 , align: "left", title: "[[#{screen.text.comm.file.nm}]]"
+			 	 	,itemTemplate: function(value, item) {
+				 	return '<span style="cursor:hand;" onclick="fileDownload(\''+item.gbn+'\',\''+item.realName+'\',\''+item.name+'\')">'+item.name+'</span>';
+			 		}
+				},
+				{ name: "size"	, type: "number"   , width: 100 , align: "right" , title: "[[#{screen.text.comm.file.size}]]"
+			 		,itemTemplate: function(value, item) {
+				 	return '<span>'+ bytesToSize(item.size) +'</span>';
+			 		}
+				},
+			];
 			
 			function getGridBody() {
 				return {
@@ -77,9 +68,6 @@
 			            autoload: false,
 			            loadonce: false,
 			            updateOnResize: true, 
-			            /* rowClick:function(args) { 
-			            	fileDownload(args.item);
-			            }, */
 			            fields: attachGridField
 			            ,onDataLoaded: rowCount()
 			    	};
@@ -87,22 +75,20 @@
 			
 			function fileDownload(gbn, realName, name) { console.log(gbn);
 				 if( gbn == "undefined" && confirm("[[#{screen.info.status.file.download.yn}]]") ) {
-       		      
-		            	//파일 다운로드
-		            	var $form = $('<form></form>'); 
-						$form.attr('action', "/file/download"); 
-						$form.attr('target','_blank'); 
-						$form.attr('method','post'); 
-						$form.appendTo('body'); 
-						
-						var str1 = '<input type="text" name="fileName" value="'+realName+'">';
-						var str2 = '<input type="text" name="orgFileName" value="'+name+'">';
-						
-						$form.append(str1).append(str2);
-						$form.submit(); 		 			 
-						
-						return false;
-						 
+	            	//파일 다운로드
+	            	var $form = $('<form></form>'); 
+					$form.attr('action', "/file/download"); 
+					$form.attr('target','_blank'); 
+					$form.attr('method','post'); 
+					$form.appendTo('body'); 
+					
+					var str1 = '<input type="text" name="fileName" value="'+realName+'">';
+					var str2 = '<input type="text" name="orgFileName" value="'+name+'">';
+					
+					$form.append(str1).append(str2);
+					$form.submit(); 		 			 
+					
+					return false;
 	            }
 			}
 			
@@ -111,7 +97,6 @@
 				$.each(fileItems, function(index, el){
 					if( item == el) idx = index; 
 				});
-				//console.log(item.poNo+" >> idx : "+idx);
 				return idx;
 			}
 			
@@ -127,7 +112,6 @@
 			}
 			
 			function addFile(gbn) {
-				
 				var addFiles;
 				var obj;
 				
@@ -137,9 +121,7 @@
 					obj = event.target? event.target:evnet.srcElement;
 					addFiles = obj.files;
 				}
-				
-				console.log(gbn+" :: "+addFiles.length);
-				
+
 				//화면 표시용
 				var html = "";
 				
@@ -161,8 +143,6 @@
 			}
 			
 			function reloadFileGrid() {
-				
-				//신규 추가 파일에 id값 세팅(삭제시 필요)
 				var len = fileItems.length;
 				for(var i=0; i<len; i++) {
 					if( fileItems[i].id == null || fileItems[i].id == "undefined" || fileItems[i].id == "" ) {
@@ -176,11 +156,9 @@
 			
 			//폼 리셋 - 저장후...
 			function setFormClear() {
-				
 				$("#bbsTtl").val("");
 				$("#bbsCn").val("");
 				$('#summernote').summernote('code', "");
-				//$("#bbsId").val("");
 				
 				fileItems.length=0;
 			    deleteItems.length=0;
@@ -195,20 +173,11 @@
 			}
 			
 			$(function(){
-				
-				//
-				//bootstrap 으로 인한 메인로고 이미지 위치 보정
-		        //$("#main_logo").css("top", "0px");
-				
-				//////////////////////////////////////////////////////////////////
 				$("#fileGrid").jsGrid(getGridBody());				
-				//////////////////////////////////////////////////////////////////
 
 				$("#addFile").on("click", function(){
 					
 					$("#upFile").click();
-					
-					//return false;
 				});
 				
 				$("#upFile").on("change", function(){
@@ -241,9 +210,6 @@
 						
 					});
 					
-					console.log("@@ fileItems "+fileItems.length);
-					console.log("@@ deleteItems  "+deleteItems.length);
-					
 					//추가 파일
 					if( addCnt > 0  ) {
 						attachData.delete("files");
@@ -263,7 +229,6 @@
 					
 					attachData.append("bbsTtl", $("#bbsTtl").val());
 					var markupStr = $('#summernote').summernote('code');
-					//attachData.append("bbsCn", $("#bbsCn").val());
 					attachData.append("bbsCn", markupStr);
 					attachData.append("bbsId", $("#bbsId").val());
 					
@@ -276,12 +241,9 @@
 					let reqType = 'POST';	
 					
 					var files = attachData.getAll("files");
-//console.log(url + " @@@@ save :: "+files.length);					
-					//if( files.length > 0 ) {
 						$.commRequestFile(url, reqType, attachData)
 							.then((res) => {
 								console.log('게시판 저장 성공!!');
-								//setGridData(res.data.data);
 								setFormClear();
 							})
 							.catch((error) => {
@@ -301,19 +263,14 @@
 					
 					let url = "/system/bbs/bbsView ";
 					let reqType = 'POST';	
-					/* let data = {
-						"searchText": $("#searchText").val()
-					} */
 					$.commRequestFile(url, reqType, $("#searchText").val())
 						.then((res) => {
 							console.log('게시판 조회 성공!!');
-							//setGridData(res.data.data);
 							console.log(res);
 							var bbsInfo = res.data.bbsInfo;
 							
 							$("#bbsTtl").val(bbsInfo.bbsTtl);
 							$('#summernote').summernote('code',bbsInfo.bbsCn);
-							//$("#bbsCn").val(bbsInfo.bbsCn);
 							$("#bbsId").val(bbsInfo.bbsId);
 							
 							var bbsFiles = res.data.files;
@@ -363,7 +320,6 @@
 		    		    ['height', ['height']],
 		    		    ['table', ['table']],
 		    		    ['insert', ['link', 'hr']],
-		    		    //['insert', ['link', 'picture', 'hr']],
 		    		    ['view', ['fullscreen', 'codeview']],
 		    		    ['help', ['help']]
 		    		  ]

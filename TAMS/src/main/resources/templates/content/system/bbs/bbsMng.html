@@ -108,7 +108,6 @@
 			var html = "";
 			
 			$.each(addFiles, function(index, item){
-				//console.log(index,item);
 				var fileval = item.name.replace(/^C:\\fakepath\\/i, '');
 				
 				//첨부파일 추가
@@ -291,7 +290,6 @@
     	    	var arr_item = [];
     	    	var items = [];
     	    	
-    	    	// $("#jsGrid").jsGrid("deleteItem",delete_item);
     	    	$.each(selectedItems, function(index,item){
     	    		items.push(item);
     	    	});
@@ -316,10 +314,6 @@
     					alert("[[#{screen.info.status.error.occur}]]");
     					console.log(error);
     				})
-    	    });
-    	    
-    	    $(".btn_download").click(function() {
-    	    	//$("#jsGrid").jsGrid().trigger("");
     	    });
     	    
     	    $(".btn_srch").on("click",function (){
@@ -403,9 +397,6 @@
                 selectedItems = [];
             });
 	     	
-            //drag 활성화
-	     	/* $("#detailForm").draggable(); */
-            
             //팝업 가운데로 띄우기
             jQuery.fn.center = function () {
                 this.css("position","absolute");
@@ -430,8 +421,6 @@
 	    		    ['height', ['height']],
 	    		    ['table', ['table']],
 	    		    ['insert', ['link', 'hr']],
-	    		    // ['insert', ['link', 'picture', 'hr']],
-	    		    // ['view', ['fullscreen', 'codeview']],
 	    		    ['help', ['help']]
 	    		]
 	        });
@@ -570,6 +559,7 @@
 		    	 }
 		    		
 		    	 $(".list_head").find("#head_title").html(title);
+		    	 
 		    	 //상세 팝업 호출
 		    	 $('#detailForm').css({
 		    		 
@@ -593,7 +583,6 @@
 	    }
 	    
 	    function addFile(gbn) {
-			
 			var addFiles;
 			var obj;
 			
@@ -722,11 +711,6 @@
 				<div class="result">Totals : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
-					<!-- 				
-					<a class="btn_add">메뉴 등록</a>
-					<a class="btn_saveall">일괄 저장</a>
-					<a class="btn_del">메뉴 삭제</a>
-					-->
 					<a class="btn_add">[[#{screen.btn.insert}]]</a>
 					<a class="btn_update">[[#{screen.btn.update}]]</a>
 					<a class="btn_del">[[#{screen.btn.delete}]]</a>
@@ -769,7 +753,7 @@
 						<th style="text-align:center;">[[#{screen.text.bbs.group}]]</th>
 						<td>
 							<select id="bbsGrpId" style="width:100%">
-								<option selected value="">[[#{screen.text.comm.select.search.condition}]]</option>
+								<option selected value="">[[#{screen.text.bbs.groupSel}]]</option>
 							</select>
 						</td>
 					</tr>

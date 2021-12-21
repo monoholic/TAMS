@@ -287,10 +287,8 @@
 		        var action = "";
 		    	if(save_mode == "insert") {
 		    		action = "insertItem";
-		    		//insertedItems.push(insert_item); --일괄
 		    	}else if(save_mode == "update") {
 		    		action = "updateItem";
-		    		//updatedItems.push(insert_item); --일괄
 		    	}
 		
 				$("#jsGrid").jsGrid(action, insert_item);
@@ -359,7 +357,6 @@
 	    		 readOnly = false;
 	    		 $(".detail_table").find("#roleId").val(item.roleId);
 	    		 $(".detail_table").find("#roleId").attr("readOnly", true);
-	    		 
 	    		 $(".detail_table").find("#roleNm").val(item.roleNm);
 	    		 $(".detail_table").find("#roleDesc").val(item.roleDesc);
 	    		 $(".detail_table").find("#useYn").val(item.useYn);
