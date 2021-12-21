@@ -151,7 +151,7 @@ div .bot_line{border-bottom:1px solid #aeaeae;overflow:auto;}
 
 /* list */
 .list_wrap{margin-top:10px;margin-bottom:10px;}
-.list_head{position:relative;height:24px;}
+.list_head{position:relative;height:28px;}
 .list_wrap .list_head h4{margin-right:10px;padding-left:0!important;padding-top:3px!important;background:none!important;font-size:1.1em;}
 .list_wrap .list_head h4{float:left;}
 .list_wrap .list_head .result{font-size:11px;color:#4a566b;display:inline-block;padding-right:5px;}
@@ -451,3 +451,9 @@ input#userPw{
     right: 70px;
     font-size: 11px;
 }
+
+
+/*추가 by tommy*/
+#container-pop{position:relative;background:#f4f5f7;padding:10px 10px 15px 10px;}
+#container-pop #contents{width:auto;margin:0 0 0 0px;padding:0 20px 15px 20px;border:0px solid #d6d6d6;border-radius:0px;background:#fff;}
+
