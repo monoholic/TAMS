@@ -153,8 +153,7 @@ public class InvestRegistController {
 
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(),
 				params.get("numOfRows").toString(), params);
-		int total = investRegistService.selectCountAsetList(condition);
-		condition.pageSetup(total);
+		condition.pageSetup(investRegistService.selectCountAsetList(condition));
 
 		List<AsetListDto> list = investRegistService.selectAsetList(condition);
 		List<InvestRegistDto> list2 = investRegistService.selectInvestReg(condition);
@@ -238,88 +237,6 @@ public class InvestRegistController {
 		return view;
 	}
 
-	/*
-	 * @PostMapping("/readExcel")
-	 * 
-	 * @ResponseBody
-	 * 
-	 * @ApiOperation(value = "등록자산목록 화면 / 일괄 업로드 엑셀파일 읽기", notes =
-	 * "선택한 엑셀파일을 읽어 그리드에 뿌려준다")
-	 * 
-	 * @ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-	 * 
-	 * @ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") }) public
-	 * List<InvestDto> readExcel(@RequestParam("file") MultipartFile multipartFile)
-	 * throws IOException, InvalidFormatException { List<InvestDto> result = null;
-	 * 
-	 * InvestDto dto = new InvestDto();
-	 * 
-	 * result = excelReader.readFileToList(multipartFile, dto::row);
-	 * 
-	 * //첫번째 열 헤더 제거...??!! result.remove(0);
-	 * 
-	 *//** 유효성 검증 *//*
-					 * for(InvestDto inv : result) {
-					 * 
-					 * String chkResult = "";
-					 * 
-					 * if( StringUtils.isEmpty(inv.getInvNo()) ) { chkResult += "투자번호가 누락되었습니다"; }
-					 * if( StringUtils.isEmpty(inv.getInvTtl()) ) { chkResult += "투자명이 누락되었습니다"; }
-					 * if( StringUtils.isEmpty(inv.getInvDt()) ) { chkResult += "투자일자가 누락되었습니다"; }
-					 * if( StringUtils.isEmpty(inv.getInvQty()) ) { chkResult += "투자수량이 누락되었습니다"; }
-					 * else { //숫자값만 입력 가능... if( !StringUtils.isNumeric(inv.getInvQty()) ) {
-					 * chkResult += "숫자만 입력 가능합니다."; } } if( StringUtils.isEmpty(inv.getInvAmt()) )
-					 * { chkResult += "투자금액이 누락되었습니다"; } else { //숫자값만 입력 가능... if(
-					 * !StringUtils.isNumeric(inv.getInvAmt()) ) { chkResult += "숫자만 입력 가능합니다."; } }
-					 * if( StringUtils.isEmpty(inv.getActgYear()) ) { chkResult += "회계연도가 누락되었습니다";
-					 * } if( StringUtils.isEmpty(inv.getPoNo()) ) { chkResult += "PO번호가 누락되었습니다"; }
-					 * if( StringUtils.isEmpty(inv.getMfgdNm()) ) { chkResult += "품명이 누락되었습니다"; }
-					 * if( StringUtils.isEmpty(inv.getQty()) ) { chkResult += "수량이 누락되었습니다"; } else
-					 * { //숫자값만 입력 가능... if( !StringUtils.isNumeric(inv.getQty()) ) { chkResult +=
-					 * "숫자만 입력 가능합니다."; } } if( StringUtils.isEmpty(inv.getPoAmt()) ) { chkResult +=
-					 * "PO금액이 누락되었습니다"; } else { //숫자값만 입력 가능... if(
-					 * !StringUtils.isNumeric(inv.getPoAmt()) ) { chkResult += "숫자만 입력 가능합니다."; } }
-					 * if( StringUtils.isEmpty(inv.getInvReqr()) ) { chkResult += "담당자가 누락되었습니다"; }
-					 * else { // 담장자 id 로 정보 찾기...
-					 * 
-					 * Map<String,String> map = new HashMap<>(); map.put("userId",
-					 * inv.getInvReqr()); Map<String,String> deptInfo =
-					 * commonService.selectUserDeptInfo(map);
-					 * 
-					 * //inv.set(deptInfo.get("upDeptNm")); inv.setDeptNm(deptInfo.get("deptNm"));
-					 * inv.setInvReqr(deptInfo.get("userNm"));
-					 * 
-					 * } if( StringUtils.isEmpty(inv.getVendNm()) ) { chkResult += "업체가 누락되었습니다"; }
-					 * if( StringUtils.isEmpty(inv.getReqDt()) ) { chkResult += "구매요청일자가 누락되었습니다"; }
-					 * if( StringUtils.isEmpty(inv.getDlvDt()) ) { chkResult += "납품일자가 누락되었습니다"; }
-					 * 
-					 * //검증 결과 inv.setChkResult(chkResult); if( !StringUtils.isEmpty(chkResult) )
-					 * inv.setChkFlag("Y"); }
-					 * 
-					 * return result; }
-					 * 
-					 * 
-					 * @PostMapping("/saveExcel")
-					 * 
-					 * @ResponseBody public String saveExcel(@RequestBody List<InvDto>
-					 * datas, @AuthenticationPrincipal UserDetails userDetail) throws IOException,
-					 * InvalidFormatException {
-					 * 
-					 * String code = "202";
-					 * 
-					 * UserInfo userInfo = (UserInfo)userDetail; String userId =
-					 * userInfo.getDto().getUserId();
-					 * 
-					 * int cnt = 0; for(InvDto inv : datas) { inv.setRegr(userId);
-					 * inv.setUpdr(userId); log.error("@@@ "+inv); if(
-					 * investRegistService.saveInvestInfo(inv) > 0 ) cnt++; }
-					 * 
-					 * cnt = 0; cnt = investRegistService.savePoInfo(datas);
-					 * 
-					 * if(cnt > 0) code = "200";
-					 * 
-					 * return code; }
-					 */
 
 	/** 투자자산등록 화면 : 조회 - 엑셀다운 */
 	@PostMapping(value = "/regAsetListExcel")

@@ -83,109 +83,107 @@
 	</select>
 	
 	<select id="selectInvestRegList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-  				SELECT c.*
-    			  FROM                    
-		                 (
-		                   SELECT b.rn as rn
-		                 	    , b.inv_no 	    as invNo
-		                 	    , b.inv_ttl 	as invTtl
-		                 	    , b.inv_dt      as invDt
-		                 	    , b.po_no 		as poNo
-		                 	    , b.mfgd_nm 	as mfgdNm
-		                 	    , b.qty 		as qty
-		                 	    , FORMAT(b.po_amt, 0) as poAmt
-		                 	    , f.dept_nm     as uppDeptNm
-		                 	    , b.upp_dept_cd as uppDeptCd 
-		                 	    , b.dept_nm 	as deptNm
-		                 	    , b.dept_cd 	as deptCd
-		                 	    , b.inv_reqr 	as invReqr
-		                 	    , b.user_nm 	as userNm
-		                 	    , b.user_id    as userId
-		                 	    , b.asetQty
-		                 	    , b.qty - b.asetQty as noAsetQty
-		                 	 FROM    
-		                 			(
-		                 				SELECT a.rn
-		                 			  		 , a.inv_no
-		                 					 , a.inv_ttl
-		                 					 , date_format(a.inv_dt, '%Y-%m-%d')as inv_dt
-		                 					 , a.po_no
-		                 					 , a.mfgd_nm
-		                 					 , a.qty
-		                 					 , a.po_amt
-		                 					 , a.upp_dept_cd
-		                 					 , a.dept_cd
-		                 					 , a.dept_nm
-		                 					 , a.inv_reqr
-		                 					 , a.user_nm
-		                 					 , a.user_id
-		                 					 , IFNULL((SELECT SUM(qty)
-		                 				 		FROM tb_po_aset B
-		                 				 		WHERE 1 = 1
-		                 				 		AND B.PO_NO = A.PO_NO), 0) as asetQty
-		                 				  FROM (
-		                 							SELECT ROW_NUMBER() OVER(ORDER BY CAST(b.inv_no AS int) DESC) as rn
-		                 							  	 , a.inv_no
-		                 								 , a.inv_ttl
-		                 								 , b.po_no
-		                 								 , b.mfgd_nm
-		                 								 , b.qty
-		                 								 , a.inv_dt
-		                 								 , b.po_amt
-		                 								 , e.upp_dept_cd
-		                 								 , e.dept_cd
-		                 								 , e.dept_nm
-		                 								 , a.inv_reqr
-		                 						 		 , d.user_nm
-		                 						 		 , d.user_id
-		                 							FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
-		                 							WHERE 1 = 1
-		                 							AND A.inv_no = B.inv_no
-		                 					        AND D.use_yn = 'Y'
-		                 							AND E.use_yn = 'Y'
-		                 							AND A.regr = D.user_id
-		                 							AND D.dept_cd = E.dept_cd
-		                 							<if test="params.invNo != '' and params.invNo != null">
-		                 							AND a.inv_no LIKE CONCAT('%', #{params.invNo}, '%')
-		                 							</if>
-		                 							<if test="params.invTtl != '' and params.invTtl != null">
-		                 							AND a.inv_ttl LIKE CONCAT('%', #{params.invTtl}, '%')
-		                 							</if>
-		                 							<if test="params.poNo != '' and params.poNo != null">
-		                 							AND B.po_no LIKE CONCAT('%', #{params.poNo}, '%')
-		                 							</if>
-		                 							<if test="params.mfgdNm != '' and params.mfgdNm != null">
-		                 							AND B.mfgd_nm LIKE CONCAT('%', #{params.mfgdNm}, '%')
-		                 							</if>
-		                 							<if test="params.deptCd != '' and params.deptCd != null">
-		                 							AND E.dept_cd LIKE CONCAT('%', #{params.deptCd}, '%')
-		                 							</if>
-		                 							<if test="params.userId != '' and params.userId != null">
-		                 							AND D.user_id LIKE CONCAT('%', #{params.userId}, '%')
-		                 							</if>
-		                 							<if test="params.fromDate != '' and params.fromDate != null">
-		                 							AND A.inv_dt BETWEEN #{params.fromDate} AND #{params.toDate}
-		                 							</if>
-		                 						) AS a
-		                 			) AS b	
-		                 	LEFT OUTER JOIN TB_DEPT F
-		                 	ON f.use_yn = 'Y'
-		                 	AND f.dept_cd = b.upp_dept_cd
-		                 	WHERE rn BETWEEN #{start} AND #{end}
-		                 	<if test="params.regYn != '' and params.regYn != null">
-		                 		<if test='params.regYn != "N"'>
-		                 			AND B.asetQty = 0
-		                 		</if>
-		                 	</if>
-		                 ) as c
-		                   <choose> 
-		                   	<when test="params.sortField != null">
-		                   		ORDER BY ${params.sortField} ${params.sortOrder}
-		                   	</when>
-		                   	<otherwise>
-		                   		ORDER BY c.invNo DESC
-		                   	</otherwise>
-		                   </choose>
+		select c.*
+		from (
+	             select b.rn as rn
+	           	    , b.inv_no 	    as invNo
+	           	    , b.inv_ttl 	as invTtl
+	           	    , b.inv_dt      as invDt
+	           	    , b.po_no 		as poNo
+	           	    , b.mfgd_nm 	as mfgdNm
+	           	    , b.qty 		as qty
+	           	    , format(b.po_amt, 0) as poAmt
+	           	    , f.dept_nm     as uppDeptNm
+	           	    , b.upp_dept_cd as uppDeptCd 
+	           	    , b.dept_nm 	as deptNm
+	           	    , b.dept_cd 	as deptCd
+	           	    , b.inv_reqr 	as invReqr
+	           	    , b.user_nm 	as userNm
+	           	    , b.user_id    as userId
+	           	    , b.asetQty
+	           	    , b.qty - b.asetQty as noAsetQty
+	           	 from (
+	       				select a.rn
+	       			  		 , a.inv_no
+	       					 , a.inv_ttl
+	       					 , date_format(a.inv_dt, '%Y-%m-%d')as inv_dt
+	       					 , a.po_no
+	       					 , a.mfgd_nm
+	       					 , a.qty
+	       					 , a.po_amt
+	       					 , a.upp_dept_cd
+	       					 , a.dept_cd
+	       					 , a.dept_nm
+	       					 , a.inv_reqr
+	       					 , a.user_nm
+	       					 , a.user_id
+	       					 , IFNULL((select sum(qty)
+	       				 			   from tb_po_aset B
+	       				 		       where 1 = 1
+	       				 		       and B.PO_NO = A.PO_NO), 0) as asetQty
+	           			 from (
+	                     		select row_number() over(order by cast(b.inv_no as int) desc) as rn
+	     						 	 , a.inv_no
+	     						     , a.inv_ttl
+	     							 , b.po_no
+	     							 , b.mfgd_nm
+	     							 , b.qty
+	     							 , a.inv_dt
+	     							 , b.po_amt
+	     							 , e.upp_dept_cd
+	     							 , e.dept_cd
+	     							 , e.dept_nm
+	     							 , a.inv_reqr
+	     						 	 , d.user_nm
+	     						 	 , d.user_id
+	     						from tb_inv_mas a, tb_po b, tb_user d, tb_dept e
+	     						where 1 = 1
+	     						  and a.inv_no = b.inv_no
+	     					      and d.use_yn = 'Y'
+	     						  and e.use_yn = 'Y'
+	     						  and a.regr = d.user_id
+	   							  and d.dept_cd = e.dept_cd
+	      						  <if test="params.invNo != '' and params.invNo != null">
+	      							and a.inv_no like concat('%', #{params.invNo}, '%')
+	      						  </if>
+	      						  <if test="params.invTtl != '' and params.invTtl != null">
+	      						    and a.inv_ttl like concat('%', #{params.invTtl}, '%')
+	      						  </if>
+	      						  <if test="params.poNo != '' and params.poNo != null">
+	      							and b.po_no like concat('%', #{params.poNo}, '%')
+	      						  </if>
+	      						  <if test="params.mfgdNm != '' and params.mfgdNm != null">
+	      						    and b.mfgd_nm like concat('%', #{params.mfgdNm}, '%')
+	      						  </if>
+	      						  <if test="params.deptCd != '' and params.deptCd != null">
+	      							and e.dept_cd like concat('%', #{params.deptCd}, '%')
+	      						  </if>
+	      						  <if test="params.userId != '' and params.userId != null">
+	      						    and d.user_id like concat('%', #{params.userId}, '%')
+	      						  </if>
+	      						  <if test="params.fromDate != '' and params.fromDate != null">
+	      							and A.inv_dt between #{params.fromDate} and #{params.toDate}
+	      						  </if>
+	      						) as a
+	           			) as b	
+	           	left outer join tb_dept F
+	           	  on f.use_yn = 'Y'
+	           	 and f.dept_cd = b.upp_dept_cd
+	           	where rn between #{start} and #{end}
+	           	<if test="params.regYn != '' and params.regYn != null">
+	           		<if test='params.regYn != "N"'>
+	           			and B.asetQty = 0
+	           		</if>
+	           	</if>
+	    ) as c
+	    <choose> 
+	    	<when test="params.sortField != null">
+	    		order by ${params.sortField} ${params.sortOrder}
+	    	</when>
+	    	<otherwise>
+	    		order by c.invNo desc, c.poNo
+	    	</otherwise>
+	    </choose>
 	</select>
 	
 	<select id="selectInvestReg" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
@@ -263,118 +261,76 @@
 	</select>
 	
 	<select id="selectCountAsetList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-				SELECT COUNT(*)
-				FROM
-						(
-							SELECT STRAIGHT_JOIN
-							       ROW_NUMBER() OVER(ORDER BY CAST(A.aset_no as int) asc) as rn
-							     , A.aset_no as asetNo
-							     , A.aset_type1 as asetType1
-							     , A.aset_type2 as asetType2
-							     , A.aset_type3 as asetType3
-							     , A.mftco as mftco
-							     , A.model as model
-							     , A.sn as sn
-							     , A.biz_dept_cd as bizDeptCd
-							     , A.dept_cd as deptCd
-							     , A.chrgr as chrgr
-							     , A.aset_stus as asetStus
-							     , C.tag_id as tagId
-							FROM TB_ASET_MAS A
-							INNER JOIN TB_PO_ASET B
-							ON A.aset_no = B.aset_no
-							INNER JOIN TB_TAG_MAS C
-							ON C.aset_no = B.aset_no
-							WHERE 1 = 1
-							AND B.po_no = #{params.poNo}
-						) a
-				LEFT OUTER JOIN tb_com_code c
-				ON  c.use_yn = 'Y'
-				AND c.code_id = a.asetType1
-				LEFT OUTER JOIN tb_com_code d
-				ON  d.use_yn = 'Y'
-				AND d.code_id = a.asetType2
-				LEFT OUTER JOIN tb_com_code e
-				ON  e.use_yn = 'Y'
-				AND e.code_id = a.asetType3
-				LEFT OUTER JOIN tb_dept f
-				ON  f.use_yn = 'Y'
-				AND f.dept_cd = a.bizDeptCd
-				LEFT OUTER JOIN tb_dept g
-				ON  g.use_yn = 'Y'
-				AND g.dept_cd = a.deptCd
-				LEFT OUTER JOIN tb_com_code h
-				ON  h.use_yn = 'Y'
-				AND h.code_id = a.asetStus
-				AND h.code_grp_id = 'AS_STATUS'
+		select count(*)
+		from tb_aset_mas a
+		inner join tb_po_aset b
+		   on a.aset_no = b.aset_no
+		where 1 = 1
+		  and b.po_no = #{params.poNo}					
 	</select>
 	
 	<select id="selectAsetList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.AsetListDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-				SELECT c.*
-				  FROM			
-						 (
-							SELECT a.asetNo
-						         , c.code_nm as asetType1
-						         , d.code_nm as asetType2
-						         , e.code_nm as asetType3
-						         , a.mftco
-						         , a.model
-						         , a.sn
-						         , f.dept_nm as uppDeptNm
-						         , g.dept_nm as deptNm
-						         , a.chrgr
-							     , (SELECT CASE 
-							               WHEN COUNT(*) > 0 THEN 'Y'
-							               ELSE 'N' END
-							          FROM tb_tag_his C
-						             WHERE C.tag_id = a.tagId
-						           ) as tagYn
-						         , h.code_nm as asetStus
-							FROM
-									(
-										SELECT STRAIGHT_JOIN
-										       ROW_NUMBER() OVER(ORDER BY CAST(A.aset_no as int) asc) as rn
-										     , A.aset_no as asetNo
-										     , A.aset_type1 as asetType1
-										     , A.aset_type2 as asetType2
-										     , A.aset_type3 as asetType3
-										     , A.mftco as mftco
-										     , A.model as model
-										     , A.sn as sn
-										     , A.biz_dept_cd as bizDeptCd
-										     , A.dept_cd as deptCd
-										     , A.chrgr as chrgr
-										     , A.aset_stus as asetStus
-										     , C.tag_id as tagId
-										FROM TB_ASET_MAS A
-										INNER JOIN TB_PO_ASET B
-										ON A.aset_no = B.aset_no
-										INNER JOIN TB_TAG_MAS C
-										ON C.aset_no = B.aset_no
-										WHERE 1 = 1
-										AND B.po_no = #{params.poNo}
-									) a
-							LEFT OUTER JOIN tb_com_code c
-							ON  c.use_yn = 'Y'
-							AND c.code_id = a.asetType1
-							LEFT OUTER JOIN tb_com_code d
-							ON  d.use_yn = 'Y'
-							AND d.code_id = a.asetType2
-							LEFT OUTER JOIN tb_com_code e
-							ON  e.use_yn = 'Y'
-							AND e.code_id = a.asetType3
-							LEFT OUTER JOIN tb_dept f
-							ON  f.use_yn = 'Y'
-							AND f.dept_cd = a.bizDeptCd
-							LEFT OUTER JOIN tb_dept g
-							ON  g.use_yn = 'Y'
-							AND g.dept_cd = a.deptCd
-							LEFT OUTER JOIN tb_com_code h
-							ON  h.use_yn = 'Y'
-							AND h.code_id = a.asetStus
-							AND h.code_grp_id = 'AS_STATUS'
-							WHERE rn BETWEEN #{start} AND #{end}
-						) c
+		select c.*
+		from (
+				select a.asetNo
+			         , c.code_nm as asetType1
+			         , d.code_nm as asetType2
+			         , e.code_nm as asetType3
+			         , a.mftco
+			         , a.model
+			         , a.sn
+			         , f.dept_nm as uppDeptNm
+			         , g.dept_nm as deptNm
+			         , a.chrgr
+				     , (select case 
+				               when count(*) > 0 then 'Y'
+				               else 'N' end
+				         from tb_tag_mas c
+			             where c.aset_no = a.asetno
+			           ) as tagYn
+			         , h.code_nm as asetStus
+				from
+						(
+							select straight_join
+							       row_number() over(order by cast(a.aset_no as int) asc) as rn
+							     , a.aset_no as asetno
+							     , a.aset_type1 as asettype1
+							     , a.aset_type2 as asettype2
+							     , a.aset_type3 as asettype3
+							     , a.mftco as mftco
+							     , a.model as model
+							     , a.sn as sn
+							     , a.biz_dept_cd as bizdeptcd
+							     , a.dept_cd as deptcd
+							     , a.chrgr as chrgr
+							     , a.aset_stus as asetstus
+							from tb_aset_mas a
+							inner join tb_po_aset b
+							   on a.aset_no = b.aset_no
+							where 1 = 1
+							  and B.po_no = #{params.poNo}
+						) a
+				left outer join tb_com_code c
+				  on c.use_yn = 'Y'
+				 and c.code_id = a.asetType1
+				left outer join tb_com_code d
+				  on d.use_yn = 'Y'
+				 and d.code_id = a.asetType2
+				left outer join tb_com_code e
+				  on e.use_yn = 'Y'
+				 and e.code_id = a.asetType3
+				left outer join tb_dept f
+				  on f.use_yn = 'Y'
+				 and f.dept_cd = a.bizDeptCd
+				left outer join tb_dept g
+				  on g.use_yn = 'Y'
+				 and g.dept_cd = a.deptCd
+				left outer join tb_com_code h
+				  on h.use_yn = 'Y'
+				 and h.code_id = a.asetStus
+				 and h.code_grp_id = 'AS_STATUS'
+				where rn between #{start} and #{end}
+			) c	
 	</select>
 	
 	<select id="selectInvInqrExcelList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
@@ -547,7 +503,7 @@
 				                 , #{acqPrc}
 				                 , #{svalPrc}
 				                 , #{dprcPrc}
-				                 , #{acqDt}
+				                 , replace(#{acqDt}, '-', '')
 				                 , 'N'
 				                 , '10'
 				                 , #{regr}
@@ -574,7 +530,7 @@
 				                      , ACQ_PRC     = #{acqPrc}
 				                      , SVAL_PRC    = #{svalPrc}
 				                      , DPRC_PRC    = #{dprcPrc}
-				                      , ACQ_DT      = #{acqDt}
+				                      , ACQ_DT      = replace(#{acqDt}, '-', '')
 				                      , UPDR 	    = #{updr}
 				                      , UP_DT 	    = now()
 	</insert>
@@ -607,7 +563,7 @@
 				                 , #{acqPrc}
 				                 , #{svalPrc}
 				                 , #{dprcPrc}
-				                 , #{acqDt}
+				                 , replace(#{acqDt}, '-', '')
 				                 , 'N'
 				                 , '10'
 				                 , #{regr}
@@ -634,7 +590,7 @@
 				                      , ACQ_PRC     = #{acqPrc}
 				                      , SVAL_PRC    = #{svalPrc}
 				                      , DPRC_PRC    = #{dprcPrc}
-				                      , ACQ_DT      = #{acqDt}
+				                      , ACQ_DT      = replace(#{acqDt}, '-', '')
 				                      , UPDR        = #{updr}
 				                      , UP_DT       = now()  
 	</insert>
