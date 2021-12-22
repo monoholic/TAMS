@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto;
 import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
 import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasExcelDto;
 import kr.co.trito.tams.web.asset.change.modify.mapper.AssetModifyMapper;
@@ -45,15 +46,27 @@ public class AssetModifyService {
 		return mapper.selectRequestRegist(condition);
 	}
 	
-	public List<AsetMasDto> selectAsetReqList(SearchCondition condition) {
+	public List<AsetReqDto> selectAsetReqList(SearchCondition condition) {
 		return mapper.selectAsetReqList(condition);
+	}
+	
+	public int selectCountAsetReqList(SearchCondition condition) {
+		return mapper.selectCountAsetReqList(condition);
 	}
 	
 	public int requestRegUpdate1(Map<String, Object> data) {
 		return mapper.requestRegUpdate1(data);
 	};
 	
-	public int requestRegUpdate2(String item) {
-		return mapper.requestRegUpdate2(item);
+	public int requestRegUpdate2(Map<String, Object> data) {
+		return mapper.requestRegUpdate2(data);
 	};
+	
+	public int requestRegDelete(Map<String, Object> items) {
+		return mapper.requestRegDelete(items);
+	}
+	
+	public int requestRegDelete2(AsetReqDto dto) {
+		return mapper.requestRegDelete2(dto);
+	}
 }

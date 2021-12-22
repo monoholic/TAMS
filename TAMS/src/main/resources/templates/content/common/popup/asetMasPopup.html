@@ -241,22 +241,23 @@
     	 	
     	  	//공통코드팝업(트리) 호출 
      	    $("#openDeptPopup1").on("click", function() { 
-     	    // 팝업 호출 url
+     	    	// 팝업 호출 url
     	        var url = "/common/popup/deptTreePopup";
     	        var popId = "DeptPopup";
     	        var args = {
+    	        	width   : 500,
+    	        	height  : 450,
+    	        	pheight : window.opener.innerHeight,
+    	        	pwidth  : window.opener.innerWidth
     	        };
-    	        args.width = 500;
-    	        args.height = 450;
-    	        args.fullscreen = "no";
-    	        args.resizable = "no";
     	        
-    	        var param = {};
-    	        param.searchType = "BIZ_DEPT";
- 	        	param.deptCd = "#deptCd1";
- 	        	param.deptNm = "#deptNm1";
-    	         	  
- 	           openPopup2(popId, url, args, param);
+    	        var param = {
+    	        	searchType : "BIZ_DEPT",
+    	        	deptCd     : "#deptCd1",
+    	        	deptNm     : "#deptNm1"
+    	        };
+    	        
+ 	            openPopup2(popId, url, args, param);
      	    });
     	  	
      	    $("#openDeptPopup2").on("click", function() { 
@@ -264,17 +265,18 @@
        	        var url = "/common/popup/deptTreePopup";
        	        var popId = "DeptPopup";
        	        var args = {
+   	        		width   : 500,
+       	        	height  : 450,
+       	        	pheight : window.opener.innerHeight,
+       	        	pwidth  : window.opener.innerWidth
        	        };
-       	        args.width = 500;
-       	        args.height = 450;
-       	        args.fullscreen = "no";
-       	        args.resizable = "no";
        	        
-       	     	var param = {}; 	        	
-    	        param.searchType = "DEPT";
- 	        	param.deptCd = "#deptCd2";
- 	        	param.deptNm = "#deptNm2"; 	        	
-       	        
+       	     	var param = {
+       	     		searchType : "DEPT",
+    	        	deptCd     : "#deptCd2",
+    	        	deptNm     : "#deptNm2"
+       	     	};
+       	     	
  	        	openPopup2(popId, url, args, param);
         	});
      	    

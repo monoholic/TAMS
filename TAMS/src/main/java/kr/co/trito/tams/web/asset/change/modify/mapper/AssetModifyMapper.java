@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto;
 import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
 import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasExcelDto;
 import kr.co.trito.tams.web.common.dto.AsetMasDto;
@@ -27,10 +28,16 @@ public interface AssetModifyMapper {
 	
 	public List<ReqMasDto> selectRequestRegist(SearchCondition condition);
 	
-	public List<AsetMasDto> selectAsetReqList(SearchCondition condition);
+	public List<AsetReqDto> selectAsetReqList(SearchCondition condition);
+	
+	public int selectCountAsetReqList(SearchCondition condition);
 	
 	
 	public int requestRegUpdate1(Map<String, Object> data);
 	
-	public int requestRegUpdate2(String item);
+	public int requestRegUpdate2(Map<String, Object> data);
+	
+	public int requestRegDelete(Map<String, Object> items);
+	
+	public int requestRegDelete2(AsetReqDto dto);
 }

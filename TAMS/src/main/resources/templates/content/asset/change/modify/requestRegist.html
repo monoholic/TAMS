@@ -41,8 +41,9 @@
 	 	var asetArr1 = [];
 	 	var asetArr2 = [];
 	 	var asetArr3 = [];
-	 	
 	 	var asetList = [];
+	 	
+	 	let loadParams = [];
 	 	
 	 	var selectItem = function(item) {
 	    	if(!selectedItems.includes(item)) {
@@ -71,6 +72,11 @@
 	    };
 	 	
 	    $(function(){
+	    	const SCREEN_NM = "MODIFY_REQ_RIST";   
+	    	loadParams = $.commLoadSearchParams(SCREEN_NM);
+	    	
+	    	console.log(loadParams);
+	    	
 	        $("#pager").on("change", function() {
 	            var page = parseInt($(this).val(), 10);
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
@@ -78,20 +84,18 @@
 
 	        // 상단 삭제 버튼
 			$(".btn_del1").click(function() {
-	  	    	
-	  	    	let url = "/aset/update/reqmas/reqmasDelete";
-	  			let reqType = 'GET';
+	  	    	let url = "/asset/update/reqmas/requestRegDelete";
+	  			let reqType = 'POST';
 	  			dataType: 'json';
 	  			let data={
 	  				reqNo : $("#reqNo").val()
 	  			}
 	  			
-	  			$.commRequest(url, reqType, data)
+	  			$.commRequest(url, reqType, JSON.stringify(data))
 	  				.then((res) => {
-	  					console.log(res);
 	  					alert("[[#{screen.info.status.delete.success}]]");
-	  					selectedItems = [];
-	  					$('.btn_srch').click();
+	  					
+	  					requestListView();
 	  				})
 	  				.catch((error) => {
 	  					alert("[[#{screen.info.status.error.occur}]]");
@@ -99,30 +103,31 @@
 	  				})
     	    });
     	    
-			// 상단 삭제 버튼
+			// 하단 삭제 버튼
 			$(".btn_del2").click(function() {
-   	    		
 	  	    	var arr_item =  [];
 	  	    	var items = [];
 	  	    	
 	  	    	$.each(selectedItems, function(index,item){
-	  	    		items.push(item);
+	  	    		items.push(item.asetNo);
 	  	    	});
 	  	    	
 	  	    	//별도 호출
-	  	    	let url = "/aset/update/reqmas/reqmasDelete";
-	  			let reqType = 'GET';
+	  	    	let url = "/asset/update/reqmas/requestRegDelete2";
+	  			let reqType = 'POST';
 	  			dataType: 'json';
 	  			let data={
-	  				"items": items.join(",")
+	  				"reqNo" : $("#reqNo").val(),
+	  				"asetNoList" : items
 	  			}
 	  			
-	  			$.commRequest(url, reqType, data)
+	  			$.commRequest(url, reqType, JSON.stringify(data))
 	  				.then((res) => {
 	  					console.log(res);
 	  					alert("[[#{screen.info.status.delete.success}]]");
-	  					selectedItems = [];
-	  					$('.btn_srch').click();
+	  					
+	  					asetList = [];
+	  					$("#jsGrid").jsGrid("loadData");
 	  				})
 	  				.catch((error) => {
 	  					alert("[[#{screen.info.status.error.occur}]]");
@@ -130,14 +135,6 @@
 	  				})
     	    });
 			
-    	    $(".btn_download").click(function() {
-    	    	//$("#jsGrid").jsGrid().trigger("");
-    	    });
-    	    
-    	    $(".btn_srch").on("click",function (){
-	    	   $("#jsGrid").jsGrid().trigger("loadData");
-	        });
-	        
 	     	// 저장 버튼 처리
             $('.btn_save').on('click', function (e) {
                 
@@ -145,12 +142,13 @@
                 
 		    	action = "updateItem";
             	
-                var insert_item = {};
-                	insert_item.reqNo  = $("#reqNo").val();
-	                insert_item.reqNm  = $("#reqNm").val();
-	                insert_item.reqRsn = $("#reqRsn").val();
-	                insert_item.asetList = asetList;
-	                
+                var insert_item = {
+                		reqNo   : $("#reqNo").val(),
+                		reqNm   : $("#reqNm").val(),
+                		reqRsn  : $("#reqRsn").val(),
+                		asetList: selectedItems
+                };
+	            
     			$("#jsGrid").jsGrid(action, insert_item);
                 
                 $(this).parents("#detailForm").hide();
@@ -217,15 +215,34 @@
     		});
     		
     		$.each(obj, function (idx, el){
-    			if(!asetNoChk.includes(el.asetNo))
-    				(asetList).push(el);
+    			if(!asetNoChk.includes(el.asetNo)) {
+    				asetList.push(el);
+    			}
     			else
     				alert("[[#{screen.info.status.error.modify.dup.asset}]]");
     		});
     		
     		jsGridLoad();
 		}
-	    
+    	
+    	// 삭제 시 이전 페이지로 이동
+    	function requestListView() {
+    		let url = "/asset/update/reqmas/requestListView";
+    		
+    		var $form = $('<form></form>'); 
+				$form.attr('action', url); 
+				$form.attr('method', 'post'); 
+				$form.attr('target', '_self'); 
+				inputStr = $('<input type="hidden" value="'+ loadParams.menuId + '" name="menuId">');
+				$form.append(inputStr);
+				inputStr = $('<input type="hidden" value="'+ loadParams.menuNm + '" name="menuNm">');	
+				$form.append(inputStr);
+				inputStr = $('<input type="hidden" value="'+ loadParams.menuDesc + '" name="menuDesc">');	
+				$form.append(inputStr);
+				$form.appendTo('body'); 
+				$form.submit();
+	    }
+    	
 		// asetType 리스트 출력
 	    async function asetTypeList() {
 			
@@ -254,9 +271,7 @@
 			 				asetArr3.push({Id : el.codeId, Nm:el.codeNm});
 		 				}
 		 			})
-		 			
 		 			console.log(">>>>>> step 2 asetArr1 " + asetArr1.length);
-		 			//jsGridLoad();
 		 		})
 		 		
 		 		.catch((error) => {                                                                      
@@ -268,7 +283,7 @@
 			console.log('--------------- jsGridLoad ------------------');
 	 		
 	 		 $("#jsGrid").jsGrid({
-		        	height: "550",
+		        	height: "485",
 	                width: "100%",
 	                filtering: false,
 	                editing: true,
@@ -291,17 +306,10 @@
 	                loadonce: true,
 	                updateOnResize: true,
 		            rowClick: function(args) {
-		            	var target = args.event.target;
 		            	
-						if(target instanceof HTMLTableCellElement) {
-							
-						} else {
-						   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-						                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
-						                .on("change", function () {
-							  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
-							});
-						}
+		            	if(args.event.target.cellIndex != 0){
+		            		jsGrid.Grid.prototype.rowClick.call(this, args);
+	            	    }
 		            },
 		            pagerContainerClass: "paginate",
 		            deleteConfirm: function(item) {
@@ -350,18 +358,18 @@
 		                
 			            updateItem: function(item) { 
 		                	let url = "/asset/update/reqmas/requestRegUpdate";
-		                	let reqType = 'GET';
-		                	$.commRequest(url, reqType, item)
+		                	let reqType = 'POST';
+		                	$.commRequest(url, reqType, JSON.stringify(item))
 		                		.then((res) => {
 		                			console.log(res);
 		                			unselectItem(item);
 		                			
 		                			alert("[[#{screen.info.status.update.success}]]");
 		                			selectedItems = [];
-		                			$("#jsGrid").jsGrid("loadData");
+		                			window.location.reload();
 		                		})
 		                		.catch((error) => {
-		                			console.log(error);
+		                			console.log(error);		                			
 		                		})
 		                },
 	           		},
@@ -497,8 +505,7 @@
 	</th:block>
 
 	<div layout:fragment="content">
-		<h3><span>[[#{screen.text.modify.screen.title3}]]</span></h3><br>
-		
+		<h3><span>[[#{screen.text.modify.screen.title3}]]</span></h3>
 		<div class="list_head">
 			<div class="list_head">
 				<div><h6>[[#{screen.text.modify.screen.title4}]]</h6></div>
@@ -507,6 +514,7 @@
 				<a class="btn_save">[[#{screen.text.comm.save}]]</a>
 				<a class="btn_del1">[[#{screen.btn.delete}]]</a>
 				<a class="btn_">[[#{screen.text.comm.approve}]]</a>
+				<a class="btn_" id="requestBack" onclick="requestListView()">뒤로가기</a>
 			</div>
 		</div>
 		
@@ -522,7 +530,6 @@
 					<col width=""/>
 				</colgroup>
 				<tr>
-					
 					<th>[[#{screen.text.modify.type}]]</th>
 					<td><input type="text" id="reqType" style="width:100%;" readonly></td>
 					<th>[[#{screen.text.modify.no}]]</th>

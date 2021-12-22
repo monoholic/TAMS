@@ -3,8 +3,10 @@ package kr.co.trito.tams.web.asset.change.modify.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,6 +35,7 @@ import kr.co.trito.tams.comm.util.file.excel.ExcelConstant;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto;
 import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
 import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasExcelDto;
 import kr.co.trito.tams.web.asset.change.modify.mapper.AssetModifyMapper;
@@ -63,13 +66,21 @@ public class AssetModifyController {
 	
 	/** 자산정보수정 화면 */
 	@PostMapping("/requestListView")
-	public ModelAndView requestListView(@RequestParam(value="menuId"  , required=true) String menuId
-			                      , @RequestParam(value="menuNm"  , required=true) String menuNm
-			                      , @RequestParam(value="menuDesc", required=true) String menuDesc) {
+	public ModelAndView requestListView(HttpServletRequest request,
+			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
+		
 		ModelAndView view = new ModelAndView();
-		view.addObject("menuId"  , menuId);
-		view.addObject("menuNm"  , menuNm);
-		view.addObject("menuDesc", menuDesc);
+		if (params != null) {
+			view.addObject("menuId", params.get("menuId").toString());
+			view.addObject("menuNm", params.get("menuNm").toString());
+			view.addObject("menuDesc", params.get("menuDesc").toString());
+		} else {
+			view.addObject("menuId", request.getParameter("menuId"));
+			view.addObject("menuNm", request.getParameter("menuNm"));
+			view.addObject("menuDesc", request.getParameter("menuDesc"));
+		}
+		view.addObject("url", request.getParameter("url"));
+		
 		view.setViewName("/content/asset/change/modify/requestList");
 		return view;
 	}
@@ -114,23 +125,18 @@ public class AssetModifyController {
 	@ApiOperation(value = "자산정보수정 화면 : 등록", notes = "자산정보수정 화면 : 등록")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String requestListInsert(
+	public ResponseEntity<? extends Response> requestListInsert(
 			@ApiParam(value = "자산의뢰 등록 데이터", required = true) @RequestParam Map<String, Object> items,
 			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
 			) { 
-		
-		String code = "202";
 		
 		UserInfo userInfo = (UserInfo)userDetail;
 		String userId = userInfo.getDto().getUserId();
 		
 		items.put("regr", userId);
-		 
-		int cnt = reqmasService.requestListInsert(items); 
+		reqmasService.requestListInsert(items); 
 		
-		if( cnt > 0) code = "200";
-		
-		return code;
+		return responseService.success(null);
 	}
 	
 	/** 자산정보수정 화면 : 삭제 */
@@ -139,27 +145,17 @@ public class AssetModifyController {
 	@ApiOperation(value = "자산정보수정 화면 : 삭제", notes = "자산정보수정 화면 : 삭제")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String requestListDelete( 
-			@ApiParam(value = "의뢰 번호", required = true) @RequestParam(value = "items", required = true) List<String> items
-			) { 
+	public ResponseEntity<? extends Response> requestListDelete( 
+			@ApiParam(value = "의뢰 번호", required = true) @RequestParam(value = "items", required = true) List<String> items) { 
 		
-		String code = "202";
-		
-		int cnt = 0;
-		
+		ReqMasDto dto = new ReqMasDto();
+
 		for(String reqNo : items) {
-			ReqMasDto dto = new ReqMasDto();
-			
 			dto.setReqNo(reqNo);
-			
-			if( reqmasService.requestListDelete(dto) > 0 )
-				cnt++;
+			reqmasService.requestListDelete(dto);
 		}
 		
-		if(cnt > 0) 
-			code = "200";
-		
-		return code;
+		return responseService.success(null);
 	}
 	
 	/** 자산정보수정 화면 : 조회 - 엑셀다운 */ 
@@ -219,49 +215,79 @@ public class AssetModifyController {
 		params.put("userId", userId);
 		
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);
-		condition.pageSetup(reqmasService.selectCountRequestList(condition));
+		condition.pageSetup(reqmasService.selectCountAsetReqList(condition));
 		List<ReqMasDto> list = reqmasService.selectRequestRegist(condition);
-		List<AsetMasDto> list2 = reqmasService.selectAsetReqList(condition);
+		List<AsetReqDto> list2 = reqmasService.selectAsetReqList(condition);
 		
 		return responseService.success(condition, list, list2);
 	}
 	
 	/** 자산수정 의뢰작성 화면 : 수정 */  
-	@GetMapping(value="/requestRegUpdate")
+	@PostMapping(value="/requestRegUpdate")
 	@ResponseBody
 	@ApiOperation(value = "자산수정 의뢰작성 화면 : 수정", notes = "자산수정 의뢰작성 화면 : 수정")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String requestRegUpdate(
-			@ApiParam(value = "자산수정의뢰작성 화면 수정 데이터", required = true) @RequestParam Map<String, Object> items,
-			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail
-			) { 
-		
-		String code = "202";
+	public ResponseEntity<? extends Response> requestRegUpdate(
+			@ApiParam(value = "자산수정의뢰작성 화면 수정 데이터", required = true) @RequestBody Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
 		
 		UserInfo userInfo = (UserInfo)userDetail;
 		String userId = userInfo.getDto().getUserId();
+
+		List<Map<String, Object>> list = (List<Map<String, Object>>)items.get("asetList");
 		
 		items.put("regr", userId);
-		 
-		int cnt1 = reqmasService.requestRegUpdate1(items);
+		reqmasService.requestRegUpdate1(items);
 		
-		/*
-		 UPDATE tb_aset_req     
-		   SET aset_type1  = #{asetType1}
-		     , aset_type2  = #{asetType2}
-		     , aset_type3  = #{asetType3}
-		     , mftco	   = #{mftco}
-		     , model	   = #{model}
-		     , sn		   = #{sn}
-		     <!-- , chrgr	   = #{chrgr} -->
-		 WHERE aset_no = #{asetNo} 
-		   AND req_no = #{reqNo} 
-		 */
+		for(int i=0; i<list.size(); i++) {
+			if (list.get(i).containsKey("reqNo"))
+				reqmasService.requestRegUpdate2(list.get(i));
+			
+			else
+				(list.get(i)).put("reqNo", items.get("reqNo").toString());
+				reqmasService.requestRegUpdate2(list.get(i));
+		}
 		
-		if(cnt1 > 0) code = "200";
+		return responseService.success(null);
+	}
+
+	
+	/** 자산수정 의뢰작성 화면 : 삭제(화면 상단) */
+	@PostMapping(value="/requestRegDelete")
+	@ResponseBody
+	@ApiOperation(value = "자산수정 의뢰작성 화면 : 삭제", notes = "자산수정 의뢰작성 화면 : 삭제")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> requestRegDelete( 
+			@ApiParam(value = "의뢰 번호", required = true) @RequestBody Map<String, Object> items) { 
 		
-		return code;
+		reqmasService.requestRegDelete(items);
+		
+		return responseService.success(null);
+	}
+	
+	/** 자산수정 의뢰작성 화면 : 삭제(화면 하단) */
+	@PostMapping(value="/requestRegDelete2")
+	@ResponseBody
+	@ApiOperation(value = "자산수정 의뢰작성 화면 : 삭제", notes = "자산수정 의뢰작성 화면 : 삭제")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> requestRegDelete2( 
+			@ApiParam(value = "의뢰 번호", required = true) @RequestBody Map<String, Object> items) { 
+		// System.out.println(items.get("asetNoList"));
+		
+		AsetReqDto dto = new AsetReqDto();
+		List<String> asetList = (List<String>) items.get("asetNoList");
+		
+		dto.setReqNo(items.get("reqNo").toString());
+		
+		for(String asetNo : asetList) {
+			dto.setAsetNo(asetNo);
+			reqmasService.requestRegDelete2(dto);
+		}
+		
+		return responseService.success(null);
 	}
 }
 

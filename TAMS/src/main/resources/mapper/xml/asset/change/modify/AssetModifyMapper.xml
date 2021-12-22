@@ -216,8 +216,10 @@
    	</select>
    	
    	<!-- 대상자산목록 조회 -->
-   	<select id="selectAsetReqList" resultType="kr.co.trito.tams.web.common.dto.AsetMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-	   	SELECT aset_no
+   	<select id="selectAsetReqList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+	    SELECT aset_no
+			 , req_no
+			 , aset_nm
 		 	 , aset_type1
 		     , aset_type2
 		     , aset_type3
@@ -227,18 +229,22 @@
 		     , biz_dept_cd
 		     , (SELECT dept_nm
 		 	      FROM tb_dept a
-	             WHERE dept_cd = b.biz_dept_cd) biz_dept_nm
+		            WHERE dept_cd = b.biz_dept_cd) biz_dept_nm
 		     , dept_cd
 		     , (SELECT dept_nm
 		 	      FROM tb_dept a
-	             WHERE dept_cd = b.dept_cd) dept_nm
+		            WHERE dept_cd = b.dept_cd) dept_nm
 		     , chrgr
-		  FROM tb_req_mas a
-		 INNER JOIN tb_aset_req b
-		    ON a.req_no = b.req_no
-		  WHERE b.req_no = #{params.reqNo}
+		FROM tb_aset_req b
+		WHERE b.req_no = #{params.reqNo};
 	</select>
 	
+	<!-- 대상자산목록 조회 카운트 -->
+   	<select id="selectCountAsetReqList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 	 	
+		SELECT count(*) AS cnt
+		FROM tb_aset_req
+		WHERE req_no = #{params.reqNo};
+   	</select>
 	
 	<!-- 수정의뢰목록 엑셀 다운로드 -->
    	<select id="selectReqExcelList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
@@ -353,17 +359,45 @@
    	</update>
    	
    	<!-- 자산수정의뢰작성 화면 : 대상자산정보 수정 -->
-   	<update id="requestRegUpdate2" parameterType="kr.co.trito.tams.web.common.dto.AsetMasDto">
-   		UPDATE tb_aset_req     
-		   SET aset_type1  = #{asetType1}
-		     , aset_type2  = #{asetType2}
-		     , aset_type3  = #{asetType3}
-		     , mftco	   = #{mftco}
-		     , model	   = #{model}
-		     , sn		   = #{sn}
-		     <!-- , chrgr	   = #{chrgr} -->
-		 WHERE aset_no = #{asetNo} 
-		   AND req_no = #{reqNo} 
+   	<update id="requestRegUpdate2" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto">
+   		INSERT INTO tb_aset_req
+   			   SET aset_no     = #{asetNo}
+   			     , req_no	   = #{reqNo}
+   			     , aset_nm	   = #{asetNm}
+   			     , aset_type1  = #{asetType1}
+   			     , aset_type2  = #{asetType2}
+   			     , aset_type3  = #{asetType3}
+   			     , mftco	   = #{mftco}
+			     , model	   = #{model}
+			     , sn		   = #{sn}
+			     , chrgr	   = #{chrgr}
+			     , biz_dept_cd = #{bizDeptCd}
+			     , dept_cd	   = #{deptCd}
+			     <!-- chrgr = #{chrgr} -->
+			   ON  DUPLICATE KEY UPDATE
+			       aset_type1  = #{asetType1}
+		         , aset_type2  = #{asetType2}
+		         , aset_type3  = #{asetType3}
+		         , mftco	   = #{mftco}
+		         , model	   = #{model}
+		         , sn		   = #{sn}
+		         , chrgr	   = #{chrgr}
    	</update>
+   	
+   	<!-- 자산수정 의뢰작성 화면 : 삭제 (화면 상단) -->
+   	<delete id="requestRegDelete" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto">
+       	DELETE FROM a, b 
+       		USING tb_req_mas AS a 
+       		LEFT JOIN tb_aset_req AS b 
+       		ON a.req_no = b.req_no 
+       	WHERE a.req_no = #{reqNo}
+   	</delete>
+   	
+   	<!-- 자산수정 의뢰작성 화면 : 삭제 (화면 하단) -->
+   	<delete id="requestRegDelete2" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto">
+       	DELETE FROM tb_aset_req
+		 WHERE aset_no = #{asetNo}
+		  AND req_no = #{reqNo};
+   	</delete>
    	
 </mapper>
