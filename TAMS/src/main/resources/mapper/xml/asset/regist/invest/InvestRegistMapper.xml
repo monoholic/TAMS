@@ -476,7 +476,7 @@
 						SELECT a.code_nm as c1
 						     , a.code_id as c2
 						FROM tb_com_code a
-						WHERE a.upp_code_id = #{params.asetType3}
+						WHERE a.upp_code_id = #{asetType}
 						ORDER BY 2 ASC		
 				) 
 				
@@ -506,7 +506,7 @@
 				INSERT INTO TB_PO_ASET(PO_NO, ASET_NO, NEW_YN, QTY, APPV_DOC_ID, REGR, REG_DT)
 						        VALUES 
 						        ( #{poNo}
-						        , CONCAT('A', DATE_FORMAT(now(), '%Y%m'), LPAD(#{asetNo}, 5, 0))
+						        , CONCAT('A', SUBSTRING(DATE_FORMAT(now(), '%Y%m'), 3), LPAD(#{asetNo}, 5, 0))
 						        , 'Y'
 						        , CAST('1' as int)
 						        , #{appvDocId}
@@ -526,7 +526,7 @@
 					                  , LOC, EXP_DEPT_CD, EXP_ACCT, DUR_YEAR, ACQ_PRC, SVAL_PRC
 					                  , DPRC_PRC, ACQ_DT, ASET_OUT_BOOK_YN, ASET_STUS, REGR, REG_DT)
 				                 VALUES 
-				                 ( CONCAT('A', DATE_FORMAT(now(), '%Y%m'), LPAD(#{asetNo}, 5, 0))
+				                 ( CONCAT('A', SUBSTRING(DATE_FORMAT(now(), '%Y%m'), 3), LPAD(#{asetNo}, 5, 0))
 				                 , #{asetNm}
 				                 , #{asetType1}
 				                 , #{asetType2}
@@ -585,7 +585,7 @@
 									  , FLOOR, LOC, EXP_DEPT_CD, EXP_ACCT, DUR_YEAR, ACQ_PRC, SVAL_PRC
 									  , DPRC_PRC, ACQ_DT, ASET_OUT_BOOK_YN, ASET_STUS, REGR, REG_DT)
 				                 VALUES 
-				                 ( CONCAT('A', DATE_FORMAT(now(), '%Y%m'), LPAD(#{asetNo}, 5, 0))
+				                 ( CONCAT('A', SUBSTRING(DATE_FORMAT(now(), '%Y%m'), 3), LPAD(#{asetNo}, 5, 0))
 				                 , #{reqNo}
 				                 , #{asetNm}
 				                 , #{asetType1}
@@ -650,7 +650,7 @@
 				                      , DTL_INFO41, DTL_INFO42, DTL_INFO43, DTL_INFO44, DTL_INFO45, DTL_INFO46
 				                      , DTL_INFO47, DTL_INFO48, DTL_INFO49, DTL_INFO50, REGR, REG_DT)
 				                 VALUES 
-				                 ( CONCAT('A', DATE_FORMAT(now(), '%Y%m'), LPAD(#{asetNo}, 5, 0))
+				                 ( CONCAT('A', SUBSTRING(DATE_FORMAT(now(), '%Y%m'), 3), LPAD(#{asetNo}, 5, 0))
 				                 , #{asetType3}
 				                 , #{dtlInfo1}
 								 , #{dtlInfo2}
@@ -690,6 +690,7 @@
 								 , #{dtlInfo36}
 								 , #{dtlInfo37}
 								 , #{dtlInfo38}
+								 , #{dtlInfo39}
 								 , #{dtlInfo40}
 								 , #{dtlInfo41}
 								 , #{dtlInfo42}
@@ -744,6 +745,7 @@
 								 	 , DTL_INFO36 = #{dtlInfo36}
 								 	 , DTL_INFO37 = #{dtlInfo37}
 								 	 , DTL_INFO38 = #{dtlInfo38}
+								 	 , DTL_INFO39 = #{dtlInfo39}
 								 	 , DTL_INFO40 = #{dtlInfo40}
 								 	 , DTL_INFO41 = #{dtlInfo41}
 								 	 , DTL_INFO42 = #{dtlInfo42}
@@ -880,10 +882,15 @@
 					                     , UP_DT = now()
 	</insert>
 	
-	<select id="selectMaxAsetNo" resultType="int" parameterType="String">
-			SELECT CAST(SUBSTR(MAX(b.aset_no), 8) as int) + 1 as maxVal
-              FROM tb_po_aset b
-             WHERE b.po_no = #{poNo}
+	<select id="selectMaxAsetNo" resultType="int">
+		select max(maxAsetNo) as maxAsetNo
+		from (
+				select 1 as maxAsetNo
+				union all
+				select cast(substring(aset_no, 6) as int) + 1 as maxAsetNo 
+				from tb_aset_mas   
+				where aset_no like concat('A', substring(date_format(now(),'%Y%m'), 3), '%')
+			 ) a        
 	</select>
 	
 </mapper>

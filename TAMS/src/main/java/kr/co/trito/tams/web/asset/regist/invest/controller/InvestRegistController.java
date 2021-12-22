@@ -37,6 +37,7 @@ import kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto;
 import kr.co.trito.tams.web.asset.regist.invest.service.InvestRegistService;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
+import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -189,17 +190,15 @@ public class InvestRegistController {
 	@ApiOperation(value = "투자자산등록(팝업 : 신규자산 등록) 화면 / 저장버튼", notes = "신규자산을 등록한다")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String saveNewAset(
+	public ResponseEntity<? extends Response> saveNewAset(
 			@ApiParam(value = "필터 / 페이징 값", required = false) @RequestBody List<Map<String, Object>> params,
-			@AuthenticationPrincipal UserDetails userDetail) {
-
-		String code = "202";
-
-		code = investRegistService.registAset(userDetail, params, code);
-
-		return code;
+			@AuthenticationPrincipal UserDetails userDetail) {		
+		String userId = ((UserInfo)userDetail).getDto().getUserId();		
+		investRegistService.registAset(userId, params);
+		return responseService.success(null);
 	}
 
+	
 	/** 신규자산등록(팝업) 화면 */
 	@GetMapping("/remodelAsetReg")
 	public ModelAndView remodelAsetRegView(HttpServletRequest request,
@@ -218,19 +217,15 @@ public class InvestRegistController {
 	}
 
 	/** 투자자산등록(팝업) 등록자산목록 화면 : 조회 */
-	@PostMapping(value = "/asetTypeInfo")
+	@GetMapping(value = "/asetTypeInfo")
 	@ResponseBody
-	@ApiOperation(value = "투자자산등록(팝업 : 신규자산 등록) 화면 / 자산유형3 셀렉트박스 체인지 이벤트", notes = "자산유형3에 해당하는 자산유형특성정보를 조회한다")
+	@ApiOperation(value = "자산유형3 특성정보 조회", notes = "자산유형3에 해당하는 자산유형특성정보를 조회한다")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> asetTypeInfo(
-			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestBody Map<String, Object> params) {
-
-		SearchCondition condition = new SearchCondition("0", "0", params);
-
-		List<ComCodeDto> list = investRegistService.selectAsetTypeInfo(condition);
-
-		return responseService.success(condition, list);
+			@ApiParam(value = "자산유형3", required = true) @RequestParam(value="asetType") String asetType) {
+		List<ComCodeDto> list = investRegistService.selectAsetTypeInfo(asetType);
+		return responseService.success(list);
 	}
 
 	/** 투자자산등록(팝업) 등록자산목록 일괄업로드 팝업 화면 : 일괄업로드 */

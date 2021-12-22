@@ -57,8 +57,8 @@ public class InvestRegistService {
 	/** 
 	 * 자산유형특성정보 조회
 	 * */
-	public List<ComCodeDto> selectAsetTypeInfo(SearchCondition condition) {
-		return mapper.selectAsetTypeInfo(condition);
+	public List<ComCodeDto> selectAsetTypeInfo(String asetType) {
+		return mapper.selectAsetTypeInfo(asetType);
 	}
 	
 	/** 
@@ -109,38 +109,28 @@ public class InvestRegistService {
 	public int saveAsetDtlReq(Map<String, Object> param){
 		return mapper.saveAsetDtlReq(param);
 	}
-	
-	/** 
-	 * 현재 ASET_NO의 마지막 시퀀스 조회 
-	 * */
-	public int selectMaxAsetNo(String poNo){
-		return mapper.selectMaxAsetNo(poNo);
-	}
+
 	
 	/**
 	 * 신규자산등록 
 	 */
-	public String registAset(UserDetails userDetail, List<Map<String, Object>> params, String code) {
+	public String registAset(String userId, List<Map<String, Object>> params) {
 		
-		int sequence = this.selectMaxAsetNo(params.get(0).get("poNo").toString());
-		
-		UserInfo userInfo = (UserInfo) userDetail;
-		String userId = userInfo.getDto().getUserId();
-		
-		int cnt = 0;
+		int maxAssetNo = mapper.selectMaxAsetNo();
 		
 		for (Map<String, Object> param : params) { 
 			param.put("regr", userId);
 			param.put("updr", userId);
-			param.put("asetNo", sequence);
+			param.put("asetNo", maxAssetNo);
 			
-			if(this.savePoAset(param) > 0 && this.saveAsetMas(param) > 0 && this.saveAsetDtl(param) > 0)
-				cnt++;
+			this.saveAsetMas(param);
+			this.saveAsetDtl(param);
+			this.savePoAset(param);			
+			
+			maxAssetNo++;
 		}
 		
-		if (cnt > 0) code = "200";
-		
-		return code;
+		return "200";
 	}
 	
 	/** 

@@ -18,13 +18,14 @@
 	<th:block layout:fragment="script">
 	
 		<script>
-		
+
+			//등록자산 목록에서 저장한 데이터 로드
+			let invData = $.commLoadSearchParams("invData");
+			let propertyLength = 0;
+			
 			$(function(){
 				
 				let asetType = [];
-				
-				//등록자산 목록에서 저장한 데이터 로드
-				let invData = $.commLoadSearchParams("invData");
 				
 		    	//항목값 설정
 				$("#invNo").html(invData.invNo);		
@@ -37,12 +38,12 @@
 				$("#invReqr").html(invData.invReqr);
 				
 				//공통코드 조회
-		        getCommCode("#asetType1", "AS_CLASS", "1", "");
-		        getCommCode("#bspic", "SITE", "", "");
-		        getCommCode("#buld", "BUILDING", "", "");
-		        getCommCode("#floor", "FLOOR", "", "");
-		        getCommCode("#expDeptCd", "COST_CENTER", "", "");
-		        getCommCode("#expAcct", "COST_ACCOUNT", "", "");
+		        getCommCode("#asetType1", "AS_CLASS"	, "1"	, "");
+		        getCommCode("#bspic"	, "SITE"		, ""	, "");
+		        getCommCode("#buld"		, "BUILDING"	, ""	, "");
+		        getCommCode("#floor"	, "FLOOR"		, ""	, "");
+		        getCommCode("#expDeptCd", "COST_CENTER"	, ""	, "");
+		        getCommCode("#expAcct"	, "COST_ACCOUNT", ""	, "");
 
 		        
 		        /*------------------------ Event ------------------------*/
@@ -73,13 +74,17 @@
 	    	        openPopup2("DeptPopup", dept_url, args, param);
 	     	    });	    	  	
 	    	  	
+	    	  	let chooseAsset = "자산유형3을 선택하세요.";
+	    	  	let noAssetProperty = "자산유형 특성정보가 없습니다."
+	    	  	
 		      	//자산유형1 change 이벤트
 		        $("#asetType1").change(function(){
 		        	let type1 = $("#asetType1").val();
 	        		$('#asetType2').children('option:not(:first)').remove();
 	        		$('#asetType3').children('option:not(:first)').remove();	        		
-		        	if(type1 != '선택') {
+		        	if(type1 != '') {
 		        		getCommCode("#asetType2", "AS_CLASS", "2", type1);
+		        		defaultAssetProperty(chooseAsset);
 		        	}
 		        });
 		        
@@ -87,18 +92,157 @@
 		        $("#asetType2").change(function(){
 		        	let type2 = $("#asetType2").val();		        	
 		        	$('#asetType3').children('option:not(:first)').remove();		        	
-		        	if(type2 != '선택') {		        		
+		        	if(type2 != '') {		        		
 		        		getCommCode("#asetType3", "AS_CLASS", "3", type2);
+		        		defaultAssetProperty(chooseAsset);
 		        	}
-		        });		        	    	  	
+		        });
+		        
+		        //자산유형2 change 이벤트
+		        $("#asetType3").change(function(){
+		        	let type3 = $("#asetType3").val();
+
+		        	if(type3 != '') {		        				        		
+		        		let url = "/asset/regist/invest/asetTypeInfo";
+		        		let params = {asetType:type3}
+		        		$.commRequest(url, "GET", params)
+		        			.then((res) => {
+		        				
+		        				//console.log(res.data);
+		        				if(res.data.length > 0)
+		        					buildAssetProperty(res.data);
+		        				else
+		        					defaultAssetProperty(noAssetProperty);
+		        				
+		        			}).catch((error) => {
+		        				console.log(error);
+		        			});
+		        	}else{
+		        		defaultAssetProperty(chooseAsset);
+		        	}
+		        });		        
 	    	  	
+		        //팝업종료
+				$(".pop_close").on("click",function(){ 
+					window.close();
+				});		        
+		        
+		        //저장
+	     	    $("#saveNewAset").on("click",function() {
+	     	    	
+	     	    	event.preventDefault();
+	     	    	let data = [saveParams()];	     	    	
+	   		       	console.log(data);
+	   		       	
+	   		       	//저장전 체크로직 추후구현
+	   		       	
+					$.commRequest("/asset/regist/invest/saveNewAset", "POST", JSON.stringify(data))
+						.then((res) => {
+							alert("[[#{screen.info.status.save.success}]]");
+						}).catch((error) => {
+							console.log("[[#{screen.info.status.error.search}]]");
+						});    					
+    			});		        
+		        
 			});
 		
+			function saveParams(){
+				
+				let field = ["asetNo","asetNm","asetType1","asetType2","asetType3","mftco","model","sn","bizDeptCd",
+							 "deptCd","chrgr","bspic","buld","floor","loc","expDeptCd","expAcct","durYear","arqPrc","svalPrc","acqDt"];
+								
+				let params = {
+					"poNo"      : invData.poNo,
+					"uppDeptCd" : invData.uppDeptCd,
+					"deptCd" 	: invData.deptCd,
+					"mfgdNm" 	: invData.mfgdNm,
+					"propLength": propertyLength,				
+				}
+				//자산 입력항목
+				field.forEach(id => {
+					params[id] = $("#"+id).val();
+				});
+				
+				//자산유형 특성
+				let prefix = "dtlInfo";				
+				for(var i=0; i<50; i++){
+					var keyname = prefix + (i+1);					
+					if(i<propertyLength){
+						params[keyname] = $("#"+keyname).val();	
+					}else{
+						params[keyname] = "";
+					}
+				}
+								
+				return params;
+			}
+			
 			function getCommCode(id, code, level, upperCodeId){				
 				let url = "/common/comm/selectBox";
 				let reqType = 'GET';
 				$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);			
 			}
+			
+			function buildAssetProperty(data){
+				
+				let idx = 0;
+				
+				let html = "<colgroup>"
+				html += "  <col style='width:12%' />";
+				html += "  <col style='width:20%' />";
+				html += "  <col style='width:12%' />";
+				html += "  <col style='width:20%' />";					
+				html += "  <col style='width:12%' />";
+				html += "  <col />";
+				html += "</colgroup>";
+				
+				data.forEach(
+					(row) => {
+
+						html += "<tr>";
+						html += "	<th>" + row.code1 + "</th>";
+						html += "	<td><input type='text' id='dtlInfo" + ++idx + "' style='width:100%;'></td>";
+						
+						if(row.code2 == '' || row.code2 == null){
+							html += "	<th />";							
+							html += "	<td />";							
+						}else{
+							html += "	<th>" + row.code2 + "</th>";
+							html += "	<td><input type='text' id='dtlInfo" + ++idx + "' style='width:100%;'></td>";							
+						}
+
+						if(row.code3 == '' || row.code3 == null){
+							html += "	<th />";							
+							html += "	<td />";							
+						}else{
+							html += "	<th>" + row.code3 + "</th>";
+							html += "	<td><input type='text' id='dtlInfo" + ++idx + "' style='width:100%;'></td>";
+						}
+
+						html += "</tr>";				
+					}
+				);
+				
+				propertyLength = idx;
+				
+		    	$('#append_table').empty();
+		    	$('#append_table').append(html);				
+			}
+			
+			function defaultAssetProperty(msg){
+				let html = "<colgroup>"
+					html += "  <col style='width:12%' />";
+					html += "  <col style='width:20%' />";
+					html += "  <col style='width:12%' />";
+					html += "  <col style='width:20%' />";					
+					html += "  <col style='width:12%' />";
+					html += "  <col />";
+					html += "</colgroup>";
+					html += "<tr><td colspan='6' style='text-align:center;'>" + msg+ "</th></tr>";
+			    $('#append_table').empty();
+			    $('#append_table').append(html);									
+			}
+			
 		</script>
 	
 	</th:block>
@@ -110,7 +254,8 @@
 			<!-- contents -->
 			<div id="contents">
 				<!-- contents_head -->
-				<h3>[[#{screen.text.inv.screen.title2}]]</h3>
+				<h3>[[#{screen.text.inv.screen.title2}]]<a href="#;" class="pop_close" title="닫기">닫기</a></h3>
+				
 				<!-- //contents_head -->
 				
 				<!-- detail_table -->
@@ -159,8 +304,8 @@
 						<h6>[[#{screen.text.inv.screen.subtitle1}]]</h6>
 						<!-- list_button -->
 						<div class="button">
-							<a class="btn_list">저장</a>
-							<a class="btn_list">삭제</a>
+							<a id="saveNewAset" class="btn_list">저장</a>
+							<a id="delNewAset" class="btn_list">삭제</a>
 						</div>
 						<!-- list_button -->
 					</div>
@@ -178,7 +323,7 @@
 						</colgroup>
 						<tr>
 							<th>[[#{screen.popup.text.asset.no}]]</th>
-							<td>-</td>
+							<td><input type="text" id="asetNo" style="width:100%;" readOnly></td>
 							<th>[[#{screen.text.aset.nm2}]]</th>
 							<td colspan="3"><input type="text" id="asetNm" style="width:100%;"></td>
 						</tr>
@@ -231,7 +376,7 @@
 							<td>
 								<input type="hidden" id="userId"/>
 								<div class="inqr_popup_btn">
-									<input type="text" id="userNm" style="width:100%; border-right: 1px none;" />
+									<input type="text" id="userNm" style="width:100%; border-right: 1px none;"/>
 									<a href="#" id="openUserPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 								</div>
 							</td>
@@ -300,7 +445,7 @@
 					<!-- //list_head -->
 
 					<!-- detail_table -->
-					<table class="detail_table form_s">
+					<table id="append_table" class="detail_table form_s">
 						<colgroup>
 						<col style="width:12%" />
 						<col style="width:20%" />
@@ -310,29 +455,8 @@
 						<col />
 						</colgroup>
 						<tr>
-							<th>크기</th>
-							<td><input type="text" style="width:100%;" value="유형자산"></td>
-							<th>타입</th>
-							<td><input type="text" style="width:100%;" value=""></td>
-							<th>타입</th>
-							<td><input type="text" style="width:100%;" value=""></td>							
-						</tr>
-						<tr>
-							<th>크기</th>
-							<td><input type="text" style="width:100%;" value="유형자산"></td>
-							<th>타입</th>
-							<td><input type="text" style="width:100%;" value=""></td>
-							<th>타입</th>
-							<td><input type="text" style="width:100%;" value=""></td>		
-						</tr>
-						<tr>
-							<th>크기</th>
-							<td><input type="text" style="width:100%;" value="유형자산"></td>
-							<th>타입</th>
-							<td><input type="text" style="width:100%;" value=""></td>
-							<th>타입</th>
-							<td><input type="text" style="width:100%;" value=""></td>		
-						</tr>						
+							<td colspan="6" style="text-align:center;">자산유형3을 선택하세요.</th>
+						</tr>				
 					</table>
 				</div>
 				<!-- //list -->
