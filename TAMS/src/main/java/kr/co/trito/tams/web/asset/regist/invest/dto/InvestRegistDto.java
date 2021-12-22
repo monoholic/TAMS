@@ -55,5 +55,6 @@ public class InvestRegistDto{
 	private String toDate;
 	@ApiModelProperty(value="미등록자산여부")
 	private String regYn;
-	
+	@ApiModelProperty(value="신규개조여부")
+	private String newYn;	
 }

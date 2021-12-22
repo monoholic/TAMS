@@ -33,8 +33,8 @@
 				$("#poNo").html(invData.poNo);
 				$("#mfgdNm").html(invData.mfgdNm);
 				$("#qty").html(invData.qty);
-				$("#uppDeptNm").html(invData.uppDeptNm);
-				$("#deptNm").html(invData.deptNm);
+				$("#invBizDeptNm").html(invData.uppDeptNm);
+				$("#invDeptNm").html(invData.deptNm);
 				$("#invReqr").html(invData.invReqr);
 				
 				//공통코드 조회
@@ -89,8 +89,8 @@
 	    	        openPopup2("DeptPopup", dept_url, args, param);
 	     	    });	    	  	
 	    	  	
-	    	  	let chooseAsset = "자산유형3을 선택하세요.";
-	    	  	let noAssetProperty = "자산유형 특성정보가 없습니다."
+	    	  	let chooseAsset = "[[#{screen.info.status.inv.choose.assettype3}]]";
+	    	  	let noAssetProperty = "[[#{screen.info.status.inv.no.asset.property}]]"
 	    	  	
 		      	//자산유형1 change 이벤트
 		        $("#asetType1").change(function(){
@@ -268,7 +268,7 @@
 			<!-- contents -->
 			<div id="contents">
 				<!-- contents_head -->
-				<h3>[[#{screen.text.inv.screen.title2}]]<a href="#;" class="pop_close" title="닫기">닫기</a></h3>
+				<h3>[[#{screen.text.inv.screen.title2}]]<a href="#;" class="pop_close" title="닫기">[[#{screen.text.comm.close}]]</a></h3>
 				
 				<!-- //contents_head -->
 				
@@ -300,9 +300,9 @@
 					</tr>
 					<tr>
 						<th>[[#{screen.text.asset.bizDeptCd}]]</th>
-						<td><span id="uppDeptNm"></span></td>					
+						<td><span id="invBizDeptNm"></span></td>					
 						<th>[[#{screen.text.asset.deptCd}]]</th>
-						<td><span id="deptNm"></span></td>
+						<td><span id="invDeptNm"></span></td>
 						<th>[[#{screen.text.asset.chrgr}]]</th>
 						<td><span id="invReqr"></span></td>
 					</tr>
@@ -318,8 +318,8 @@
 						<h6>[[#{screen.text.inv.screen.subtitle1}]]</h6>
 						<!-- list_button -->
 						<div class="button">
-							<a id="saveNewAset" class="btn_list">저장</a>
-							<a id="delNewAset" class="btn_list">삭제</a>
+							<a id="saveNewAset" class="btn_list">[[#{screen.text.comm.save}]]</a>
+							<a id="delNewAset" class="btn_list">[[#{screen.text.comm.close}]]</a>
 						</div>
 						<!-- list_button -->
 					</div>
@@ -423,7 +423,7 @@
 							<th>[[#{screen.text.aset.expDeptCd}]]</th>
 							<td>
 	                            <select id="expDeptCd" style="width:100%;">
-	                            	<option value="">선택</option>
+	                            	<option value="">[[#{screen.text.comm.choice}]]</option>
 	                            </select>
 							</td>
 							<th>[[#{screen.text.aset.expAcct}]]</th>
@@ -469,7 +469,7 @@
 						<col />
 						</colgroup>
 						<tr>
-							<td colspan="6" style="text-align:center;">자산유형3을 선택하세요.</th>
+							<td colspan="6" style="text-align:center;">[[#{screen.info.status.inv.choose.assettype3}]]</th>
 						</tr>				
 					</table>
 				</div>

@@ -30,272 +30,258 @@
 	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
 		
 	    <script>
-	    // 공통코드(자산유형 1레벨 출력)
-	    let numOfRows = 20;
-	    let menuId = "[[${menuId}]]";
 	    
-	 	var condition = {};
-	 	var prevCondition = {};
-	 	
-	    $(function(){
-	    	
-            if($.commLoadSearchParams("condition") != null){
-            	
-                prevCondition = $.commLoadSearchParams("condition").params;
-                
-    	        if(Object.keys(prevCondition).length != undefined){
-    	        	console.log("성공");
-    	        	console.log(prevCondition);
-    	        	$("#invNo").val(prevCondition.invNo);
-    	        	$("#invTtl").val(prevCondition.invTtl);
-    	        	$("#poNo").val(prevCondition.poNo);
-    	        	$("#mfgdNm").val(prevCondition.mfgdNm);
-    	        	$("#deptNm").val(prevCondition.deptNm);
-    	        	$("#invReqr").val(prevCondition.invReqr);
-    	        	if($.commLoadSearchParams("fromDate") != null){
-	    	        	$("#fromDate").val($.commLoadSearchParams("fromDate"));
-	    	        	$("#toDate").val($.commLoadSearchParams("toDate"));
-    	        	}
-    	        	$("#regYn").val(prevCondition.regYn);
-    	        } 
-            }
-	    	
-	        $("#jsGrid").jsGrid({
-	        	height: "550",
-                width: "100%",
-                filtering: false,
-                editing: true,
-                inserting: true,
-                sorting: true,
-                paging: true,
-                sorter: "number",
-                pageIndex:1,
-                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
-                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
-                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
-                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
-                pagerFormat: "{first} {prev} {pages} {next} {last}",
-                pagerContainer:null,
-                pageLoading: true,
-                pager: "#pager",
-                autoload: true,
-                pageSize: numOfRows,
-                pageButtonCount: 5,
-                loadonce: true,
-                updateOnResize: true, 
-	            rowClick: function(args) {
-	            	var target = args.event.target;
+			const SCREEN_NM = "INVEST_REG_RIST";    
+		    
+		    // 공통코드(자산유형 1레벨 출력)
+		    let numOfRows = 20;
+		    let menuId = "[[${menuId}]]";
+		    
+		 	var condition = {};
+		 	var prevCondition = {};
+		 	
+		    $(function(){
+		    	
+		    	//Local Storage에 저장된 파라미터 정보
+		    	let loadParams;
+		    	
+		    	if("[[${loadParams}]]" == 'Y'){ //등록자산 목록에서 화면전환시
+		    		loadParams = $.commLoadSearchParams(SCREEN_NM);
+		    	}else{
+		    		$.commRemoveSearchParams(SCREEN_NM); //메뉴클릭시	    		
+		    	}
+		    	
+	            if(loadParams != null){
 	            	
-					if(target instanceof HTMLTableCellElement) {
-						
-						openAsetList(args.item);
-						
-					}
-	            }, 
-	            pagerContainerClass: "paginate",
-	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
+	                prevCondition = loadParams.condition.params;
+	                
+	    	        if(Object.keys(prevCondition).length != undefined){
+	    	        	$("#invNo").val(prevCondition.invNo);
+	    	        	$("#invTtl").val(prevCondition.invTtl);
+	    	        	$("#poNo").val(prevCondition.poNo);
+	    	        	$("#mfgdNm").val(prevCondition.mfgdNm);
+	    	        	$("#deptCd").val(prevCondition.deptCd);
+	    	        	$("#deptNm").val(prevCondition.deptNm);	    	        	
+	    	        	$("#invReqr").val(prevCondition.invReqr);
+	    	        	$("#fromDate").val(loadParams.fromDate);
+	    	        	$("#toDate").val(loadParams.toDate);
+	    	        	$("#regYn").val(prevCondition.regYn);
+	    	        } 
+	            }
+		    	
+		        $("#jsGrid").jsGrid({
+		        	height: "550",
+	                width: "100%",
+	                filtering: false,
+	                editing: true,
+	                inserting: true,
+	                sorting: true,
+	                paging: true,
+	                sorter: "number",
+	                pageIndex:1,
+	                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
+	                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
+	                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
+	                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
+	                pagerFormat: "{first} {prev} {pages} {next} {last}",
+	                pagerContainer:null,
+	                pageLoading: true,
+	                pager: "#pager",
+	                autoload: true,
+	                pageSize: numOfRows,
+	                pageButtonCount: 5,
+	                loadonce: true,
+	                updateOnResize: true, 
+		            rowClick: function(args) {
+		            	var target = args.event.target;
+		            	
+						if(target instanceof HTMLTableCellElement) {							
+							openAsetList(args.item);							
+						}
+		            }, 
+		            pagerContainerClass: "paginate",
+		            deleteConfirm: function(item) {
+		                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
+		            },
+		            controller:  {
+		                loadData: function(filter) {
+		                    var d = $.Deferred();
+		                    
+		                    let url = "/asset/regist/invest/investReg/investRegList";
+							let reqType = 'POST';
+							let params = getParams();
+		                    params.sortField = filter.sortField;
+		                    params.sortOrder = filter.sortOrder;
+		                    
+							$.commRequest(url, reqType, JSON.stringify(params))
+								.then((res) => {
+									console.log(res);
+									$(".result").text("Totals : " + res.condition.totalCount);
+									d.resolve({data : res.data, itemsCount: res.condition.totalCount});
+									currentPage = res.condition.currentPage;
+									condition = res.condition;
+								})
+								.catch((error) => {
+									console.log('[[#{screen.info.status.error.search}]]');
+								});						
+		                    
+		                    return d.promise();
+		                },
 	            },
-	            controller:  {
-	                loadData: function(filter) {
-	                    var d = $.Deferred();
-	                    
-	                    let url = "/asset/regist/invest/investReg/investRegList";
-						let reqType = 'POST';
-						let params = getParams();
-	                    params.sortField = filter.sortField;
-	                    params.sortOrder = filter.sortOrder;
-	                    
-						$.commRequest(url, reqType, JSON.stringify(params))
-							.then((res) => {
-								console.log(res);
-								$(".result").text("Totals : " + res.condition.totalCount);
-								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
-								currentPage = res.condition.currentPage;
-								condition = res.condition;
-							})
-							.catch((error) => {
-								console.log('[[#{screen.info.status.error.search}]]');
-							});						
-	                    
-	                    return d.promise();
-	                },
-            },
-	            fields: [
-	            	{ name: "invNo"    , type: "text", width: 70 , align: "center"  , title: "[[#{screen.text.inv.no}]]"    },
-	                { name: "invTtl"   , type: "text", width: 170, align: "left"  , title: "[[#{screen.text.inv.ttl}]]"   },
-	                { name: "invDt"    , type: "text", width: 80, align: "center"  , title: "[[#{screen.text.inv.dt}]]"    },
-	                { name: "poNo"	   , type: "text", width: 80, align: "center"  , title: "[[#{screen.text.po.no}]]"     },
-	                { name: "mfgdNm"   , type: "text", width: 130, align: "left"  , title: "[[#{screen.text.po.mfgdnm}]]" },
-	                { name: "qty"	   , type: "text", width: 50 , align: "right"  , title: "[[#{screen.text.po.qty}]]"    },
-	                { name: "poAmt"    , type: "text", width: 80, align: "right"  , title: "[[#{screen.text.po.amt}]]"    },
-	                { name: "deptNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.dept.nm}]]"   },
-	                { name: "userNm"   , type: "text", width: 80, align: "center"  , title: "[[#{screen.text.inv.reqr}]]"  },
-	                { name: "invReqr"  , type: "text", width: 80, align: "right"  , title: "[[#{screen.text.inv.reqr}]]",  visible: false },
-	                { name: "asetQty"  , type: "text", width: 80, align: "right"  , title: "[[#{screen.text.inv.asetqty}]]",
-	                  itemTemplate: function(value, item) {
-	                    return '<a href="javascript:void(0);" onclick="openAsetList(' + item.poNo + ');">' + value + '</a>';
-	                  }
-	                },
-	                { name: "noAsetQty", type: "text", width: 80, align: "right"  , title: "[[#{screen.text.inv.noasetqty}]]"  }
-	            ]
-	        });
-	        
-    	    $(".btn_srch").on("click",function (){
-    	    	if (validationCheck() == '202') {
-	    	   		$("#jsGrid").jsGrid().trigger("loadData");
-    	    	}
-	        });
-	        
-    	    //팝업창 닫기
-			$("#btn_close_pop").on("click",function(){ 
-				window.close();
-			});
-	        
-          	//리셋 버튼
-    	    $(".btn_reset").click(function() {
-    	    	$("#invNo").val("");
-    	    	$("#invTtl").val("");
-    	    	$("#poNo").val("");
-    	    	$("#mfgdNm").val("");
-    	    	$("#deptNm").val("");
-    	    	$("#deptCd").val("");
-    	    	$("#userNm").val("");
-    	    	$("#userId").val("");
-    	    	$("#fromDate").val("");
-    	    	$("#toDate").val("");
-    	    	$("#regYn").val("");
-    	    });
-          	
-			// 사용자 필터 팝업 호출 
-    	    $("#openUserFilterPopup").on("click", function() { 
-    	        // 팝업 호출 url
-    	        var url = "/common/popup/userFilterPopup";
-    	        var popId = "userFilterPopup";
-    	        var args = {};
-    	        args.width = 650;
-    	        args.height = 416;
-    	        args.fullscreen = "no";
-    	        args.resizable = "no";
-    	        
-    	        openPopup(popId, url, args);
-    	    });
-			
-    	  	//공통코드팝업(트리) 호출 
-     	    $("#openDeptPopup").on("click", function() { 
-     	    	// 팝업 호출 url
-    	        var url = "/common/popup/deptTreePopup";
-    	        var popId = "DeptPopup";
-    	        var args = {
-    	        };
-    	        args.width = 500;
-    	        args.height = 450;
-    	        args.fullscreen = "no";
-    	        args.resizable = "no";
-    	        
-    	        var param = {};
-    	        param.id    = "dept";
-    	        param.value = "DEPT";
-    	        
-    	        openPopup(popId, url, args, param);
-     	    });
-     	    
-     	    $("#excelDown").on("click",function() {
-     	    	    
-			       	event.preventDefault();
-			       	
-			       	$(".btn_srch").click();
-			       
+		            fields: [
+		            	{ name: "invNo"    , type: "text", width: 70 , align: "center"  , title: "[[#{screen.text.inv.no}]]"    },
+		                { name: "invTtl"   , type: "text", width: 170, align: "left"  , title: "[[#{screen.text.inv.ttl}]]"   },
+		                { name: "invDt"    , type: "text", width: 80, align: "center"  , title: "[[#{screen.text.inv.dt}]]"    },
+		                { name: "poNo"	   , type: "text", width: 80, align: "center"  , title: "[[#{screen.text.po.no}]]"     },
+		                { name: "mfgdNm"   , type: "text", width: 130, align: "left"  , title: "[[#{screen.text.po.mfgdnm}]]" },
+		                { name: "qty"	   , type: "text", width: 50 , align: "right"  , title: "[[#{screen.text.po.qty}]]"    },
+		                { name: "poAmt"    , type: "text", width: 80, align: "right"  , title: "[[#{screen.text.po.amt}]]"    },
+		                { name: "deptNm"   , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.dept.nm}]]"   },
+		                { name: "userNm"   , type: "text", width: 80, align: "center"  , title: "[[#{screen.text.inv.reqr}]]"  },
+		                { name: "invReqr"  , type: "text", width: 80, align: "right"  , title: "[[#{screen.text.inv.reqr}]]",  visible: false },
+		                { name: "asetQty"  , type: "text", width: 80, align: "right"  , title: "[[#{screen.text.inv.asetqty}]]",
+		                  itemTemplate: function(value, item) {
+		                    return '<a href="javascript:void(0);" onclick="openAsetList(' + item.poNo + ');">' + value + '</a>';
+		                  }
+		                },
+		                { name: "noAsetQty", type: "text", width: 80, align: "right"  , title: "[[#{screen.text.inv.noasetqty}]]"  },
+		                { name: "newYn", type: "text", visible:false},
+		            ]
+		        });
+		        
+	    	    $(".btn_srch").on("click",function (){
+	    	    	if (validationCheck() == '202') {
+		    	   		$("#jsGrid").jsGrid().trigger("loadData");
+	    	    	}
+		        });
+		        
+	    	    //팝업창 닫기
+				$("#btn_close_pop").on("click",function(){ 
+					window.close();
+				});
+		        
+	          	//리셋 버튼
+	    	    $(".btn_reset").click(function() {
+	    	    	$("#invNo").val("");
+	    	    	$("#invTtl").val("");
+	    	    	$("#poNo").val("");
+	    	    	$("#mfgdNm").val("");
+	    	    	$("#deptNm").val("");
+	    	    	$("#deptCd").val("");
+	    	    	$("#userNm").val("");
+	    	    	$("#userId").val("");
+	    	    	$("#fromDate").val("");
+	    	    	$("#toDate").val("");
+	    	    	$("#regYn").val("");
+	    	    });
+	          	
+				//담당자 
+	    	    $("#openUserFilterPopup").on("click", function() { 	    	    	
+	    	        var url = "/common/popup/userFilterPopup";
+	    	        var popId = "userPopup";
+	    	        var args = {
+	    	        	width  : 800,	
+	    	        	height : 416,
+	    	        };	    	        
+	    	        var param = {userId:"#userId", userNm:"#userNm"};	    	        
+	    	        openPopup2("userPopup", url, args, param);	    	    	
+	    	    });
+				
+	    	  	//부서
+	     	    $("#openDeptPopup").on("click", function() { 
+	     	    	let url = "/common/popup/deptTreePopup";
+	     	    	let args = {
+		     	    		width  : 500, 
+		     	    		height : 450,
+		     	    	};	    	        
+	     	    	let param = {
+	    	        	searchType:"DEPT", 
+	    	        	deptCd:"#deptCd", 
+	    	        	deptNm:"#deptNm"
+	    	        };	    	        
+	    	        openPopup2("DeptPopup", url, args, param);
+	     	    });
+	     	    
+	     	    $("#excelDown").on("click",function() {	       					       
 	                let url = "/asset/regist/invest/invListExcel";
-	                $.commExcelDown(url, getParams());
-						
-			});
-    	});
-	    
-		//팝업에서 받은 결과 처리
-		function setResult1(obj) {
-			$("#userId").val(obj.userId);
-			$("#userNm").val(obj.userNm);
-		}
-		
-		//팝업에서 받은 결과 처리
-		function setResult3(obj) {
-			$("#deptCd").val(obj.deptCd);
-			$("#deptNm").val(obj.deptNm);
-		}
-		 
-		function enterkey() {
-	    	if (window.event.keyCode == 13) {
-	    		if (validationCheck() == '202') {
-	    			$("#jsGrid").jsGrid().trigger("loadData");
-	    		}
-	        }
-	    }
-		 
-		// 유효성 검사
-	    function validationCheck() {
-	    	let code = '202';
+	                $.commExcelDown(url, getParams());							
+				});
+	    	});
+
+			function enterkey() {
+		    	if (window.event.keyCode == 13) {
+		    		if (validationCheck() == '202') {
+		    			$("#jsGrid").jsGrid().trigger("loadData");
+		    		}
+		        }
+		    }
+			 
+			// 유효성 검사
+		    function validationCheck() {
+		    	let code = '202';				
+		    	let fromDate = $("#fromDate").val().replaceAll("-", "");
+		    	let toDate = $("#toDate").val().replaceAll("-", "");
+		    	
+				if(fromDate > toDate) {
+					alert("[[#{screen.info.status.date.fail}]]");
+					$("#toDate").focus();
+					code = '200';
+				}
+				return code;
+		    }
 			
-	    	var fromDate = $("#fromDate").val().replaceAll("-", "");
-	    	var toDate = $("#toDate").val().replaceAll("-", "");
-	    	
-			if(fromDate > toDate) {
-				alert("[[#{screen.info.status.date.fail}]]");
-				$("#toDate").focus();
-				code = '200';
-			}
-			return code;
-	    }
-		
-	    function returnResult(item) {
-			opener.selectAsetList(item);
-			window.close();
-	    }
-	    
-	    function openAsetList(val){
-	    	
-	       	event.preventDefault();
-	       	
-	       	$.commSaveSearchParams("condition", condition);
-	       	$.commSaveSearchParams("fromDate", $("#fromDate").val());
-	       	$.commSaveSearchParams("toDate", $("#toDate").val());
-	       	$.commSaveSearchParams("menuId", "[[${menuId}]]");
-	       	$.commSaveSearchParams("menuNm", "[[${menuNm}]]");
-	       	$.commSaveSearchParams("menuDesc", "[[${menuDesc}]]");
-	       	
-            let url = "/asset/regist/invest/regAset";
-			let menuId = "[[${menuId}]]";
-            
-			var $form = $('<form></form>'); 
-				$form.attr('action', url); 
-				$form.attr('method', 'Post'); 
-				$form.attr('target', '_self'); 
-				
-			var inputStr = $('<input type="hidden" value="' + val.poNo + '" name="poNo">');
-				$form.append(inputStr);
- 				inputStr = $('<input type="hidden" value="' + menuId + '" name="menuId">');
-				$form.append(inputStr); 
-				
-				$form.appendTo('body'); 
-				
-				$form.submit();
-	    }
-	    
-        function getParams(){
-            return {
-                    "currentPage": $("#jsGrid").jsGrid("option", "pageIndex"),
-    				"numOfRows"    : numOfRows,
-    				"invNo"   	   : $("#invNo").val(),
-    				"invTtl"   	   : $("#invTtl").val(),
-    				"poNo"         : $("#poNo").val(),
-    				"mfgdNm"   	   : $("#mfgdNm").val(),
-    				"deptCd"       : $("#deptCd").val(),
-    				"userId"   	   : $("#userId").val(),
-    			    "fromDate"     : $("#fromDate").val().replaceAll("-", ""),
-				    "toDate"       : $("#toDate").val().replaceAll("-", ""),
-				    "regYn"	   	   : $("#regYn").val()             
-                 }
-         }   
+		    function returnResult(item) {
+				opener.selectAsetList(item);
+				window.close();
+		    }
+		    
+		    function openAsetList(val){
+
+		       	event.preventDefault();
+		       	
+		       	let saveParams = {
+		       		"condition": condition,
+		       		"fromDate" : $("#fromDate").val(), 
+		       		"toDate"   : $("#toDate").val(),
+		       		"menuId"   : "[[${menuId}]]" ,
+		       		"menuNm"   : "[[${menuNm}]]",
+		       		"menuDesc" : "[[${menuDesc}]]",
+		       		"newYn"    : val.newYn,
+		       	}
+		       	
+		       	$.commSaveSearchParams(SCREEN_NM, saveParams);
+		       	
+	            let url = "/asset/regist/invest/regAset";
+				let menuId = "[[${menuId}]]";
+	            
+				var $form = $('<form></form>'); 
+					$form.attr('action', url); 
+					$form.attr('method', 'Post'); 
+					$form.attr('target', '_self'); 
+					
+				var inputStr = $('<input type="hidden" value="' + val.poNo + '" name="poNo">');
+					$form.append(inputStr);
+	 				inputStr = $('<input type="hidden" value="' + menuId + '" name="menuId">');
+					$form.append(inputStr); 					
+					$form.appendTo('body'); 					
+					$form.submit();
+		    }
+		    
+	        function getParams(){
+	            return {
+	                    "currentPage": $("#jsGrid").jsGrid("option", "pageIndex"),
+	    				"numOfRows"    : numOfRows,
+	    				"invNo"   	   : $("#invNo").val(),
+	    				"invTtl"   	   : $("#invTtl").val(),
+	    				"poNo"         : $("#poNo").val(),
+	    				"mfgdNm"   	   : $("#mfgdNm").val(),
+	    				"deptCd"       : $("#deptCd").val(),
+	    				"userId"   	   : $("#userId").val(),
+	    			    "fromDate"     : $("#fromDate").val().replaceAll("-", ""),
+					    "toDate"       : $("#toDate").val().replaceAll("-", ""),
+					    "regYn"	   	   : $("#regYn").val()             
+	                 }
+	         }   
 	    
 	    </script>	
 	</th:block>
@@ -315,12 +301,12 @@
 					<div class="srch_form">
 						<table class="srch_table">
 							<colgroup>
-											<col width="10%"/>
-											<col width="20%"/>
-											<col width="15%"/>
-											<col width="20%"/>
-											<col width="15%"/>
-											<col width=""/>
+								<col width="10%"/>
+								<col width="20%"/>
+								<col width="15%"/>
+								<col width="20%"/>
+								<col width="15%"/>
+								<col width=""/>
 							</colgroup>
 							<tr>
 								<th>[[#{screen.text.inv.no}]]</th>
@@ -359,7 +345,7 @@
 								<th>[[#{screen.text.inv.asetinqr}]]</th>
 								<td>
 									<select id="regYn" style="width:100%;">
-										<option value="">선택</option>
+										<option value="">[[#{screen.text.comm.choice}]]</option>
 										<option value="Y">Y</option>
 										<option value="N">N</option>
 									</select>

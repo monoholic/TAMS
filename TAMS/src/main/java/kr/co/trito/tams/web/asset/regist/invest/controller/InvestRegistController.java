@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -61,18 +62,19 @@ public class InvestRegistController {
 
 		ModelAndView view = new ModelAndView();
 		if (params != null) {
-			view.addObject("menuId", params.get("menuId").toString());
-			view.addObject("menuNm", params.get("menuNm").toString());
-			view.addObject("menuDesc", params.get("menuDesc").toString());
+			view.addObject("menuId"    , params.get("menuId").toString());
+			view.addObject("menuNm"    , params.get("menuNm").toString());
+			view.addObject("menuDesc"  , params.get("menuDesc").toString());			
 		} else {
-			view.addObject("menuId", request.getParameter("menuId"));
-			view.addObject("menuNm", request.getParameter("menuNm"));
-			view.addObject("menuDesc", request.getParameter("menuDesc"));
+			view.addObject("menuId"    , request.getParameter("menuId"));
+			view.addObject("menuNm"    , request.getParameter("menuNm"));
+			view.addObject("menuDesc"  , request.getParameter("menuDesc"));
 		}
+		
+		view.addObject("loadParams", StringUtils.defaultIfBlank(request.getParameter("loadParams"), "N"));
 		view.addObject("url", request.getParameter("url"));
-
 		view.setViewName("/content/asset/regist/invest/investRegist");
-
+		
 		return view;
 	}
 
@@ -100,7 +102,7 @@ public class InvestRegistController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ModelAndView invListExcel(
-			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestBody Map<String, Object> params) {
+			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
 
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(),
 				params.get("numOfRows").toString(), params);

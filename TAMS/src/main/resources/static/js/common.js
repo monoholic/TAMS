@@ -335,12 +335,7 @@ function openPopup2(popId, url, args, param) {
     
     var sTop  = Math.max(0, ((pheight - height) / 2) + $(window).scrollTop()) + "px";
     var sLeft = Math.max(0, ((pwidth - width) / 2) + $(window).scrollLeft()) + "px";
-    
-    console.log("parent width --> " + pheight);
-    console.log("parent height --> " + pwidth);
-    console.log("sTop --> " + sTop);
-    console.log("sLeft --> " + sLeft);
-    
+        
     options = "";
     options += "position=absolute";
     options += ",top="+sTop+", left="+sLeft+", height="+height+"px, width="+width+"px";
