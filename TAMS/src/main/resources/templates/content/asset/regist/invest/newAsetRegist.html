@@ -52,8 +52,13 @@
 	    	    $("#openUserPopup").on("click", function() { 
 	    	        var url = "/common/popup/userPopup";
 	    	        var popId = "userPopup";
-	    	        var args = {width:650,	height:416};	    	        
-	    	        var param = {userId:"#userId", userNm:"#userNm"};	    	        
+	    	        var args = {
+	    	        	width  : 650,	
+	    	        	height : 416,
+		    	    	pheight: window.opener.innerHeight,
+		    	    	pwidth : window.opener.innerWidth,	  
+	    	        };	    	        
+	    	        var param = {userId:"#chrgr", userNm:"#chrgrNm"};	    	        
 	    	        openPopup2(popId, url, args, param);
 	    	    });		    	
 		    	
@@ -62,15 +67,25 @@
 		    	
 	    	  	//사업부 선택
 	     	    $("#openDeptPopup1").on("click", function() { 
-	    	       var args = {width:500, height:450};
-	    	       var param = {searchType:"BIZ_DEPT", deptCd:"#deptCd1", deptNm:"#deptNm1"};	    	         	  
+	    	       var args = {
+	    	    		width  : 500, 
+	    	    		height : 450,
+	    	    		pheight: window.opener.innerHeight,
+	    	    		pwidth : window.opener.innerWidth,	    	    		
+	    	       };
+	    	       var param = {searchType:"BIZ_DEPT", deptCd:"#bizDeptCd", deptNm:"#bizDeptNm"};	         	  
 	 	           openPopup2("DeptPopup", dept_url, args, param);
 	     	    });		
 	    	  	
 	    	  	//부서 
 	     	    $("#openDeptPopup").on("click", function() {
-	     	    	var args = {width:500, height:450};
-	     	    	var param = {searchType:"DEPT", deptCd:"#deptCd2", deptNm:"#deptNm2"};	    	        
+	     	    	var args = {
+	     	    		width  : 500, 
+	     	    		height : 450,
+		    	    	pheight: window.opener.innerHeight,
+		    	    	pwidth : window.opener.innerWidth,	  	     	    		
+	     	    	};
+	     	    	var param = {searchType:"DEPT", deptCd:"#deptCd", deptNm:"#deptNm"};	    	        
 	    	        openPopup2("DeptPopup", dept_url, args, param);
 	     	    });	    	  	
 	    	  	
@@ -138,9 +153,11 @@
 	   		       	
 					$.commRequest("/asset/regist/invest/saveNewAset", "POST", JSON.stringify(data))
 						.then((res) => {
-							alert("[[#{screen.info.status.save.success}]]");
+							alert("[[#{screen.info.status.save.success}]]");							
+							opener.parent.search();
+							window.close();
 						}).catch((error) => {
-							console.log("[[#{screen.info.status.error.search}]]");
+							console.log("[[#{screen.info.status.error.occur}]]");
 						});    					
     			});		        
 		        
@@ -153,9 +170,6 @@
 								
 				let params = {
 					"poNo"      : invData.poNo,
-					"uppDeptCd" : invData.uppDeptCd,
-					"deptCd" 	: invData.deptCd,
-					"mfgdNm" 	: invData.mfgdNm,
 					"propLength": propertyLength,				
 				}
 				//자산 입력항목
@@ -358,25 +372,25 @@
 						<tr>
 							<th>[[#{screen.text.asset.bizDeptCd}]]</th>
 							<td>
-								<input type="hidden" id="deptCd1"/>
+								<input type="hidden" id="bizDeptCd"/>
 								<div class="inqr_popup_btn">
-									<input type="text" id="deptNm1" style="width:100%; border-right: 1px none;" />
+									<input type="text" id="bizDeptNm" style="width:100%; border-right: 1px none;" />
 									<a href="#" id="openDeptPopup1" ><img title="사업부 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 								</div>
 							</td>
 							<th>[[#{screen.text.asset.deptCd}]]</th>
 							<td>
-								<input type="hidden" id="deptCd2"/>
+								<input type="hidden" id="deptCd"/>
 								<div class="inqr_popup_btn">
-									<input type="text" id="deptNm2" style="width:100%; border-right: 1px none;" />
+									<input type="text" id="deptNm" style="width:100%; border-right: 1px none;" />
 									<a href="#" id="openDeptPopup" ><img title="부서 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 								</div>
 							</td>
 							<th>[[#{screen.text.asset.asetChrgr}]]</th>
 							<td>
-								<input type="hidden" id="userId"/>
+								<input type="hidden" id="chrgr"/>
 								<div class="inqr_popup_btn">
-									<input type="text" id="userNm" style="width:100%; border-right: 1px none;"/>
+									<input type="text" id="chrgrNm" style="width:100%; border-right: 1px none;"/>
 									<a href="#" id="openUserPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 								</div>
 							</td>
