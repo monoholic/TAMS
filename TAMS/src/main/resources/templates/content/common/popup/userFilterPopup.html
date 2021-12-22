@@ -206,18 +206,6 @@
 				    	popSelectedItems = $.grep(popSelectedItems, function(i) {
 					    return i !== item;
 					    });
-					    
-					    /*  
-					    if(popSelectedItems.length == 0) {
-					    	$('#popSelectAllCheckbox').attr('checked', false);
-					    }
-					    if($(".popSingleCheckbox").length == $(".popSingleCheckbox:checked").length) {
-			             	$("#popSelectAllCheckbox").prop("checked", true);
-				        } else {
-				            $("#popSelectAllCheckbox").prop("checked", false);
-				        } 
-					    */
-					    
 				    };
 				
 				
@@ -254,7 +242,14 @@
 		  //선택 버튼클릭시 
 		  function selectItem(obj) {
 			 console.log(obj);
-			  opener.setResult1(obj); //부모창에 구현
+			 
+			  if(typeof(opener.setResult) == "undefined") {
+				  $($("#userId").text(), opener.document).val(obj.userId);
+				  $($("#userNm").text(), opener.document).val(obj.userNm);				  
+			  }else{
+				  opener.setResult(obj); //부모창에 구현	  
+			  }			 
+			 
 			  window.close();
 		  }
 			
@@ -283,68 +278,73 @@
 	<!-- pop_alert -->
 	<div id="pop_wrap" >
 	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
-					<!-- head -->
-					<h3>[[#{screen.popup.text.user.screen.title}]]
-						 <!-- <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a> -->
-					</h3>
-					<!-- //head -->
-					<!-- contents -->
-					<div id="contents">
 	
-						<!-- search -->
-						<div class="srch_wrap">
-							<!-- search_form -->
-							<div class="srch_form">
-								<table class="srch_table">
-									<colgroup>
-											<col width="15%"/>
-											<col width="40%"/>
-											<col width="15%"/>
-											<col width=""/>
-									</colgroup>
-									<tr>
-										<td>
-											<select id="searchType" onkeyup="enterkey()">
-												<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
-											</select>
-										</td>
-										<td>
-											<input type="text" id="searchTxt"/>
-										</td>
-										<td>
-											<select id="searchType2" onkeyup="enterkey()">
-												<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
-											</select>
-										</td>
-										<td>
-											<input type="text" id="searchTxt2"/>
-										</td>
-									</tr>
-								</table>
-								<!-- search_button -->
-								<div class="button">
-									<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
-									<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
-								</div>
-								<!-- //search_button -->
-							</div>
-							<!-- //search_form -->
-						</div>
-						<!-- //search -->
+		<span id="userId" th:text="${param.userId}" style="display:none;"></span>
+		<span id="userNm" th:text="${param.userNm}" style="display:none;"></span>	
+		
 
-						<!-- list 1 -->
-						<div id="jsGrid"></div>
-						<!-- //list 1 -->
-	
+		<!-- head -->
+		<h3>[[#{screen.popup.text.user.screen.title}]]
+			 <!-- <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">닫기</a> -->
+		</h3>
+		<!-- //head -->
+		<!-- contents -->
+		<div id="contents">
+
+			<!-- search -->
+			<div class="srch_wrap">
+				<!-- search_form -->
+				<div class="srch_form">
+					<table class="srch_table">
+						<colgroup>
+								<col width="15%"/>
+								<col width="40%"/>
+								<col width="15%"/>
+								<col width=""/>
+						</colgroup>
+						<tr>
+							<td>
+								<select id="searchType" onkeyup="enterkey()">
+									<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
+								</select>
+							</td>
+							<td>
+								<input type="text" id="searchTxt"/>
+							</td>
+							<td>
+								<select id="searchType2" onkeyup="enterkey()">
+									<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
+								</select>
+							</td>
+							<td>
+								<input type="text" id="searchTxt2"/>
+							</td>
+						</tr>
+					</table>
+					<!-- search_button -->
+					<div class="button">
+						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 					</div>
-					<!-- contents -->
-					<!-- button -->
-					<div class="pop_button">
-						<p>
-						<a href="#;" id="btn_close_pop" class="btn_list_rd">[[#{screen.text.comm.close}]]</a>
-						</p>
-					</div>
-					<!-- //button -->
+					<!-- //search_button -->
+				</div>
+				<!-- //search_form -->
+			</div>
+			<!-- //search -->
+
+			<!-- list 1 -->
+			<div id="jsGrid"></div>
+			<!-- //list 1 -->
+
+		</div>
+		<!-- contents -->
+		<!-- button -->
+		<div class="pop_button">
+			<p>
+			<a href="#;" id="btn_close_pop" class="btn_list_rd">[[#{screen.text.comm.close}]]</a>
+			</p>
+		</div>
+		<!-- //button -->
 	</div>
 	<!-- //pop_alert -->
 </div>
