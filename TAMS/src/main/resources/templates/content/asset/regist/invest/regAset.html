@@ -39,6 +39,12 @@
 		 	var invData = {};
 		 	
 		    $(function(){
+		    	
+		    	const SCREEN_NM = "INVEST_REG_RIST";   
+		    	let loadParams = $.commLoadSearchParams(SCREEN_NM);
+		    	
+		    	console.log(loadParams);
+		    	
 		    	$("#jsGrid").jsGrid({
 			        	height: "510",
 		                width: "100%",
@@ -133,7 +139,7 @@
 	    	        args.resizable = "no";
 	    	        
 	    	        var param = {};
-	    	        param.menuId = $.commLoadSearchParams("menuId");
+	    	        param.menuId = loadParams.menuId;
 	    	        param.poNo = "[[${poNo}]]";
 	    	        
 	    	        $.commSaveSearchParams("invData", invData);
@@ -209,12 +215,14 @@
 							$form.attr('action', url); 
 							$form.attr('method', 'post'); 
 							$form.attr('target', '_self'); 
-							inputStr = $('<input type="hidden" value="'+ $.commLoadSearchParams("menuId") + '" name="menuId">');	
+							inputStr = $('<input type="hidden" value="'+ loadParams.menuId + '" name="menuId">');	
 							$form.append(inputStr);
-							inputStr = $('<input type="hidden" value="'+ $.commLoadSearchParams("menuNm") + '" name="menuNm">');	
+							inputStr = $('<input type="hidden" value="'+ loadParams.menuNm + '" name="menuNm">');	
 							$form.append(inputStr);
-							inputStr = $('<input type="hidden" value="'+ $.commLoadSearchParams("menuDesc") + '" name="menuDesc">');	
+							inputStr = $('<input type="hidden" value="'+ loadParams.menuDesc + '" name="menuDesc">');	
 							$form.append(inputStr);
+							inputStr = $('<input type="hidden" value="Y" name="loadParams">');	
+							$form.append(inputStr);							
 							$form.appendTo('body'); 
 							$form.submit();
 							

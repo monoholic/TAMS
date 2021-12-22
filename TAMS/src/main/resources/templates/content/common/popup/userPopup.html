@@ -235,10 +235,8 @@
 			});
 			
 		  //선택 버튼클릭시 
-		  function selectItem(obj) {
-			  
-			  console.log(obj);
-			  
+		  function selectItem(obj) {			  
+			  //console.log(obj);			  
 			  if(typeof(opener.setResult) == "undefined") {
 				  $($("#userId").text(), opener.document).val(obj.userId);
 				  $($("#userNm").text(), opener.document).val(obj.userNm);				  
