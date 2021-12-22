@@ -102,6 +102,7 @@
 	           	    , b.user_id    as userId
 	           	    , b.asetQty
 	           	    , b.qty - b.asetQty as noAsetQty
+	           	    , ifnull((select max(new_yn) from tb_po_aset x where x.po_no = b.po_no), '') as newYn
 	           	 from (
 	       				select a.rn
 	       			  		 , a.inv_no
@@ -117,10 +118,10 @@
 	       					 , a.inv_reqr
 	       					 , a.user_nm
 	       					 , a.user_id
-	       					 , IFNULL((select sum(qty)
-	       				 			   from tb_po_aset B
+	       					 , ifnull((select sum(qty)
+	       				 			   from tb_po_aset b
 	       				 		       where 1 = 1
-	       				 		       and B.PO_NO = A.PO_NO), 0) as asetQty
+	       				 		       and b.po_no = a.po_no), 0) as asetQty
 	           			 from (
 	                     		select row_number() over(order by cast(b.inv_no as int) desc) as rn
 	     						 	 , a.inv_no
@@ -166,7 +167,7 @@
 	      						  </if>
 	      						) as a
 	           			) as b	
-	           	left outer join tb_dept F
+	           	left outer join tb_dept f
 	           	  on f.use_yn = 'Y'
 	           	 and f.dept_cd = b.upp_dept_cd
 	           	where rn between #{start} and #{end}

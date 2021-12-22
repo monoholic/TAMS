@@ -43,8 +43,6 @@
 		    	const SCREEN_NM = "INVEST_REG_RIST";   
 		    	let loadParams = $.commLoadSearchParams(SCREEN_NM);
 		    	
-		    	console.log(loadParams);
-		    	
 		    	$("#jsGrid").jsGrid({
 			        	height: "510",
 		                width: "100%",
@@ -84,7 +82,6 @@
 			                    
 								$.commRequest(url, reqType, JSON.stringify(params))
 									.then((res) => {
-										console.log(res);
 										$(".result").text("Totals : " + res.condition.totalCount);
 										d.resolve({data : res.data, itemsCount: res.condition.totalCount});
 										
@@ -127,58 +124,50 @@
 			        });
 			        
 
-				// 신규자산 등록
-	    	    $("#newAsetRegist").on("click", function() { 
-	    	        // 팝업 호출 url
+				//신규자산
+	    	    $("#newAsetRegist").on("click", function() {
+	    	    	
+	    	    	if(loadParams.newYn == "N"){
+	    	    		alert("개조자산 등록만 가능합니다.");
+	    	    		return;
+	    	    	}
+	    	    	
 	    	        var url = "/asset/regist/invest/newAsetReg";
-	    	        var popId = "newAsetRegist";
-	    	        var args = {};
-	    	        args.width = 1200;
-	    	        args.height = 700;
-	    	        args.fullscreen = "no";
-	    	        args.resizable = "no";
+	    	        var args = {width:1200, height:700};
+	    	        var param = {
+	    	        	menuId : loadParams.menuId,
+	    	        	poNo   : "[[${poNo}]]",
+	    	        };
 	    	        
-	    	        var param = {};
-	    	        param.menuId = loadParams.menuId;
-	    	        param.poNo = "[[${poNo}]]";
-	    	        
-	    	        $.commSaveSearchParams("invData", invData);
-	    	        
-	    	        openPopup2(popId, url, args, param);
+	    	        $.commSaveSearchParams("invData", invData);	    	        
+	    	        openPopup2("newAsetRegist", url, args, param);
 	    	    });
 				
-				// 개조자산 선택
+				//개조자산
 	    	    $("#remodelAsetRegist").on("click", function() { 
-	    	        // 팝업 호출 url
+	    	    	
+	    	    	if(loadParams.newYn == "Y"){
+	    	    		alert("신규자산 등록만 가능합니다.");
+	    	    		return;
+	    	    	}	    	    	
+
 	    	        var url = "/asset/regist/invest/remodelAsetReg";
-	    	        var popId = "remodelAsetRegist";
-	    	        var args = {};
-	    	        args.width = 1350;
-	    	        args.height = 650;
-	    	        args.fullscreen = "no";
-	    	        args.resizable = "no";
+	    	        var args = {width:1350, height:650};
+	    	        var param = {
+	    	        	id    : "poNo",
+	    	        	value : "[[${poNo}]]",
+	    	        };
 	    	        
-	    	        var param = {};
-	    	        param.id    = "poNo";
-	    	        param.value = "[[${poNo}]]";
-	    	        
-	    	        $.commSaveSearchParams("invData", invData);
-	    	        
-	    	        openPopup(popId, url, args);
+	    	        $.commSaveSearchParams("invData", invData);	    	        
+	    	        openPopup("remodelAsetRegist", url, args);
 	    	    });
 				
 				// 일괄 업로드 팝업 
 	    	    $("#openRegAsetPopup").on("click", function() { 
 	    	        // 팝업 호출 url
 	    	        var url = "/asset/regist/invest/popup/regAsetUploadPopup";
-	    	        var popId = "regAsetPopup";
-	    	        var args = {};
-	    	        args.width = 1200;
-	    	        args.height = 710;
-	    	        args.fullscreen = "no";
-	    	        args.resizable = "no";
-	    	        
-	    	        openPopup(popId, url, args);
+	    	        var args = {width:1200, height:710};	    	        
+	    	        openPopup("regAsetPopup", url, args);
 	    	    });
 	     	    
 				// 엑셀다운

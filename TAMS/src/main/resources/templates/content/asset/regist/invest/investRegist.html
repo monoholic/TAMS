@@ -144,7 +144,8 @@
 		                    return '<a href="javascript:void(0);" onclick="openAsetList(' + item.poNo + ');">' + value + '</a>';
 		                  }
 		                },
-		                { name: "noAsetQty", type: "text", width: 80, align: "right"  , title: "[[#{screen.text.inv.noasetqty}]]"  }
+		                { name: "noAsetQty", type: "text", width: 80, align: "right"  , title: "[[#{screen.text.inv.noasetqty}]]"  },
+		                { name: "newYn", type: "text", visible:false},
 		            ]
 		        });
 		        
@@ -201,9 +202,7 @@
 	    	        openPopup2("DeptPopup", url, args, param);
 	     	    });
 	     	    
-	     	    $("#excelDown").on("click",function() {	     	    	    
-			       	event.preventDefault();				       	
-			       	$(".btn_srch").click();				       
+	     	    $("#excelDown").on("click",function() {	       					       
 	                let url = "/asset/regist/invest/invListExcel";
 	                $.commExcelDown(url, getParams());							
 				});
@@ -237,7 +236,7 @@
 		    }
 		    
 		    function openAsetList(val){
-		    	
+
 		       	event.preventDefault();
 		       	
 		       	let saveParams = {
@@ -247,6 +246,7 @@
 		       		"menuId"   : "[[${menuId}]]" ,
 		       		"menuNm"   : "[[${menuNm}]]",
 		       		"menuDesc" : "[[${menuDesc}]]",
+		       		"newYn"    : val.newYn,
 		       	}
 		       	
 		       	$.commSaveSearchParams(SCREEN_NM, saveParams);
@@ -301,12 +301,12 @@
 					<div class="srch_form">
 						<table class="srch_table">
 							<colgroup>
-											<col width="10%"/>
-											<col width="20%"/>
-											<col width="15%"/>
-											<col width="20%"/>
-											<col width="15%"/>
-											<col width=""/>
+								<col width="10%"/>
+								<col width="20%"/>
+								<col width="15%"/>
+								<col width="20%"/>
+								<col width="15%"/>
+								<col width=""/>
 							</colgroup>
 							<tr>
 								<th>[[#{screen.text.inv.no}]]</th>
