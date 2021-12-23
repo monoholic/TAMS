@@ -79,6 +79,8 @@ public class AssetModifyController {
 			view.addObject("menuNm", request.getParameter("menuNm"));
 			view.addObject("menuDesc", request.getParameter("menuDesc"));
 		}
+		
+		view.addObject("loadParams", StringUtils.defaultIfBlank(request.getParameter("loadParams"), "N"));
 		view.addObject("url", request.getParameter("url"));
 		
 		view.setViewName("/content/asset/change/modify/requestList");
@@ -89,7 +91,6 @@ public class AssetModifyController {
 	@PostMapping("/requestRegistView")
 	@ResponseBody
 	public ModelAndView requestRegistView(HttpServletRequest request) {
-		
 		ModelAndView view = new ModelAndView();
 		String reqNo = request.getParameter("reqNo");
 		

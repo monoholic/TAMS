@@ -236,7 +236,8 @@
 		            WHERE dept_cd = b.dept_cd) dept_nm
 		     , chrgr
 		FROM tb_aset_req b
-		WHERE b.req_no = #{params.reqNo};
+		WHERE b.req_no = #{params.reqNo}
+		ORDER BY b.aset_no;
 	</select>
 	
 	<!-- 대상자산목록 조회 카운트 -->
@@ -373,7 +374,6 @@
 			     , chrgr	   = #{chrgr}
 			     , biz_dept_cd = #{bizDeptCd}
 			     , dept_cd	   = #{deptCd}
-			     <!-- chrgr = #{chrgr} -->
 			   ON  DUPLICATE KEY UPDATE
 			       aset_type1  = #{asetType1}
 		         , aset_type2  = #{asetType2}

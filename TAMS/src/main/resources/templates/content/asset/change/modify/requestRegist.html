@@ -29,7 +29,6 @@
 	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
 		
 	    <script>
-	    
 	    let numOfRows = 30;
 	    var status = true;
         var selectedItems = [];
@@ -44,6 +43,7 @@
 	 	var asetList = [];
 	 	
 	 	let loadParams = [];
+	 	let targetItem;
 	 	
 	 	var selectItem = function(item) {
 	    	if(!selectedItems.includes(item)) {
@@ -74,8 +74,6 @@
 	    $(function(){
 	    	const SCREEN_NM = "MODIFY_REQ_RIST";   
 	    	loadParams = $.commLoadSearchParams(SCREEN_NM);
-	    	
-	    	console.log(loadParams);
 	    	
 	        $("#pager").on("change", function() {
 	            var page = parseInt($(this).val(), 10);
@@ -148,7 +146,6 @@
                 		reqRsn  : $("#reqRsn").val(),
                 		asetList: selectedItems
                 };
-	            
     			$("#jsGrid").jsGrid(action, insert_item);
                 
                 $(this).parents("#detailForm").hide();
@@ -183,22 +180,23 @@
     	        var url = "/common/popup/asetMasPopup";
     	        var popId = "AsetMasPopup";
     	        var args = {
+    	        	width : 1350,
+    	    	    height : 600,
+    	    	    fullscreen : "no",
+    	    	    resizable : "no"
     	        };
-    	        args.width = 1350;
-    	        args.height = 600;
-    	        args.fullscreen = "no";
-    	        args.resizable = "no";
     	        
-    	        var param = {};
-    	        param.id    = "reqStus";
-    	        param.value = "20";
+    	        var param = {
+   	        		id : "reqStus",
+   	    	        value : "20"
+    	        };
     	        
     	        openPopup(popId, url, args, param);
     	    });
 	     	
 			/*-------------------------------------------------------------------------*/			
 	        (async () => {	        	
-  				console.log(">>>>>> step 1 asetArr1 " + asetArr1.length);  				
+  				console.log(">>>>>> step 1 asetArr1 " + asetArr1.length);
   				await asetTypeList();
   				await jsGridLoad();
   				})();			
@@ -206,10 +204,10 @@
 	        
     	});
     	
+	 	// 자산번호 비교 및 자산 추가
     	function selectAsetList(obj) {
     		var asetNoChk = [];
     		
-    		// 자산번호 비교
     		$.each(asetList, function(idx, el){
     			asetNoChk.push(el.asetNo);
     		});
@@ -221,7 +219,6 @@
     			else
     				alert("[[#{screen.info.status.error.modify.dup.asset}]]");
     		});
-    		
     		jsGridLoad();
 		}
     	
@@ -239,15 +236,14 @@
 				$form.append(inputStr);
 				inputStr = $('<input type="hidden" value="'+ loadParams.menuDesc + '" name="menuDesc">');	
 				$form.append(inputStr);
+				inputStr = $('<input type="hidden" value="Y" name="loadParams">');
+				$form.append(inputStr);
 				$form.appendTo('body'); 
 				$form.submit();
 	    }
     	
 		// asetType 리스트 출력
 	    async function asetTypeList() {
-			
-	    	console.log('--------------- asetTypeList ------------------');
-			
 		 	let url = '/common/popup/asetType';                                                      
 		 	let reqType = 'POST';                                                                        
 		 	let data = {                                                                                 
@@ -271,17 +267,13 @@
 			 				asetArr3.push({Id : el.codeId, Nm:el.codeNm});
 		 				}
 		 			})
-		 			console.log(">>>>>> step 2 asetArr1 " + asetArr1.length);
 		 		})
-		 		
 		 		.catch((error) => {                                                                      
 		 			alert('[[#{screen.info.status.error.search}]]');                                                                  
 		 		});
 		};
 		
 		function jsGridLoad() {
-			console.log('--------------- jsGridLoad ------------------');
-	 		
 	 		 $("#jsGrid").jsGrid({
 		        	height: "485",
 	                width: "100%",
@@ -306,8 +298,13 @@
 	                loadonce: true,
 	                updateOnResize: true,
 		            rowClick: function(args) {
+		            	targetItem = args.item;
 		            	
-		            	if(args.event.target.cellIndex != 0){
+		            	// 체크박스 선택 시 editing 활성화 막기
+		            	var chkBoxNm = jQuery(".singleCheckbox").attr("class");
+		            	var chkBoxNm2 = jQuery(args.event.target).attr("class");
+		            	
+		            	if(args.event.target.cellIndex != 0 && chkBoxNm != chkBoxNm2) {
 		            		jsGrid.Grid.prototype.rowClick.call(this, args);
 	            	    }
 		            },
@@ -356,17 +353,14 @@
 		                    return d.promise();
 		                },
 		                
-			            updateItem: function(item) { 
+			            updateItem: function(item) {
 		                	let url = "/asset/update/reqmas/requestRegUpdate";
 		                	let reqType = 'POST';
 		                	$.commRequest(url, reqType, JSON.stringify(item))
 		                		.then((res) => {
-		                			console.log(res);
 		                			unselectItem(item);
-		                			
-		                			alert("[[#{screen.info.status.update.success}]]");
 		                			selectedItems = [];
-		                			window.location.reload();
+		                			$("#jsGrid").jsGrid().trigger("loadData");
 		                		})
 		                		.catch((error) => {
 		                			console.log(error);		                			
@@ -414,45 +408,56 @@
 						{ name: "sn", 		 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.sn}]]"},
 						{ name: "bizDeptNm", type:"text",   width: 40 ,align: "left", title:"[[#{screen.text.modify.asset.biz.dept}]]", editing: false},
 						{ name: "deptNm", 	 type:"text",   width: 40 ,align: "left", title:"[[#{screen.text.modify.asset.dept}]]",	    editing: false},
-						{ name: "chrgr", 	 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.charger}]]",  editing: false,
+						{ name: "chrgr", 	 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.chrgr}]]",  editing: false,
 							itemTemplate : function(value, item) {
 							let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
 							
-							var chrgrStr = '<input type="text" style="width:100%" readonly value='+value+'>'
+							var chrgrStr = '<input id=chrgr'+idx+' type="text" style="width:100%" readonly value='+value+'>'
 							
 		                    var str = $("<a href='#' id='openUserPopup'><img title='의뢰자 검색' class='ico_search' alt='Search' src='/images/common/ico_search.png'></a></div>")
-		                    .click(function(e) {
+		                    . click(function(e) {
 		                    	var url = "/common/popup/userPopup";
 		            	        var popId = "userPopup";
-		            	        var args = {};
-		            	        args.width = 650;
-		            	        args.height = 400;
-		            	        args.fullscreen = "no";
-		            	        args.resizable = "no";
-		            	        
+		            	        var args = {
+	            	        		width      : 650,
+			            	        height     : 400,
+			            	        fullscreen : "no",
+			            	        resizable  : "no"
+		            	        };
 		            	        openPopup(popId, url, args);
 		                    });
-							
 		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
 							}
 						},
-						{ name: "control" , type: "control", width: 15 ,align: "center", modeSwitchButton: false},
+						{ name: "chrgr"   , type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.charger}]]", editing: false, visible:false},
+						{ name: "control" , type: "control", width: 15, align: "center", modeSwitchButton: false, deleteButton: false, editing: false},
 		            ]
 		        });
 	 	}
 	 	
 	    //선택 버튼클릭시 
 	    function selectItems(obj) {
-			console.log(obj);
 			opener.setResult(obj);
 			window.close();
 	    }
 	    
 	    //팝업에서 받은 결과 처리
 	    function setResult(obj) {
-			$("#userId").val(obj.userId);
-			$("#userNm").val(obj.userNm);
+	    	$("#jsGrid").jsGrid("updateItem", targetItem, {chrgr: obj.userId});
 	    }
+	    
+	    function openUserPopup() {
+	        // 팝업 호출 url
+	        var url = "/common/popup/userPopup";
+	        var popId = "userPopup";
+	        var args = {};
+	        args.width = 650;
+	        args.height = 416;
+	        args.fullscreen = "no";
+	        args.resizable = "no";
+	        
+	        openPopup(popId, url, args);
+	    };
 	    
 	 	// 자산 유형 부모 요소 찾아서 return
 	 	function getAsetType(asetType1) {
@@ -471,36 +476,6 @@
 	 			$(objNm).append('<option value="'+ e.codeId+'">' + e.codeNm+ '</option>');
 	 		});
 	 	}
-	    
-	    function enterkey() {
-	    	if (window.event.keyCode == 13) {
-	    		$("#jsGrid").jsGrid().trigger("loadData");
-	        }
-	    }
-		   
-	    function getAsetTypeId1(id, selectVal) {
-			intId = id.replace(/[^0-9]/g,'');
-			intId1 = Number(intId)+10;
-			intId2 = Number(intId)+20;
-			
-			ObjNm1 = "#asetType"+intId1;
-			ObjNm2 = "#asetType"+intId2;
-			
-			makeAsetCombo(ObjNm1, getAsetType(selectVal))
-		   	makeAsetCombo(ObjNm2, "")
-	    }
-	    
-	    function getAsetTypeId2(id, selectVal) {
-			intId = id.replace(/[^0-9]/g,'');
-			intId1 = Number(intId)+10;
-			intId2 = Number(intId)+20;
-			
-			ObjNm1 = "#asetType"+intId1;
-			ObjNm2 = "#asetType"+intId2;
-			
-			makeAsetCombo(ObjNm1, getAsetType(selectVal))
-	    }
-	    
 	    </script>	
 	</th:block>
 
@@ -553,12 +528,9 @@
 			</table>
 		</div><br>
 		
-		<div class="list_head">
+		<div class="list_head" style="display: flex;">
 			<div><h6>[[#{screen.text.modify.screen.title5}]]</h6></div>
-			<div class="result">Results : 0,000</div>
-		</div>
-			
-		<div class="list_head">
+			<div class="result" style="margin-left: 20px;">Results : 0,000</div>
 			<div class="button">
 				<a class="btn_" id="openAsetMasPopup">[[#{screen.text.comm.add.asset}]]</a>
 				<a class="btn_del2">[[#{screen.btn.delete}]]</a>

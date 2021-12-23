@@ -47,28 +47,25 @@
 	    	
 	    	//Local Storage에 저장된 파라미터 정보
 	    	let loadParams;
-	    	
+			
 	    	if("[[${loadParams}]]" == 'Y'){ //등록자산 목록에서 화면전환시
 	    		loadParams = $.commLoadSearchParams(SCREEN_NM);
 	    	}else{
-	    		$.commRemoveSearchParams(SCREEN_NM); //메뉴클릭시	    		
+	    		$.commRemoveSearchParams(SCREEN_NM); //메뉴클릭시
 	    	}
 	    	
             if(loadParams != null){
-            	
                 prevCondition = loadParams.condition.params;
-                
     	        if(Object.keys(prevCondition).length != undefined){
-    	        	$("#invNo").val(prevCondition.invNo);
-    	        	$("#invTtl").val(prevCondition.invTtl);
-    	        	$("#poNo").val(prevCondition.poNo);
-    	        	$("#mfgdNm").val(prevCondition.mfgdNm);
-    	        	$("#deptCd").val(prevCondition.deptCd);
-    	        	$("#deptNm").val(prevCondition.deptNm);	    	        	
-    	        	$("#invReqr").val(prevCondition.invReqr);
+    	        	$("#req_no").val(prevCondition.reqNo);
     	        	$("#fromDate").val(loadParams.fromDate);
     	        	$("#toDate").val(loadParams.toDate);
-    	        	$("#regYn").val(prevCondition.regYn);
+    	        	$("#req_nm").val(prevCondition.reqNm);
+    	        	$("#deptCd1").val(prevCondition.deptCd1);
+    	        	$("#deptCd2").val(prevCondition.deptCd2);
+    	        	$("#Reqtr").val(prevCondition.reqtr);
+    	        	$("#aset_no").val(prevCondition.asetNo);
+    	        	$("#req_stus").val(prevCondition.reqStus);	    	        	
     	        } 
             }
 	    	
@@ -140,6 +137,8 @@
             			}
 						$.commRequest(url, reqType, data)
 							.then((res) => {
+								condition = res.condition;
+								console.log(condition);
 								codeGrpMngList = res.data;
 								$(".result").text("Results : " + res.condition.totalCount);
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
