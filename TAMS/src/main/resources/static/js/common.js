@@ -1,5 +1,23 @@
 
 (function($) {
+
+  /*$.commRequest 대체용.(기능동일 파라미터 간소화 처리)*/
+  $.request = function(params) {
+	return new Promise(function(resolve, reject){
+		$.ajax({
+			url:params.url,
+			data:params.data,
+			type:params.reqType,
+			dataType:'json',
+			contentType: 'application/json',
+			success: (result) => resolve(result),
+			error: (request, status, error) => {
+				reject(error);
+			}
+		});
+	}); 
+  };	
+	
   $.commRequest = function(url, reqType, data) {
 	return new Promise(function(resolve, reject){
 		$.ajax({
@@ -38,23 +56,28 @@
 	 args -> 0:url, 1:reqType, 3:selectboxId, 4:codeGrpId, 5:codeLvl, 5:upperCodeId
   */
   $.commRequestSelectbox = function(...args) {
-		//console.log(args);
-		let params = {
-			"codeGrpId" : args[3],
-			"codeLvl" : args.length > 4 ? args[4]: "", 
-			"upperCodeId" : args.length > 5 ? args[5]: ""
-		}
-		$.commRequest(args[0], args[1], params)
-			.then((res) => {
-				var str = '';
-				$.each(res.data, function(i){
-					str += '<option value="' + res.data[i].codeId + '">' + res.data[i].codeNm + '</option>';
-				})
-				$(args[2]).append(str);
-			})
-			.catch((error) => {
-				console.log('조회 실패');
-			});
+
+      return new Promise(function(resolve, reject){
+         let params = {
+            "codeGrpId" : args[3],
+            "codeLvl" : args.length > 4 ? args[4]: "", 
+            "upperCodeId" : args.length > 5 ? args[5]: ""
+         }
+         
+         $.commRequest(args[0], args[1], params)
+          .then((res) => {
+            var str = '';
+            $.each(res.data, function(i){
+               str += '<option value="' + res.data[i].codeId + '">' + res.data[i].codeNm + '</option>';
+            })
+            $(args[2]).append(str);
+            
+            resolve();
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
   };
        
   $.commRequestComCode = function(...args) {
