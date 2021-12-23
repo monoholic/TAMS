@@ -34,7 +34,6 @@
 	    let menuId = "[[${menuId}]]";
 	    
 	    let numOfRows = 30;
-	    var status = true;
         var selectedItems = [];
 	 	var insertedItems = [];
 	 	var updatedItems = [];
@@ -54,24 +53,38 @@
 	    		$.commRemoveSearchParams(SCREEN_NM); //메뉴클릭시
 	    	}
 	    	
-            if(loadParams != null){
-                prevCondition = loadParams.condition.params;
-    	        if(Object.keys(prevCondition).length != undefined){
-    	        	$("#req_no").val(prevCondition.reqNo);
-    	        	$("#fromDate").val(loadParams.fromDate);
-    	        	$("#toDate").val(loadParams.toDate);
-    	        	$("#req_nm").val(prevCondition.reqNm);
-    	        	$("#deptCd1").val(prevCondition.deptCd1);
-    	        	$("#deptCd2").val(prevCondition.deptCd2);
-    	        	$("#Reqtr").val(prevCondition.reqtr);
-    	        	$("#aset_no").val(prevCondition.asetNo);
-    	        	$("#req_stus").val(prevCondition.reqStus);	    	        	
-    	        } 
-            }
-	    	
-	    	getCommCode("#req_stus", "APPR_STATUS", "1", "");
+
 	    	getCommCode("#reqStus", "APPR_STATUS", "1", "");
 	    	getCommCode("#reqType", "REQ_TYPE", "1", "");
+	    	getCommCode("#req_stus", "APPR_STATUS", "1", "")
+	    	 .then(()=>{
+				  	console.log('.... appr status loaded.....');
+				  
+		            if(loadParams != null){
+		                prevCondition = loadParams.condition.params;
+		                console.log(prevCondition);
+		    	        if(Object.keys(prevCondition).length != undefined){
+		    	        	$("#req_no").val(prevCondition.reqNo);
+		    	        	$("#fromDate").val(prevCondition.fromDate);
+		    	        	$("#toDate").val(prevCondition.toDate);
+		    	        	$("#req_nm").val(prevCondition.reqNm);
+		    	        	$("#deptCd1").val(prevCondition.deptCd1);
+		    	        	$("#deptNm1").val(prevCondition.deptNm1);
+		    	        	$("#deptCd2").val(prevCondition.deptCd2);
+		    	        	$("#deptNm2").val(prevCondition.deptNm2);
+		    	        	$("#Reqtr").val(prevCondition.reqtr);
+		    	        	$("#aset_no").val(prevCondition.asetNo);
+		    	        	$("#req_stus").val(prevCondition.reqStus);
+		    	        	
+		    	        	$("#jsGrid").jsGrid("loadData");
+		    	        } 
+		            }else{
+		            	$("#jsGrid").jsGrid("loadData");
+		            }				  
+	    	 }).catch((error) => {
+	    		 console.log(error);
+	    	 })
+	    	 
 	        $("#jsGrid").jsGrid({
 	        	height: "550",
                 width: "100%",
@@ -90,7 +103,6 @@
                 pagerContainer:null,
                 pageLoading: true,
                 pager: "#pager",
-                autoload: status,
                 pageSize: numOfRows,
                 pageButtonCount: 5,
                 loadonce: true,
@@ -107,7 +119,7 @@
 						  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
 						});
 					}
-	            }, 
+	            },
 	            pagerContainerClass: "paginate",
 	            deleteConfirm: function(item) {
 	                return "\""+item.menuNm+"("+menuId+")"+"\""+ '[[#{screen.info.status.delete.yn}]]';
@@ -129,9 +141,11 @@
         				    "reqNm"        : $("#req_nm").val(),
         				    "deptCd1"      : $("#deptCd1").val(),
         				    "deptCd2"      : $("#deptCd2").val(),
+        				    "deptNm1"      : $("#deptNm1").val(),
+        				    "deptNm2"      : $("#deptNm2").val(),
         				    "reqtr"        : $("#Reqtr").val(),
         				    "asetNo" 	   : $("#aset_no").val(),
-        				    "reqStus" 	   : $("#req_stus option:selected").val(),
+        				    "reqStus" 	   : $("#req_stus").val(),
             				"sortField"    : filter.sortField,
             				"sortOrder"    : filter.sortOrder
             			}
@@ -275,7 +289,7 @@
     	    });
     	    
     	    $(".btn_srch").on("click",function (){
-	    	   $("#jsGrid").jsGrid().trigger("loadData");
+    	    	$("#jsGrid").jsGrid("loadData");
 	        });
 	        
 	     	// 팝업창 저장 버튼 처리
@@ -450,10 +464,15 @@
 	    }
 	 	
 	 	// 공통코드 호출
-	    function getCommCode(id, code, level, upperCodeId){				
-			let url = "/common/comm/selectBox";
-			let reqType = 'GET';
-			$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);			
+	    function getCommCode(id, code, level, upperCodeId){	 		
+	 		return new Promise(function(resolve, reject){
+				let url = "/common/comm/selectBox";
+				let reqType = 'GET';
+				$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId)
+				  .then(() => {
+					  resolve();
+				  });				 			
+	 		});
 		}
 	 	
 	 	// 조회 정보 및 자산수정 의뢰작성 이동

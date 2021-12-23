@@ -80,8 +80,8 @@
 	 	
 	 	function getGridBody() {
 			return {
-		        	height: "100",
 		            width: "100%",
+		            height: "auto",
 		            data: fileItems, 
 		            autoload: false,
 		            loadonce: false,
@@ -496,17 +496,16 @@
 		<!-- //contents_head -->
 		
 		<div class="list_head">
-				<!-- list_button -->
-				<div class="button">
-					<a class="btn_update">[[#{screen.btn.update}]]</a>
-					<a class="btn_del">[[#{screen.btn.delete}]]</a>
-					<a class="btn_back">[[#{screen.btn.list}]]</a>
-				</div>
+			<!-- list_button -->
+			<div class="button">
+				<a class="btn_update">[[#{screen.btn.update}]]</a>
+				<a class="btn_del">[[#{screen.btn.delete}]]</a>
+				<a class="btn_back">[[#{screen.btn.list}]]</a>
+			</div>
 		</div>
 		
 		<div class="view_wrap">
 			<span id="bbs_Id" th:text="${bbsDto.bbsId}" style="display:none;"></span>
-			
 			<h4><span id="bbs_Ttl" th:text="${bbsDto.bbsTtl}"></span></h4>
 			<div class="view_write">작성자 : <span id="user_Id" th:text="${bbsDto.userId}"></span></div>
 			<dl class="view_info">
@@ -516,9 +515,10 @@
 			<div id="bbs_Cn" class="view_article" style="padding:20px 0px 50px 0px;">
 				<th:block th:utext="${bbsDto.bbsCn}"></th:block>
 			</div>
+			
+			<div id="fileGrid"></div>
 		</div>
 		
-		<div id="fileGrid" style="padding:10px 0px 10px 0px;"></div>
 		
 		<!-- detail popup -->
 		<div id="detailForm" class="list_head" style="display:none;">
