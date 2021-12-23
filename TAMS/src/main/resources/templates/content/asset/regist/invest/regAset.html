@@ -70,12 +70,14 @@
 			            deleteConfirm: function(item) {
 			                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
 			            },
-			            rowClick: function(args) {
-			            	var target = args.event.target;
+			            rowClick: function(row) {
+			            	console.log(row);
 			            	
-							if(target instanceof HTMLTableCellElement) {							
-								openAsetList(args.item);							
-							}
+			    	        var params = {
+			        	        	menuId  : loadParams.menuId,
+			        	        	assetNo : row.item.asetNo,
+			        	        }; 	
+			    	        openNewAssetPopup(params);							
 			            }, 			            			            
 			            controller:  {
 			                loadData: function(filter) {
@@ -132,24 +134,19 @@
 			        
 
 				//신규자산
-	    	    $("#newAsetRegist").on("click", function() {
+	    	    $("#newAsetRegist").on("click", function() {	    	    	
 	    	    	
-	    	    	if(!checkRegistQty()) return;
+	    	    	if(!checkRegistQty()) return;	    	    	
 	    	    	
 	    	    	if(loadParams.newYn == "N"){
 	    	    		alert("[[#{screen.info.status.error.inv.modified.asset.can.be}]]");
 	    	    		return;
-	    	    	}	 	    	    	
-	    	    	
-	    	        var url = "/asset/regist/invest/newAsetReg";
-	    	        var args = {width:1200, height:700};
-	    	        var param = {
-	    	        	menuId : loadParams.menuId,
-	    	        	poNo   : "[[${poNo}]]",
-	    	        };
-	    	        
-	    	        $.commSaveSearchParams("invData", invData);	    	        
-	    	        openPopup2("newAsetRegist", url, args, param);
+	    	    	}	 	   	    	    	
+	    	        var params = {
+	        	        	menuId  : loadParams.menuId,
+	        	        	assetNo : "",
+	        	        }; 	    	    	
+	    	    	openNewAssetPopup(params);
 	    	    });
 				
 				//개조자산
@@ -248,11 +245,19 @@
 	        
 	        function checkRegistQty(){	        	
     	    	if($("#cpt").val() == $("#all").val()){
-    	    		alert("[[#{screen.info.status.save.success}]]");
+    	    		alert("[[#{screen.info.status.error.inv.regist.completed}]]");
     	    		return false;	    	    		
     	    	}
 				return true;
 	        }
+	        
+	        function openNewAssetPopup(params){
+    	        var url = "/asset/regist/invest/newAsetReg";
+    	        var args = {width:1200, height:700};
+    	        $.commSaveSearchParams("invData", invData);	    	        
+    	        openPopup2("newAsetRegist", url, args, params);	        	
+	        }
+	        
 	    </script>	
 	</th:block>
 

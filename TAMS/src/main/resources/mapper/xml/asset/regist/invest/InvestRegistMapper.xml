@@ -850,4 +850,125 @@
 			 ) a        
 	</select>
 	
+   	<select id="selectAssetMas" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.AssetMasDto">
+		 select aset_no as asetNo
+			,aset_nm as asetNm
+			,aset_type1 as asetType1
+			,aset_type2 as asetType2
+			,aset_type3 as asetType3
+			,mftco 
+			,model 
+			,sn 
+			,biz_dept_cd as bizDeptCd
+		    ,biz_dept_nm as bizDeptNm 
+			,dept_cd as deptCd
+		    ,dept_nm as deptNm
+			,chrgr
+		    ,chrgr_nm as chrgrNm
+			,bsplc
+			,buld
+			,floor
+			,loc
+			,exp_dept_cd as expDeptCd
+		    ,exp_dept_nm as expDeptNm
+			,exp_acct as expAcct
+			,dur_year as durYear
+			,acq_prc as acqPrc
+			,sval_prc as svalPrc
+			,dprc_prc as dprcPrc
+			,acq_dt as acqDt
+			,aset_out_book_yn as asetOutBookYn
+			,aset_stus as asetStus
+		    ,(
+				select count(*) 
+				from tb_com_code 
+				where code_grp_id = 'AS_CLASS_CHTRS'
+				  and upp_code_id = x.aset_type3    
+		     ) as propCnt			
+			,updr
+			,up_dt as upDt
+			,regr
+			,reg_dt as regDt
+		from (
+				select a.*
+				     , b.dept_nm as biz_dept_nm
+				     , c.dept_nm as dept_nm
+				     , d.user_nm as chrgr_nm
+				     , e.dept_nm as exp_dept_nm
+				from tb_aset_mas a
+				left outer join tb_dept b 
+				  on a.biz_dept_cd = b.dept_cd
+				left outer join tb_dept c 
+				  on a.dept_cd = c.dept_cd  
+				left outer join tb_user d
+				  on a.chrgr = d.user_id  
+				left outer join tb_dept e 
+				  on a.exp_dept_cd = e.dept_cd    
+				where aset_no = #{assetNo}
+			 ) x
+   	</select>	
+	
+   	<select id="selectAssetDtl" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.AssetDtlDto">
+		select aset_no as asetNo 
+			,aset_type as asetType 
+			,dtl_info1 as dtlInfo1
+			,dtl_info2 as dtlInfo2
+			,dtl_info3 as dtlInfo3
+			,dtl_info4 as dtlInfo4
+			,dtl_info5 as dtlInfo5
+			,dtl_info6 as dtlInfo6
+			,dtl_info7 as dtlInfo7
+			,dtl_info8 as dtlInfo8
+			,dtl_info9 as dtlInfo9
+			,dtl_info10 as dtlInfo10
+			,dtl_info11 as dtlInfo11
+			,dtl_info12 as dtlInfo12
+			,dtl_info13 as dtlInfo13
+			,dtl_info14 as dtlInfo14
+			,dtl_info15 as dtlInfo15
+			,dtl_info16 as dtlInfo16
+			,dtl_info17 as dtlInfo16 
+			,dtl_info18 as dtlInfo17
+			,dtl_info19 as dtlInfo19
+			,dtl_info20 as dtlInfo20
+			,dtl_info21 as dtlInfo21
+			,dtl_info22 as dtlInfo22
+			,dtl_info23 as dtlInfo23
+			,dtl_info24 as dtlInfo24
+			,dtl_info25 as dtlInfo25
+			,dtl_info26 as dtlInfo26
+			,dtl_info27 as dtlInfo27
+			,dtl_info28 as dtlInfo28
+			,dtl_info29 as dtlInfo29
+			,dtl_info30 as dtlInfo30
+			,dtl_info31 as dtlInfo31
+			,dtl_info32 as dtlInfo32
+			,dtl_info33 as dtlInfo33
+			,dtl_info34 as dtlInfo34
+			,dtl_info35 as dtlInfo35
+			,dtl_info36 as dtlInfo36
+			,dtl_info37 as dtlInfo37
+			,dtl_info38 as dtlInfo38
+			,dtl_info39 as dtlInfo39
+			,dtl_info40 as dtlInfo40
+			,dtl_info41 as dtlInfo41
+			,dtl_info42 as dtlInfo42
+			,dtl_info43 as dtlInfo43
+			,dtl_info44 as dtlInfo44
+			,dtl_info45 as dtlInfo45
+			,dtl_info46 as dtlInfo46
+			,dtl_info47 as dtlInfo47
+			,dtl_info48 as dtlInfo48
+			,dtl_info49 as dtlInfo49
+			,dtl_info50 as dtlInfo50
+			,updr
+			,up_dt as upDt 
+			,regr
+			,reg_dt as regDt
+		from (
+			select *		
+			from tb_aset_dtl a
+			where a.aset_no = #{assetNo}		
+		) x			 
+   	</select>		
 </mapper>

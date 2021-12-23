@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.asset.regist.invest.dto.AsetListDto;
+import kr.co.trito.tams.web.asset.regist.invest.dto.AssetDtlDto;
+import kr.co.trito.tams.web.asset.regist.invest.dto.AssetMasDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
@@ -42,4 +44,11 @@ public interface InvestRegistMapper {
 	public int selectMaxAsetNo();
 	
 	public int deletePoInfo(InvestDto invs);
+	
+	public AssetMasDto selectAssetMas(String assetNo);
+	
+	public AssetDtlDto selectAssetDtl(String assetNo);
+	
+	
+	
 }

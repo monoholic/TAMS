@@ -47,7 +47,50 @@
 
 		        
 		        /*------------------------ Event ------------------------*/
-		    	
+	    	  	const chooseAsset = "[[#{screen.info.status.inv.choose.assettype3}]]";
+	    	  	const noAssetProperty = "[[#{screen.info.status.inv.no.asset.property}]]"
+	    	  		    	  	
+	    	  	//자산유형1 change 이벤트
+	    	  	asetType1ChangeOn = function(){
+			        $("#asetType1").change(function(){
+			        	let type1 = $("#asetType1").val();
+		        		$('#asetType2').children('option:not(:first)').remove();
+		        		$('#asetType3').children('option:not(:first)').remove();	        		
+			        	if(type1 != '') {
+			        		getCommCode("#asetType2", "AS_CLASS", "2", type1);
+			        		defaultAssetProperty(chooseAsset);
+			        	}
+			        });	    	  		
+	    	  	}
+	    	  	
+	    	  	//자산유형2 change 이벤트
+	    	  	asetType2ChangeOn = function(){
+			        $("#asetType2").change(function(){
+			        	let type2 = $("#asetType2").val();		        	
+			        	$('#asetType3').children('option:not(:first)').remove();		        	
+			        	if(type2 != '') {		        		
+			        		getCommCode("#asetType3", "AS_CLASS", "3", type2);
+			        		defaultAssetProperty(chooseAsset);
+			        	}
+			        });
+	    	  	}	    	  	
+		        
+		        //자산유형3 change 이벤트
+		       	asetType3ChangeOn = function(){
+			        $("#asetType3").change(function(){			        	
+			        	let type3 = $("#asetType3").val();			        	
+			        	if(type3 != '') {		    			        		
+			        		getAssetProperty(type3)
+			        		 .then((len) => {
+			        			 //console.log(len);
+			        		 });
+			        	}else{
+			        		defaultAssetProperty(chooseAsset);
+			        	}
+			        });			        	
+		        }
+	        		    	
+		        		        
 		    	//사용자 선택
 	    	    $("#openUserPopup").on("click", function() { 
 	    	        var url = "/common/popup/userPopup";
@@ -89,53 +132,7 @@
 	    	        openPopup2("DeptPopup", dept_url, args, param);
 	     	    });	    	  	
 	    	  	
-	    	  	let chooseAsset = "[[#{screen.info.status.inv.choose.assettype3}]]";
-	    	  	let noAssetProperty = "[[#{screen.info.status.inv.no.asset.property}]]"
-	    	  	
-		      	//자산유형1 change 이벤트
-		        $("#asetType1").change(function(){
-		        	let type1 = $("#asetType1").val();
-	        		$('#asetType2').children('option:not(:first)').remove();
-	        		$('#asetType3').children('option:not(:first)').remove();	        		
-		        	if(type1 != '') {
-		        		getCommCode("#asetType2", "AS_CLASS", "2", type1);
-		        		defaultAssetProperty(chooseAsset);
-		        	}
-		        });
-		        
-		        //자산유형2 change 이벤트
-		        $("#asetType2").change(function(){
-		        	let type2 = $("#asetType2").val();		        	
-		        	$('#asetType3').children('option:not(:first)').remove();		        	
-		        	if(type2 != '') {		        		
-		        		getCommCode("#asetType3", "AS_CLASS", "3", type2);
-		        		defaultAssetProperty(chooseAsset);
-		        	}
-		        });
-		        
-		        //자산유형2 change 이벤트
-		        $("#asetType3").change(function(){
-		        	let type3 = $("#asetType3").val();
 
-		        	if(type3 != '') {		        				        		
-		        		let url = "/asset/regist/invest/asetTypeInfo";
-		        		let params = {asetType:type3}
-		        		$.commRequest(url, "GET", params)
-		        			.then((res) => {
-		        				
-		        				//console.log(res.data);
-		        				if(res.data.length > 0)
-		        					buildAssetProperty(res.data);
-		        				else
-		        					defaultAssetProperty(noAssetProperty);
-		        				
-		        			}).catch((error) => {
-		        				console.log(error);
-		        			});
-		        	}else{
-		        		defaultAssetProperty(chooseAsset);
-		        	}
-		        });		        
 	    	  	
 		        //팝업종료
 				$(".pop_close").on("click",function(){ 
@@ -147,7 +144,7 @@
 	     	    	
 	     	    	event.preventDefault();
 	     	    	let data = [saveParams()];	     	    	
-	   		       	console.log(data);
+	   		       	//console.log(data);
 	   		       	
 	   		       	//저장전 체크로직 추후구현
 	   		       	
@@ -161,7 +158,36 @@
 						});    					
     			});		        
 		        
+	     	   /*------------------------ 상세정보 조회 ------------------------*/
+		       if("[[${assetNo}]]" != null && "[[${assetNo}]]" != ""){
+		    	   
+		    	   let params = {
+		    				url     : "/asset/regist/invest/assetDetailInfo",
+		    				reqType : "GET",
+		    			   	data    : {assetNo:"[[${assetNo}]]"}
+		    		   }
+		    	   $.request(params)
+					.then(getAssetProperty)
+					.then((data) => {						
+						//1.자산유형 select-box 설정
+						//2.항목값 설정
+						//3.자산유형 select-box 이벤트 설정						
+						console.log('-------22222------------');
+						console.log(data);
+						
+						
+					}).catch((error) => {
+						console.log("[[#{screen.info.status.error.occur}]]");
+					}); 		    	   
+		    	   
+		       }else{
+				   //자산유형 select-box 이벤트 설정
+		    	   asetType1ChangeOn();
+		    	   asetType2ChangeOn();
+		    	   asetType3ChangeOn();		    	   
+		       } 		        
 			});
+		
 		
 			function saveParams(){
 				
@@ -197,11 +223,39 @@
 				$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);			
 			}
 			
-			function buildAssetProperty(data){
+			function getAssetProperty(param){
 				
-				let idx = 0;
+				//param은 object 또는 string으로 전달됨.
 				
+				if(typeof(param) == 'string')
+					type = param;
+				else 
+					type = param.data.mas.asetType3;
+
+        		return new Promise(function(resolve, reject){
+        			let params = {
+		    				url     : "/asset/regist/invest/asetTypeInfo",
+		    				reqType : "GET",
+		    			   	data    : {asetType:type}
+		    			}        
+        			//자산유형3에 해당하는 특성정보 조회
+            		$.request(params)
+        				.then((res) => {			        				        				
+	        				if(res.data.length > 0)
+	        					buildAssetProperty(res.data);
+	        				else
+	        					defaultAssetProperty(noAssetProperty);	 
+	        				resolve(param);
+        			}).catch((error) => {
+        				reject(error);
+        			});				        			
+        		});
+			}			
+			
+			function buildAssetProperty(data){			
+				let idx = 0;				
 				let html = "<colgroup>"
+				
 				html += "  <col style='width:12%' />";
 				html += "  <col style='width:20%' />";
 				html += "  <col style='width:12%' />";
@@ -318,8 +372,8 @@
 						<h6>[[#{screen.text.inv.screen.subtitle1}]]</h6>
 						<!-- list_button -->
 						<div class="button">
-							<a id="saveNewAset" class="btn_list">[[#{screen.text.comm.save}]]</a>
-							<a id="delNewAset" class="btn_list">[[#{screen.text.comm.close}]]</a>
+							<a id="saveNewAset" class="btn_list">[[#{screen.btn.save}]]</a>
+							<a id="delNewAset" class="btn_list">[[#{screen.btn.delete}]]</a>
 						</div>
 						<!-- list_button -->
 					</div>

@@ -34,6 +34,8 @@ import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.asset.regist.invest.dto.AsetListDto;
+import kr.co.trito.tams.web.asset.regist.invest.dto.AssetDtlDto;
+import kr.co.trito.tams.web.asset.regist.invest.dto.AssetMasDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto;
 import kr.co.trito.tams.web.asset.regist.invest.service.InvestRegistService;
@@ -144,7 +146,7 @@ public class InvestRegistController {
 		return view;
 	}
 
-	/** 투자자산등록(팝업) 등록자산목록 화면 : 조회 */
+	/** 등록자산목록 화면 */
 	@PostMapping(value = "/regAset/regAsetList")
 	@ResponseBody
 	@ApiOperation(value = "투자자산등록(팝업 : 등록자산목록) 화면 / 리스트", notes = "투자에 해당하는 자산목록 리스트를 조회한다")
@@ -163,7 +165,7 @@ public class InvestRegistController {
 		return responseService.success(condition, list, list2);
 	}
 
-	/** 신규자산등록(팝업) 화면 */
+	/** 신규자산 등록 화면 */
 	@GetMapping("/newAsetReg")
 	public ModelAndView newAsetRegView(HttpServletRequest request,
 			@ApiParam(value = "메뉴ID", required = false) @RequestParam(value = "menuId", required = false) String menuId,
@@ -178,14 +180,14 @@ public class InvestRegistController {
 		view.addObject("menuNm", request.getParameter("menuNm"));
 		view.addObject("menuDesc", request.getParameter("menuDesc"));
 		view.addObject("url", request.getParameter("url"));
-		view.addObject("poNo", poNo);
+		view.addObject("assetNo", request.getParameter("assetNo"));
 
 		view.setViewName("/content/asset/regist/invest/newAsetRegist");
 
 		return view;
 	}
 
-	/** 신규자산등록(팝업) 저장 */
+	/** 신규자산 저장 */
 	@PostMapping("/saveNewAset")
 	@ResponseBody
 	@ApiOperation(value = "투자자산등록(팝업 : 신규자산 등록) 화면 / 저장버튼", notes = "신규자산을 등록한다")
@@ -200,7 +202,7 @@ public class InvestRegistController {
 	}
 
 	
-	/** 신규자산등록(팝업) 화면 */
+	/** 개조자산 등록 팝업 */
 	@GetMapping("/remodelAsetReg")
 	public ModelAndView remodelAsetRegView(HttpServletRequest request,
 			@ApiParam(value = "PO번호", required = false) @RequestParam(value = "poNo", required = false) String poNo) {
@@ -217,7 +219,7 @@ public class InvestRegistController {
 		return view;
 	}
 
-	/** 투자자산등록(팝업) 등록자산목록 화면 : 조회 */
+	/** 자산유형 특성정보 조회 */
 	@GetMapping(value = "/asetTypeInfo")
 	@ResponseBody
 	@ApiOperation(value = "자산유형3 특성정보 조회", notes = "자산유형3에 해당하는 자산유형특성정보를 조회한다")
@@ -229,6 +231,28 @@ public class InvestRegistController {
 		return responseService.success(list);
 	}
 
+	
+	/** 자산유형 특성정보 조회 */
+	@GetMapping(value = "/assetDetailInfo")
+	@ResponseBody
+	@ApiOperation(value = "자산 상세 정보", notes = "자산번호로 자산의 상세정보를 조회한다.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> assetDetailInfo(
+			@ApiParam(value = "자산유형3", required = true) @RequestParam(value="assetNo") String assetNo) {
+		
+		AssetMasDto assetMasDto = investRegistService.selectAssetMasPoInfo(assetNo);		
+		AssetDtlDto assetDtlDto = investRegistService.selectAssetDtl(assetNo);		
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("mas", assetMasDto);
+		map.put("dtl", assetDtlDto);
+		
+		return responseService.success(map);
+	}
+	
+	
+	
 	/** 투자자산등록(팝업) 등록자산목록 일괄업로드 팝업 화면 : 일괄업로드 */
 	@GetMapping("/popup/regAsetUploadPopup")
 	public ModelAndView invUploadPopupView(HttpServletRequest request) {

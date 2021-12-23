@@ -4,19 +4,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import jdk.internal.org.jline.utils.Log;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.asset.regist.invest.dto.AsetListDto;
+import kr.co.trito.tams.web.asset.regist.invest.dto.AssetDtlDto;
+import kr.co.trito.tams.web.asset.regist.invest.dto.AssetMasDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto;
 import kr.co.trito.tams.web.asset.regist.invest.mapper.InvestRegistMapper;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
-import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -60,6 +58,9 @@ public class InvestRegistService {
 	public List<ComCodeDto> selectAsetTypeInfo(String asetType) {
 		return mapper.selectAsetTypeInfo(asetType);
 	}
+	
+	
+	
 	
 	/** 
 	 * 투자자산등록 리스트 카운트
@@ -139,4 +140,14 @@ public class InvestRegistService {
 	public int deletePoInfo(InvestDto invs){
 		return mapper.deletePoInfo(invs);
 	}
+	
+	
+	public AssetMasDto selectAssetMasPoInfo(String assetNo){
+		return mapper.selectAssetMas(assetNo);
+	}	
+	
+	public AssetDtlDto selectAssetDtl(String assetNo){
+		return mapper.selectAssetDtl(assetNo);
+	}		
+	
 }
