@@ -244,7 +244,7 @@ div .bot_line{border-bottom:1px solid #aeaeae;overflow:auto;}
 .form_table_NLine tr.line td{border-bottom:1px solid #e8e9ec;}
 .form_table_NLine th,.form_tableNLine th,.line td{border-bottom:1px solid #e8e9ec;}
 
-.detail_table{clear:both;width:100%;margin-bottom:10px;border-collapse:collapse;border-top:1px solid #4d5566;border-bottom:1px solid #dcdcdc;}
+.detail_table{clear:both;width:100%;margin-bottom:10px;border-collapse:collapse;border-top:1px solid #dcdcdc;border-bottom:1px solid #dcdcdc;}
 .detail_table th,.detail_table td{padding:7px;border-bottom:1px solid #eaeaea;border-right:1px solid #eaeaea;f7f7f7vertical-align:top;}
 .detail_table th{background:#f3f4f8;padding-left:9px}
 .detail_table .total{color:#ff5400;}

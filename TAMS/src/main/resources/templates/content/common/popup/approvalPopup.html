@@ -19,7 +19,7 @@
 			    margin-bottom: 0;
 			    margin-left: 0;
 			    margin-right: 0;
-			    padding-left: 40px;
+			    padding-left: 15px;
 			}
 			ol .selecting { background: #FECA40; }
 			ol .selected { background: #F39814; color: #ffffff; }
@@ -27,7 +27,7 @@
 			.apprList {
 			 		overflow:auto;
 			 		width:100%;
-			 		height:60px;
+			 		height:50px;
 			 		list-style-type:decimal;
 			}
 			
@@ -40,14 +40,12 @@
 		<script src="/js/summernote/lang/summernote-ko-KR.min.js"></script>
 		
 		<script>
-		
 		/* var appv_id = '[[${appv_id}]]';
 		
 		if( param_id != null && param_id != "" ) {
 			var paramObj = $('<input name="'+param_id+'" value="'+param_value+'"  />');
 			$("#pop_wrap").append(paramObj);
 		} */
-		
 		
 		var appvId = '[[${appv_id}]]';
 		
@@ -84,14 +82,14 @@
 				// 팝업 호출 url
     	        var url = "/common/popup/userPopup";
     	        var popId = "userPopup";
-    	        var args = {};
-    	        args.width = 650;
-    	        args.height = 416;
-    	        args.fullscreen = "no";
-    	        args.resizable = "no";
+    	        var args = {
+    	        	width : 650,
+    	    	    height : 416,
+   	        		pheight : window.opener.innerHeight,
+       	        	pwidth  : window.opener.innerWidth
+    	        };
     	        
-    	        openPopup(popId, url, args);
-				
+    	        openPopup2(popId, url, args);
 			});
 			
 			//결재자 이동(위)
@@ -109,7 +107,6 @@
 				if( $(this).is(":checked") ) {
 					apprGbn = $(this).val();
 				}
-				//console.log("@@@ "+apprGbn);
 			});
 			
 			//결재상신 내용 : web editor 설정
@@ -138,8 +135,7 @@
 	    		    ['height', ['height']],
 	    		    ['table', ['table']],
 	    		    ['insert', ['link', 'hr']],
-	    		    //['insert', ['link', 'picture', 'hr']],
-	    		    ['view', ['fullscreen', 'codeview']],
+	    		    ['view', ['codeview']],
 	    		    ['help', ['help']]
 	    		  ]
 	        };
@@ -155,10 +151,10 @@
 			arrNoti.length = 0;
 			
 			$.each(list, function(index, element){
-					var gbn =  $(element).attr('gbn'); 
-					if( gbn == 'appr')  arrAppr.push($(element).attr('value'));
-					if( gbn == 'agree') arrAgree.push($(element).attr('value'));
-					if( gbn == 'noti')  arrNoti.push($(element).attr('value'));
+				var gbn =  $(element).attr('gbn'); 
+				if( gbn == 'appr')  arrAppr.push($(element).attr('value'));
+				if( gbn == 'agree') arrAgree.push($(element).attr('value'));
+				if( gbn == 'noti')  arrNoti.push($(element).attr('value'));
 			});
 			
 			var apprContent = $('#apprContent').summernote('code'); //<p><br></p> 
@@ -182,11 +178,6 @@
 				}
 				
 			}
-			
-			//console.log(arrAppr);
-			//console.log(arrAgree);
-			//console.log(arrNoti);
-			//console.log(apprContent);
 			
 			let url = "/approval/saveApproval";
 			let reqType = 'POST';	
@@ -261,44 +252,28 @@
 			
 			var objStr = '';
 			    objStr+= '<li value="'+obj.userId+'" gbn="'+apprGbn+'" onclick="selList(this,\''+apprGbn+'\');">';
-			    objStr+= '<span style="width:5px;">&nbsp;&nbsp;</span>';  //공백용
-			    objStr+= '<img src="/images/common/ico_pop_error.png" style="width:14px;height:14px;cursor:pointer;" onclick="removeUser(this,\''+apprGbn+'\');"/>'; //삭제용
-			    objStr+= '<span style="width:1Opx;">&nbsp;&nbsp;</span>';  //공백용
+			    objStr+= '<span style="width:5px;">&nbsp;</span>';  //공백용
+			    objStr+= '<img src="/images/common/ico_pop_error.png" style="margin-bottom:2px; width:13px;height:13px;cursor:pointer;" onclick="removeUser(this,\''+apprGbn+'\');"/>'; //삭제용
+			    objStr+= '<span style="width:1Opx;">&nbsp;</span>';  //공백용
 			    objStr+= obj.userNm;
 			    objStr+= '</li>';
 			var ojbGr = $(objStr);
 			    
 			if( apprGbn == "appr" ) { //결재자
-				
 				divAppr.append(ojbGr);
-				//ojbGr.append(objSp);
-				//ojbGr.append(objDel);
-				
 				apprCnt++;
 				
 			} else
 			if( apprGbn == "agree" ) { //합의자
-				 
 				divAgree.append(ojbGr);
-				//ojbGr.append(objSp);
-				//ojbGr.append(objDel);
-				
 				agreeCnt++;
 				
 			} else
 			if( apprGbn == "noti" ) { //통보자
-				
 				divNoti.append(ojbGr);
-				//ojbGr.append(objSp);
-				//ojbGr.append(objDel);
-				
 				notiCnt++;
-				
 			}
-			
-			/////////////////////////
 			setCount();		
-	
 		}
 		
 		//결재자 선택시 배경 표시
@@ -330,7 +305,6 @@
 		
 		//결재자 숫자 표시
 		function setCount() {
-			/////////////////////////
 			$("#appr_cnt").text(apprCnt);
 			$("#agree_cnt").text(agreeCnt);
 			$("#noti_cnt").text(notiCnt);
@@ -343,10 +317,8 @@
 			let data = {
 				"appv_id" : appvId					
 			};
-			//console.log(data);
 			$.commRequest(url, reqType, data)
 				.then((res) => {
-					//console.log(res.data);
 					//결재 제목, 본문
 					var appvDto = res.data.appvDto;
 					$("#appvId").val(appvDto.appvId);
@@ -378,144 +350,101 @@
 							 obj.userNm = el.appvrNm
 							 setResult(obj);
 						}
-							 
 					});
-					//apprGbn = "appr";
 				})
 				.catch((error) => {
 					
 				});
 		}
-		   
 		</script>
 	</th:block> 
 
 </head>
 <body >
-
-<div layout:fragment="content">
+	<div layout:fragment="content">
 	<!-- <span id="asset_no" th:text='${param.asset_no}' style="display:none;"></span> -->
 	<input type="hidden" id="appvId" name="appvId" />
-	<!-- pop_alert -->
-	<div id="pop_wrap" >
-	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
-					<!-- head -->
-					<h3><span id="popTitle"></span>&nbsp;[[#{screen.text.comm.approve}]]
-						 <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">[[#{screen.btn.close}]]</a>
-					</h3>
-					<!-- //head -->
-					<!-- contents -->
-					<div id="contents">
-	
-						<!-- search -->
-						<!-- <div class="srch_wrap"> -->
-							<!-- search_form -->
-							<div class="srch_form">
-							    <table class="srch_table" style="width:100%;">
-									<colgroup>
-											<col width="40%"/>
-											<col width="50%"/>
-											<col width="10%"/>
-									</colgroup>
-									<tr>
-										<th colspan="2">&nbsp;</th>
-										<td style="text-align:right;" >
-											<!-- search_button -->
-												<a href="#;" class="btn_srch" id="btnSave">[[#{screen.btn.save}]]</a>
-												<a href="#;" class="btn_srch" id="btnApproval">[[#{screen.btn.approve}]]</a>
-											<!-- //search_button -->
-										</td>
-									</tr>
-								</table>
-							 </div>
-							<!-- //search_form -->							
-						<!-- </div> -->
-						<!-- //search -->
-						<p class="space10">
-						<!-- list 1 -->
-						<table class="srch_table" style="width:100%;" >
-							<colgroup>
-									<col width="10%"/>
-									<col width="30%"/>
-									<col width="35%"/>
-									<col width="25%"/>
-							</colgroup>
-							<tr>
-								<th >결재자 지정</th>
-								<th align="left">
-									<input type="radio" name="appr_gbn" value="appr" checked>&nbsp;[[#{screen.text.comm.approver1}]]&nbsp;[<span id="appr_cnt">0</span>]&nbsp;&nbsp;
-									<input type="radio" name="appr_gbn" value="agree" >&nbsp;[[#{screen.text.comm.approver2}]]&nbsp;[<span id="agree_cnt">0</span>]&nbsp;&nbsp;
-									<input type="radio" name="appr_gbn" value="noti" >&nbsp;[[#{screen.text.comm.approver3}]]&nbsp;[<span id="noti_cnt">0</span>]&nbsp;&nbsp;
-								</th>
-								<td>
-									<a href="#;" class="btn_srch" id="btnAdd">[[#{screen.text.comm.add.approver}]]</a>
-								</td>
-								<td style="text-align:right;" >
-									<!-- search_button -->
-										<a href="#;" id="btnUp" title="[[#{screen.btn.up}]]">▲</a>
-										<a href="#;" id="btnDown" title="[[#{screen.btn.down}]]">▼</a>
-									<!-- //search_button -->
-								</td>
-							</tr>
-						</table>
-						
-						
-						<table class="detail_table" style="width:100%;" >
-							<colgroup>
-									<col width="10%"/>
-									<col />
-							</colgroup>
-							<tr>
-								<th style="text-align:center">[[#{screen.text.appr.draft}]]</th>
-								<td>
-									<span sec:authentication="principal.dto.userNm"></span><span id="apprId" sec:authentication="principal.dto.userId" style="display:none;"></span>
-								</td>
-							</tr>
-							<tr>
-								<th style="text-align:center">[[#{screen.text.appr.approval}]]</th>
-								<td style="padding-left:5px;">
-									<div class="apprList">
-									<ol id="divAppr"  ></ol>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<th style="text-align:center">[[#{screen.text.appr.agreement}]]</th>
-								<td style="padding-left:5px;">
-									<div class="apprList">
-									<ol id="divAgree" ></ol>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<th style="text-align:center">[[#{screen.text.appr.inform}]]</th>
-								<td style="padding-left:5px;">
-									<div class="apprList">
-									<ol id="divNoti" ></ol>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<th  style="text-align:center">[[#{screen.text.appr.title}]]</th>
-								<td>
-									<input type="text" name="appvTtl" id="appvTtl" style="width:80%;"/>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="2">
-									<div id="apprContent"></span></div>
-								</td>
-							</tr>
-						</table>
-					 
-						<!-- //list 1 -->
-	
-					</div>
-
+		<div id="pop_wrap" >
+			<h3><span id="popTitle"></span>&nbsp;[[#{screen.text.comm.approve}]]
+				 <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">[[#{screen.btn.close}]]</a>
+			</h3>
+			<div id="contents">
+				<div class="srch_wrap single"> 
+					<table class="srch_table" style="width:100%;" >
+						<tr>
+							<td style="font-weight: bold;">
+								<span style="margin-left: 15px;">결재자 지정</span>
+								<input type="radio" name="appr_gbn" value="appr" checked style="margin-left: 30px;">&nbsp;[[#{screen.text.comm.approver1}]]&nbsp;[<span id="appr_cnt">0</span>]&nbsp;&nbsp;
+								<input type="radio" name="appr_gbn" value="agree" >&nbsp;[[#{screen.text.comm.approver2}]]&nbsp;[<span id="agree_cnt">0</span>]&nbsp;&nbsp;
+								<input type="radio" name="appr_gbn" value="noti" >&nbsp;[[#{screen.text.comm.approver3}]]&nbsp;[<span id="noti_cnt">0</span>]&nbsp;&nbsp;
+							
+								<a href="#;" class="btn_srch" id="btnAdd" style="margin-left: 30px;">[[#{screen.text.comm.add.approver}]]</a>
+							</td>
+							<td>
+								<div style="text-align:right;">
+									<a href="#;" class="btn_srch" id="btnSave">[[#{screen.btn.save}]]</a>
+									<a href="#;" class="btn_srch" id="btnApproval" style="margin-left: 5px;">[[#{screen.btn.approve}]]</a>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				
+				<table class="detail_table" style="width:100%;" >
+					<colgroup>
+							<col width="10%"/>
+							<col />
+					</colgroup>
+					<tr>
+						<th style="text-align:center">[[#{screen.text.appr.draft}]]</th>
+						<td style="display: flex; justify-content: space-between;">
+							<div>
+								<span sec:authentication="principal.dto.userNm"></span><span id="apprId" sec:authentication="principal.dto.userId" style="display:none;"></span>
+							</div>
+							<div>
+								<a href="#;" id="btnUp" title="[[#{screen.btn.up}]]">▲</a>
+								<a href="#;" id="btnDown" title="[[#{screen.btn.down}]]">▼</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th style="text-align:center">[[#{screen.text.appr.approval}]]</th>
+						<td>
+							<div class="apprList">
+							<ol id="divAppr"  ></ol>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th style="text-align:center">[[#{screen.text.appr.agreement}]]</th>
+						<td>
+							<div class="apprList">
+							<ol id="divAgree" ></ol>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th style="text-align:center">[[#{screen.text.appr.inform}]]</th>
+						<td>
+							<div class="apprList">
+							<ol id="divNoti" ></ol>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th  style="text-align:center">[[#{screen.text.appr.title}]]</th>
+						<td>
+							<input type="text" name="appvTtl" id="appvTtl" style="width:100%;"/>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" >
+							<div id="apprContent"></div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 	</div>
-
-
-</div>
-
 </body>
 </html>

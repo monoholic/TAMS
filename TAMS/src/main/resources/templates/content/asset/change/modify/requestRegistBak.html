@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>자산정보수정</title>
+	    <title>[[#{screen.text.modify.screen.title2}]]</title>
 	</head>
         
 	<!-- css -->
@@ -42,6 +42,8 @@
 	 	var asetArr2 = [];
 	 	var asetArr3 = [];
 	 	
+	 	var asetList = [];
+	 	
 	    $(function(){
 	    	
 	        var selectItem = function(item) {
@@ -73,18 +75,35 @@
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
 	        });
 
-	        ////////////////////////////////////////////////////////////////////
-    	    $(".btn_add").click(function() {
-    	    	//$("#jsGrid").jsGrid("option", "inserting", "true");
-    	    	showDetailForm();
+	        // 상단 삭제 버튼
+			$(".btn_del1").click(function() {
+	  	    	
+	  	    	let url = "/aset/update/reqmas/reqmasDelete";
+	  			let reqType = 'GET';
+	  			dataType: 'json';
+	  			let data={
+	  				reqNo : $("#reqNo").val()
+	  			}
+	  			
+	  			$.commRequest(url, reqType, data)
+	  				.then((res) => {
+	  					console.log(res);
+	  					alert("[[#{screen.info.status.delete.success}]]");
+	  					selectedItems = [];
+	  					$('.btn_srch').click();
+	  				})
+	  				.catch((error) => {
+	  					alert("[[#{screen.info.status.error.occur}]]");
+	  					console.log(error);
+	  				})
     	    });
     	    
-			$(".btn_del").click(function() {
+			// 상단 삭제 버튼
+			$(".btn_del2").click(function() {
    	    		
 	  	    	var arr_item =  [];
 	  	    	var items = [];
 	  	    	
-	  	    	// $("#jsGrid").jsGrid("deleteItem",delete_item);
 	  	    	$.each(selectedItems, function(index,item){
 	  	    		items.push(item);
 	  	    	});
@@ -100,16 +119,16 @@
 	  			$.commRequest(url, reqType, data)
 	  				.then((res) => {
 	  					console.log(res);
-	  					alert("삭제 되었습니다!");
+	  					alert("[[#{screen.info.status.delete.success}]]");
 	  					selectedItems = [];
 	  					$('.btn_srch').click();
 	  				})
 	  				.catch((error) => {
-	  					alert("오류가 발생했습니다");
+	  					alert("[[#{screen.info.status.error.occur}]]");
 	  					console.log(error);
 	  				})
     	    });
-    	    
+			
     	    $(".btn_download").click(function() {
     	    	//$("#jsGrid").jsGrid().trigger("");
     	    });
@@ -119,56 +138,23 @@
 	        });
 	        
 	     	// 팝업창 저장 버튼 처리
-            $('.save_btn').on('click', function (e) {
+            $('.btn_save').on('click', function (e) {
                 
-            	if (validationCheck() == '202') {
-	            	e.preventDefault();
+            	e.preventDefault();
+                
+                var insert_item = {};
+                	insert_item.reqNo  = $("#reqNo").val();
+	                insert_item.reqNm  = $("#reqNm").val();
+	                insert_item.reqRsn = $("#reqRsn").val();
 	                
-	                var insert_item = {};
-	                	insert_item.reqNo       = $(".detail_table").find("#reqNo").val();
-		                insert_item.reqType 	= $(".detail_table").find("#reqType").val();
-		                insert_item.reqNm 	    = $(".detail_table").find("#reqNm").val();
-		                insert_item.reqtr 	    = $(".detail_table").find("#reqtr").val();
-		                insert_item.appvDocId 	= $(".detail_table").find("#appvDocId").val();
-		                insert_item.reqRsn 	    = $(".detail_table").find("#reqRsn").val();
-		                insert_item.reqStus 	= $(".detail_table").find("#reqStus").val();
-		                insert_item.movePupos 	= $(".detail_table").find("#movePupos").val();
-		                insert_item.moveDt 	    = $(".detail_table").find("#moveDt").val();
-		                insert_item.tkoutScheYn = $(".detail_table").find("#tkoutScheYn").val();
-		                insert_item.tkoutScheDt = $(".detail_table").find("#tkoutScheDt").val();
-		                insert_item.tkoutYn 	= $(".detail_table").find("#tkoutYn").val();
-		                insert_item.tkoutDt 	= $(".detail_table").find("#tkoutDt").val();
-		                insert_item.rtkinYn 	= $(".detail_table").find("#rtkinYn").val();
-		                insert_item.rtKinDt 	= $(".detail_table").find("#rtKinDt").val();
-		                insert_item.prgsDcontYn = $(".detail_table").find("#prgsDcontYn").val();
-		                
-			        var action = "";
-			        
-			        
-			        
-			    	if(save_mode == "insert") {
-			    		action = "insertItem";
-			    		//insertedItems.push(insert_item); --일괄
-			    	}else if(save_mode == "update") {
-			    		action = "updateItem";
-			    		//updatedItems.push(insert_item); --일괄
-			    	}
-	    			
-	    			$("#jsGrid").jsGrid(action, insert_item);
-	                
-		    		clearDetailForm();
-	                $(this).parents("#detailForm").hide();
-	                save_mode = "";
-	          	}
+	                console.log("++++" + selectedItems);
+    			$("#jsGrid").jsGrid(action, updateItem);
+                
+	    		clearDetailForm();
+                $(this).parents("#detailForm").hide();
+                save_mode = "";
             });
 	     	
-    	  	//수정 버튼
-    	    $(".btn_update").click(function() {
-    	    	var items = $("#jsGrid").jsGrid("option", "data");
-    	    	var item = items.filter(arr => arr.codeId == selectedItems[0].codeId);
-    	    	showDetailForm(item[0]);
-    	    });
-          	
           	//리셋 버튼
     	    $(".btn_reset").click(function() {
     	    	$("#req_no").val("");
@@ -184,8 +170,6 @@
     	    	$("#req_stus option:eq(0)").prop("selected",true);
     	    });
 	     	
-          	// #codeGrpId option:eq("+ find_idx +")").prop("selected",true);
-          	
 	     	// 팝업창 닫기 버튼 처리
             $('.close_btn').on('click', function (e) {
                 e.preventDefault();
@@ -242,28 +226,6 @@
        	        openPopup(popId, url, args, param);
         	});
      	    
-    	 	// 엑셀 다운로드
-			$(".btn_excelDown").on("click", function(){
-				
-		       	event.preventDefault();
-                let url = "/aset/update/reqmas/reqInqrExcel";
-				
-				var $form = $('<form id="downForm"></form>'); 
-					$form.attr('action', url); 
-					$form.attr('method', 'post'); 
-					$form.attr('target', '_self');
-					
-				var idArr = ['req_no', 'fromDate', 'toDate', 'req_nm', 'dept_cd1', 'dept_cd2', 'Reqtr', 'aset_no', 'req_stus'];
-				var inputStr = '';
-				
-				$.each(idArr,function(i){
-					inputStr = $('<input type="hidden" value="'+ $("#" + idArr[i]).val() + '" name="' + idArr[i] +'">');
-					$form.append(inputStr);
-				});
-					$form.appendTo('body'); 
-					$form.submit();
-			});
-    	 	
 			// 사용자 팝업 호출
 	        $("#openUserPopup").on("click", function() { 
 		        // 팝업 호출 url
@@ -277,7 +239,26 @@
 		        
 		        openPopup(popId, url, args);
 		    });
-	        			
+	        
+	     	// 자산선택(팝업-공통) 호출
+    	    $("#openAsetMasPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/asetMasPopup";
+    	        var popId = "AsetMasPopup";
+    	        var args = {
+    	        };
+    	        args.width = 1350;
+    	        args.height = 600;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        var param = {};
+    	        param.id    = "reqStus";
+    	        param.value = "20";
+    	        
+    	        openPopup(popId, url, args, param);
+    	    });
+	     	
 			/*-------------------------------------------------------------------------*/			
 	        (async () => {	        	
   				console.log(">>>>>> step 1 asetArr1 " + asetArr1.length);  				
@@ -288,23 +269,25 @@
 	        /*-------------------------------------------------------------------------*/
 	        
     	});
-	    
-	 	// 사용자 선택 팝업에서 받은 결과 처리
-	    function setResult(obj) {
-			$("#reqtr").val(obj.userId);
+    	
+    	function selectAsetList(obj) {
+    		var asetNoChk = [];
+    		
+    		// 자산번호 비교
+    		$.each(asetList, function(idx, el){
+    			asetNoChk.push(el.asetNo);
+    		});
+    		
+    		$.each(obj, function (idx, el){
+    			if(!asetNoChk.includes(el.asetNo))
+    				(asetList).push(el);
+    			else
+    				alert("[[#{screen.info.status.error.modify.dup.asset}]]");
+    		});
+    		
+    		jsGridLoad();
 		}
 	    
-	    function setResult3(obj) {
-			if(obj.deptCd.length <= 6) {
-				$("#dept_cd1").val(obj.deptCd);
-				$("#dept_nm1").val(obj.deptNm);
-			}
-			else{
-				$("#dept_cd2").val(obj.deptCd);
-				$("#dept_nm2").val(obj.deptNm);
-			}
-		}
-
 		// asetType 리스트 출력
 	    async function asetTypeList() {
 			
@@ -339,7 +322,7 @@
 		 		})
 		 		
 		 		.catch((error) => {                                                                      
-		 			alert('조회 실패!!');                                                                  
+		 			alert('[[#{screen.info.status.error.search}]]');                                                                  
 		 		});
 		};
 		
@@ -347,7 +330,7 @@
 			console.log('--------------- jsGridLoad ------------------');
 	 		
 	 		 $("#jsGrid").jsGrid({
-		        	height: "600",
+		        	height: "400",
 	                width: "100%",
 	                filtering: false,
 	                editing: true,
@@ -369,7 +352,7 @@
 	                pageButtonCount: 5,
 	                loadonce: true,
 	                updateOnResize: true,
-		            /* rowClick: function(args) {
+		            rowClick: function(args) {
 		            	var target = args.event.target;
 		            	
 						if(target instanceof HTMLTableCellElement) {
@@ -381,17 +364,17 @@
 							  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
 							});
 						}
-		            }, */
+		            },
 		            pagerContainerClass: "paginate",
 		            deleteConfirm: function(item) {
-		                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
+		                return "\""+item.menuNm+"("+menuId+")"+"\""+ '[[#{screen.info.status.delete.yn}]]';
 		            },
 		            controller:  {
 		                loadData: function(filter) {
 		                    var d = $.Deferred();
 		                    
 		                    currentPage = filter.pageIndex;
-		                    let url = "/asset/update/reqmas/reqInqrPopup";
+		                    let url = "/asset/update/reqmas/requestRegist";
 							let reqType = 'GET';	
 							let data = {
 	            				"currentPage"  : filter.pageIndex,
@@ -400,10 +383,8 @@
 	            				"sortField"    : filter.sortField,
 	            				"sortOrder"    : filter.sortOrder
 	            			}
-							
 							$.commRequest(url, reqType, data)
 								.then((res) => {
-									
 									$("#reqType").val((res.data)[0].reqTypeNm);
 									$("#reqNo").val((res.data)[0].reqNo);
 									$("#reqDt").val((res.data)[0].reqDt);
@@ -414,10 +395,16 @@
 									$("#reqRsn").val((res.data)[0].reqRsn);
 									
 									$(".result").text("Results : " + res.condition.totalCount);
+									
+									if(asetList.length < res.data2.length)
+										asetList = res.data2;
+									else
+										res.data2 = asetList;
+									
 									d.resolve({data : res.data2, itemsCount: res.condition.totalCount});
 								})
 								.catch((error) => {
-									console.log('메뉴조회 실패!!');
+									console.log('[[#{screen.info.status.error.search}]]');
 								});						
 		                    
 		                    return d.promise();
@@ -431,7 +418,7 @@
 		                			console.log(res);
 		                			unselectItem(item);
 		                			
-		                			alert("수정이 완료되었습니다.");
+		                			alert("[[#{screen.info.status.update.success}]]");
 		                			selectedItems = [];
 		                			$("#jsGrid").jsGrid("loadData");
 		                		})
@@ -440,22 +427,7 @@
 		                		})
 		                },
 		                
-		                deleteItem: function(item) { 
-		        			let url = "/asset/update/reqmas/reqmasDelete";
-		        			let reqType = 'GET';
-		        			$.commRequest(url, reqType, item)
-		        				.then((res) => {
-		        					console.log(res);
-		        					
-		        					$("#jsGrid").jsGrid("loadData");
-		        				})
-		        				.catch((error) => {
-		        					console.log(error);
-		        				})
-		            	},
-		                
 		             	insertItem: function(item) { 
-		             		//insertedItems.push(item);
 		        			let url = "/asset/update/reqmas/reqmasInsert";
 		        			let reqType = 'GET';
 		        			
@@ -468,7 +440,7 @@
 		        				.catch((error) => {
 		        					console.log(error);
 		        				})
-		            	}
+		            	},
 	           		},
 		            fields: [
 		            	{  	   name : "chk"
@@ -489,7 +461,7 @@
 							  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
 			                     .on("change", function (item) {
 			             	    	selectedItems = [];
-			            	    	if(this.checked) { // check select status
+			            	    	if(this.checked) {
 			            	            $('.singleCheckbox').each(function() { 
 			            	                this.checked = true;   
 			            	                selectItem($(this).parent().next().text());           
@@ -505,96 +477,17 @@
 			    				   });
 						 	 } ,
 		                },
-		                { name: "asetNo", type: "text", width: 35 ,align: "left", title: "자산번호", editing: false},
-		                { name: "asetType1", type:"select", width: 35, align:"left", title:"자산유형1", items:asetArr1, valueField :"Id", textField : "Nm"
-		                	/* itemTemplate : function(value, item){
-		                		var str = "";
-		                		
-		                		let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
-		                		var str = '<select id="asetType1'+idx+'" style="width:100%;" onChange="getAsetTypeId1(this.id, this.value)"><option value="none">선택</option>'
-		                		
-			                	$.each(asetArr1, function(i){
-			                		str += '<option value=' + asetArr1[i].Id + '>' + asetArr1[i].Nm + '</option>';
-			                	});
-		                		
-			                	str += '</select>';
-			                	
-			                	$('#asetType1'+idx+" "+'option[value='+value+']').attr('selected', true);
-			                	
-			                	return str;
-			                  } */
-		                },
-		                { name: "asetType2", type:"select", width: 35, align:"left", title:"자산유형2", items:asetArr2, valueField :"Id", textField : "Nm"
-		                	/* itemTemplate : function(value, item){
-		                		var str = "";
-		                		
-		                		let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
-		                		var str = '<select id="asetType2'+idx+'" style="width:100%;" onChange="getAsetTypeId2(this.id, this.value)"><option value="none">선택</option>'
-		                		
-		                		asetArr2 = getAsetType(item.asetType1);
-		                		
-			                	$.each(asetArr2, function(i){
-			                		str += '<option value=' + asetArr2[i].codeId + '>' + asetArr2[i].codeNm + '</option>';
-			                	});
-			                	
-			                	str += '</select>';
-			                	
-			                	return str;
-			            	} */
-		                },
-						{ name: "asetType3", type:"select", width: 35, align:"left", title:"자산유형3", items:asetArr3, valueField :"Id", textField : "Nm"
-		                	/* itemTemplate : function(value, item){
-		                		// var asetVal3 = "";
-		                		var str = "";
-		                		
-		                		let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
-		                		var str = '<select id="asetType3'+idx+'" style="width:100%;"><option value="none">선택</option>'
-		                		
-		                		asetArr3 = getAsetType(item.asetType2);
-		                		
-			                	$.each(asetArr3, function(i){
-			                		str += '<option value=' + asetArr3[i].codeId + '>' + asetArr3[i].codeNm + '</option>';
-			                	});
-		                		
-			                	str += '</select>';
-			                	
-			                	return str;
-			                  } */
-		                },
-						{ name: "mftco"	    , type: "text", width: 30 ,align: "left", title: "메이커",
-		                	/* itemTemplate : function(value, item){
-			                	
-		                		let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
-		                		
-			                	var str = '<input type="text" style="width:100%;" value='+item.mftco+'>'
-			                	  
-			                	return str;
-			            	}, editing: false */	
-						},
-						{ name: "model"	    , type: "text", width: 40 ,align: "left", title: "모델",
-							/* itemTemplate : function(value, item){
-			                	  
-								var str = '<input type="text" style="width:100%;" value='+item.model+'>'
-			                	  
-			                	return str;
-			                }, editing: false */	
-						},
-						{ name: "sn"     	, type: "text", width: 30 ,align: "left", title: "S/N",
-							/* itemTemplate : function(value, item){
-			                	
-								let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
-								
-								var str = '<input type="text" style="width:100%;" value='+item.sn+'>'
-			                	  
-			                	return str;
-			                  }, editing: false */	
-						},
-						{ name: "bizDeptNm"	, type: "text", width: 40 ,align: "left", title: "사업부",editing: false},
-						{ name: "deptNm"    , type: "text", width: 40 ,align: "left", title: "부서", editing: false},
-						{ name: "chrgr"	    , type: "text", width: 30 ,align: "left", title: "담당자", editing: false,
+		                { name: "asetNo",    type:"text",   width: 35 ,align: "left", title:"[[#{screen.text.modify.asetno}]]", 	 editing: false},
+		                { name: "asetType1", type:"select", width: 35, align: "left", title:"[[#{screen.text.modify.asset.type1}]]", items:asetArr1, valueField :"Id", textField : "Nm"},
+		                { name: "asetType2", type:"select", width: 35, align: "left", title:"[[#{screen.text.modify.asset.type2}]]", items:asetArr2, valueField :"Id", textField : "Nm"},
+						{ name: "asetType3", type:"select", width: 35, align: "left", title:"[[#{screen.text.modify.asset.type3}]]", items:asetArr3, valueField :"Id", textField : "Nm"},
+						{ name: "mftco", 	 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.manufacture}]]"},
+						{ name: "model", 	 type:"text",   width: 40 ,align: "left", title:"[[#{screen.text.modify.asset.model}]]"},
+						{ name: "sn", 		 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.sn}]]"},
+						{ name: "bizDeptNm", type:"text",   width: 40 ,align: "left", title:"[[#{screen.text.modify.asset.biz.dept}]]", editing: false},
+						{ name: "deptNm", 	 type:"text",   width: 40 ,align: "left", title:"[[#{screen.text.modify.asset.dept}]]",	    editing: false},
+						{ name: "chrgr", 	 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.charger}]]",  editing: false,
 							itemTemplate : function(value, item) {
-							// var str = '<a href="#" id="openUserPopup"><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>';
-
 							let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
 							
 							var chrgrStr = '<input type="text" style="width:100%" readonly value='+item.chrgr+'>'
@@ -615,47 +508,15 @@
 		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
 							}
 						},
+						{ name: "control" , type: "control", width: 15 ,align: "center", modeSwitchButton: false},
 		            ]
 		        });
 	 	}
 	 	
-	 	/* // 자산유형 option 선택
-	    function asetTypeSel(idx, val) {
-	    	console.log(idx);
-	    	console.log(val);
-	    	
-	    	$('#asetType11 option[value='+val+']').attr('selected', true);
-	    	$('#asetType12 option[value='+val+']').attr('selected', true);
-	    	$('#asetType13 option[value='+val+']').attr('selected', true);
-	    	// $('#asetType1'+(idx)+" "+'option:contains('+ val +')').prop('selected', true);
-	    	
-	    	console.log('#asetType1'+idx+' option[value='+val+']');
-	    } */
-	    
-	 	// 자산유형 option 선택
-	    function asetTypeSel() {
-	    	
-	    	console.log('--------------- asetTypeSel ------------------');
-	    	
-	    	console.log("---- asetArr1------ " + asetArr1.length)
-	    	
-	    	$.each(asetArr1, function(idx, el) {
-		    	$('#asetType1'+(idx+1)+" "+'option:contains('+ el.Nm +')').prop('selected', true);
-	    	})
-	    	
-	    	/* $.each(asetArr2, function(idx, el) {
-		    	$('#asetType2'+(idx+1)+" "+'option:contains('+ el.codeNm +')').prop('selected', true);
-	    	})
-	    	
-	    	$.each(asetArr3, function(idx, el) {
-		    	$('#asetType3'+(idx+1)+" "+'option:contains('+ el.codeNm +')').prop('selected', true);
-	    	}) */
-	 	}
-	 	
 	    //선택 버튼클릭시 
-	    function selectItem(obj) {
+	    function selectItems(obj) {
 			console.log(obj);
-			opener.setResult(obj); //부모창에 구현
+			opener.setResult(obj);
 			window.close();
 	    }
 	    
@@ -716,19 +577,16 @@
 	</th:block>
 
 	<div layout:fragment="content">
-		<!-- contents_head -->
-		<div class="bc">Home &gt; <span> 자산변동 > 자산수정의뢰작성</span></div>
-		<h3><span>자산수정의뢰작성</span></h3><br>
-		<!-- //contents_head -->
-
-		<!-- search -->
+		<h3><span>[[#{screen.text.modify.screen.title3}]]</span></h3><br>
 		
 		<div class="list_head">
-			<div style="font-weight:bold;">의뢰정보</div>
+			<div class="list_head">
+				<div><h6>[[#{screen.text.modify.screen.title4}]]</h6></div>
+			</div>
 			<div class="button">
-				<a class="btn_add">저장</a>
-				<a class="btn_add">삭제</a>
-				<a class="btn_add">결재상신</a>
+				<a class="btn_save">[[#{screen.text.comm.save}]]</a>
+				<a class="btn_del1">[[#{screen.btn.delete}]]</a>
+				<a class="btn_">[[#{screen.text.comm.approve}]]</a>
 			</div>
 		</div>
 		
@@ -747,196 +605,56 @@
 					<col style="width:5%"/>
 				</colgroup>
 				<tr>
-					<!-- <td>
-						<select id="asetType1" style="width:100%;">
-							<option value="">[[#{screen.text.comm.choice}]]</option>
-						</select>
-					</td> -->
 					<td><input id="req_no" type="hidden" th:value="${reqNo}"></td>
-						<th style="text-align:center;">의뢰구분</th>
-						<td><input type="text" id="reqType" style="width:100%;"></td>
+						<th style="text-align:center;">[[#{screen.text.modify.type}]]</th>
+						<td><input type="text" id="reqType" style="width:100%;" readonly></td>
 					<td></td>
-						<th style="text-align:center;">의뢰번호</th>
-						<td><input type="text" id="reqNo" style="width:100%;"></td>
+						<th style="text-align:center;">[[#{screen.text.modify.no}]]</th>
+						<td><input type="text" id="reqNo" style="width:100%;" readonly></td>
 					<td></td> 
-						<th style="text-align:center;">의뢰일시</th>
-						<td><input type="date" id="reqDt" style="width:100%;"></td>
+						<th style="text-align:center;">[[#{screen.text.modify.dt}]]</th>
+						<td><input type="date" id="reqDt" style="width:100%;" readonly></td>
 					<td></td>
 				</tr>
 				<tr>
 					<td></td>
-					<th style="text-align:center;">의뢰부서</th>
+					<th style="text-align:center;">[[#{screen.text.modify.dept}]]</th>
 					<td>
 						<input type="text" style=" width:100%" id="deptNm" readonly/>
-						<!-- <input type="text" style="width:100%" id="dept_cd1" /> -->
 					</td>
-					<td>
-						<a href="#" id="openDeptPopup1" style="margin-left: 10px;"><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
-					</td>
-					<th style="text-align:center;">의뢰자</th>
+					<td></td>
+					<th style="text-align:center;">[[#{screen.text.modify.reqtr}]]</th>
 					<td>
 						<input type="text" style="width:100%" id="reqtr" readonly/>
 					</td>
-					<td>
-						<a href="#" id="openDeptPopup2" style="margin-left: 10px;"><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
-					</td>
-					<th style="text-align:center;">의뢰명</th>
+					<td></td>
+					<th style="text-align:center;">[[#{screen.text.modify.nm}]]</th>
 						<td><input type="text" id="reqNm" style="width:100%;"></td>
 					<td></td>
 				</tr>
 				<tr>
 					<td></td>
-					<th style="text-align:center;">의뢰사유</th>
+					<th style="text-align:center;">[[#{screen.text.modify.rsn}]]</th>
 					<td colspan="1"><input type="text" id="reqRsn" style="width:100%;"/></td>
 					<td></td>
 				</tr>
-				<tr>
-					<td class="search" colspan="10 ">
-						<a href="#;" class="btn_reset">Reset</a>
-						<a href="#;" class="btn_srch">Search</a>
-					</td>
-				</tr>
+				<tr><td></td></tr>
 			</table>
 		</div><br>
-		<!-- //search -->
+		
 		<div class="list_head">
-				<!-- <div style="font-weight:bold;">
-					의뢰정보
-				</div> -->
-				<div class="result">Results : 0,000</div>
-				<!-- <div class="result">Results : 0,000</div> -->
-				<!-- list_button -->
-				<div class="button">
-					<a class="btn_add">자산 추가</a>
-					<a class="btn_del">삭제</a>
-				</div>
-				
-				<!-- list_button -->
+			<div><h6>[[#{screen.text.modify.screen.title5}]]</h6></div>
+			<div class="result">Results : 0,000</div>
 		</div>
-		<!-- list -->
-		<!-- //search -->
-
-		<!-- list -->
+			
+		<div class="list_head">
+			<div class="button">
+				<a class="btn_" id="openAsetMasPopup">[[#{screen.text.comm.add.asset}]]</a>
+				<a class="btn_del2">[[#{screen.btn.delete}]]</a>
+			</div>
+		</div>
 		<div id="jsGrid"></div>
 		<input type="hidden" id="curr_Idx"/>
-		<!-- //list -->
-	
-		<!-- detail popup -->
-		<div id="detailForm" class="list_head" style="display:none;">
-		  <div id="container">
-			  
-		        <!-- list_head -->
-				<div class="list_head">
-					<h6><span id="head_title" ></span></h6>
-					<!-- list_button -->
-					<div class="button">
-						<a class="btn_list save_btn">저장</a>
-						<a class="btn_list close_btn">닫기</a>
-					</div>
-					<!-- list_button -->
-				</div>
-				<!-- //list_head -->
-				<!-- detail_table -->
-					<table class="detail_table ">
-						<colgroup>
-							<col style="width:20%" />
-							<col style="width:30%" />
-							<col style="width:20%" />
-							<col style="width:30%" />
-						<col />
-						<tr>
-							<th style="text-align: center;">의뢰번호</th>
-							<td><input type="text" style="width:100%;" id="reqNo" /></td>
-							<th style="text-align: center;">의뢰구분</th>
-							<td>
-								<select id="reqType" style="width:100%;">
-									<option value="">선택</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<th style="text-align: center;">의뢰명</th>
-							<td colspan="4"><input type="text" style="width:100%" id="reqNm" /></td>
-						</tr>
-						<tr>
-							<th style="text-align: center;">의뢰자</th>
-							<td class="aset_td">
-								<input type="text" style="width:100%" id="reqtr" readonly/>
-								<a href="#" id="openUserPopup" ><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
-							</td>
-							<th style="text-align: center;">의뢰 상태</th>
-							<td>
-								<select id="reqStus" style="width:100%;">
-									<option value="">선택</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<th style="text-align: center;">의뢰 사유</th>
-							<td colspan="4"><input type="text" style="width:100%" id="reqRsn" /></td>
-						</tr>
-						<tr>
-							<th style="text-align: center;">이동 목적</th>
-							<td><input type="text" style="width:100%" id="movePupos" /></td>
-							<th style="text-align: center;">이동일자</th>
-							<td><input type="date" style="width:100%" id="moveDt" /></td>
-						</tr>
-						<tr>
-							<th style="text-align: center;">결재문서 ID</th>
-							<td><input type="text" style="width:100%" id="appvDocId"/></td>
-							<th style="text-align: center;">진행중단여부</th>
-							<td>
-								<select id="prgsDcontYn" style="width:100%">
-									<option value="">선택</option>
-									<option value="Y">사용</option>
-									<option value="N">미사용</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<th style="text-align: center;">반출예정 여부</th>
-							<td>
-								<select id="tkoutScheYn" style="width:100%">
-									<option value="">선택</option>
-									<option value="Y">사용</option>
-									<option value="N">미사용</option>
-								</select>
-							</td>
-							<th style="text-align: center;">반출 예정일자</th>
-							<td><input type="date" style="width:100%" id="tkoutScheDt" /></td>
-						</tr>
-						<tr>
-							<th style="text-align: center;">반출 여부</th>
-							<td>
-								<select id="tkoutYn" style="width:100%">
-									<option value="">선택</option>
-									<option value="Y">사용</option>
-									<option value="N">미사용</option>
-								</select>
-							</td>
-							<th style="text-align: center;">반출일자</th>
-							<td><input type="date" style="width:100%" id="tkoutDt" /></td>
-						</tr>
-						<tr>
-							<th style="text-align: center;">재반입 여부</th>
-							<td>
-								<select id="rtkinYn" style="width:100%">
-									<option value="">선택</option>
-									<option value="Y">사용</option>
-									<option value="N">미사용</option>
-								</select>
-							</td>
-							<th style="text-align: center;">재반입일자</th>
-							<td><input type="date" style="width:100%" id="rtKinDt" /></td>
-						</tr>
-					</table>
-				<!-- //detail_table -->
-				 
-	     	</div>
-     	</div>
-		
 		<div id="excelDownTarget"></div>
-		
 	</div>
-	
 </html>
