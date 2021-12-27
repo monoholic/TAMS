@@ -49,6 +49,9 @@ public interface InvestRegistMapper {
 	
 	public AssetDtlDto selectAssetDtl(String assetNo);
 	
+	public int deletePoAset(Map<String, Object> param);
 	
+	public int deleteAsetDtl(Map<String, Object> param);
 	
+	public int deleteAsetMas(Map<String, Object> param);
 }

@@ -332,6 +332,7 @@
 				 and h.code_grp_id = 'AS_STATUS'
 				where rn between #{start} and #{end}
 			) c	
+		order by c.asetNo desc		
 	</select>
 	
 	<select id="selectInvInqrExcelList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
@@ -463,7 +464,10 @@
 				INSERT INTO TB_PO_ASET(PO_NO, ASET_NO, NEW_YN, QTY, APPV_DOC_ID, REGR, REG_DT)
 						        VALUES 
 						        ( #{poNo}
-						        , CONCAT('A', SUBSTRING(DATE_FORMAT(now(), '%Y%m'), 3), LPAD(#{asetNo}, 5, 0))
+						        ,(case 
+						        	when substring(#{asetNo}, 1, 1) = 'A' then #{asetNo}
+						         	else concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
+						          end)	 						        
 						        , 'Y'
 						        , CAST('1' as int)
 						        , #{appvDocId}
@@ -483,7 +487,11 @@
 					                  , LOC, EXP_DEPT_CD, EXP_ACCT, DUR_YEAR, ACQ_PRC, SVAL_PRC
 					                  , DPRC_PRC, ACQ_DT, ASET_OUT_BOOK_YN, ASET_STUS, REGR, REG_DT)
 				                 VALUES 
-				                 ( CONCAT('A', SUBSTRING(DATE_FORMAT(now(), '%Y%m'), 3), LPAD(#{asetNo}, 5, 0))
+				                 ( 
+						           (case 
+						        	  when substring(#{asetNo}, 1, 1) = 'A' then #{asetNo}
+						         	  else concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
+						            end)				                 
 				                 , #{asetNm}
 				                 , #{asetType1}
 				                 , #{asetType2}
@@ -501,9 +509,9 @@
 				                 , #{expDeptCd} 
 				                 , #{expAcct}
 				                 , #{durYear}
-				                 , #{acqPrc}
-				                 , #{svalPrc}
-				                 , #{dprcPrc}
+				                 , (case when #{acqPrc} = '' then null else #{acqPrc} end)
+				                 , (case when #{svalPrc} = '' then null else #{svalPrc} end)
+				                 , (case when #{dprcPrc} = '' then null else #{dprcPrc} end)					                 
 				                 , replace(#{acqDt}, '-', '')
 				                 , 'N'
 				                 , '10'
@@ -528,9 +536,9 @@
 				                      , EXP_DEPT_CD = #{expDeptCd}
 				                      , EXP_ACCT    = #{expAcct}
 				                      , DUR_YEAR    = #{durYear}
-				                      , ACQ_PRC     = #{acqPrc}
-				                      , SVAL_PRC    = #{svalPrc}
-				                      , DPRC_PRC    = #{dprcPrc}
+				                      , ACQ_PRC     = (case when #{acqPrc} = '' then null else #{acqPrc} end)
+				                      , SVAL_PRC    = (case when #{svalPrc} = '' then null else #{svalPrc} end) 
+				                      , DPRC_PRC    = (case when #{dprcPrc} = '' then null else #{dprcPrc} end) 
 				                      , ACQ_DT      = replace(#{acqDt}, '-', '')
 				                      , UPDR 	    = #{updr}
 				                      , UP_DT 	    = now()
@@ -542,7 +550,11 @@
 									  , FLOOR, LOC, EXP_DEPT_CD, EXP_ACCT, DUR_YEAR, ACQ_PRC, SVAL_PRC
 									  , DPRC_PRC, ACQ_DT, ASET_OUT_BOOK_YN, ASET_STUS, REGR, REG_DT)
 				                 VALUES 
-				                 ( CONCAT('A', SUBSTRING(DATE_FORMAT(now(), '%Y%m'), 3), LPAD(#{asetNo}, 5, 0))
+				                 ( 
+						           (case 
+						        	  when substring(#{asetNo}, 1, 1) = 'A' then #{asetNo}
+						         	  else concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
+						            end)					                 				                 
 				                 , #{reqNo}
 				                 , #{asetNm}
 				                 , #{asetType1}
@@ -561,9 +573,9 @@
 				                 , #{expDeptCd} 
 				                 , #{expAcct}
 				                 , #{durYear}
-				                 , #{acqPrc}
-				                 , #{svalPrc}
-				                 , #{dprcPrc}
+				                 , (case when #{acqPrc} = '' then null else #{acqPrc} end)
+				                 , (case when #{svalPrc} = '' then null else #{svalPrc} end)
+				                 , (case when #{dprcPrc} = '' then null else #{dprcPrc} end)				                 
 				                 , replace(#{acqDt}, '-', '')
 				                 , 'N'
 				                 , '10'
@@ -588,9 +600,9 @@
 				                      , EXP_DEPT_CD = #{expDeptCd}
 				                      , EXP_ACCT    = #{expAcct}
 				                      , DUR_YEAR    = #{durYear}
-				                      , ACQ_PRC     = #{acqPrc}
-				                      , SVAL_PRC    = #{svalPrc}
-				                      , DPRC_PRC    = #{dprcPrc}
+				                      , ACQ_PRC     = (case when #{acqPrc} = '' then null else #{acqPrc} end)
+				                      , SVAL_PRC    = (case when #{svalPrc} = '' then null else #{svalPrc} end)
+				                      , DPRC_PRC    = (case when #{dprcPrc} = '' then null else #{dprcPrc} end)
 				                      , ACQ_DT      = replace(#{acqDt}, '-', '')
 				                      , UPDR        = #{updr}
 				                      , UP_DT       = now()  
@@ -607,7 +619,11 @@
 				                      , DTL_INFO41, DTL_INFO42, DTL_INFO43, DTL_INFO44, DTL_INFO45, DTL_INFO46
 				                      , DTL_INFO47, DTL_INFO48, DTL_INFO49, DTL_INFO50, REGR, REG_DT)
 				                 VALUES 
-				                 ( CONCAT('A', SUBSTRING(DATE_FORMAT(now(), '%Y%m'), 3), LPAD(#{asetNo}, 5, 0))
+				                 ( 
+						           (case 
+						        	  when substring(#{asetNo}, 1, 1) = 'A' then #{asetNo}
+						         	  else concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
+						            end)					                 				                 
 				                 , #{asetType3}
 				                 , #{dtlInfo1}
 								 , #{dtlInfo2}
@@ -729,7 +745,11 @@
 					                      , DTL_INFO41, DTL_INFO42, DTL_INFO43, DTL_INFO44, DTL_INFO45, DTL_INFO46
 					                      , DTL_INFO47, DTL_INFO48, DTL_INFO49, DTL_INFO50, REGR, REG_DT)
 					                 VALUES 
-					                 ( #{asetNo}
+					                 ( 
+							           (case 
+							        	  when substring(#{asetNo}, 1, 1) = 'A' then #{asetNo}
+							         	  else concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
+							            end)						                 					                 
 					                 , #{reqNo}
 					                 , #{asetType}
 					                 , #{dtlInfo1}
@@ -876,7 +896,7 @@
 			,acq_prc as acqPrc
 			,sval_prc as svalPrc
 			,dprc_prc as dprcPrc
-			,acq_dt as acqDt
+			,DATE_FORMAT(acq_dt, '%Y-%m-%d') as acqDt
 			,aset_out_book_yn as asetOutBookYn
 			,aset_stus as asetStus
 		    ,(
@@ -927,8 +947,8 @@
 			,dtl_info14 as dtlInfo14
 			,dtl_info15 as dtlInfo15
 			,dtl_info16 as dtlInfo16
-			,dtl_info17 as dtlInfo16 
-			,dtl_info18 as dtlInfo17
+			,dtl_info17 as dtlInfo17 
+			,dtl_info18 as dtlInfo18
 			,dtl_info19 as dtlInfo19
 			,dtl_info20 as dtlInfo20
 			,dtl_info21 as dtlInfo21
@@ -970,5 +990,21 @@
 			from tb_aset_dtl a
 			where a.aset_no = #{assetNo}		
 		) x			 
-   	</select>		
+   	</select>	
+   		
+   	<delete id="deletePoAset" parameterType="Map">
+   		delete from tb_po_aset
+   		where po_no = #{poNo}
+   		  and aset_no = #{assetNo}
+   	</delete>
+   	
+   	<delete id="deleteAsetDtl" parameterType="Map">
+   		delete from tb_aset_dtl
+   		where aset_no = #{assetNo}
+   	</delete>   
+
+   	<delete id="deleteAsetMas" parameterType="Map">
+   		delete from tb_aset_mas
+   		where aset_no = #{assetNo}
+   	</delete>   	   		
 </mapper>

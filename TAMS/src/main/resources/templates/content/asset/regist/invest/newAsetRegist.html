@@ -19,10 +19,14 @@
 	
 		<script>
 
+		  	const chooseAsset = "[[#{screen.info.status.inv.choose.assettype3}]]";
+		  	const noAssetProperty = "[[#{screen.info.status.inv.no.asset.property}]]"
+				
 			//등록자산 목록에서 저장한 데이터 로드
 			let invData = $.commLoadSearchParams("invData");
 			let propertyLength = 0;
-			
+
+					
 			$(function(){
 				
 				let asetType = [];
@@ -38,8 +42,7 @@
 				$("#invReqr").html(invData.invReqr);
 				
 				//공통코드 조회
-		        getCommCode("#asetType1", "AS_CLASS"	, "1"	, "");
-		        getCommCode("#bspic"	, "SITE"		, ""	, "");
+		        getCommCode("#bsplc"	, "SITE"		, ""	, "");
 		        getCommCode("#buld"		, "BUILDING"	, ""	, "");
 		        getCommCode("#floor"	, "FLOOR"		, ""	, "");
 		        getCommCode("#expDeptCd", "COST_CENTER"	, ""	, "");
@@ -47,8 +50,6 @@
 
 		        
 		        /*------------------------ Event ------------------------*/
-	    	  	const chooseAsset = "[[#{screen.info.status.inv.choose.assettype3}]]";
-	    	  	const noAssetProperty = "[[#{screen.info.status.inv.no.asset.property}]]"
 	    	  		    	  	
 	    	  	//자산유형1 change 이벤트
 	    	  	asetType1ChangeOn = function(){
@@ -132,8 +133,6 @@
 	    	        openPopup2("DeptPopup", dept_url, args, param);
 	     	    });	    	  	
 	    	  	
-
-	    	  	
 		        //팝업종료
 				$(".pop_close").on("click",function(){ 
 					window.close();
@@ -141,8 +140,7 @@
 		        
 		        //저장
 	     	    $("#saveNewAset").on("click",function() {
-	     	    	
-	     	    	event.preventDefault();
+
 	     	    	let data = [saveParams()];	     	    	
 	   		       	//console.log(data);
 	   		       	
@@ -158,6 +156,33 @@
 						});    					
     			});		        
 		        
+		        //삭제
+		        $("#delNewAset").on("click",function() {
+		        	let chooseVal = confirm("[[#{screen.info.status.default.delete.yn}]]");
+		        	
+		        	if(chooseVal) {
+		        		let params = {		        				
+			    				url     : "/asset/regist/invest/deleteNewAset",
+			    				reqType : "GET",
+			    			   	data    : { 
+			    			   		        poNo    : $("#poNo").html(),
+			    			   		        assetNo : "[[${assetNo}]]"
+			    			   		      }			        		
+		        		}
+		        		
+				    	$.request(params)
+						  .then(res => {
+								alert("[[#{screen.info.status.delete.success}]]");							
+								opener.parent.search();
+								window.close();
+						  })
+						  .catch(error => {
+							  console.log("[[#{screen.info.status.error.occur}]]");
+						  });		        		
+		        	}
+		        });
+		        
+		        
 	     	   /*------------------------ 상세정보 조회 ------------------------*/
 		       if("[[${assetNo}]]" != null && "[[${assetNo}]]" != ""){
 		    	   
@@ -168,23 +193,71 @@
 		    		   }
 		    	   $.request(params)
 					.then(getAssetProperty)
-					.then((data) => {						
+					.then(res => {			
+						
 						//1.자산유형 select-box 설정
+						appendAssetType("#asetType1", res.data.assetType1);
+						appendAssetType("#asetType2", res.data.assetType2);
+						appendAssetType("#asetType3", res.data.assetType3);
+												
 						//2.항목값 설정
-						//3.자산유형 select-box 이벤트 설정						
-						console.log('-------22222------------');
-						console.log(data);
+						let mas = res.data.mas;
+						//console.log(mas);
 						
+						$("#asetNo").val(mas.asetNo);
+						$("#asetNm").val(mas.asetNm);
+						$("#asetType1").val(mas.asetType1);
+						$("#asetType2").val(mas.asetType2);
+						$("#asetType3").val(mas.asetType3);
+						$("#mftco").val(mas.mftco);
+						$("#model").val(mas.model);
+						$("#sn").val(mas.sn);
+						$("#bizDeptCd").val(mas.bizDeptCd);
+						$("#bizDeptNm").val(mas.bizDeptNm);
+						$("#deptCd").val(mas.deptCd);
+						$("#deptNm").val(mas.deptNm);
+						$("#chrgr").val(mas.chrgr);
+						$("#chrgrNm").val(mas.chrgrNm);
+						$("#bsplc").val(mas.bsplc);
+						$("#buld").val(mas.buld);
+						$("#floor").val(mas.floor);
+						$("#loc").val(mas.loc);
+						$("#expDeptCd").val(mas.expDeptCd);
+						$("#expAcct").val(mas.expAcct);
+						$("#durYear").val(mas.durYear);
+						$("#acqPrc").val(mas.acqPrc);
+						$("#svalPrc").val(mas.svalPrc);
+						$("#acqDt").val(mas.acqDt);
 						
+						let dtl = res.data.dtl;
+						//console.log(dtl);
+						
+						for(var i=0; i<mas.propCnt; i++){							
+							var key = "dtlInfo" + (i+1);
+							$("#"+key).val(dtl[key]);
+						}
+						
+						propertyLength = mas.propCnt;
+						
+						//3.자산유형 select-box 이벤트 설정		
+				    	 asetType1ChangeOn();
+				    	 asetType2ChangeOn();
+				    	 asetType3ChangeOn();						
+				    	 
 					}).catch((error) => {
 						console.log("[[#{screen.info.status.error.occur}]]");
 					}); 		    	   
 		    	   
 		       }else{
-				   //자산유형 select-box 이벤트 설정
-		    	   asetType1ChangeOn();
-		    	   asetType2ChangeOn();
-		    	   asetType3ChangeOn();		    	   
+		    	   $("#delNewAset").hide();
+		    	   
+			       getCommCode("#asetType1", "AS_CLASS"	, "1"	, "")
+			         .then(() => {
+			        	 //자산유형 select-box 이벤트 설정
+				    	 asetType1ChangeOn();
+				    	 asetType2ChangeOn();
+				    	 asetType3ChangeOn();		    	   			        	 
+			         });		    	   		    	   
 		       } 		        
 			});
 		
@@ -192,7 +265,7 @@
 			function saveParams(){
 				
 				let field = ["asetNo","asetNm","asetType1","asetType2","asetType3","mftco","model","sn","bizDeptCd",
-							 "deptCd","chrgr","bspic","buld","floor","loc","expDeptCd","expAcct","durYear","arqPrc","svalPrc","acqDt"];
+							 "deptCd","chrgr","bsplc","buld","floor","loc","expDeptCd","expAcct","durYear","acqPrc","svalPrc","acqDt"];
 								
 				let params = {
 					"poNo"      : invData.poNo,
@@ -217,10 +290,10 @@
 				return params;
 			}
 			
-			function getCommCode(id, code, level, upperCodeId){				
+			async function getCommCode(id, code, level, upperCodeId){	
 				let url = "/common/comm/selectBox";
 				let reqType = 'GET';
-				$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);			
+				return await $.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);
 			}
 			
 			function getAssetProperty(param){
@@ -251,6 +324,14 @@
         			});				        			
         		});
 			}			
+			
+			function appendAssetType(target, data){
+				var str = '';
+	            $.each(data, function(i){
+	                str += '<option value="' + data[i].codeId + '">' + data[i].codeNm + '</option>';
+	             })
+	             $(target).append(str);				
+			}
 			
 			function buildAssetProperty(data){			
 				let idx = 0;				
@@ -452,7 +533,7 @@
 						<tr>
 							<th>[[#{screen.text.aset.bspic}]]</th>
 							<td>
-	                            <select id="bspic" style="width:100%;">
+	                            <select id="bsplc" style="width:100%;">
 	                            	<option value="">[[#{screen.text.comm.choice}]]</option>
 	                            </select>
 							</td>
@@ -491,7 +572,7 @@
 						</tr>
 						<tr>
 							<th>[[#{screen.text.aset.acqPrc}]]</th>
-							<td><input type="text" id="arqPrc" style="width:100%;" value=""></td>
+							<td><input type="text" id="acqPrc" style="width:100%;"></td>
 							<th>[[#{screen.text.aset.svalPrc}]]</th>
 							<td><input type="text" id="svalPrc" style="width:100%;"></td>
 							<th>[[#{screen.text.aset.acqDt}]]</th>

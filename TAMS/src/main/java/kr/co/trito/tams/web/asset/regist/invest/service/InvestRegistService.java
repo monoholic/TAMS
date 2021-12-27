@@ -3,6 +3,7 @@ package kr.co.trito.tams.web.asset.regist.invest.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import kr.co.trito.tams.web.asset.regist.invest.mapper.InvestRegistMapper;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
 import lombok.RequiredArgsConstructor;
+
 
 @RequiredArgsConstructor
 @Service
@@ -119,16 +121,22 @@ public class InvestRegistService {
 		
 		int maxAssetNo = mapper.selectMaxAsetNo();
 		
-		for (Map<String, Object> param : params) { 
+		for (Map<String, Object> param : params) {
+			
+			boolean isNew = StringUtils.isEmpty((String)param.get("asetNo"));				
+			
 			param.put("regr", userId);
 			param.put("updr", userId);
-			param.put("asetNo", maxAssetNo);
+			
+			if(isNew) 
+				param.put("asetNo", maxAssetNo);
 			
 			this.saveAsetMas(param);
 			this.saveAsetDtl(param);
 			this.savePoAset(param);			
 			
-			maxAssetNo++;
+			if(isNew) 
+				maxAssetNo++;
 		}
 		
 		return "200";
@@ -141,13 +149,27 @@ public class InvestRegistService {
 		return mapper.deletePoInfo(invs);
 	}
 	
-	
+	/** 
+	 * 신규자산 정보 조회
+	 * */
 	public AssetMasDto selectAssetMasPoInfo(String assetNo){
 		return mapper.selectAssetMas(assetNo);
 	}	
 	
+	/** 
+	 * 신규자산 자산유형 특성정보 조회
+	 * */	
 	public AssetDtlDto selectAssetDtl(String assetNo){
 		return mapper.selectAssetDtl(assetNo);
 	}		
 	
+
+	/** 
+	 * 등록된 신규자산 정보 삭제(투자자산/자산마스터/자산상세)
+	 * */
+	public void deleteNewAset(Map<String, Object> param) {
+		mapper.deletePoAset(param);
+		mapper.deleteAsetDtl(param);
+		mapper.deleteAsetMas(param);
+	}		
 }

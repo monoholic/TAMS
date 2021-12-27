@@ -40,6 +40,8 @@ import kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto;
 import kr.co.trito.tams.web.asset.regist.invest.service.InvestRegistService;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
+import kr.co.trito.tams.web.common.dto.ComCodeParamDto;
+import kr.co.trito.tams.web.common.service.CommonService;
 import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,6 +52,9 @@ public class InvestRegistController {
 
 	@Autowired
 	ResponseService responseService;
+	
+	@Autowired
+	CommonService commonService;
 
 	@Autowired
 	InvestRegistService investRegistService;
@@ -201,6 +206,20 @@ public class InvestRegistController {
 		return responseService.success(null);
 	}
 
+	/** 신규자산 삭제 */
+	@GetMapping("/deleteNewAset")
+	@ResponseBody
+	@ApiOperation(value = "투자자산등록(팝업 : 신규자산 등록) 화면 / 삭제버튼", notes = "등록된 신규자산을 삭제한다")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })	
+	public ResponseEntity<? extends Response> deleteNewAset(
+			@ApiParam(value = "PO/자산번호", required = true) @RequestParam Map<String, Object> param){
+		log.info(param.toString());
+		investRegistService.deleteNewAset(param);		
+		return responseService.success(null);
+	}
+	
+	
 	
 	/** 개조자산 등록 팝업 */
 	@GetMapping("/remodelAsetReg")
@@ -241,12 +260,48 @@ public class InvestRegistController {
 	public ResponseEntity<? extends Response> assetDetailInfo(
 			@ApiParam(value = "자산유형3", required = true) @RequestParam(value="assetNo") String assetNo) {
 		
+		List<ComCodeDto> assetType1 = new ArrayList<>();
+		List<ComCodeDto> assetType2 = new ArrayList<>();
+		List<ComCodeDto> assetType3 = new ArrayList<>();
+		
 		AssetMasDto assetMasDto = investRegistService.selectAssetMasPoInfo(assetNo);		
 		AssetDtlDto assetDtlDto = investRegistService.selectAssetDtl(assetNo);		
+		
+		ComCodeParamDto codeDto = ComCodeParamDto
+					.builder()
+					.codeGrpId("AS_CLASS")
+					.codeLvl("1")
+					.upperCodeId("")
+					.build();
+		assetType1 = commonService.commSelectBox(codeDto);
+		
+		if(StringUtils.isNotEmpty(assetMasDto.getAsetType1())) {
+			codeDto = ComCodeParamDto
+						.builder()
+						.codeGrpId("AS_CLASS")						
+						.upperCodeId(assetMasDto.getAsetType1())
+						.codeLvl("")						
+						.build();
+			assetType2 = commonService.commSelectBox(codeDto);
+		}
+		
+		if(StringUtils.isNotEmpty(assetMasDto.getAsetType2())) {
+			codeDto = ComCodeParamDto
+						.builder()
+						.codeGrpId("AS_CLASS")						
+						.upperCodeId(assetMasDto.getAsetType2())
+						.codeLvl("")
+						.build();
+			assetType3 = commonService.commSelectBox(codeDto);
+		}		
+		
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("mas", assetMasDto);
 		map.put("dtl", assetDtlDto);
+		map.put("assetType1", assetType1);
+		map.put("assetType2", assetType2);
+		map.put("assetType3", assetType3);
 		
 		return responseService.success(map);
 	}
