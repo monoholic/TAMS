@@ -91,7 +91,7 @@
 			ORDER BY ${params.sortField} ${params.sortOrder}
 		</when>
 		<otherwise>
-			ORDER BY reg_dt desc, inv_no, po_no asc
+			ORDER BY inv_no desc, po_no asc
 		</otherwise>
 		</choose>
 	</select>
