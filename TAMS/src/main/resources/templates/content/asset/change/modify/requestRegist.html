@@ -85,7 +85,7 @@
 				
 				var subReqNo = ($("#reqNo").val()).substr(5,3);
 				
-	  	    	let url = "/asset/update/reqmas/requestRegDelete";
+	  	    	let url = "/asset/change/modify/requestRegDelete";
 	  			let reqType = 'POST';
 	  			dataType: 'json';
 	  			let data={
@@ -115,7 +115,7 @@
 	  	    	});
 	  	    	
 	  	    	//별도 호출
-	  	    	let url = "/asset/update/reqmas/requestRegDelete2";
+	  	    	let url = "/asset/change/modify/requestRegDelete2";
 	  			let reqType = 'POST';
 	  			dataType: 'json';
 	  			let data={
@@ -247,7 +247,7 @@
     	
     	// 삭제 시 이전 페이지로 이동
     	function requestListView() {
-    		let url = "/asset/update/reqmas/requestListView";
+    		let url = "/asset/change/modify/requestListView";
     		
     		var $form = $('<form></form>'); 
 				$form.attr('action', url); 
@@ -340,7 +340,7 @@
 		                    var d = $.Deferred();
 		                    
 		                    currentPage = filter.pageIndex;
-		                    let url = "/asset/update/reqmas/requestRegist";
+		                    let url = "/asset/change/modify/requestRegist";
 							let reqType = 'GET';	
 							let data = {
 	            				"currentPage"  : filter.pageIndex,
@@ -377,7 +377,7 @@
 		                },
 		                
 			            updateItem: function(item) {
-		                	let url = "/asset/update/reqmas/requestRegUpdate";
+		                	let url = "/asset/change/modify/requestRegUpdate";
 		                	let reqType = 'POST';
 		                	$.commRequest(url, reqType, JSON.stringify(item))
 		                		.then((res) => {
@@ -452,7 +452,7 @@
 		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
 							}
 						},
-						{ name: "chrgr"   , type:"text",   width: 25 ,align: "left", title:"[[#{screen.text.modify.asset.charger}]]", editing: false, visible:false},
+						{ name: "chrgrNm" , type:"text",   width: 25 ,align: "left", title:"[[#{screen.text.modify.asset.charger}]]", editing: false, visible:false},
 						{ name: "control" , type: "control", width: 15, align: "center", modeSwitchButton: false, deleteButton: false, editing: false},
 		            ]
 		        });

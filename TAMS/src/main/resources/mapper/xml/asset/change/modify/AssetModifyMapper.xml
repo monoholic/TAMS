@@ -230,12 +230,15 @@
 		     , (SELECT dept_nm
 		 	      FROM tb_dept a
 		            WHERE dept_cd = b.biz_dept_cd) biz_dept_nm
-		     , dept_cd
+		     , b.dept_cd
 		     , (SELECT dept_nm
 		 	      FROM tb_dept a
 		            WHERE dept_cd = b.dept_cd) dept_nm
 		     , chrgr
+		     , c.user_nm as chrgr_nm
 		FROM tb_aset_req b
+		INNER JOIN tb_user c
+           ON c.user_id = b.chrgr
 		WHERE b.req_no = #{params.reqNo}
 		ORDER BY b.aset_no;
 	</select>

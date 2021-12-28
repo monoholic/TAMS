@@ -45,6 +45,8 @@ public class AsetReqDto {
 	private String deptNm;
 	@ApiModelProperty(value="담당자")
 	private String chrgr;
+	@ApiModelProperty(value="담당자명")
+	private String chrgrNm;
 	@ApiModelProperty(value="공통코드(사업장)")
 	private String bsplc;
 	@ApiModelProperty(value="공통코드(건물)")

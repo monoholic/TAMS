@@ -125,7 +125,7 @@
 	                    var d = $.Deferred();
 	                    
 	                    currentPage = filter.pageIndex; 
-	                    let url = "/asset/update/reqmas/requestList";
+	                    let url = "/asset/change/modify/requestList";
 						let reqType = 'GET';	
 						let data = {
             				"currentPage"  : filter.pageIndex,
@@ -161,7 +161,7 @@
 
 	                insertItem: function(item) { 
 	             		//insertedItems.push(item);
-	        			let url = "/asset/update/reqmas/requestListInsert";
+	        			let url = "/asset/change/modify/requestListInsert";
 	        			let reqType = 'GET';
 	        			
 	        			$.commRequest(url, reqType, item)
@@ -264,7 +264,7 @@
 	  	    	});
 	  	    	
 	  	    	//별도 호출
-	  	    	let url = "/asset/update/reqmas/requestListDelete";
+	  	    	let url = "/asset/change/modify/requestListDelete";
 	  			let reqType = 'GET';
 	  			dataType: 'json';
 	  			let data={
@@ -486,7 +486,7 @@
 	       	
 	       	$.commSaveSearchParams(SCREEN_NM, saveParams);
 	       	
-            let url = "/asset/update/reqmas/requestRegistView";
+            let url = "/asset/change/modify/requestRegistView";
 			let menuId = "[[${menuId}]]";
             
 			var $form = $('<form></form>'); 
@@ -507,7 +507,7 @@
 			$(".btn_excelDown").on("click", function(){
 				
 		       	event.preventDefault();
-                let url = "/asset/update/reqmas/requestListExcel";
+                let url = "/asset/change/modify/requestListExcel";
 				
 				var $form = $('<form id="downForm"></form>'); 
 					$form.attr('action', url); 

@@ -52,7 +52,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/asset/update/reqmas")
+@RequestMapping("/asset/change/modify")
 @Slf4j
 public class AssetModifyController {
 	@Autowired
