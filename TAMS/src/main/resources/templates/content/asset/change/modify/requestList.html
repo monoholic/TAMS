@@ -52,17 +52,13 @@
 	    	}else{
 	    		$.commRemoveSearchParams(SCREEN_NM); //메뉴클릭시
 	    	}
-	    	
 
 	    	getCommCode("#reqStus", "APPR_STATUS", "1", "");
 	    	getCommCode("#reqType", "REQ_TYPE", "1", "");
 	    	getCommCode("#req_stus", "APPR_STATUS", "1", "")
 	    	 .then(()=>{
-				  	console.log('.... appr status loaded.....');
-				  
 		            if(loadParams != null){
 		                prevCondition = loadParams.condition.params;
-		                console.log(prevCondition);
 		    	        if(Object.keys(prevCondition).length != undefined){
 		    	        	$("#req_no").val(prevCondition.reqNo);
 		    	        	$("#fromDate").val(prevCondition.fromDate);
@@ -152,7 +148,6 @@
 						$.commRequest(url, reqType, data)
 							.then((res) => {
 								condition = res.condition;
-								console.log(condition);
 								codeGrpMngList = res.data;
 								$(".result").text("Results : " + res.condition.totalCount);
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
@@ -264,7 +259,8 @@
 	  	    	var items = [];
 	  	    	
 	  	    	$.each(selectedItems, function(index,item){
-	  	    		items.push(item);
+	  	    		var subReqNo = parseInt((item).substr(5,3));
+	  	    		items.push(subReqNo);
 	  	    	});
 	  	    	
 	  	    	//별도 호출
@@ -447,7 +443,7 @@
 	    
 	    function enterkey() {
 	    	if (window.event.keyCode == 13) {
-	    		$("#jsGrid").jsGrid().trigger("loadData");
+	    		$("#jsGrid").jsGrid("loadData");
 	        }
 	    }
 	    
@@ -477,8 +473,9 @@
 	 	
 	 	// 조회 정보 및 자산수정 의뢰작성 이동
 	    function openReqRegist(val){
-
 	       	event.preventDefault();
+	       	
+	       	var subReqNo = parseInt((val.reqNo).substr(5,3));
 	       	
 	       	let saveParams = {
 	       		"condition": condition,
@@ -497,7 +494,7 @@
 				$form.attr('method', 'Post'); 
 				$form.attr('target', '_self'); 
 				
-			var reqNoStr = $('<input type="hidden" value="'+ val.reqNo+'" name="reqNo">');
+			var reqNoStr = $('<input type="hidden" value="'+ subReqNo +'" name="reqNo">');
 				$form.append(reqNoStr);
  				menuIdStr = $('<input type="hidden" value="' + menuId + '" name="menuId">');
 				$form.append(menuIdStr); 					

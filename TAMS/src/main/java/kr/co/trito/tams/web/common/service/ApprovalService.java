@@ -137,4 +137,7 @@ public class ApprovalService {
 		return mapper.deleteAppvLine(appvId);
 	}
 	
+	public int reqNoCheck(Map<String, Object> items) {
+		return mapper.reqNoCheck(items);
+	}
 }

@@ -26,4 +26,5 @@ public interface ApprovalMapper {
 	
 	public int deleteAppvLine(String appvId);
 	
+	public int reqNoCheck(Map<String, Object> items);
 }

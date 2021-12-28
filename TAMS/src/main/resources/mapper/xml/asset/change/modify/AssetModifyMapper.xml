@@ -6,7 +6,7 @@
 
 	<!-- 수정의뢰목록 리스트 출력 -->
    	<select id="selectRequestList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-   		SELECT req_no
+   		SELECT CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no
 		     , req_type
 		     , (SELECT code_nm
 		          FROM tb_com_code
@@ -85,7 +85,7 @@
 	     ) AS A
 	     WHERE 1=1
 	     	<if test="params.reqNo != ''">
-				AND (req_no LIKE CONCAT('%', #{params.reqNo}, '%'))
+				AND (CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) LIKE CONCAT('%', #{params.reqNo}, '%'))
 		 	</if>
 		 	<if test="params.fromDate != '' and (params.toDate !='')">
 				AND (req_dt between #{params.fromDate} and #{params.toDate})
@@ -140,7 +140,7 @@
 	     ) AS A
 	     WHERE 1=1
 	     	<if test="params.reqNo != ''">
-				AND (req_no LIKE CONCAT('%', #{params.reqNo}, '%'))
+				AND (CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) LIKE CONCAT('%', #{params.reqNo}, '%'))
 		 	</if>
 		 	<if test="params.fromDate != '' and (params.toDate !='')">
 				AND (req_dt between #{params.fromDate} and #{params.toDate})
@@ -187,7 +187,7 @@
 		          FROM tb_com_code
 		         WHERE code_id = A.req_type) AS req_type_nm
 		     , req_type 
-			 , req_no
+			 , CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no
 			 , DATE_FORMAT(req_dt, '%Y-%m-%d') AS req_dt
 			 , dept_cd
 			 , (SELECT dept_nm

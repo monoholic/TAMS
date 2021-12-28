@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>결재함 관리</title>
+	    <title>[[#{screen.text.appr.screen.title}]]</title>
 	</head>
         
 	<!-- css -->
@@ -34,23 +34,17 @@
 	    var approvalItems = [];
 	    
 	    var approvalField = [
-			{ name: "rownum"	, type: "number" , width:  30 ,align: "right" , title: "No."
+			{ name:"rownum", type:"number", width:10, align:"center", title:"No."
 			 ,itemTemplate: function(value, item) {
-				 //console.log("###");
-              return $("<span>").attr("id","row_"+item.appvId).text( getIndex(item)   );
-			 }
+              	return $("<span>").attr("id","row_"+item.appvId).text(getIndex(item));
+			  }
 			},
-			{ name: "appvId"		, type: "text"   , width: 50 ,align: "center", title: "결재 ID"	},
-			//{ name: "appvUserId"	, type: "text"   , width: 50 ,align: "center"  , title: "상신자ID"	},
-			{ name: "appvUserNm"	, type: "text"   , width: 50 ,align: "center"  , title: "상신자ID"	},
-			//{ name: "appvType"		, type: "text"   , width: 50 ,align: "center", title: "결재문서유형" 	},
-			{ name: "appvTypeNm"		, type: "text"   , width: 50 ,align: "center", title: "결재문서유형" 	},
-			{ name: "appvTtl"		, type: "text"   , width: 250 ,align: "left"  , title: "결재 제목"	 	},
-			//{ name: "appvCn"		, type: "text"   , width: 100 ,align: "left"  , title: "본문"	 	},
-			//{ name: "appvStus"		, type: "text" 	 , width: 50 ,align: "center" , title: "결재상태"	 	},
-			{ name: "appvStusNm"		, type: "text" 	 , width: 50 ,align: "center" , title: "결재상태"	 	},
-			//{ name: "appvStep"		, type: "text"   , width: 50 ,align: "center", title: "결재진행단계"	},
-			{ name: "appvStepNm"		, type: "text"   , width: 50 ,align: "center", title: "결재진행단계"	},
+			{ name:"appvId"	   , type:"text", width:35,  align:"center", title:"결재 ID"},
+			{ name:"appvUserNm", type:"text", width:35,  align:"center", title:"상신자 ID"},
+			{ name:"appvTypeNm", type:"text", width:35,  align:"center", title:"결재문서유형"},
+			{ name:"appvTtl"   , type:"text", width:250, align:"left"  , title:"결재 제목"},
+			{ name:"appvStusNm", type:"text", width:35,  align:"center", title:"결재상태"},
+			{ name:"appvStepNm", type:"text", width:30,  align:"center", title:"결재진행단계"},
 		];
 	    
 	    function getIndex(item) {
@@ -58,13 +52,12 @@
 			$.each(approvalItems, function(index, el){
 				if( item.appvId == el.appvId) idx = index; 
 			});
-			//console.log(item.poNo+" >> idx : "+idx);
 			return idx+1;
 		}
 	
 		function getGridBody() {
 			return {
-		        	height: "580",
+		        	height: "600",
 		            width: "100%",
 		            data: approvalItems, 
 		            autoload: false,
@@ -72,7 +65,6 @@
 		            updateOnResize: true, 
 		            rowClick:function(args){
 		            	openApprovalPopup(args.item.appvId);
-						//console.log(args.item.appvId);
 		            },
 		            fields: approvalField
 		            ,onDataLoaded: rowCount()
@@ -132,12 +124,15 @@
 	    }
 		
 		$(function(){
-			
-			//////////////////////////////////////////////////////////////////
 			$("#jsGrid").jsGrid(getGridBody());				
-			//////////////////////////////////////////////////////////////////
-			
 			getAppvList();
+			
+			//리셋 버튼
+    	    $(".btn_reset").click(function() {
+    	    	$("#searchText").val("");
+    	    	$("#searchOption option:eq(0)").prop("selected",true);
+    	    	$("#delYnOption option:eq(0)").prop("selected",true);
+    	    });
 		});
 	    </script>	
 	</th:block>
@@ -151,27 +146,21 @@
 		<!-- search -->
 		<div class="srch_wrap single">
 			<table class="srch_table">
-			<colgroup>
-					<col width="10%"/>
-					<col width="20%"/>
-					<col width="15%"/>
-					<col width="20%"/>
-					<col width="15%"/>
-			</colgroup>
 				<tr>
 					<td>
-						<select id="searchOption" style="width:90%;">
-							<option selected value="">검색항목 선택</option>
-							<option value="appv_id">결재 ID</option>
-							<option value="appv_ttl">제목</option>
-						</select>
-					</td>	
-					<td>
-						<input id="searchText" type="text" onkeyup="enterkey()" style="width:90%; margin:10px;">
+						<div style="display: flex; align-items: stretch;">
+							<select id="searchOption">
+								<option selected value="">[[#{screen.text.comm.select.search.condition}]]</option>
+								<option value="appv_id">[[#{screen.text.appr.appvId}]]</option>
+								<option value="appv_ttl">[[#{screen.text.appr.appvttl}]]</option>
+							</select>
+							<input id="searchText" type="text" onkeyup="enterkey()" placeholder="검색어를 입력해주세요." style="margin-left: 5px;">
+						</div>
 					</td>
 					<td class="search" colspan="3">
-					<!-- [button search] -->
-					<header th:replace="layout/fragments/button_srch :: buttonSrchFragment"></header>
+						<!-- [button search] -->
+						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 					</td>
 				</tr>
 			</table>

@@ -235,7 +235,7 @@ public class AssetModifyController {
 		
 		UserInfo userInfo = (UserInfo)userDetail;
 		String userId = userInfo.getDto().getUserId();
-
+		
 		List<Map<String, Object>> list = (List<Map<String, Object>>)items.get("asetList");
 		
 		items.put("regr", userId);
@@ -276,8 +276,6 @@ public class AssetModifyController {
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> requestRegDelete2( 
 			@ApiParam(value = "의뢰 번호", required = true) @RequestBody Map<String, Object> items) { 
-		// System.out.println(items.get("asetNoList"));
-		
 		AsetReqDto dto = new AsetReqDto();
 		List<String> asetList = (List<String>) items.get("asetNoList");
 		

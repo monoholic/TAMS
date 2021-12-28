@@ -5,7 +5,7 @@
 <mapper namespace="kr.co.trito.tams.web.common.mapper.ApprovalMapper">
 
 	<select id="selectAppvList" parameterType="map" resultType="kr.co.trito.tams.web.common.dto.AppvDto">
-		SELECT a.appv_id, a.appv_user_id, a.appv_type, a.appv_ttl, a.appv_cn, a.appv_stus, a.appv_step, a.del_yn, a.updr, a.up_dt, a.regr, a.reg_dt
+		SELECT CONCAT('DC',DATE_FORMAT(NOW(),'%y%m'),LPAD(appv_id,'3','0')) AS appv_id, a.appv_user_id, a.appv_type, a.appv_ttl, a.appv_cn, a.appv_stus, a.appv_step, a.del_yn, a.updr, a.up_dt, a.regr, a.reg_dt
               ,(select user_nm from tb_user b where b.user_id = a.appv_user_id) appv_user_nm
               ,(select code_nm from tb_com_code b where b.code_id = a.appv_type and b.code_grp_id='REQ_TYPE') appv_type_nm
               ,(select code_nm from tb_com_code b where b.code_id = a.appv_stus and b.code_grp_id='APPR_STATUS') appv_stus_nm
@@ -30,30 +30,28 @@
 		 WHERE a.appv_id = '${appv_id}'
 	</select>
 
-	<insert id="insertAppv" parameterType="kr.co.trito.tams.web.common.dto.AppvDto" useGeneratedKeys="true" keyProperty="appvId">
-		INSERT INTO TB_COM_APPV(
-						<if test="appvId != null and appvId !=''">
-								APPV_ID,
-						</if>
-		                        APPV_USER_ID, APPV_TYPE, APPV_TTL, APPV_CN, APPV_STUS, APPV_STEP, REGR)
-		               VALUES(
-						<if test="appvId != null and appvId !=''">
-								#{appvId},
-						</if>
-		               #{appvUserId}, #{appvType}, #{appvTtl}, #{appvCn}, #{appvStus}, #{appvStep}, #{regr})
-		               ON DUPLICATE KEY
-						UPDATE APPV_USER_ID 	= #{appvUserId}
-						  	 , APPV_TYPE 		= #{appvType}
-						  	 , APPV_TTL 		= #{appvTtl}
-						  	 , APPV_CN 			= #{appvCn}
-						  	 , APPV_STUS 		= #{appvStus}
-						  	 , APPV_STEP 		= #{appvStep}
-						  	 , UPDR 			= #{regr}
-						  	 , UP_DT 			= CURRENT_TIMESTAMP()
+	<insert id="insertAppv" parameterType="kr.co.trito.tams.web.common.dto.AppvDto" useGeneratedKeys="true" keyProperty="appv_id">
+		INSERT INTO tb_com_appv
+			   SET appv_user_id = #{appvUserId}
+				 , appv_type    = #{appvType}  
+				 , appv_ttl     = #{appvTtl}   
+				 , appv_cn      = #{appvCn}    
+				 , appv_stus    = #{appvStus}  
+				 , appv_step    = #{appvStep}  
+				 , regr         = #{regr}      
+               ON DUPLICATE KEY UPDATE 
+                   appv_user_id = #{appvUserId}
+				 , appv_type    = #{appvType}
+				 , appv_ttl     = #{appvTtl}
+				 , appv_cn 	    = #{appvCn}
+				 , appv_stus    = #{appvStus}
+				 , appv_step    = #{appvStep}
+				 , updr 	    = #{regr}
+				 , up_dt 	    = NOW()
 				                 
 	</insert>
 	
-	<insert id="insertAppvLine" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="appvId">
+	<insert id="insertAppvLine" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="appv_id">
 		INSERT INTO TB_COM_APPV_LINE(APPV_ID, APPVR, APPV_DIV, APPV_ORD, APPV_STUS, REGR)
 		                    VALUES
 							<foreach collection="list" item="line" separator=" , ">
@@ -65,4 +63,11 @@
 		DELETE FROM TB_COM_APPV_LINE
 		      WHERE APPV_ID = #{appvId}
 	</delete>
+	
+	<select id="reqNoCheck" resultType="int" parameterType="kr.co.trito.tams.web.common.dto.ReqAppvDto">
+		SELECT count(*) as cnt
+		FROM tb_req_appv
+		WHERE req_no = #{reqNo}	
+	</select>
+	
 </mapper>

@@ -63,7 +63,6 @@
 		var selectedObj;
 		
 		$(function() {
-			
 			if( appvId != null && appvId != "" )  getApprovalInfo(appvId);
 			
 			//저장(임시)
@@ -143,56 +142,52 @@
 		
 		//결재 저장/상신
 		function saveApproval(status) {
-			
 			var list = $("li");
 			
 			arrAppr.length = 0;
-			arrAgree.elngth = 0;
+			arrAgree.length = 0;
 			arrNoti.length = 0;
 			
 			$.each(list, function(index, element){
 				var gbn =  $(element).attr('gbn'); 
-				if( gbn == 'appr')  arrAppr.push($(element).attr('value'));
-				if( gbn == 'agree') arrAgree.push($(element).attr('value'));
-				if( gbn == 'noti')  arrNoti.push($(element).attr('value'));
+				if(gbn == 'appr') 
+					arrAppr.push($(element).attr('value'));
+				if(gbn == 'agree')
+					arrAgree.push($(element).attr('value'));
+				if(gbn == 'noti')
+					arrNoti.push($(element).attr('value'));
 			});
 			
-			var apprContent = $('#apprContent').summernote('code'); //<p><br></p> 
+			var apprContent = $('#apprContent').summernote('code'); 
 			
 			//상신일 경우 필수 항목 체크
-			if( status == "F" ) {
+			if(status == "F") {
 				
 				var apprCnt = arrAppr.length;
 				if( apprCnt == 0 ) {
 					alert("[[#{screen.info.status.error.appr.no.approver}]]");
 					return false;
 				}
-				
 				if( apprContent == "<p><br></p>" ) {
 					alert("[[#{screen.info.status.error.input.content}]]");
 					return false;
 				}
-				
 				if( !confirm("[[#{screen.info.status.approval.yn}]]") ) {
 					return false;
 				}
-				
 			}
-			
 			let url = "/approval/saveApproval";
 			let reqType = 'POST';	
 			let data = {
-				"assetNo"     : $("#asset_no").text(),						
-				"appvId"      : $("#appvId").val(),						
+				"reqNo"		  : $("#req_no").text(),
 				"appr"        : arrAppr,
 				"agree"       : arrAgree,
 				"noti"        : arrNoti,
 				"appvTtl"     : $("#appvTtl").val(),
-				"appvType"    : "RE",  //등록의뢰
+				"appvType"    : "MO",  //등록의뢰
 				"apprContent" : apprContent,
 				"status"      : status
 			};
-			//console.log(data);
 			$.commRequest(url, reqType, JSON.stringify(data))
 				.then((res) => {
 					console.log('결재상신 성공!!');
@@ -202,8 +197,6 @@
 					console.log('결재상신 실패!!');
 					alert('[[#{screen.info.status.error.occur}]]')
 				});
-			
-			
 		}
 
 		//결재자 위치 이동
@@ -362,7 +355,7 @@
 </head>
 <body >
 	<div layout:fragment="content">
-	<!-- <span id="asset_no" th:text='${param.asset_no}' style="display:none;"></span> -->
+	<span id="req_no" th:text='${param.req_no}'></span>
 	<input type="hidden" id="appvId" name="appvId" />
 		<div id="pop_wrap" >
 			<h3><span id="popTitle"></span>&nbsp;[[#{screen.text.comm.approve}]]

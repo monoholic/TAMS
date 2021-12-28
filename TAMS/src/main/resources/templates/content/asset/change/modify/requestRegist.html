@@ -82,13 +82,15 @@
 
 	        // 상단 삭제 버튼
 			$(".btn_del1").click(function() {
+				
+				var subReqNo = ($("#reqNo").val()).substr(5,3);
+				
 	  	    	let url = "/asset/update/reqmas/requestRegDelete";
 	  			let reqType = 'POST';
 	  			dataType: 'json';
 	  			let data={
-	  				reqNo : $("#reqNo").val()
+	  				reqNo : subReqNo
 	  			}
-	  			
 	  			$.commRequest(url, reqType, JSON.stringify(data))
 	  				.then((res) => {
 	  					alert("[[#{screen.info.status.delete.success}]]");
@@ -106,6 +108,8 @@
 	  	    	var arr_item =  [];
 	  	    	var items = [];
 	  	    	
+	  	    	var subReqNo = ($("#reqNo").val()).substr(5,3);
+	  	    	
 	  	    	$.each(selectedItems, function(index,item){
 	  	    		items.push(item.asetNo);
 	  	    	});
@@ -115,10 +119,9 @@
 	  			let reqType = 'POST';
 	  			dataType: 'json';
 	  			let data={
-	  				"reqNo" : $("#reqNo").val(),
+	  				"reqNo" : subReqNo,
 	  				"asetNoList" : items
 	  			}
-	  			
 	  			$.commRequest(url, reqType, JSON.stringify(data))
 	  				.then((res) => {
 	  					console.log(res);
@@ -135,13 +138,14 @@
 			
 	     	// 저장 버튼 처리
             $('.btn_save').on('click', function (e) {
-                
             	e.preventDefault();
                 
 		    	action = "updateItem";
-            	
+		    	
+		    	var subReqNo = ($("#reqNo").val()).substr(5,3);
+		    	
                 var insert_item = {
-                		reqNo   : $("#reqNo").val(),
+                		reqNo   : subReqNo,
                 		reqNm   : $("#reqNm").val(),
                 		reqRsn  : $("#reqRsn").val(),
                 		asetList: selectedItems
@@ -191,6 +195,25 @@
    	    	        value : "20"
     	        };
     	        
+    	        openPopup(popId, url, args, param);
+    	    });
+	     	
+    	  	//결재팝업 호출 
+    	    $("#openApprovalPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/approval/approvalPopup";
+    	        var popId = "approvalPopup";
+    	        var args = {};
+    	        args.width = 1100;
+    	        args.height = 650;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        var param = {
+    	        	id : 'req_no',
+    	    	    value : $("#reqNo").val()
+    	        };
+   	        
     	        openPopup(popId, url, args, param);
     	    });
 	     	
@@ -360,7 +383,7 @@
 		                		.then((res) => {
 		                			unselectItem(item);
 		                			selectedItems = [];
-		                			$("#jsGrid").jsGrid().trigger("loadData");
+		                			$("#jsGrid").jsGrid("loadData");
 		                		})
 		                		.catch((error) => {
 		                			console.log(error);		                			
@@ -488,7 +511,7 @@
 			<div class="button">
 				<a class="btn_save">[[#{screen.text.comm.save}]]</a>
 				<a class="btn_del1">[[#{screen.btn.delete}]]</a>
-				<a class="btn_">[[#{screen.text.comm.approve}]]</a>
+				<a class="btn_" id="openApprovalPopup">[[#{screen.text.comm.approve}]]</a>
 				<a class="btn_" id="requestBack" onclick="requestListView()">뒤로가기</a>
 			</div>
 		</div>

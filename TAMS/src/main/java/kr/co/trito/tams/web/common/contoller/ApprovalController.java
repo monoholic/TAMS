@@ -84,9 +84,7 @@ public class ApprovalController {
 		condition.pageSetup(list.size());
 		
 		return responseService.success(condition, list);
-
 	}
-	
 	
 	/** 결재상신 팝업 화면 */
 	@GetMapping("/approvalPopup")
@@ -126,8 +124,7 @@ public class ApprovalController {
 		return responseService.success(result);
 	}
 	
-	
-	/** 결재상신 저장 */
+	/** 결재상신 저장 
 	@SuppressWarnings("unchecked")
 	@PostMapping("/saveApproval")
 	@ResponseBody
@@ -135,9 +132,12 @@ public class ApprovalController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public String saveApproval(HttpServletRequest request
-			                       , @ApiParam(value = "결재상신 정보 (결재,합의,통보,본문)", required = true) @RequestBody(required=true) String datas
-			                       , @ApiParam(value = "결재자 정보", required = true) @AuthenticationPrincipal UserDetails userDetail  
-			                        ) {
+           , @ApiParam(value = "결재상신 정보 (결재,합의,통보,본문)", required = true) @RequestBody(required=true) String datas
+           , @ApiParam(value = "결재자 정보", required = true) @AuthenticationPrincipal UserDetails userDetail  ) {
+		
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		System.out.println(datas);
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		
 		Map<String,Object> map = new HashMap<>();
 		
@@ -203,8 +203,89 @@ public class ApprovalController {
 		String rst = approvalService.regAppvInfo(map, status);
 		
 		return rst;
+	}*/
+	
+	/** 결재상신 저장 */
+	@SuppressWarnings("unchecked")
+	@PostMapping("/saveApproval")
+	@ResponseBody
+	@ApiOperation(value = "저장 및 결재상신", notes = "저장 및 결재 상신")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> saveApproval(
+           @ApiParam(value = "결재상신 정보 (결재,합의,통보,본문)", required = true) @RequestBody(required=true) Map<String, Object> items,
+           @ApiParam(value = "결재자 정보", required = true) @AuthenticationPrincipal UserDetails userDetail) {
+		
+		//상신자
+		UserInfo userDto = (UserInfo)userDetail;
+		String userId = userDto.getDto().getUserId();
+		
+		// tb_req_appv 테이블에서 자산의뢰 번호가 있는지 확인.
+		// 있다면, appv_doc_id 값을 가지고 업데이트
+		// 없다면, appv_doc_id 만들기 → 임시저장임
+		
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+		System.out.println(items);
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+		// 자산의뢰 결재 테이블 유무 확인.
+		int reqNoChk = approvalService.reqNoCheck(items);
+		
+		if(reqNoChk > 0) {
+			
+		}
+		else {
+			
+		}
+			
+		
+		/*
+		try {
+			
+			LinkedHashMap<?,?> obj = (LinkedHashMap<?,?>)parser.parse();
+			
+			assetNo = (String) obj.get("assetNo");
+			status = (String) obj.get("status");
+			appvId = (String) obj.get("appvId");
+			appvTtl = (String) obj.get("appvTtl");
+			appvType = (String) obj.get("appvType");
+			apprContent = (String) obj.get("apprContent");
+			
+			appr = (List<String>)obj.get("appr");
+			agree = (List<String>)obj.get("agree");
+			noti = (List<String>)obj.get("noti");
+			
+		}catch(ParseException pe) {}
+		
+			AppvDto appvDto = new AppvDto();
+			appvDto.setAppvId(appvId);
+			appvDto.setAppvTtl(appvTtl);
+			appvDto.setAppvTtl(appvTtl);
+			appvDto.setAppvCn(apprContent);
+			appvDto.setAppvType(appvType);
+			appvDto.setAppvUserId(userId);
+			
+			if( "F".equals(status) ) {
+				appvDto.setAppvStus("ING");
+			} else {
+				appvDto.setAppvStus("TMP");
+			}
+			appvDto.setAppvStep("SUBMIT"); //기안
+			appvDto.setRegr(userId);
+			
+			log.error("======================================================");
+			log.error(appvDto.toString());
+			log.error("======================================================");
+			
+			map.put("appvDto"	, appvDto);
+			map.put("appr"		, appr);
+			map.put("agree"		, agree);
+			map.put("noti"		, noti);
+
+		String rst = approvalService.regAppvInfo(map, status);
+		
+		return rst;
+		*/
+		return responseService.success(null);
 	}
-	
-	
 }
 
