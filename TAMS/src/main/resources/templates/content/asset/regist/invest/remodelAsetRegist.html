@@ -8,33 +8,21 @@
 	</head>
         
 	<!-- css -->
-	<th:block layout:fragment="css">
+	<th:block layout:fragment="css">	
 	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="/css/jsgrid.css" />
 		<link rel="stylesheet" href="/css/theme.css" />
-		
-	</th:block>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.8/css/tabulator.min.css" rel="stylesheet"> 
+	</th:block> 
 	
 	<th:block layout:fragment="script">
-		<script src="/js/jsgrid/db.js"></script>
-	    <script src="/js/jsgrid/jsgrid.core.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.field.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
+		<script type="text/javascript" src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
 		
 	    <script>
 	    
+	    	let grid;
 	    	let invData = $.commLoadSearchParams("invData");
 	    	let menuId = "[[${menuId}]]";
-
-			let gridData = [];
-	        let selectedItems = [];
 	        
 		    $(function(){
 		    	
@@ -48,107 +36,29 @@
 				$("#invDeptNm").html(invData.deptNm);
 				$("#invReqr").html(invData.invReqr);		    	
 		    	
-		    	
-		        $("#jsGrid").jsGrid({
-		        	height: "400",
-	                width: "100%",
-	                autoload: true,
-	                editing: true,
-	                data: gridData, 
-		            deleteConfirm: function(item) {
-		                return "\""+item.menuNm+"("+menuId+")"+"\""+ "을 삭제 하시겠습니까?";
-		            },
-		            controller:  {
-		                loadData: function(filter) {
-		                },
-		                insertItem: function(item) {
-		                },		                		                
-	            	},
-		            fields: [{ name : "chk"
-		               	     , align: "center"
-		                	 , width: 20
-		                	 , title: ""
-		                	 , editing: false
-		                	 , sorting: false
-		                	 , filtering: false
-		                	 , itemTemplate: function(value, item) {
-		                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox").attr("id", function(){
-		                    	   
-		                    	  return "checkbox" + $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.poNo == item.poNo);
-		                       })
-		                       .attr("checked", function(){
-		                    	  return value || item.checked;
-		                       })
-		                       .on("change", function () {
-		  					  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
-		  					  	 });
-		            		   }
-		                	 , headerTemplate : function ()  { 
-							  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
-			                     .on("change", function (item) {
-			            	    	if(this.checked) { 
-				            	            $('.singleCheckbox').each(function(i) {
-			            	            	$("#checkbox" + i).prop("checked", true).change();
-			            	            });
-			            	        }else {
-			            	            $('.singleCheckbox').each(function(i) { 
-			            	            	$("#checkbox" + i).prop("checked", false).change();
-			            	            });  
-			            	        }
-			    				   });
-						 	 },
-		                },
-		            	{ name: "asetNo"     , type: "text", width: 70, align: "center", editing: false, title: "[[#{screen.text.aset.no}]]"},
-		                { name: "asetTypeNm1", type: "text", width: 80, align: "left"  , editing: false, title: "[[#{screen.text.aset.type1}]]"},
-		                { name: "asetTypeNm2", type: "text", width: 80, align: "left"  , editing: false, title: "[[#{screen.text.aset.type2}]]"},
-		                { name: "asetTypeNm3", type: "text", width: 80, align: "left"  , editing: false, title: "[[#{screen.text.aset.type3}]]"},
-		                { name: "mftco"   	 , type: "text", width: 70, align: "left"  , editing: false, title: "[[#{screen.text.aset.mftco}]]"},
-		                { name: "model"	   	 , type: "text", width: 70, align: "left"  , editing: false, title: "[[#{screen.text.aset.md}]]"},
-		                { name: "sn"    	 , type: "text", width: 80, align: "left"  , editing: false, title: "[[#{screen.text.aset.sn}]]"},
-		                { name: "bizDeptNm"  , type: "text", width: 80, align: "left"  , editing: false, title: "[[#{screen.text.asset.bizDeptCd}]]"},
-		                { name: "deptNm"   	 , type: "text", width: 80, align: "left"  , editing: false, title: "[[#{screen.text.asset.deptCd}]]"},
-		                { name: "chrgr"  	 , type: "text", width: 60, align: "center", editing: false, title: "[[#{screen.text.asset.chrgr}]]"},
-		                { name: "asetQty"  	 , type: "text", width: 50, align: "left"  , title: "[[#{screen.text.comm.qty}]]"},		                
-		                { name: "asetType1"  , type: "text", visible:false},
-		                { name: "asetType2"  , type: "text", visible:false},
-		                { name: "asetType3"	 , type: "text", visible:false},		                
-		                { name: "bizDeptCd"  , type: "text", visible:false},
-		                { name: "deptCd"   	 , type: "text", visible:false},		                
-		                ],
-		        	onItemUpdating: function(args){
-		        		console.log(args);
-		        		console.log('onItemUpdating called....');
-		        	}		                
-		        });
-		    	
-			    var selectItem = function(item) {
-			    	
-			    	if(!selectedItems.includes(item)){
-				    	selectedItems.push(item);
-			    	}
-			    	
-				    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-		             $("#selectAllCheckbox").prop("checked", true);
-		            } else {
-		                $("#selectAllCheckbox").prop("checked", false);
-		            }
-				};
-			     
-			    var unselectItem = function(item) {
-			    	
-				    selectedItems = $.grep(selectedItems, function(i) {
-				    return i !== item;
-				    });
-				    
-				    if(selectedItems.length == 0) {
-				    	$('#selectAllCheckbox').attr('checked', false);
-				    }
-				    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-		             	$("#selectAllCheckbox").prop("checked", true);
-			        } else {
-			            $("#selectAllCheckbox").prop("checked", false);
-			        }
-			    };		    	
+				grid = new Tabulator("#data-table", {
+				 	locale:true,
+				    langs: $.commGridLocalization(),								
+				 	height:"95%",
+				 	layout:"fitColumns",
+				 	movableColumns:true,
+				 	placeholder:"No Data Set",				 	
+				 	columns:[ 
+					 	{title:"[[#{screen.text.aset.no}]]"		 	, field:"asetNo"	 , hozAlign:"center", headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.type1}]]"		, field:"asetTypeNm1", hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.type2}]]"	   	, field:"asetTypeNm2", hozAlign:"left"	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.type3}]]"	   	, field:"asetTypeNm3", hozAlign:"left"	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.mftco}]]"	   	, field:"mftco"		 , hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.md}]]"	 	   	, field:"model"		 , hozAlign:"left" 	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.sn}]]"	 	   	, field:"sn"		 , hozAlign:"left" 	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.asset.bizDeptCd}]]"	, field:"bizDeptNm"	 , hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.asset.deptCd}]]"	, field:"deptNm"	 , hozAlign:"left"	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.asset.chrgr}]]"	 	, field:"chrgrNm"	 , hozAlign:"center", headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.comm.qty}]]"		, field:"asetQty"	 , hozAlign:"right"	, headerHozAlign:"center"},
+
+				 	],
+				});				    					
+					
 
 			    
 			    /*------------------------ Event ------------------------*/
@@ -161,17 +71,10 @@
 	    	    	    height : 600,
 		    	    	pheight: window.opener.innerHeight,
 		    	    	pwidth : window.opener.innerWidth,	  	     	    			    	    	    
-	    	        };
-	    	        
-	    	        var param = {
-	   	        		id : "reqStus",
-	   	    	        value : "20"
-	    	        };
-	    	        
+	    	        };	    	        
+	    	        var param = {id:"reqStus", value : "20"};	    	        
 	    	        openPopup("AsetMasPopup", url, args, param);
 	    	    });		        
-			    
-			    
 			    
 		        //팝업종료
 				$(".pop_close").on("click",function(){ 
@@ -188,21 +91,7 @@
 	    			
 		    		$("#jsGrid").jsGrid("insertItem", row);	
 	    		});	    		
-	    			    		
-	    		/*
-	    		$.each(asetList, function(idx, el){
-	    			asetNoChk.push(el.asetNo);
-	    		});
-	    		
-	    		$.each(obj, function (idx, el){
-	    			if(!asetNoChk.includes(el.asetNo)) {
-	    				asetList.push(el);
-	    			}
-	    			else
-	    				alert("[[#{screen.info.status.error.modify.dup.asset}]]");
-	    		});
-	    		jsGridLoad();
-	    		*/
+
 			}
 		    
 	    </script>	
@@ -264,7 +153,7 @@
 				
 					<!-- list_head -->
 					<div class="list_head">
-						<div class="result">Totals : 0,000</div>
+						<div class="result">Totals : 0</div>
 						<!-- list_button -->
 						<div class="button">
 							<a id="addAsset" class="btn_sel">자산추가</a>
@@ -275,7 +164,7 @@
 					</div>
 					<!-- //list_head -->
 									
-					<div id="jsGrid"></div>				
+					<div id="data-table"></div>				
 				</div>
 				<!-- //list -->
 			</div>		
