@@ -80,7 +80,18 @@
 				 	],
 				});						
 		    		    
-
+				/*------------- Grid Events -------------*/
+				//row click
+				grid.on("rowClick", function(e, row){	
+	    	        var params = {
+	        	        	menuId  : loadParams.menuId,
+	        	        	assetNo : row.getData().asetNo,
+	        	        }; 										
+					openNewAssetPopup(params);
+				});	
+				
+				
+				/*------------- Button Events -------------*/
 				//신규자산
 	    	    $("#newAsetRegist").on("click", function() {	    	    	
 	    	    	

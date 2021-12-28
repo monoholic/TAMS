@@ -42,8 +42,13 @@
 				 	height:"95%",
 				 	layout:"fitColumns",
 				 	movableColumns:true,
-				 	placeholder:"No Data Set",				 	
-				 	columns:[ 
+				 	placeholder:"No Data Set",	
+				 	index:"asetNo",				 	
+				 	columns:[
+			 	        {formatter:"rowSelection", titleFormatter:"rowSelection", hozAlign:"center", headerHozAlign:"center", 
+			 	        	headerSort:false, width:30, cellClick:function(e, cell){
+			 	         		cell.getRow().toggleSelect();
+			 	        }},				 		
 					 	{title:"[[#{screen.text.aset.no}]]"		 	, field:"asetNo"	 , hozAlign:"center", headerHozAlign:"center"},
 					 	{title:"[[#{screen.text.aset.type1}]]"		, field:"asetTypeNm1", hozAlign:"left"  , headerHozAlign:"center"},
 					 	{title:"[[#{screen.text.aset.type2}]]"	   	, field:"asetTypeNm2", hozAlign:"left"	, headerHozAlign:"center"},
@@ -54,12 +59,10 @@
 					 	{title:"[[#{screen.text.asset.bizDeptCd}]]"	, field:"bizDeptNm"	 , hozAlign:"left"  , headerHozAlign:"center"},
 					 	{title:"[[#{screen.text.asset.deptCd}]]"	, field:"deptNm"	 , hozAlign:"left"	, headerHozAlign:"center"},
 					 	{title:"[[#{screen.text.asset.chrgr}]]"	 	, field:"chrgrNm"	 , hozAlign:"center", headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.comm.qty}]]"		, field:"asetQty"	 , hozAlign:"right"	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.comm.qty}]]"		, field:"asetQty"	 , hozAlign:"right"	, headerHozAlign:"center", editor:"input", validator:"integer"},
 
 				 	],
 				});				    					
-					
-
 			    
 			    /*------------------------ Event ------------------------*/
 		        //자산선택
@@ -76,6 +79,31 @@
 	    	        openPopup("AsetMasPopup", url, args, param);
 	    	    });		        
 			    
+			    //저장
+	    	    $("#save").on("click", function() { 
+	    	    	let selectedData  = grid.getSelectedData();
+	    	    	
+	    	    	if(selectedData.length == 0){
+	    	    		alert("[[#{screen.info.status.error.no.selected.data}]]");	    	    			    	    		
+	    	    		return;	
+	    	    	}
+	    	    	
+	    	    });				    
+			    
+			    //삭제
+	    	    $("#delete").on("click", function() { 
+	    	    	let selectedRows = grid.getSelectedRows();
+
+	    	    	if(selectedRows.length == 0){
+	    	    		alert("[[#{screen.info.status.error.no.selected.data}]]");	    	    			    	    		
+	    	    		return;	
+	    	    	}
+	    	    	
+	    	    	for(var row of selectedRows){
+	    	    		row.delete(); 	    		
+	    	    	}	
+	    	    });				    			    
+			    
 		        //팝업종료
 				$(".pop_close").on("click",function(){ 
 					window.close();
@@ -84,14 +112,20 @@
     		});
 	    
 		    //자산선택 팝업 Callback function.
-	    	function selectAsetList(obj) {
-	    		obj.forEach(row => {
-	    			
-	    			//기존 선택한 자산 확인.
-	    			
-		    		$("#jsGrid").jsGrid("insertItem", row);	
-	    		});	    		
-
+	    	function selectAsetList(obj) {		    	
+	    		let gridData = grid.getData(); //테이블 전체 Row 데이터 
+	    				    	
+		    	for(var nRow of obj){
+		    		let chkValue = false;
+		    		//중복체크
+		    		for(var row of gridData){
+		    			if(row.asetNo == nRow.asetNo){
+		    				chkValue = true;
+							break;
+		    			}
+		    		}
+		    		if(!chkValue) grid.addData(nRow);				    		
+		    	}
 			}
 		    
 	    </script>	
@@ -155,10 +189,10 @@
 					<div class="list_head">
 						<div class="result">Totals : 0</div>
 						<!-- list_button -->
-						<div class="button">
-							<a id="addAsset" class="btn_sel">자산추가</a>
-							<a id="save" class="btn_sel">저장</a>
-							<a id="del" class="btn_sel">삭제</a>
+						<div class="button">						
+							<a id="addAsset" class="btn_sel">[[#{screen.btn.add.asset}]]</a>
+							<a id="save" class="btn_sel">[[#{screen.btn.save}]]</a>
+							<a id="delete" class="btn_sel">[[#{screen.btn.delete}]]</a>
 						</div>
 						<!-- list_button -->
 					</div>
