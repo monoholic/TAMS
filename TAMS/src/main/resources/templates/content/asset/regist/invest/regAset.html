@@ -8,130 +8,78 @@
 	</head>
         
 	<!-- css -->
-	<th:block layout:fragment="css">
+	<th:block layout:fragment="css">	
 	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="/css/jsgrid.css" />
 		<link rel="stylesheet" href="/css/theme.css" />
-		
-	</th:block>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.8/css/tabulator.min.css" rel="stylesheet"> 
+	</th:block>   
 	
 	<th:block layout:fragment="script">
-		<script src="/js/jsgrid/db.js"></script>
-	    <script src="/js/jsgrid/jsgrid.core.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.field.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
+		<script type="text/javascript" src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
 		
 	    <script>
 
-		    // 공통코드(자산유형 1레벨 출력)
-		    let numOfRows = 15;
-	        var selectedItems = [];
-		 	var insertedItems = [];
-		 	var updatedItems = [];
-		 	
-		 	var invData = {};
+	    	let grid; 		 	
+		 	let invData = {};
 		 	
 		    $(function(){
 		    	
 		    	const SCREEN_NM = "INVEST_REG_RIST";   
 		    	let loadParams = $.commLoadSearchParams(SCREEN_NM);
 		    	
-		    	$("#jsGrid").jsGrid({
-			        	height: "510",
-		                width: "100%",
-		                filtering: false,
-		                editing: false,
-		                inserting: true,
-		                sorting: true,
-		                paging: true,
-		                sorter: "number",
-		                pageIndex:1,
-		                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
-		                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
-		                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
-		                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
-		                pagerFormat: "{first} {prev} {pages} {next} {last}",
-		                pagerContainer:null,
-		                pageLoading: true,
-		                pager: "#pager",
-		                autoload: true,
-		                pageSize: numOfRows,
-		                pageButtonCount: 5,
-		                loadonce: true,
-		                updateOnResize: true, 
-			            pagerContainerClass: "paginate",
-			            deleteConfirm: function(item) {
-			                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
-			            },
-			            rowClick: function(row) {
-			            	//console.log(row);
-			            	
-			    	        var params = {
-			        	        	menuId  : loadParams.menuId,
-			        	        	assetNo : row.item.asetNo,
-			        	        }; 	
-			    	        openNewAssetPopup(params);							
-			            }, 			            			            
-			            controller:  {
-			                loadData: function(filter) {
-			                    var d = $.Deferred();
-			                    
-			                    let url = "/asset/regist/invest/regAset/regAsetList";
-								let reqType = 'POST';
-								let params = getParams();
-			                    params.sortField = filter.sortField;
-			                    params.sortOrder = filter.sortOrder;
-			                    
-								$.commRequest(url, reqType, JSON.stringify(params))
-									.then((res) => {
-										$(".result").text("Totals : " + res.condition.totalCount);
-										d.resolve({data : res.data, itemsCount: res.condition.totalCount});
-										
-										$("#invNo").val(res.data2[0].invNo);
-										$("#invTtl").val(res.data2[0].invTtl);
-										$("#poNo").val(res.data2[0].poNo);
-										$("#mfgdNm").val(res.data2[0].mfgdNm);
-										$("#qty").val(res.data2[0].qty);
-										$("#uppDeptNm").val(res.data2[0].uppDeptNm);
-										$("#deptNm").val(res.data2[0].deptNm);
-										$("#invReqr").val(res.data2[0].invReqr);
-										
-										$("#all").val(res.data2[0].qty);
-										$("#cpt").val(res.data2[0].asetQty);
-										$("#icpt").val(res.data2[0].noAsetQty);
-										
-										invData = res.data2[0];
-									})
-									.catch((error) => {
-										console.log('데이터 조회 실패!!');
-									});						
-			                    
-			                    return d.promise();
-			                },
-		            },
-			            fields: [
-			            	{ name: "asetNo"    , type: "text", width: 80 , align: "center", title: "[[#{screen.text.aset.no}]]"        },
-			                { name: "asetType1"	, type: "text", width: 80 , align: "left"  , title: "[[#{screen.text.aset.type1}]]"     },
-			                { name: "asetType2" , type: "text", width: 80 , align: "left"  , title: "[[#{screen.text.aset.type2}]]"     },
-			                { name: "asetType3"	, type: "text", width: 80 , align: "left"  , title: "[[#{screen.text.aset.type3}]]"     },
-			                { name: "mftco"   	, type: "text", width: 100, align: "left"  , title: "[[#{screen.text.aset.mftco}]]" 	},
-			                { name: "model"	   	, type: "text", width: 100, align: "left"  , title: "[[#{screen.text.aset.md}]]"        },
-			                { name: "sn"    	, type: "text", width: 80 , align: "left"  , title: "[[#{screen.text.aset.sn}]]"        },
-			                { name: "uppDeptNm" , type: "text", width: 90 , align: "left"  , title: "[[#{screen.text.asset.bizDeptCd}]]"},
-			                { name: "deptNm"   	, type: "text", width: 90 , align: "left"  , title: "[[#{screen.text.asset.deptCd}]]"   },
-			                { name: "chrgr"   	, type: "text", width: 70 , align: "left"  , title: "[[#{screen.text.asset.chrgr}]]"    },
-			                { name: "tagYn"		, type: "text", width: 50 , align: "center", title: "[[#{screen.text.aset.tagYn}]]"     },
-			                { name: "asetStus"	, type: "text", width: 70 , align: "center", title: "[[#{screen.text.aset.asetStus}]]"  },
-			            ]
-			        });
-			        
+				grid = new Tabulator("#data-table", {
+				 	locale:true,
+				    langs: $.commGridLocalization(),								
+				 	height:"95%",		
+				 	maxHeight:"100%",				 	
+				 	layout:"fitColumns",
+				 	movableColumns:true,
+				 	pagination:true,
+				 	paginationMode:"remote",
+				 	ajaxURL:"/asset/regist/invest/regAset/regAsetList",	 
+				 	ajaxParams: getParams(),
+				 	paginationSize:20,				    
+				 	paginationSizeSelector:[20, 50, 100, 500],			
+				 	dataSendParams:{
+				        "page":"currentPage",
+				        "size":"numOfRows"
+				    } ,							    
+				 	placeholder:"No Data Set",				 	
+				 	ajaxResponse:function(url, params, res){						
+						$(".result").text("Totals : " + res.condition.totalCount);						
+						$("#invNo").val(res.data2[0].invNo);
+						$("#invTtl").val(res.data2[0].invTtl);
+						$("#poNo").val(res.data2[0].poNo);
+						$("#mfgdNm").val(res.data2[0].mfgdNm);
+						$("#qty").val(res.data2[0].qty);
+						$("#uppDeptNm").val(res.data2[0].uppDeptNm);
+						$("#deptNm").val(res.data2[0].deptNm);
+						$("#invReqr").val(res.data2[0].invReqr);						
+						$("#all").val(res.data2[0].qty);
+						$("#cpt").val(res.data2[0].asetQty);
+						$("#icpt").val(res.data2[0].noAsetQty);
+						
+						invData = res.data2[0];
+						
+				 		return res;
+				 	},					 	
+				 	columns:[ 
+					 	{title:"[[#{screen.text.aset.no}]]"		 	, field:"asetNo"	, hozAlign:"center", headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.type1}]]"		, field:"asetType1"	, hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.type2}]]"		, field:"asetType2" , hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.type3}]]"	 	, field:"asetType3"	, hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.mftco}]]"	 	, field:"mftco"		, hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.md}]]"	 	 	, field:"model"		, hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.sn}]]"	 	   	, field:"sn"		, hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.asset.bizDeptCd}]]"	, field:"uppDeptNm"	, hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.asset.deptCd}]]"	, field:"deptNm"	, hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.asset.chrgr}]]"	 	, field:"chrgr"		, hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.tagYn}]]"		, field:"tagYn"		, hozAlign:"center", headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.asetStus}]]"	, field:"asetStus"	, hozAlign:"center", headerHozAlign:"center"},
+				 	],
+				});						
+		    		    
 
 				//신규자산
 	    	    $("#newAsetRegist").on("click", function() {	    	    	
@@ -179,26 +127,8 @@
 	    	    });
 	     	    
 				// 엑셀다운
-	     	    $("#excelDown").on("click",function() {
-	     	    	
-				       	event.preventDefault();
-		                let url = "/asset/regist/invest/regAsetListExcel";
-						
-						var $form = $('<form id="downForm"></form>'); 
-							$form.attr('action', url); 
-							$form.attr('method', 'post'); 
-							$form.attr('target', '_self'); 
-							
-						var inputStr = $('<input type="hidden" value="'+ "[[${poNo}]]" + '" name="poNo">');
-							$form.append(inputStr);
-							inputStr = $('<input type="hidden" value="'+ $("#jsGrid").jsGrid("option", "pageIndex") + '" name="currentPage">');
-							$form.append(inputStr);
-							inputStr = $('<input type="hidden" value="'+ numOfRows + '" name="numOfRows">');
-							$form.append(inputStr);
-							
-							$form.appendTo('body'); 
-							$form.submit();
-							
+	     	    $("#excelDown").on("click",function() {	     	    	
+	     	    	grid.download("xlsx", "RegistAsset.xlsx", {sheetName:"등록자산"});							
 				});
 	     	    
 	     	    // 뒤로가기
@@ -232,15 +162,11 @@
 		    }
 		    
 	        function getParams(){
-	            return {
-	                    "currentPage": $("#jsGrid").jsGrid("option", "pageIndex"),
-	    				"numOfRows"    : numOfRows,
-	    				"poNo"         : "[[${poNo}]]"      
-	                 }
+	            return {"poNo" : "[[${poNo}]]"}
 	        }  
 	        
 	        function search(){
-	        	$("#jsGrid").jsGrid().trigger("loadData");
+	        	grid.replaceData();
 	        }
 	        
 	        function checkRegistQty(){	        	
@@ -262,79 +188,74 @@
 	</th:block>
 
 	<div layout:fragment="content">
-	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
-		<!-- contents -->
-		<div id="contents">
-			<!-- contents_head -->
-			<!-- <div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div> -->
-			<h3><span>등록자산목록</span></h3>
-			<div class="bbc">						
-				<div class="button">
-					<a class="btn_sel" id="investBack">뒤로가기</a>
-				</div>
+		<!-- contents_head -->
+		<!-- <div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div> -->
+		<h3><span>등록자산목록</span></h3>
+		<div class="bbc">						
+			<div class="button">
+				<a class="btn_sel" id="investBack">뒤로가기</a>
 			</div>
-			<!-- //contents_head -->			
-			<!-- search -->
-			<div class="srch_wrap">
-				<!-- search_form -->
-				<div class="srch_form">
-					<table class="srch_table">
-						<colgroup>
-							<col width="10%"/>
-							<col width="20%"/>
-							<col width="10%"/>
-							<col width="20%"/>
-							<col width="10%"/>
-							<col width="20%"/>
-						</colgroup>
-						<tr>
-							<th>[[#{screen.text.inv.no}]]</th>
-							<td><input type="text" id="invNo" onkeyup="enterkey()" style="width:100%;" readOnly></td>
-							<th>[[#{screen.text.inv.ttl}]]</th>
-							<td><input type="text" id="invTtl" onkeyup="enterkey()" style="width:100%;" readOnly></td>
-							<th>[[#{screen.text.po.no}]]</th>
-							<td><input type="text" id="poNo" onkeyup="enterkey()" style="width:100%;" readOnly></td>
-						</tr>
-						<tr>
-							<th>[[#{screen.text.po.mfgdnm}]]</th>
-							<td><input type="text" id="mfgdNm" onkeyup="enterkey()" style="width:100%;" readOnly></td>
-							<th>[[#{screen.text.comm.qty}]]</th>
-							<td><input type="text" id="qty" onkeyup="enterkey()" style="width:100%;" readOnly></td>
-							<th>[[#{screen.text.asset.bizDeptCd}]]</th>
-							<td><input type="text" id="uppDeptNm" onkeyup="enterkey()" style="width:100%;" readOnly></td>
-						</tr>
-						<tr>
-							<th>[[#{screen.text.asset.deptCd}]]</th>
-							<td><input type="text" id="deptNm" onkeyup="enterkey()" style="width:100%;" readOnly></td>
-							<th>[[#{screen.text.asset.chrgr}]]</th>
-							<td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;" readOnly></td>
-							<th>[[#{screen.text.inv.reg.status}]]</th>
-							<td>
-							    <div id="asetStatusQty">
-									<input type="text" id="all" onkeyup="enterkey()" style="width:100%;" readOnly>
-									<input type="text" id="cpt" onkeyup="enterkey()" style="width:100%;" readOnly>
-									<input type="text" id="icpt" onkeyup="enterkey()" style="width:100%;" readOnly>
-								</div>
-							</td>							
-						</tr>
-					</table>
-				</div>
-				<!-- //search_form -->
+		</div>
+		<!-- //contents_head -->			
+		<!-- search -->
+		<div class="srch_wrap">
+			<!-- search_form -->
+			<div class="srch_form">
+				<table class="srch_table">
+					<colgroup>
+						<col width="10%"/>
+						<col width="20%"/>
+						<col width="10%"/>
+						<col width="20%"/>
+						<col width="10%"/>
+						<col width="20%"/>
+					</colgroup>
+					<tr>
+						<th>[[#{screen.text.inv.no}]]</th>
+						<td><input type="text" id="invNo" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+						<th>[[#{screen.text.inv.ttl}]]</th>
+						<td><input type="text" id="invTtl" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+						<th>[[#{screen.text.po.no}]]</th>
+						<td><input type="text" id="poNo" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+					</tr>
+					<tr>
+						<th>[[#{screen.text.po.mfgdnm}]]</th>
+						<td><input type="text" id="mfgdNm" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+						<th>[[#{screen.text.comm.qty}]]</th>
+						<td><input type="text" id="qty" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+						<th>[[#{screen.text.asset.bizDeptCd}]]</th>
+						<td><input type="text" id="uppDeptNm" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+					</tr>
+					<tr>
+						<th>[[#{screen.text.asset.deptCd}]]</th>
+						<td><input type="text" id="deptNm" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+						<th>[[#{screen.text.asset.chrgr}]]</th>
+						<td><input type="text" id="invReqr" onkeyup="enterkey()" style="width:100%;" readOnly></td>
+						<th>[[#{screen.text.inv.reg.status}]]</th>
+						<td>
+						    <div id="asetStatusQty">
+								<input type="text" id="all" onkeyup="enterkey()" style="width:100%;" readOnly>
+								<input type="text" id="cpt" onkeyup="enterkey()" style="width:100%;" readOnly>
+								<input type="text" id="icpt" onkeyup="enterkey()" style="width:100%;" readOnly>
+							</div>
+						</td>							
+					</tr>
+				</table>
 			</div>
-			<!-- //search -->			
-	
-			<div class="list_head">
-				<div class="result">Totals : 0,000</div>
-				<div class="button">
-					<a class="btn_sel" id="newAsetRegist">[[#{screen.text.inv.new.asset}]]</a>
-					<a class="btn_sel" id="remodelAsetRegist">[[#{screen.text.inv.modified.asset}]]</a>
-					<a class="btn_sel" id="openRegAsetPopup">[[#{screen.text.inv.batch.upload}]]</a>
-					<a class="btn_sel" id="excelDown">[[#{screen.btn.excel}]]</a>
-				</div>
-				<!-- list_button -->
+			<!-- //search_form -->
+		</div>
+		<!-- //search -->			
+
+		<div class="list_head">
+			<div class="result">Totals : 0,000</div>
+			<div class="button">
+				<a class="btn_sel" id="newAsetRegist">[[#{screen.text.inv.new.asset}]]</a>
+				<a class="btn_sel" id="remodelAsetRegist">[[#{screen.text.inv.modified.asset}]]</a>
+				<a class="btn_sel" id="openRegAsetPopup">[[#{screen.text.inv.batch.upload}]]</a>
+				<a class="btn_sel" id="excelDown">[[#{screen.btn.excel}]]</a>
 			</div>
-			<div id="jsGrid"></div>
-		</div>		
-		<div id="excelDownTarget"></div>
+			<!-- list_button -->
+		</div>
+		<div id="data-table"></div>
 	</div>			
 </html>

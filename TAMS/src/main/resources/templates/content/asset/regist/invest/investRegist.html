@@ -61,7 +61,6 @@
 				 	locale:true,
 				    langs: $.commGridLocalization(),								
 				 	height:"95%",
-				 	minHeight:540,
 				 	layout:"fitColumns",
 				 	movableColumns:true,
 				 	pagination:true,
@@ -241,95 +240,89 @@
 	</th:block>
 
 	<div layout:fragment="content">
-	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
-			<!-- contents_head -->
-			<div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div>
-			<h3><span th:text="${menuNm}"></span></h3>
-			<!-- //contents_head -->
-			<!-- contents -->
-			<div id="contents">
-			
-				<!-- search -->
-				<div class="srch_wrap">
-					<!-- search_form -->
-					<div class="srch_form">
-						<table class="srch_table">
-							<colgroup>
-								<col width="10%"/>
-								<col width="20%"/>
-								<col width="15%"/>
-								<col width="20%"/>
-								<col width="15%"/>
-								<col width=""/>
-							</colgroup>
-							<tr>
-								<th>[[#{screen.text.inv.no}]]</th>
-								<td><input type="text" id="invNo" onkeyup="enterkey()" style="width:100%;"></td>
-								<th>[[#{screen.text.inv.ttl}]]</th>
-								<td><input type="text" id="invTtl" onkeyup="enterkey()" style="width:100%;"></td>
-								<th>[[#{screen.text.po.no}]]</th>
-								<td><input type="text" id="poNo" onkeyup="enterkey()" style="width:100%;"></td>
-							</tr>
-							<tr>
-								<th>[[#{screen.text.po.mfgdnm}]]</th>
-								<td><input type="text" id="mfgdNm" onkeyup="enterkey()" style="width:100%;"></td>
-								<th>[[#{screen.text.dept.nm}]]</th>
-								<td th:if="${session.MenuRoleCheck.roleId}=='ROLE_ADMIN'">
-									<input type="hidden" id="deptCd"/>
-									<div class="inqr_popup_btn">
-										<input type="text" id="deptNm" style="width:100%; border-right: 1px none;" />
-										<a href="#" id="openDeptPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
-									</div>
-								</td>
-								<td th:if="${session.MenuRoleCheck.roleId}!='ROLE_ADMIN'">
-									<input type="text" id="deptNm" style="width:100%;" />
-								</td>
-								<th>[[#{screen.text.inv.reqr}]]</th>
-								<td>
-									<input type="hidden" id="userId"/>
-									<input type="text" id="userNm" style="width:91%; border-right: 1px none;" />
-									<a href="#" id="openUserFilterPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
-								</td>
-							</tr>
-							<tr>
-								<th>[[#{screen.text.inv.dt}]]</th>
-								<td>
-								<div class="form_wrap_date"><input type="date" id="fromDate" class="aset_date"><input type="date" id="toDate" class="aset_date"></div>
-								</td>
-								<th>[[#{screen.text.inv.asetinqr}]]</th>
-								<td>
-									<select id="regYn" style="width:100%;">
-										<option value="">[[#{screen.text.comm.choice}]]</option>
-										<option value="Y">Y</option>
-										<option value="N">N</option>
-									</select>
-								</td>
-								<td colspan="2"></td>
-							</tr>
-						</table>
-						<!-- search_button -->
-						<div class="button">
-							<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
-							<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>										
-										
-						</div>
-						<!-- //search_button -->
-					</div>
-					<!-- //search_form -->
+		<!-- contents_head -->
+		<div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div>
+		<h3><span th:text="${menuNm}"></span></h3>
+		<!-- //contents_head -->
+		
+		<!-- search -->
+		<div class="srch_wrap">
+			<!-- search_form -->
+			<div class="srch_form">
+				<table class="srch_table">
+					<colgroup>
+						<col width="10%"/>
+						<col width="20%"/>
+						<col width="15%"/>
+						<col width="20%"/>
+						<col width="15%"/>
+						<col width=""/>
+					</colgroup>
+					<tr>
+						<th>[[#{screen.text.inv.no}]]</th>
+						<td><input type="text" id="invNo" onkeyup="enterkey()" style="width:100%;"></td>
+						<th>[[#{screen.text.inv.ttl}]]</th>
+						<td><input type="text" id="invTtl" onkeyup="enterkey()" style="width:100%;"></td>
+						<th>[[#{screen.text.po.no}]]</th>
+						<td><input type="text" id="poNo" onkeyup="enterkey()" style="width:100%;"></td>
+					</tr>
+					<tr>
+						<th>[[#{screen.text.po.mfgdnm}]]</th>
+						<td><input type="text" id="mfgdNm" onkeyup="enterkey()" style="width:100%;"></td>
+						<th>[[#{screen.text.dept.nm}]]</th>
+						<td th:if="${session.MenuRoleCheck.roleId}=='ROLE_ADMIN'">
+							<input type="hidden" id="deptCd"/>
+							<div class="inqr_popup_btn">
+								<input type="text" id="deptNm" style="width:100%; border-right: 1px none;" />
+								<a href="#" id="openDeptPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+							</div>
+						</td>
+						<td th:if="${session.MenuRoleCheck.roleId}!='ROLE_ADMIN'">
+							<input type="text" id="deptNm" style="width:100%;" />
+						</td>
+						<th>[[#{screen.text.inv.reqr}]]</th>
+						<td>
+							<input type="hidden" id="userId"/>
+							<input type="text" id="userNm" style="width:91%; border-right: 1px none;" />
+							<a href="#" id="openUserFilterPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+						</td>
+					</tr>
+					<tr>
+						<th>[[#{screen.text.inv.dt}]]</th>
+						<td>
+						<div class="form_wrap_date"><input type="date" id="fromDate" class="aset_date"><input type="date" id="toDate" class="aset_date"></div>
+						</td>
+						<th>[[#{screen.text.inv.asetinqr}]]</th>
+						<td>
+							<select id="regYn" style="width:100%;">
+								<option value="">[[#{screen.text.comm.choice}]]</option>
+								<option value="Y">Y</option>
+								<option value="N">N</option>
+							</select>
+						</td>
+						<td colspan="2"></td>
+					</tr>
+				</table>
+				<!-- search_button -->
+				<div class="button">
+					<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+					<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>										
+								
 				</div>
-				<!-- //search -->			
-	
-				<div class="list_head">
-					<div class="result">Totals : 0,000</div>
-					<div class="button">
-						<a class="btn_sel" id="excelDown">[[#{screen.btn.excel}]]</a>
-					</div>
-					<!-- list_button -->
-				</div>
-				<div id="data-table"></div>
+				<!-- //search_button -->
 			</div>
-			
-			<div id="excelDownTarget"></div>
-			
+			<!-- //search_form -->
 		</div>
+		<!-- //search -->			
+
+		<div class="list_head">
+			<div class="result">Totals : 0,000</div>
+			<div class="button">
+				<a class="btn_sel" id="excelDown">[[#{screen.btn.excel}]]</a>
+			</div>
+			<!-- list_button -->
+		</div>
+		<div id="data-table"></div>
+		</div>
+
 </html>

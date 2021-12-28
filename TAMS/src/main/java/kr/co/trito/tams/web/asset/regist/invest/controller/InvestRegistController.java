@@ -152,13 +152,13 @@ public class InvestRegistController {
 	}
 
 	/** 등록자산목록 화면 */
-	@PostMapping(value = "/regAset/regAsetList")
+	@GetMapping(value = "/regAset/regAsetList")
 	@ResponseBody
 	@ApiOperation(value = "투자자산등록(팝업 : 등록자산목록) 화면 / 리스트", notes = "투자에 해당하는 자산목록 리스트를 조회한다")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> regAsetList(
-			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestBody Map<String, Object> params) {
+			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
 
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(),
 				params.get("numOfRows").toString(), params);

@@ -373,96 +373,93 @@
 		<h3><span th:text="${menuNm}"></span></h3>
 
 		<!-- //contents_head -->	
-	
-		<!-- contents -->
-		<div id="contents">
-			<div class="srch_wrap">
-				<!-- search_form -->
-				<div class="srch_form">
-					<table class="srch_table">
-						<colgroup>
-							<col width="10%"/>
-							<col width="23%"/>
-							<col width="10%"/>
-							<col width="23%"/>
-							<col width="10%"/>
-							<col width="23%"/>
-						</colgroup>		
-						<tr>
-							<th>[[#{screen.text.asset.asetNo}]]</th>
-							<td><input id="asetNo" type="text" style="width:100%;"></td>
-							<th>[[#{screen.text.asset.asetType}]]</th>
-							<td colspan="3">
-								<select id="asetType1" style="width:33%;">
-									<option>ALL</option>
-								</select>							
-								<select id="asetType2" style="width:33%;">
-									<option>ALL</option>
-								</select>
-								<select id="asetType3" style="width:33%;">
-									<option>ALL</option>
-								</select>							
-							</td>
-						</tr>
-						<tr>
-							<th>[[#{screen.text.asset.bizDeptCd}]]</th>
-							<td>
-								<input type="hidden" id="bizDeptCd"/>
-								<input type="text" id="bizDeptNm" style="width:91%;" readonly/>							
-								<a href="#" id="bizDeptPopup" >
-									<img title="" class="ico_search" alt="Search" src="/images/common/ico_search.png">
-								</a>
-							</td>
-							<th>[[#{screen.text.asset.deptCd}]]</th>
-							<td>
-								<input type="hidden" id="deptCd"/>
-								<input type="text" id="deptNm" style="width:91%;" readonly/>							
-								<a href="#" id="deptPopup" >
-									<img title="" class="ico_search" alt="Search" src="/images/common/ico_search.png">
-								</a>
-							</td>
-							<th>[[#{screen.text.asset.chrgr}]]</th>
-							<td><input id="chrgr" type="text" style="width:100%;"></td>
-						</tr>
-						<tr>
-							<th>[[#{screen.text.asset.mftco}]]</th>
-							<td><input id="mftco" type="text" style="width:100%;"></td>
-							<th>[[#{screen.text.asset.model}]]</th>
-							<td><input id="model" type="text" style="width:100%;"></td>
-							<th>[[#{screen.text.asset.asetStus}]]</th>
-							<td>
-								<select id="asetStatus" style="width:100%;">
-									<option>ALL</option>
-								</select>
-							</td>
-						</tr>						
-					</table>
-					<!-- search_button -->
-					<div class="button">
-						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
-						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
-					</div>
-					<!-- //search_button -->					
+
+		<div class="srch_wrap">
+			<!-- search_form -->
+			<div class="srch_form">
+				<table class="srch_table">
+					<colgroup>
+						<col width="10%"/>
+						<col width="23%"/>
+						<col width="10%"/>
+						<col width="23%"/>
+						<col width="10%"/>
+						<col width="23%"/>
+					</colgroup>		
+					<tr>
+						<th>[[#{screen.text.asset.asetNo}]]</th>
+						<td><input id="asetNo" type="text" style="width:100%;"></td>
+						<th>[[#{screen.text.asset.asetType}]]</th>
+						<td colspan="3">
+							<select id="asetType1" style="width:33%;">
+								<option>ALL</option>
+							</select>							
+							<select id="asetType2" style="width:33%;">
+								<option>ALL</option>
+							</select>
+							<select id="asetType3" style="width:33%;">
+								<option>ALL</option>
+							</select>							
+						</td>
+					</tr>
+					<tr>
+						<th>[[#{screen.text.asset.bizDeptCd}]]</th>
+						<td>
+							<input type="hidden" id="bizDeptCd"/>
+							<input type="text" id="bizDeptNm" style="width:91%;" readonly/>							
+							<a href="#" id="bizDeptPopup" >
+								<img title="" class="ico_search" alt="Search" src="/images/common/ico_search.png">
+							</a>
+						</td>
+						<th>[[#{screen.text.asset.deptCd}]]</th>
+						<td>
+							<input type="hidden" id="deptCd"/>
+							<input type="text" id="deptNm" style="width:91%;" readonly/>							
+							<a href="#" id="deptPopup" >
+								<img title="" class="ico_search" alt="Search" src="/images/common/ico_search.png">
+							</a>
+						</td>
+						<th>[[#{screen.text.asset.chrgr}]]</th>
+						<td><input id="chrgr" type="text" style="width:100%;"></td>
+					</tr>
+					<tr>
+						<th>[[#{screen.text.asset.mftco}]]</th>
+						<td><input id="mftco" type="text" style="width:100%;"></td>
+						<th>[[#{screen.text.asset.model}]]</th>
+						<td><input id="model" type="text" style="width:100%;"></td>
+						<th>[[#{screen.text.asset.asetStus}]]</th>
+						<td>
+							<select id="asetStatus" style="width:100%;">
+								<option>ALL</option>
+							</select>
+						</td>
+					</tr>						
+				</table>
+				<!-- search_button -->
+				<div class="button">
+					<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+					<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
 				</div>
-				<!-- //search_form -->				
-			</div>	
-			<!-- list -->
-			<div class="list_wrap" style="height:570px">
-				<!-- list_head -->
-				<div class="list_head">
-					<div class="result">Totals : 0,000</div>
-					<!-- list_button -->
-					<div class="button">
-						<a id="tab-main-excel" class="btn_list_rd">[[#{screen.btn.excel}]]</a>
-					</div>
-					<!-- list_button -->
+				<!-- //search_button -->					
+			</div>
+			<!-- //search_form -->				
+		</div>	
+		<!-- list -->
+		<div class="list_wrap" style="height:570px">
+			<!-- list_head -->
+			<div class="list_head">
+				<div class="result">Totals : 0,000</div>
+				<!-- list_button -->
+				<div class="button">
+					<a id="tab-main-excel" class="btn_list_rd">[[#{screen.btn.excel}]]</a>
 				</div>
-				<!-- //list_head -->	
-				
-				<div id="data-table"></div>							
-			</div>		
-			<!-- //list -->					
+				<!-- list_button -->
+			</div>
+			<!-- //list_head -->	
+			
+			<div id="data-table"></div>							
 		</div>		
+		<!-- //list -->					
 		
 		<!-- detail popup -->
 		<div id="detailForm" class="list_head" style="position:absoulte;z-index:1;display:none;">
@@ -639,7 +636,6 @@
 			</div>
 			<!-- //container -->			
 		</div>
-		<!-- //detail popup -->		
-	
+		<!-- //detail popup -->			
 	</div>	        
 </html>        
