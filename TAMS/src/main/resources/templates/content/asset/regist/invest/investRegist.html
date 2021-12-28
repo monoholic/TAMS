@@ -107,7 +107,7 @@
 				/*------------- Button Events -------------*/
 	         	//조회
 	    	    $(".btn_srch").on("click",function (){
-	    	    	table.replaceData();
+	    	    	grid.replaceData();
 		        });
 		        
 	    	    //팝업창 닫기
@@ -166,7 +166,7 @@
 			function enterkey() {
 		    	if (window.event.keyCode == 13) {
 		    		if (validationCheck() == '202') {
-		    			$("#jsGrid").jsGrid().trigger("loadData");
+		    			grid.replaceData();
 		    		}
 		        }
 		    }
