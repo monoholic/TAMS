@@ -399,7 +399,7 @@
 				 		</if>
 		) AS A
 		WHERE rn BETWEEN #{start} AND #{end}
-		ORDER BY asetNo
+		ORDER BY asetNo DESC
    	</select>
 	
 	<!-- 자산 선택(팝업-공통) 카운트 -->

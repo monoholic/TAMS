@@ -240,7 +240,7 @@
 		INNER JOIN tb_user c
            ON c.user_id = b.chrgr
 		WHERE b.req_no = #{params.reqNo}
-		ORDER BY b.aset_no;
+		ORDER BY b.aset_no DESC;
 	</select>
 	
 	<!-- 대상자산목록 조회 카운트 -->
