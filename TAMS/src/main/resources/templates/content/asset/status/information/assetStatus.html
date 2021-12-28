@@ -12,8 +12,7 @@
 	<th:block layout:fragment="css">	
 	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="/css/theme.css" />
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.7/css/tabulator_bootstrap3.min.css" rel="stylesheet"> 
-		<!--<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.8/css/tabulator_simple.min.css" rel="stylesheet"> -->
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.8/css/tabulator.min.css" rel="stylesheet"> 
 	</th:block>        
         
 	<th:block layout:fragment="script">
@@ -144,7 +143,7 @@
 				 	placeholder:"No Data Set",
 				 	index:"asetNo",
 				 	ajaxResponse:function(url, params, res){
-				 		$(".result").text("Results : " + res.condition.totalCount);
+				 		$(".result").text("Totals : " + res.condition.totalCount);
 				 		return res;
 				 	},					 	
 				 	columns:[ 
@@ -451,7 +450,7 @@
 			<div class="list_wrap" style="height:570px">
 				<!-- list_head -->
 				<div class="list_head">
-					<div class="result">Results : 0,000</div>
+					<div class="result">Totals : 0,000</div>
 					<!-- list_button -->
 					<div class="button">
 						<a id="tab-main-excel" class="btn_list_rd">[[#{screen.btn.excel}]]</a>
