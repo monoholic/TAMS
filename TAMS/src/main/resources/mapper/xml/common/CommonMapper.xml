@@ -338,11 +338,12 @@
 						 , ( SELECT dept_nm
 						     FROM tb_dept
                              WHERE biz_dept_cd = dept_cd ) AS bizDeptNm  
-						 , dept_cd 		    AS deptCd
+						 , A.dept_cd 	    AS deptCd
 						 , ( SELECT dept_nm
 						     FROM tb_dept
                              WHERE A.dept_cd = dept_cd ) AS deptNm
 						 , chrgr			AS chrgr
+						 , B.user_nm		AS chrgr_nm
 						 , bsplc 			AS bsplc
 						 , buld 			AS buld
 						 , floor 			AS floor
@@ -360,12 +361,14 @@
 						     FROM TB_COM_CODE B
 						     WHERE B.code_grp_id = "AS_STATUS" 
 							 AND B.code_id = A.aset_stus ) AS asetStusNm
-						 , updr 			AS updr
+						 , A.updr 			AS updr
 						 , up_dt 			AS upDt
-						 , regr 			AS regr
+						 , A.regr 			AS regr
 						 , reg_dt 		    AS regDt 			
 						 , ROW_NUMBER() OVER(ORDER BY A.aset_no) AS rn
 					FROM tb_aset_mas A
+					INNER JOIN tb_user B
+					   ON B.user_id = A.chrgr
 					WHERE 1=1
 						<if test="params.asetNo != null">
 							AND ( aset_no LIKE CONCAT('%', #{params.asetNo}, '%'))
