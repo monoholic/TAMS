@@ -315,8 +315,11 @@ function openPopup(popId, url, args, param) {
     var resizable = args.resizable;
     if( resizable == null || resizable == "" ) full = "no";
     
-    var sTop  = Math.max(0, (($(window).height() - height) / 2) + $(window).scrollTop()) + "px";
-    var sLeft = Math.max(0, (($(window).width() - width) / 2) + $(window).scrollLeft()) + "px";
+	var pheight = args.pheight || $(window).height();
+	var pwidth = args.pwidth || $(window).width();    
+    
+    var sTop  = Math.max(0, ((pheight - height) / 2) + $(window).scrollTop()) + "px";
+    var sLeft = Math.max(0, ((pwidth - width) / 2) + $(window).scrollLeft()) + "px";
     
     options = "";
     options += "position=absolute";
