@@ -160,8 +160,7 @@
 	     	    
 	    	  	//엑셀 다운로드
 	     	    $("#excelDown").on("click",function() {	       					       
-	                let url = "/asset/regist/invest/invListExcel";
-	                $.commExcelDown(url, getParams());							
+	     	    	grid.download("xlsx", "InvestAsset.xlsx", {sheetName:"투자자산"});
 				});
 	    	});
 
