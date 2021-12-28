@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/default">
+
+	<head>
+	    <title>[[#{screen.text.inv.mng.screen.title}]]</title>
+	</head>
+        
+	<!-- css -->
+	<th:block layout:fragment="css">
+	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/jsgrid.css" />
+		<link rel="stylesheet" href="/css/theme.css" />
+	</th:block>
+	
+	<th:block layout:fragment="script">
+		<script src="/js/jsgrid/db.js"></script>
+	    <script src="/js/jsgrid/jsgrid.core.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.field.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
+		
+	    <script>
+	    
+	    let numOfRows = 18;
+	    let pageIdx = 1;
+	    var status = true;
+        var selectedItems = [];
+	 	var insertedItems = [];
+	 	var updatedItems = [];
+	    
+	    $(function(){
+	    	
+            let url = "/common/comm/selectBox";
+			let reqType = 'GET';	
+
+			$.commRequestSelectbox(url, reqType, "#searchType", "INV_MAS_MNG");
+			$.commRequestSelectbox(url, reqType, "#searchType2", "INV_MAS_MNG");
+			
+	        $("#jsGrid").jsGrid({
+	        	height: "600",
+                width: "100%",
+                filtering: false,
+                editing: false,
+                inserting: true,
+                sorting: true,
+                paging: true,
+                sorter: "number",
+                pageIndex:pageIdx,
+                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
+                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
+                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
+                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
+                pagerFormat: "{first} {prev} {pages} {next} {last}",
+                pagerContainer:null,
+                pageLoading: true,
+                pager: "#pager",
+                autoload: true,
+                pageSize: numOfRows,
+                pageButtonCount: 5,
+                loadonce: true,
+                updateOnResize: true, 
+	            pagerContainerClass: "paginate",
+	            rowClick: function(args) {
+	            	var target = args.event.target;
+	            	
+					if(target instanceof HTMLTableCellElement) {
+						//detail form
+						showDetailForm(args.item);
+					}
+	            }, 
+	            deleteConfirm: function(item) {
+	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
+	            },
+	            controller:  {
+	                loadData: function(filter) {
+	                    var d = $.Deferred();
+	                    
+	                    currentPage = filter.pageIndex; 
+               
+	                    let url = "/standard/invest/investMng/investMngList";
+						let reqType = 'GET';	
+						let data = {
+            				"currentPage": filter.pageIndex,
+            				"numOfRows"  : numOfRows,
+            				"searchType" : $("#searchType").val(),
+            				"searchText"  : $("#searchTxt").val(),
+            				"searchType2": $("#searchType2").val(),
+            				"searchText2" : $("#searchTxt2").val(),
+            				"sortField"  : filter.sortField,
+            				"sortOrder"  : filter.sortOrder
+            			}
+						$.commRequest(url, reqType, data)
+							.then((res) => {
+								console.log(res);
+								$(".result").text("Totals : " + res.data.length);
+								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
+							})
+							.catch((error) => {
+								console.log('조회 실패!!');
+							});
+	                    
+	                    return d.promise();
+	            },
+             	insertItem: function(data) {
+             		
+        		    let url = "/standard/invest/investMng/investMngSave";
+        		    let reqType = 'POST';
+        		    $.commRequest(url, reqType, JSON.stringify(data))
+        		    	.then((res) => {
+        		    		console.log(res);
+        		    		$("#jsGrid").jsGrid().trigger("loadData");
+        		    	})
+        		    	.catch((error) => {
+        		    		console.log(error);
+        		    	})
+            	},
+             	deleteItem: function(data) {
+             		
+        		    let url = "/standard/invest/investMng/investMngDelete";
+        		    let reqType = 'POST';
+        		    $.commRequest(url, reqType, JSON.stringify(data))
+        		    	.then((res) => {
+        		    		console.log(res);
+        		    		$("#jsGrid").jsGrid().trigger("loadData");
+        		    	})
+        		    	.catch((error) => {
+        		    		console.log(error);
+        		    	})
+            	    }
+            	},
+	            fields: [{ name : "chk"
+	                	 , align: "center"
+	                	 , width: 20
+	                	 , title: ""
+	                	 , editing: false
+	                	 , sorting: false
+	                	 , filtering: false
+	                	 , itemTemplate: function(value, item) {
+	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox").attr("id", function(){
+	                    	   
+	                    	  return "checkbox" + $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.poNo == item.poNo);
+	                       })
+	                       .attr("checked", function(){
+	                    	  return value || item.checked;
+	                       })
+	                       .on("change", function () {
+	  					  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
+	  					  	 });
+	            		   }
+	                	 , headerTemplate : function ()  { 
+						  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
+		                     .on("change", function (item) {
+		            	    	if(this.checked) { 
+ 		            	            $('.singleCheckbox').each(function(i) {
+		            	            	$("#checkbox" + i).prop("checked", true).change();
+		            	            });
+		            	        }else {
+		            	            $('.singleCheckbox').each(function(i) { 
+		            	            	$("#checkbox" + i).prop("checked", false).change();
+		            	            });  
+		            	        }
+		    				   });
+					 	 },
+	                },
+	            	{ name: "invNo"   , type: "text", width: 70 , align: "center"  , title: "[[#{screen.text.inv.mng.no}]]" },
+	                { name: "invTtl"  , type: "text", width: 140, align: "left"  , title: "[[#{screen.text.inv.mng.nm}]]"  },
+	                { name: "invDt"   , type: "text", width: 70, align: "center"  , title: "[[#{screen.text.inv.mng.dt}]]" },
+	                { name: "invQty"  , type: "text", width: 50, align: "right"  , title: "[[#{screen.text.inv.mng.qty}]]"  },
+	                { name: "invAmt"  , type: "text", width: 80, align: "right"  , title: "[[#{screen.text.inv.mng.amt}]]"  },
+	                { name: "actgYear", type: "text", width: 70 , align: "center"  , title: "[[#{screen.text.inv.mng.financial.year}]]" },
+	                { name: "poNo"	  , type: "text", width: 70, align: "center"  , title: "[[#{screen.text.inv.mng.po.no}]]"  },
+	                { name: "mfgdNm"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.mng.item.nm}]]" 	   },
+	                { name: "qty"	  , type: "text", width: 50 , align: "right"  , title: "[[#{screen.text.inv.mng.po.qty}]]"  },
+	                { name: "poAmt"	  , type: "text", width: 80 , align: "right"  , title: "[[#{screen.text.inv.mng.po.amt}]]"  },
+	                { name: "deptNm"  , type: "text", width: 100, align: "left"  , title: "[[#{screen.text.inv.mng.dept}]]" 	   },
+	                { name: "userNm"  , type: "text", width: 70, align: "center"  , title: "[[#{screen.text.inv.mng.charger}]]"   },
+	                { name: "invReqr" , type: "text", width: 50, align: "left"  , title: "[[#{screen.text.inv.mng.charger.id}]]", visible: false },
+	                { name: "vendNm"  , type: "text", width: 80, align: "left"  , title: "[[#{screen.text.inv.mng.vendor.nm}]]"   },
+	                { name: "reqDt"   , type: "text", width: 70, align: "center"  , title: "[[#{screen.text.inv.mng.order.dt}]]"},
+	                { name: "dlvDt"   , type: "text", width: 70, align: "center"  , title: "[[#{screen.text.inv.mng.ship.dt}]]"   },
+	                { name: "poAsetYn", type: "text", width: 50, align: "center"  , title: "[[#{screen.text.inv.mng.asset.regist.yn}]]"  },
+	                { name: "regDt"   , type: "text", width: 70, align: "center"  , title: "[[#{screen.text.comm.regdt}]]"  },
+	            ]
+	        });
+	        
+		    var selectItem = function(item) { 
+		    	
+		    	if(!selectedItems.includes(item)){
+			    	selectedItems.push(item);
+		    	}
+		    	
+			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+	             $("#selectAllCheckbox").prop("checked", true);
+	            } else {
+	                $("#selectAllCheckbox").prop("checked", false);
+	            }
+			};
+		     
+		    var unselectItem = function(item) {
+		    	
+			    selectedItems = $.grep(selectedItems, function(i) {
+			    return i !== item;
+			    });
+			    
+			    if(selectedItems.length == 0) {
+			    	$('#selectAllCheckbox').attr('checked', false);
+			    }
+			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+	             	$("#selectAllCheckbox").prop("checked", true);
+		        } else {
+		            $("#selectAllCheckbox").prop("checked", false);
+		        }
+		    };
+	        
+	        $("#pager").on("change", function() {
+	            var page = parseInt($(this).val(), 10);
+	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
+	        });
+
+    	    $(".btn_add").click(function() {
+    	    	showDetailForm();
+    	    });
+	        
+    	    $(".btn_del").click(function() {
+    	    	
+    	    	var arr_item = [];
+    	    	var items = [];
+
+    	    	$.each(selectedItems, function(index,item){    	    		
+    	    		if(item.poAsetYn == 'Y') {
+    	    			alert('[[#{screen.info.status.error.inv.has.registered.item}]]');
+    	    			return false;
+    	    		}    	    		
+    	    		items.push(item);
+    	    	});
+    	    	
+    	    	if(items.length == 0){
+    	    		alert('[[#{screen.info.status.error.inv.no.selected.item}]]');
+    	    		return;
+    	    	}
+    	    	
+     	    	//별도 호출
+    	    	let url = "/standard/invest/investMng/investMngDelete";
+    			let reqType = 'POST';
+    			dataType: 'json';
+    			$.commRequest(url, reqType, JSON.stringify(items))
+    				.then((res) => {
+    					console.log(res);
+    					alert("[[#{screen.info.status.delete.success}]]");
+    					$('.btn_srch').click();
+    				})
+    				.catch((error) => {
+    					alert("[[#{screen.info.status.error.occur}]]");
+    					console.log(error);
+    				}) 
+    	    	
+    	    	
+    	    });
+    	    
+	        $(".btn_srch").on("click",function (){
+	           if($("#searchType").val() != "none" && $("#searchTxt").val() == ""){
+	        	   alert("[[#{screen.info.status.error.input.search.text}]]");
+	        	   $("#searchTxt").focus();
+	           }else if($("#searchType2").val() != "none" && $("#searchTxt2").val() == ""){
+	        	   alert("[[#{screen.info.status.error.input.search.text}]]");
+	        	   $("#searchTxt2").focus();
+	           }else{
+		    	   $("#jsGrid").jsGrid().trigger("loadData");
+	           }
+	        });
+	        
+	     	// 팝업창 저장 버튼 처리
+            $('.save_btn').on('click', function (e) {
+                e.preventDefault();
+                
+                if(validationCheck() != '200'){
+	                var insert_item = [];
+	                var sub_item = {};
+		                sub_item.invNo 		=   $(".detail_table").find("#invNo").val();
+			    		sub_item.invTtl     =   $(".detail_table").find("#invTtl").val();
+			    		sub_item.invQty     =   $(".detail_table").find("#invQty").val();
+			    		sub_item.invAmt     =   $(".detail_table").find("#invAmt").val();
+			    		sub_item.actgYear 	=   $(".detail_table").find("#actgYear").val();
+			    		sub_item.poNo		=   $(".detail_table").find("#poNo").val();
+			    		sub_item.mfgdNm	 	=   $(".detail_table").find("#codeNm").val();
+			    		sub_item.qty	 	=   $(".detail_table").find("#qty").val();
+			    		sub_item.poAmt	 	=   $(".detail_table").find("#poAmt").val();
+			    		sub_item.invDt	 	=   $(".detail_table").find("#invDt").val().replaceAll("-", "");
+			    		sub_item.deptNm	 	=   $(".detail_table").find("#deptNm").val();
+			    		sub_item.invReqr	=   $(".detail_table").find("#userId").val();
+			    		sub_item.vendNm		=   $(".detail_table").find("#vendNm").val();
+			    		sub_item.reqDt	 	=   $(".detail_table").find("#reqDt").val();
+			    		sub_item.dlvDt	 	=   $(".detail_table").find("#dlvDt").val();
+			    		
+			    		insert_item.push(sub_item);
+			    		
+			        var action = "insertItem";
+			        console.log(insert_item);
+	    			$("#jsGrid").jsGrid(action, insert_item);
+	                
+		    		clearDetailForm();
+	                $(this).parents("#detailForm").hide();
+	                save_mode = "";
+                }
+            });
+
+          	//수정 버튼
+    	    $(".btn_update").click(function() {
+    	    	var items = $("#jsGrid").jsGrid("option", "data");
+    	    	var item = items.filter(arr => arr.menuId == selectedItems[0]);
+    	    	showDetailForm(item[0]);
+    	    });
+          	
+          	//리셋 버튼
+    	    $(".btn_reset").click(function() {
+    	    	$("#searchType option:eq(0)").prop("selected", true);
+    	    	$("#searchTxt").val("");
+    	    	$("#searchType2 option:eq(0)").prop("selected", true);
+    	    	$("#searchTxt2").val("");
+    	    });
+	     	
+	     	// 팝업창 닫기 버튼 처리
+            $('.close_btn').on('click', function (e) {
+                e.preventDefault();
+                clearDetailForm();
+                $(this).parents("#detailForm").hide();
+            });
+	     	
+            //drag 활성화
+	     	$("#detailForm").draggable();
+            
+            //팝업 가운데로 띄우기
+            jQuery.fn.center = function () {
+                this.css("position","absolute");
+                this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 4) + $(window).scrollTop()) + "px");
+                this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
+                return this;
+            }
+	    	
+			// 사용자 팝업 호출 
+    	    $("#openUserPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/userPopup";
+    	        var popId = "userPopup";
+    	        var args = {};
+    	        args.width = 650;
+    	        args.height = 416;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        openPopup(popId, url, args);
+    	    });
+            
+			//공통코드팝업(트리) 호출 
+    	    $("#openCommCodePopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/commCodePopup?codeGrpId=AS_CLASS";
+    	        var popId = "commCodePopup";
+    	        var args = {
+    	        };
+    	        args.width = 500;
+    	        args.height = 450;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        openPopup(popId, url, args);
+    	    });
+			
+			//투장정보 일괄 업로드 팝업 호출 
+    	    $("#openInvPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/invUploadPopup";
+    	        var popId = "invUpPopup";
+    	        var args = {};
+    	        args.width = 1600;
+    	        args.height = 710;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        openPopup(popId, url, args);
+    	    });
+			
+    	    $("#invQty").on("input", function() {
+                $(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+            });
+    	    
+    	    $("#invAmt").on("input", function() {
+                $(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+            });
+    	    
+    	    $("#poNo").on("input", function() {
+                $(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[-]/g,''));
+            });
+    	    
+    	    $("#qty").on("input", function() {
+                $(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+            });
+    	    
+    	    $("#poAmt").on("input", function() {
+                $(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+            });
+    	});
+	    
+	    function clearDetailForm() {
+	    	 $(".detail_table").find("#invNo").val("");
+	   		 $(".detail_table").find("#invTtl").val("");
+			 $(".detail_table").find("#invQty").val("");
+			 $(".detail_table").find("#invAmt").val("");
+			 $(".detail_table").find("#actgYear").val("");
+			 $(".detail_table").find("#poNo").val("");
+			 $(".detail_table").find("#codeNm").val("");
+			 $(".detail_table").find("#qty").val("");
+			 $(".detail_table").find("#poAmt").val("");
+			 $(".detail_table").find("#invDt").val("");
+			 $(".detail_table").find("#deptNm").val("");
+	 		 $(".detail_table").find("#userNm").val("");
+	 		 $(".detail_table").find("#userId").val("");
+	 		 $(".detail_table").find("#vendNm").val("");
+	 		 $(".detail_table").find("#reqDt").val("");
+	 		 $(".detail_table").find("#dlvDt").val("");
+	    }
+		
+	    let save_mode = "";
+	    function showDetailForm(item) {
+		    	
+		    	let title = "[[#{screen.text.inv.mng.insert.title}]]";
+		    	 var readOnly = false;
+		    	 
+		    	 if( item != null ) {
+		    		 title = "[[#{screen.text.inv.mng.update.title}]]";
+		    		 save_mode = "update";
+		    		 
+		    		 readOnly = false;
+		    		 $(".detail_table").find("#invNo").val(item.invNo);
+		    		 $(".detail_table").find("#invNo").attr("readOnly", true);
+		    		 
+		    		 $(".detail_table").find("#invTtl").val(item.invTtl);
+		    		 $(".detail_table").find("#invQty").val(item.invQty);
+		    		 $(".detail_table").find("#invAmt").val(item.invAmt);
+		    		 $(".detail_table").find("#actgYear").val(item.actgYear);
+		    		 $(".detail_table").find("#poNo").val(item.poNo);
+		    		 $(".detail_table").find("#codeNm").val(item.mfgdNm);
+		    		 $(".detail_table").find("#qty").val(item.qty);
+		    		 $(".detail_table").find("#poAmt").val(item.poAmt);
+		    		 $(".detail_table").find("#invDt").val(item.invDt);
+		    		 $(".detail_table").find("#deptNm").val(item.deptNm);
+		     		 $(".detail_table").find("#userNm").val(item.userNm);
+		     		 $(".detail_table").find("#vendNm").val(item.vendNm);
+		     		 $(".detail_table").find("#reqDt").val(item.reqDt);
+		     		 $(".detail_table").find("#dlvDt").val(item.dlvDt);
+		    	 } else {
+		    		 save_mode = "insert";
+		    		 $(".detail_table").find("#invNo").attr("readOnly", false);
+		    		 
+		    	 }
+		    		 
+		    	 $(".list_head").find("#head_title").html(title);
+		    	
+		    	 //상세 팝업 호출
+		    	 $('#detailForm').css({
+	                 position: 'absolute',
+	                 top	 : "10px",
+	                 left	 : "10px",
+	                 width	 : "450px",
+	                 height	 : "602px",
+	                 border:"2px solid navy"
+	             }).center().show();
+	    }
+	    
+	    
+	    function checkBoxClass(className, colNm, value, item){
+	    	
+	    	return $("<input>").attr("type", "checkbox").attr("checked", value || item.Checked).attr("class", function(){
+         	    return className + $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.menuNm == item.menuNm);})
+            	.on("change", function(){
+       				$(this).is(":checked") ? item[colNm] = 'Y' : item[colNm] = '';
+       	 	});
+	    	
+	    }
+	    
+	    function enterkey() {
+	    	if (window.event.keyCode == 13) {
+		        if($("#searchType").val() != 'none'){
+		    	   $("#jsGrid").jsGrid().trigger("loadData");
+		        }else{
+		       	   alert("[[#{screen.info.status.error.search.condition}]]");
+		        }
+	        }
+	    }
+		
+		//팝업에서 받은 결과 처리
+		function setResult(obj) {
+			$("#userId").val(obj.userId);
+			$("#userNm").val(obj.userNm);
+		}
+		
+		//팝업에서 받은 결과 처리
+		function setResult2(obj) {
+			$("#codeCd").val(obj.codeCd);
+			$("#codeNm").val(obj.codeNm);
+		}
+		
+		//선택 버튼클릭시 
+		function selectItem(obj) {
+			console.log(obj);
+			opener.setResult(obj); //부모창에 구현
+			window.close();
+		}
+	
+		function returnResult(item) {
+			opener.setResult(item);
+			window.close();
+		}
+		
+		function validationCheck(){
+			let code = "200";
+			
+	    	if($(".detail_table").find("#invNo").val() == ''){
+	    		alert("[[#{screen.info.status.error.inv.no}]]");
+	    		$(".detail_table").find("#invNo").focus();
+	    	}else if($(".detail_table").find("#invTtl").val() == ''){
+	    		alert("[[#{screen.info.status.error.inv.nm}]]");
+	    		$(".detail_table").find("#invTtl").focus();
+	    	}else if($(".detail_table").find("#invQty").val() == ''){
+	    		alert("[[#{screen.info.status.error.inv.qty}]]");
+	    		$(".detail_table").find("#invQty").focus();
+	    	}else if($(".detail_table").find("#invAmt").val() == ''){
+	    		alert("[[#{screen.info.status.error.inv.amt}]]");
+	    		$(".detail_table").find("#invAmt").focus();
+	    	}else if($(".detail_table").find("#actgYear").val() == ''){
+	    		alert("[[#{screen.info.status.error.inv.financial.year}]]");
+	    		$(".detail_table").find("#actgYear").focus();
+	    	}else if($(".detail_table").find("#poNo").val() == ''){
+	    		alert("[[#{screen.info.status.error.inv.po.no}]]");
+	    		$(".detail_table").find("#poNo").focus();
+	    	}else if($(".detail_table").find("#poAmt").val() == ''){
+	    		alert("[[#{screen.info.status.error.inv.po.amt}]]");
+	    		$(".detail_table").find("#poAmt").focus();
+	    	}else if($(".detail_table").find("#invDt").val() == ''){
+	    		alert("[[#{screen.info.status.error.inv.dt}]]");
+	    		$(".detail_table").find("#invDt").focus();
+	    	}else if($(".detail_table").find("#userNm").val() == ''){
+	    		alert("[[#{screen.info.status.error.inv.charger}]]");
+	    		$(".detail_table").find("#userNm").focus();
+	    	}else{
+	    		code = "202";
+	    	}
+	    	
+	    	return code;
+		}
+		
+	    </script>	
+	</th:block>
+
+	<div layout:fragment="content">
+		<!-- contents_head -->
+		<div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div>
+		<h3><span th:text="${menuNm}"></span></h3>
+		<!-- //contents_head -->
+
+		<!-- search -->
+		<div class="srch_wrap single">
+			<table class="srch_table">
+				<tr>
+					<td>
+						<div style="display: flex; align-items: stretch;">
+							<select id="searchType">
+								<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
+							</select>
+							<input id="searchTxt" type="text" placeholder="검색어를 입력해주세요." onkeyup="enterkey()" style="margin-left: 5px;">
+							<select id="searchType2" style="margin-left: 20px;">
+								<option value="none">[[#{screen.text.comm.select.search.condition}]]</option>
+							</select>
+							<input id="searchTxt2" type="text" placeholder="검색어를 입력해주세요." onkeyup="enterkey()" style="margin-left: 5px;">
+						</div>
+					</td>
+					<td class="search" colspan="3">
+						<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+						<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!-- //search -->
+		<div class="list_head">
+				<div class="result">Results : 0,000</div>
+				<!-- list_button -->
+				<div class="button">
+					<a id="openInvPopup" class="btn_save">[[#{screen.btn.upload}]]</a>
+					<a class="btn_add">[[#{screen.btn.insert}]]</a>
+					<a class="btn_del">[[#{screen.btn.delete}]]</a>
+				</div>
+				<!-- list_button -->
+		</div>
+		<!-- list -->
+		<!-- //search -->
+
+		<!-- list -->
+		<div id="jsGrid"></div>
+		<!-- //list -->
+		
+		<!-- detail popup -->
+		<div id="detailForm" class="list_head" style="display:none;">
+		  <div id="container">
+		        <!-- list_head -->
+				<div class="list_head">
+					<h6><span id="head_title" ></span></h6>
+					<!-- list_button -->
+						<div class="button">
+							<a class="btn_list save_btn">[[#{screen.btn.save}]]</a>
+							<a class="btn_list close_btn">[[#{screen.btn.delete}]]</a>
+							<a class="btn_list close_btn">[[#{screen.btn.close}]]</a>
+						</div>
+					<!-- list_button -->
+				</div>
+				<!-- //list_head -->
+				<!-- detail_table -->
+					<table class="detail_table">
+						<colgroup>
+							<col style="width:30%"/>
+							<col style="width:70%"/>
+						</colgroup>
+						<tr>
+							<th>[[#{screen.text.inv.mng.no}]]</th>
+							<td><input type="text" id="invNo" style="width:100%"/></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.inv.mng.nm}]]</th>
+							<td><input type="text" id="invTtl" style="width:100%"/></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.inv.mng.qty}]]</th>
+							<td><input type="text" id="invQty" style="width:100%"/></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.inv.mng.amt}]]</th>
+							<td><input type="text" id="invAmt" style="width:100%"/></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.inv.mng.dt}]]</th>
+							<td><input type="date" id="invDt" style="width:100%"/></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.inv.mng.financial.year}]]</th>
+							<td><input type="text" id="actgYear" style="width:100%"/></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.inv.mng.po.no}]]</th>
+							<td><input type="text" id="poNo" style="width:100%"/></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.inv.mng.item.nm}]]</th>
+							<td>
+								<div style='display:flex'>
+									<input type="text" id="codeNm" name="codeNm" style="width:100%"/><input type="hidden" id="codeCd" name="codeCd"/>
+									<a href="#" id="openCommCodePopup" style="margin-left: 10px;"><img title="[[#{screen.text.inv.mng.item.nm}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.inv.mng.po.qty}]]</th>
+							<td><input type="text" id="qty" style="width:100%"/></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.inv.mng.po.amt}]]</th>
+							<td><input type="text" id="poAmt" style="width:100%"/></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.inv.mng.charger}]]</th>
+							<td>
+								<div style='display:flex'>
+									<input type="text" id="userNm" name="userNm" style="width:100%"/><input type="hidden" id="userId" name="userId"/>
+									<a href="#" id="openUserPopup" style="margin-left: 10px;"><img title="[[#{screen.text.comm.search.user}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.inv.mng.vendor.nm}]]</th>
+							<td><input type="text" id="vendNm" style="width:100%"/></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.inv.mng.order.dt}]]</th>
+							<td><input type="date" id="reqDt" style="width:100%"/></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.inv.mng.ship.dt}]]</th>
+							<td><input type="date" id="dlvDt" style="width:100%"/></td>
+						</tr>
+					</table>
+				<!-- //detail_table -->
+	     	</div>
+     	</div>
+				 
+</div>
+</html>
