@@ -27,11 +27,11 @@ public class OutOfBookController {
 	@PostMapping("/outOfBook")
 	public ModelAndView outOfBookView(Authentication authentication, HttpServletRequest request) {
 		ModelAndView view = new ModelAndView();		
+		UserDto userDto = ((UserInfo) authentication.getPrincipal()).getDto();		
 		view.addObject("menuId"  , request.getParameter("menuId"));
 		view.addObject("menuNm"  , request.getParameter("menuNm"));
 		view.addObject("menuDesc", request.getParameter("menuDesc"));
 		view.addObject("url"     , request.getParameter("url"));
-		UserDto userDto = ((UserInfo) authentication.getPrincipal()).getDto();
 		view.addObject("userDto" , userDto);		
 		view.setViewName(viewPath.concat("outOfBook"));		
 		return view;
