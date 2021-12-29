@@ -111,7 +111,7 @@
 				AND (req_stus LIKE CONCAT('%', #{params.reqStus}, '%'))
 		 	</if>
 		 	
-	  	 ORDER BY req_no
+	  	 ORDER BY req_no DESC
    	</select>
    	
    	<!-- 수정의뢰목록 카운트 -->
@@ -189,6 +189,7 @@
 		     , req_type 
 			 , CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no
 			 , DATE_FORMAT(req_dt, '%Y-%m-%d') AS req_dt
+			 , appv_doc_id
 			 , dept_cd
 			 , (SELECT dept_nm
 	  			  FROM tb_dept
@@ -201,6 +202,7 @@
 			  	   req_type
 			     , req_no
 			     , req_dt
+			     , appv_doc_id
 			     , b.dept_cd
 			     , reqtr
 			     , req_nm

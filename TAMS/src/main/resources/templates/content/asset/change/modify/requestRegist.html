@@ -190,12 +190,7 @@
     	    	    resizable : "no"
     	        };
     	        
-    	        var param = {
-   	        		id : "reqStus",
-   	    	        value : "20"
-    	        };
-    	        
-    	        openPopup(popId, url, args, param);
+    	        openPopup(popId, url, args);
     	    });
 	     	
     	  	//결재팝업 호출 
@@ -205,13 +200,15 @@
     	        var popId = "approvalPopup";
     	        var args = {};
     	        args.width = 1100;
-    	        args.height = 650;
+    	        args.height = 710;
     	        args.fullscreen = "no";
     	        args.resizable = "no";
     	        
     	        var param = {
-    	        	id : 'req_no',
-    	    	    value : $("#reqNo").val()
+   	        		id : 'appv_id',
+       	    	    value : $("#appvId").val(),
+    	        	rcd : 'req_no',
+    	    	    rnm : $("#reqNo").val()
     	        };
    	        
     	        openPopup(popId, url, args, param);
@@ -351,6 +348,8 @@
 	            			}
 							$.commRequest(url, reqType, data)
 								.then((res) => {
+									console.log(res.data);
+									$("#appvId").val((res.data)[0].appvDocId);
 									$("#reqType").val((res.data)[0].reqTypeNm);
 									$("#reqNo").val((res.data)[0].reqNo);
 									$("#reqDt").val((res.data)[0].reqDt);
@@ -519,6 +518,7 @@
 		
 		<div class="srch_wrap single">
 			<input id="req_no" type="hidden" th:value="${reqNo}">
+			<input id="appvId" type="hidden">
 			<table class="srch_table">
 				<colgroup>
 					<col width="10%"/>

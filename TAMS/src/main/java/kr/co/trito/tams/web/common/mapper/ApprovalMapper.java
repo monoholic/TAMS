@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.common.dto.AppvDto;
 import kr.co.trito.tams.web.common.dto.AppvLineDto;
+import kr.co.trito.tams.web.common.dto.ReqAppvDto;
 
 @Mapper
 public interface ApprovalMapper {
@@ -18,13 +19,21 @@ public interface ApprovalMapper {
 	
 	public List<AppvLineDto> selectAppvLine(Map<String,String> map);
 	
-	public int insertAppv(AppvDto dto);
+	public int insertAppv(Map<String, Object> items);
 	
-	public int updateAppv(AppvDto dto);
+	public int insertAppvLine(List<AppvLineDto> map);
 	
-	public int insertAppvLine(List<AppvLineDto> dtoList);
+	public int insertReqAppv(Map<String, Object> items);
+	
+	public int updateAppv(Map<String, Object> items);
+	
+	public int updateAppvId(Map<String, Object> items);
 	
 	public int deleteAppvLine(String appvId);
 	
-	public int reqNoCheck(Map<String, Object> items);
+	public String reqNoCheck(Map<String, Object> items);
+	
+	public String maxAppvId();
+	
+	public int reqNoCheckCnt();
 }

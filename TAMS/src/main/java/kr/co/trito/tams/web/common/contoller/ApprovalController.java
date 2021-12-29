@@ -124,89 +124,7 @@ public class ApprovalController {
 		return responseService.success(result);
 	}
 	
-	/** 결재상신 저장 
-	@SuppressWarnings("unchecked")
-	@PostMapping("/saveApproval")
-	@ResponseBody
-	@ApiOperation(value = "Web API Approval", notes = "Web API")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String saveApproval(HttpServletRequest request
-           , @ApiParam(value = "결재상신 정보 (결재,합의,통보,본문)", required = true) @RequestBody(required=true) String datas
-           , @ApiParam(value = "결재자 정보", required = true) @AuthenticationPrincipal UserDetails userDetail  ) {
-		
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-		System.out.println(datas);
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-		
-		Map<String,Object> map = new HashMap<>();
-		
-		//상신자
-		UserInfo userDto = (UserInfo)userDetail;
-		String userId = userDto.getDto().getUserId();
-		
-		JSONParser parser = new JSONParser(datas);
-		
-		String assetNo 		= null;         
-		String status 		= null;           
-		String appvId 		= null;         
-		String appvTtl 		= null;         
-		String appvType 	= null;       
-		String apprContent 	= null; 
-		                                                      
-		List<String> appr 	= null;    
-		List<String> agree 	= null;  
-		List<String> noti 	= null;
-		
-		try {
-			
-			LinkedHashMap<?,?> obj = (LinkedHashMap<?,?>)parser.parse();
-			
-			assetNo = (String) obj.get("assetNo");
-			status = (String) obj.get("status");
-			appvId = (String) obj.get("appvId");
-			appvTtl = (String) obj.get("appvTtl");
-			appvType = (String) obj.get("appvType");
-			apprContent = (String) obj.get("apprContent");
-			
-			appr = (List<String>)obj.get("appr");
-			agree = (List<String>)obj.get("agree");
-			noti = (List<String>)obj.get("noti");
-			
-		}catch(ParseException pe) {}
-		
-			AppvDto appvDto = new AppvDto();
-			appvDto.setAppvId(appvId);
-			appvDto.setAppvTtl(appvTtl);
-			appvDto.setAppvTtl(appvTtl);
-			appvDto.setAppvCn(apprContent);
-			appvDto.setAppvType(appvType);
-			appvDto.setAppvUserId(userId);
-			
-			if( "F".equals(status) ) {
-				appvDto.setAppvStus("ING");
-			} else {
-				appvDto.setAppvStus("TMP");
-			}
-			appvDto.setAppvStep("SUBMIT"); //기안
-			appvDto.setRegr(userId);
-			
-			log.error("======================================================");
-			log.error(appvDto.toString());
-			log.error("======================================================");
-			
-			map.put("appvDto"	, appvDto);
-			map.put("appr"		, appr);
-			map.put("agree"		, agree);
-			map.put("noti"		, noti);
-
-		String rst = approvalService.regAppvInfo(map, status);
-		
-		return rst;
-	}*/
-	
-	/** 결재상신 저장 */
-	@SuppressWarnings("unchecked")
+	/** 결재상신 저장 및 수정 */
 	@PostMapping("/saveApproval")
 	@ResponseBody
 	@ApiOperation(value = "저장 및 결재상신", notes = "저장 및 결재 상신")
@@ -216,75 +134,51 @@ public class ApprovalController {
            @ApiParam(value = "결재상신 정보 (결재,합의,통보,본문)", required = true) @RequestBody(required=true) Map<String, Object> items,
            @ApiParam(value = "결재자 정보", required = true) @AuthenticationPrincipal UserDetails userDetail) {
 		
-		//상신자
+		// 결재상신 사용자 ID
 		UserInfo userDto = (UserInfo)userDetail;
 		String userId = userDto.getDto().getUserId();
+		items.put("appvUserId", userId);
 		
-		// tb_req_appv 테이블에서 자산의뢰 번호가 있는지 확인.
-		// 있다면, appv_doc_id 값을 가지고 업데이트
-		// 없다면, appv_doc_id 만들기 → 임시저장임
-		
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-		System.out.println(items);
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
 		// 자산의뢰 결재 테이블 유무 확인.
-		int reqNoChk = approvalService.reqNoCheck(items);
+		String stus = items.get("status").toString();
+		String appvId = approvalService.reqNoCheck(items);
+		String maxAppvId = approvalService.maxAppvId();
+		int reqNoCnt = approvalService.reqNoCheckCnt();
 		
-		if(reqNoChk > 0) {
-			
-		}
-		else {
-			
-		}
-			
+		items.put("appvId", appvId);
+		if (reqNoCnt < 1)
+			items.put("appvId", "DC2112001");
 		
-		/*
-		try {
-			
-			LinkedHashMap<?,?> obj = (LinkedHashMap<?,?>)parser.parse();
-			
-			assetNo = (String) obj.get("assetNo");
-			status = (String) obj.get("status");
-			appvId = (String) obj.get("appvId");
-			appvTtl = (String) obj.get("appvTtl");
-			appvType = (String) obj.get("appvType");
-			apprContent = (String) obj.get("apprContent");
-			
-			appr = (List<String>)obj.get("appr");
-			agree = (List<String>)obj.get("agree");
-			noti = (List<String>)obj.get("noti");
-			
-		}catch(ParseException pe) {}
-		
-			AppvDto appvDto = new AppvDto();
-			appvDto.setAppvId(appvId);
-			appvDto.setAppvTtl(appvTtl);
-			appvDto.setAppvTtl(appvTtl);
-			appvDto.setAppvCn(apprContent);
-			appvDto.setAppvType(appvType);
-			appvDto.setAppvUserId(userId);
-			
-			if( "F".equals(status) ) {
-				appvDto.setAppvStus("ING");
-			} else {
-				appvDto.setAppvStus("TMP");
+		// 결재 상신 버튼
+		if("F".equals(stus)) {
+			items.put("appvStus", "ING");
+			items.put("appvStep", "1");
+			if(appvId == null) {
+				items.put("appvId", maxAppvId);
+				approvalService.insertAppv(items);
+				approvalService.insertReqAppv(items);
 			}
-			appvDto.setAppvStep("SUBMIT"); //기안
-			appvDto.setRegr(userId);
-			
-			log.error("======================================================");
-			log.error(appvDto.toString());
-			log.error("======================================================");
-			
-			map.put("appvDto"	, appvDto);
-			map.put("appr"		, appr);
-			map.put("agree"		, agree);
-			map.put("noti"		, noti);
-
-		String rst = approvalService.regAppvInfo(map, status);
+			else {
+				approvalService.updateAppv(items);
+			}
+		}
+		// 저장 버튼
+		else {
+			items.put("appvStus", "TMP");
+			items.put("appvStep", "1");
+			if(appvId == null) {
+				items.put("appvId", maxAppvId);
+				approvalService.insertAppv(items);
+				approvalService.insertReqAppv(items);
+			}
+			else {
+				approvalService.updateAppv(items);
+			}
+		}
 		
-		return rst;
-		*/
+		approvalService.AppvLineInfo(items);	// 결재라인 테이블 INSERT
+		approvalService.updateAppvId(items);	// 자산의뢰마스터 테이블 UPDATE
+		
 		return responseService.success(null);
 	}
 }

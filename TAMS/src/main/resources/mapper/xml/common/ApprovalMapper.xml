@@ -5,7 +5,7 @@
 <mapper namespace="kr.co.trito.tams.web.common.mapper.ApprovalMapper">
 
 	<select id="selectAppvList" parameterType="map" resultType="kr.co.trito.tams.web.common.dto.AppvDto">
-		SELECT CONCAT('DC',DATE_FORMAT(NOW(),'%y%m'),LPAD(appv_id,'3','0')) AS appv_id, a.appv_user_id, a.appv_type, a.appv_ttl, a.appv_cn, a.appv_stus, a.appv_step, a.del_yn, a.updr, a.up_dt, a.regr, a.reg_dt
+		SELECT a.appv_id, a.appv_user_id, a.appv_type, a.appv_ttl, a.appv_cn, a.appv_stus, a.appv_step, a.del_yn, a.updr, a.up_dt, a.regr, a.reg_dt
               ,(select user_nm from tb_user b where b.user_id = a.appv_user_id) appv_user_nm
               ,(select code_nm from tb_com_code b where b.code_id = a.appv_type and b.code_grp_id='REQ_TYPE') appv_type_nm
               ,(select code_nm from tb_com_code b where b.code_id = a.appv_stus and b.code_grp_id='APPR_STATUS') appv_stus_nm
@@ -29,45 +29,82 @@
 		  FROM tams.tb_com_appv_line a
 		 WHERE a.appv_id = '${appv_id}'
 	</select>
-
-	<insert id="insertAppv" parameterType="kr.co.trito.tams.web.common.dto.AppvDto" useGeneratedKeys="true" keyProperty="appv_id">
-		INSERT INTO tb_com_appv
-			   SET appv_user_id = #{appvUserId}
-				 , appv_type    = #{appvType}  
-				 , appv_ttl     = #{appvTtl}   
-				 , appv_cn      = #{appvCn}    
-				 , appv_stus    = #{appvStus}  
-				 , appv_step    = #{appvStep}  
-				 , regr         = #{regr}      
-               ON DUPLICATE KEY UPDATE 
-                   appv_user_id = #{appvUserId}
-				 , appv_type    = #{appvType}
-				 , appv_ttl     = #{appvTtl}
-				 , appv_cn 	    = #{appvCn}
-				 , appv_stus    = #{appvStus}
-				 , appv_step    = #{appvStep}
-				 , updr 	    = #{regr}
-				 , up_dt 	    = NOW()
-				                 
+	
+	<!-- 결재상신 화면 : 결재 작성(결재문서 테이블) -->
+	<insert id="insertAppv" parameterType="kr.co.trito.tams.web.common.dto.AppvDto">
+		INSERT INTO tb_com_appv (appv_id, appv_user_id, appv_type, appv_ttl, appv_cn, appv_stus, appv_step, regr, reg_dt)        
+		VALUES ((CASE
+ 	 			   WHEN #{appvId} = 'DC2112001' THEN #{appvId}
+ 				   ELSE #{appvId}
+ 				END)
+			   , #{appvUserId}, #{appvType}, #{appvTtl}, #{appvContent}, #{appvStus}, #{appvStep}, #{appvUserId}, NOW())                                                                              
 	</insert>
 	
-	<insert id="insertAppvLine" parameterType="java.util.List"  useGeneratedKeys="true" keyProperty="appv_id">
-		INSERT INTO TB_COM_APPV_LINE(APPV_ID, APPVR, APPV_DIV, APPV_ORD, APPV_STUS, REGR)
-		                    VALUES
-							<foreach collection="list" item="line" separator=" , ">
-		                     ('${line.appvId}', '${line.appvr}', '${line.appvDiv}', '${line.appvOrd}', '${line.appvStus}', '${line.regr}')
-		                    </foreach>
+	<!-- 결재상신 화면 : 결재 작성(결재라인 테이블) -->
+	<insert id="insertAppvLine" parameterType="kr.co.trito.tams.web.common.dto.AppvLineDto" useGeneratedKeys="true" keyProperty="appvLineId">
+		INSERT INTO tb_com_appv_line (appv_id, appvr, appv_div, appv_ord, appv_stus, rcv_dt, regr, reg_dt)
+		VALUES 
+			<foreach collection="list" item="line" separator=" , ">
+                ('${line.appvId}', '${line.appvr}', '${line.appvDiv}', '${line.appvOrd}', '${line.appvStus}', NOW() ,'${line.regr}', NOW())
+            </foreach> 
 	</insert>
 	
+	<!-- 결재상신 화면 : 결재 작성(자산의뢰 결재 테이블) -->
+	<insert id="insertReqAppv" parameterType="kr.co.trito.tams.web.common.dto.ReqAppvDto">
+		INSERT INTO tb_req_appv (req_no, appv_doc_id, regr, reg_dt)      
+		VALUES (#{reqNo}
+			  ,(CASE
+ 	 			   WHEN #{appvId} = 'DC2112001' THEN #{appvId}
+ 				   ELSE #{appvId}
+ 				END)
+			  , #{appvUserId}, NOW())
+	</insert>
+	
+	<!-- 결재상신 화면 : 결재 수정(결재문서 테이블) -->
+	<update id="updateAppv" parameterType="kr.co.trito.tams.web.common.dto.AppvDto">
+		UPDATE tb_com_appv 
+		   SET appv_user_id	= #{appvUserId}
+		     , appv_type	= #{appvType}
+		     , appv_ttl     = #{appvTtl}
+		     , appv_cn      = #{appvContent}
+		     , appv_stus    = #{appvStus}
+		     , appv_step    = #{appvStep}
+		     , updr         = #{appvUserId}
+		     , up_dt        = NOW()
+		 WHERE appv_id = #{appvId}
+	</update>
+	
+	<!-- 자산의뢰 마스터 테이블 결재문서 수정 -->
+	<insert id="updateAppvId" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto">
+		UPDATE tb_req_mas 
+		   SET appv_doc_id = #{appvId}
+		     , req_stus    = #{appvStus}
+		 WHERE req_no = #{reqNo}
+	</insert>
+	
+	<!-- 결재라인 삭제 -->
 	<delete id="deleteAppvLine" parameterType="String">
 		DELETE FROM TB_COM_APPV_LINE
-		      WHERE APPV_ID = #{appvId}
+		WHERE APPV_ID = #{appvId}
 	</delete>
 	
-	<select id="reqNoCheck" resultType="int" parameterType="kr.co.trito.tams.web.common.dto.ReqAppvDto">
-		SELECT count(*) as cnt
+	<!-- 결재문서 ID 확인(NULL 체크) -->
+	<select id="reqNoCheck" resultType="String" parameterType="kr.co.trito.tams.web.common.dto.ReqAppvDto">
+		SELECT appv_doc_id
 		FROM tb_req_appv
-		WHERE req_no = #{reqNo}	
+		WHERE req_no = #{reqNo}
 	</select>
 	
+	<!-- 결재문서 ID 최댓값 -->
+	<select id="maxAppvId" resultType="String" parameterType="kr.co.trito.tams.web.common.dto.ReqAppvDto">
+		SELECT CONCAT('DC', DATE_FORMAT(now(),'%y%m'), LPAD(MAX(SUBSTRING(appv_id,7,3))+1,3,0))
+		FROM tb_com_appv
+		WHERE SUBSTRING(appv_id,1,2) = 'DC'
+	</select>
+	
+	<!-- 결재문서 ID 확인 (데이터가 없을 때 비교값) -->
+	<select id="reqNoCheckCnt" resultType="int">
+		select COUNT(*) as cnt
+		FROM tb_req_appv
+	</select>
 </mapper>

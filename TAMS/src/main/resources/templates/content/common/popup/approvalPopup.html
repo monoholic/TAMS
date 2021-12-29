@@ -40,13 +40,6 @@
 		<script src="/js/summernote/lang/summernote-ko-KR.min.js"></script>
 		
 		<script>
-		/* var appv_id = '[[${appv_id}]]';
-		
-		if( param_id != null && param_id != "" ) {
-			var paramObj = $('<input name="'+param_id+'" value="'+param_value+'"  />');
-			$("#pop_wrap").append(paramObj);
-		} */
-		
 		var appvId = '[[${appv_id}]]';
 		
 		var apprCnt  = 0;
@@ -109,7 +102,7 @@
 			});
 			
 			//결재상신 내용 : web editor 설정
-			$("#apprContent").summernote(getSummernoteBody());
+			$("#appvContent").summernote(getSummernoteBody());
 			
 			$(".pop_close").on("click", function(){
 				self.close();
@@ -136,13 +129,15 @@
 	    		    ['insert', ['link', 'hr']],
 	    		    ['view', ['codeview']],
 	    		    ['help', ['help']]
-	    		  ]
+	    		]
 	        };
 		}
 		
 		//결재 저장/상신
 		function saveApproval(status) {
 			var list = $("li");
+			
+			var reqSub = String(parseInt(($("#req_no").text()).substr(5,3)));
 			
 			arrAppr.length = 0;
 			arrAgree.length = 0;
@@ -158,17 +153,16 @@
 					arrNoti.push($(element).attr('value'));
 			});
 			
-			var apprContent = $('#apprContent').summernote('code'); 
+			var appvContent = $('#appvContent').summernote('code'); 
 			
 			//상신일 경우 필수 항목 체크
 			if(status == "F") {
-				
 				var apprCnt = arrAppr.length;
 				if( apprCnt == 0 ) {
 					alert("[[#{screen.info.status.error.appr.no.approver}]]");
 					return false;
 				}
-				if( apprContent == "<p><br></p>" ) {
+				if( appvContent == "<p><br></p>" ) {
 					alert("[[#{screen.info.status.error.input.content}]]");
 					return false;
 				}
@@ -179,13 +173,13 @@
 			let url = "/approval/saveApproval";
 			let reqType = 'POST';	
 			let data = {
-				"reqNo"		  : $("#req_no").text(),
+				"reqNo"		  : reqSub,
 				"appr"        : arrAppr,
 				"agree"       : arrAgree,
 				"noti"        : arrNoti,
 				"appvTtl"     : $("#appvTtl").val(),
 				"appvType"    : "MO",  //등록의뢰
-				"apprContent" : apprContent,
+				"appvContent" : appvContent,
 				"status"      : status
 			};
 			$.commRequest(url, reqType, JSON.stringify(data))
@@ -214,10 +208,8 @@
 			}  
 		}
 		
-		
 		//팝업에서 받은 결과 처리
 		function setResult(obj) {
-			
 			var flag = true;
 			
 			//결재자 중복 체크
@@ -236,7 +228,7 @@
 				});
 			}
 			
-			if( !flag) return false;
+			if(!flag) return false;
 			
 			
 			var divAppr  = $("#divAppr");
@@ -292,7 +284,6 @@
 			if( gbn == "noti" ) {
 				notiCnt--;
 			}
-			
 			setCount();
 		}
 		
@@ -302,7 +293,6 @@
 			$("#agree_cnt").text(agreeCnt);
 			$("#noti_cnt").text(notiCnt);
 		}
-		
 		
 		function getApprovalInfo(appvId) {
 			let url = "/approval/approvalPopup2";
@@ -316,7 +306,7 @@
 					var appvDto = res.data.appvDto;
 					$("#appvId").val(appvDto.appvId);
 					$("#appvTtl").val(appvDto.appvTtl);
-					$("#apprContent").summernote("code",appvDto.appvCn);
+					$("#appvContent").summernote("code",appvDto.appvCn);
 					
 					//결재 라인
 					var appvLines = JSON.parse(res.data.appvLines);
@@ -355,7 +345,7 @@
 </head>
 <body >
 	<div layout:fragment="content">
-	<span id="req_no" th:text='${param.req_no}'></span>
+	<span id="req_no" th:text='${param.req_no}' style="display: none;"></span>
 	<input type="hidden" id="appvId" name="appvId" />
 		<div id="pop_wrap" >
 			<h3><span id="popTitle"></span>&nbsp;[[#{screen.text.comm.approve}]]
@@ -432,7 +422,7 @@
 					</tr>
 					<tr>
 						<td colspan="2" >
-							<div id="apprContent"></div>
+							<div id="appvContent"></div>
 						</td>
 					</tr>
 				</table>

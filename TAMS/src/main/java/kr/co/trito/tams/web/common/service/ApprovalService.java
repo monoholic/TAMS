@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.common.dto.AppvDto;
 import kr.co.trito.tams.web.common.dto.AppvLineDto;
+import kr.co.trito.tams.web.common.dto.ReqAppvDto;
 import kr.co.trito.tams.web.common.mapper.ApprovalMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,88 +26,70 @@ public class ApprovalService {
 
 	@Autowired
 	ApprovalMapper mapper;
-	
-	
-	public String regAppvInfo(Map<String,Object> map, String status) {
+
+	public void AppvLineInfo(Map<String,Object> map) {
 		
-		AppvDto appv = (AppvDto)map.get("appvDto");
+		List<AppvLineDto> appvLineDto = new ArrayList<>();
 		
-		int insCnt = insertAppv(appv);
+		// 결재 순서
+		int appvOrd = 1;
 		
 		List<String> appr  = (List<String>)map.get("appr");
 		List<String> agree = (List<String>)map.get("agree");
 		List<String> noti  = (List<String>)map.get("noti");
 		
-		//상신자 정보 세팅
-		int apprOrd  = 1;
-		
-		String appvId = appv.getAppvId();
-		
-		List<AppvLineDto> appvLineDto = new ArrayList<>();
-		
-		AppvLineDto appvUserDto = new AppvLineDto();
-		appvUserDto.setAppvId(appv.getAppvId());
-		appvUserDto.setAppvr(appv.getAppvUserId());
-		appvUserDto.setAppvDiv("SUBMIT");
-		if( "F".equals(status)) appvUserDto.setAppvStus("CMP");
-		else                    appvUserDto.setAppvStus("ING");
-		appvUserDto.setAppvOrd(String.valueOf(apprOrd));
-		appvUserDto.setRegr(appv.getAppvUserId());
-		
-		appvLineDto.add(appvUserDto);
-		
 		for(String ap : appr) {
-			log.error("appr >> "+ap);
-			apprOrd++;
 			AppvLineDto apDto = new AppvLineDto();
-			apDto.setAppvId(appvId);
+			apDto.setAppvId(map.get("appvId").toString());
 			apDto.setAppvr(ap);
 			apDto.setAppvDiv("APPROVAL");
 			apDto.setAppvStus("ING");
-			apDto.setAppvOrd(String.valueOf(apprOrd));
-			apDto.setRegr(appv.getAppvUserId());
+			if("TMP".equals(map.get("appvStus").toString())){
+				appvOrd = 0;
+			}
+			apDto.setAppvOrd(String.valueOf(appvOrd));
+			apDto.setRegr(map.get("appvUserId").toString());
 			
 			appvLineDto.add(apDto);
+			appvOrd++;
 		}
 		
 		for(String ag : agree) {
-			log.error("agree >> "+ag);
-			apprOrd++;
-			AppvLineDto agDto = new AppvLineDto();
-			agDto.setAppvId(appvId);
-			agDto.setAppvr(ag);
-			agDto.setAppvDiv("AGREEMENT");
-			agDto.setAppvStus("ING");
-			agDto.setAppvOrd(String.valueOf(apprOrd));
-			agDto.setRegr(appv.getAppvUserId());
+			AppvLineDto apDto = new AppvLineDto();
+			apDto.setAppvId(map.get("appvId").toString());
+			apDto.setAppvr(ag);
+			apDto.setAppvDiv("AGREEMENT");
+			apDto.setAppvStus("ING");
+			if("TMP".equals(map.get("appvStus").toString())){
+				appvOrd = 0;
+			}
+			apDto.setAppvOrd(String.valueOf(appvOrd));
+			apDto.setRegr(map.get("appvUserId").toString());
 			
-			appvLineDto.add(agDto);
+			appvLineDto.add(apDto);
+			appvOrd++;
 		}
 		
 		for(String no : noti) {
-			log.error("noti >> "+no);
-			apprOrd++;
 			AppvLineDto noDto = new AppvLineDto();
-			noDto.setAppvId(appvId);
+			noDto.setAppvId(map.get("appvId").toString());
 			noDto.setAppvr(no);
 			noDto.setAppvDiv("NOTIFY");
 			noDto.setAppvStus("ING");
-			noDto.setAppvOrd(String.valueOf(apprOrd));
-			noDto.setRegr(appv.getAppvUserId());
+			if("TMP".equals(map.get("appvStus").toString())){
+				appvOrd = 0;
+			}
+			noDto.setAppvOrd(String.valueOf(appvOrd));
+			noDto.setRegr(map.get("appvUserId").toString());
 			
 			appvLineDto.add(noDto);
+			appvOrd++;
 		}
 		
-		if( !StringUtils.isEmpty(appv.getAppvId()) ) deleteAppvLine(appv.getAppvId());
+		if(!StringUtils.isEmpty(map.get("appvId").toString())) 
+			deleteAppvLine(map.get("appvId").toString());
 		
-		int lineCnt = insertAppvLine(appvLineDto);
-		
-		String rst = "202";
-		if( insCnt > 0 && lineCnt > 0 ) {
-			rst = "200";
-		}
-		
-		return rst;
+		insertAppvLine(appvLineDto);
 	}
 	
 	public List<AppvDto> selectAppvList(SearchCondition condition) {
@@ -121,23 +104,39 @@ public class ApprovalService {
 		return mapper.selectAppvLine(map);
 	}
 	
-	public int insertAppv(AppvDto dto) {
-		return mapper.insertAppv(dto);
+	public int insertAppv(Map<String, Object> items) {
+		return mapper.insertAppv(items);
 	}
 	
-	public int updateAppv(AppvDto dto) {
-		return mapper.updateAppv(dto);
+	public int insertAppvLine(List<AppvLineDto> map) {
+		return mapper.insertAppvLine(map);
 	}
 	
-	public int insertAppvLine(List<AppvLineDto> dtoList) {
-		return mapper.insertAppvLine(dtoList);
+	public int insertReqAppv(Map<String, Object> items) {
+		return mapper.insertReqAppv(items);
+	}
+	
+	public int updateAppv(Map<String, Object> items) {
+		return mapper.updateAppv(items);
+	}
+	
+	public int updateAppvId(Map<String, Object> items) {
+		return mapper.updateAppvId(items);
 	}
 	
 	public int deleteAppvLine(String appvId) {
 		return mapper.deleteAppvLine(appvId);
 	}
 	
-	public int reqNoCheck(Map<String, Object> items) {
+	public String reqNoCheck(Map<String, Object> items) {
 		return mapper.reqNoCheck(items);
+	}
+	
+	public String maxAppvId() {
+		return mapper.maxAppvId();
+	}
+	
+	public int reqNoCheckCnt() {
+		return mapper.reqNoCheckCnt();
 	}
 }
