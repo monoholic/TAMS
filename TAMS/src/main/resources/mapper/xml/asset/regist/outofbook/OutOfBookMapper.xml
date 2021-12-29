@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.trito.tams.web.asset.regist.outofbook.mapper.OutOfBookMapper">
+	 	 
+	<select id="selectOutOfBookCount" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		select 1	
+	</select>	 	   		
+	
+	<select id="selectOutOfBookList" resultType="kr.co.trito.tams.web.asset.regist.outofbook.dto.AssetMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		select * 
+		from tb_aset_mas
+	</select>	
+	
+</mapper>

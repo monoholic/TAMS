@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/default">
+
+	<head>
+	    <title>[[#{screen.text.inv.screen.title}]]</title>
+	</head>
+        
+	<!-- css -->
+	<th:block layout:fragment="css">	
+	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/theme.css" />
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.8/css/tabulator.min.css" rel="stylesheet"> 
+	</th:block>        
+	
+	<th:block layout:fragment="script">
+		<script type="text/javascript" src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
+		
+	    <script>
+	    
+			const SCREEN_NM = "INVEST_REG_RIST";    
+		    
+		    // 공통코드(자산유형 1레벨 출력)
+		    let menuId = "[[${menuId}]]";
+		    
+		    let grid;
+		    let loadParams; //Local Storage에 저장된 파라미터 정보
+		    
+		    var condition = {};
+		 	var prevCondition = {};
+		 	
+		    $(function(){
+		    	
+		    	if("[[${loadParams}]]" == 'Y'){ //등록자산 목록에서 화면전환시
+		    		loadParams = $.commLoadSearchParams(SCREEN_NM);
+		    	}else{
+		    		$.commRemoveSearchParams(SCREEN_NM); //메뉴클릭시	    		
+		    	}
+		    	
+	            if(loadParams != null){
+	            	
+	                prevCondition = loadParams.condition.params;
+	                
+	    	        if(Object.keys(prevCondition).length != undefined){
+	    	        	$("#invNo").val(prevCondition.invNo);
+	    	        	$("#invTtl").val(prevCondition.invTtl);
+	    	        	$("#poNo").val(prevCondition.poNo);
+	    	        	$("#mfgdNm").val(prevCondition.mfgdNm);
+	    	        	$("#deptCd").val(prevCondition.deptCd);
+	    	        	$("#deptNm").val(prevCondition.deptNm);	    	        	
+	    	        	$("#invReqr").val(prevCondition.invReqr);
+	    	        	$("#fromDate").val(loadParams.fromDate);
+	    	        	$("#toDate").val(loadParams.toDate);
+	    	        	$("#regYn").val(prevCondition.regYn);
+	    	        } 
+	            }
+		    	
+				grid = new Tabulator("#data-table", {
+				 	locale:true,
+				    langs: $.commGridLocalization(),								
+				 	height:"95%",
+				 	layout:"fitColumns",
+				 	movableColumns:true,
+				 	pagination:true,
+				 	paginationMode:"remote",
+				 	ajaxURL:"/asset/regist/invest/investReg/investRegList",			
+				 	ajaxParams: getParams(),
+				 	paginationSize:20,				    
+				 	paginationSizeSelector:[20, 50, 100, 500],			
+				 	dataSendParams:{
+				        "page":"currentPage",
+				        "size":"numOfRows"
+				    } ,							    
+				 	placeholder:"No Data Set",				 	
+				 	ajaxResponse:function(url, params, res){
+				 		$(".result").text("Totals : " + res.condition.totalCount);
+						condition = res.condition;				 						 		
+				 		return res;
+				 	},					 	
+				 	columns:[ 
+					 	{title:"[[#{screen.text.inv.no}]]"		 , field:"invNo"	, hozAlign:"center", headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.inv.ttl}]]"		 , field:"invTtl"	, hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.inv.dt}]]"		 , field:"invDt" 	, hozAlign:"center", headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.po.no}]]"	 	 , field:"poNo"		, hozAlign:"center", headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.po.mfgdnm}]]"	 , field:"mfgdNm"	, hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.po.qty}]]"	 	 , field:"qty"		, hozAlign:"right" , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.po.amt}]]"	 	 , field:"poAmt"	, hozAlign:"right" , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.dept.nm}]]"	     , field:"deptNm"	, hozAlign:"left"  , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.inv.reqr}]]"	 , field:"userNm"	, hozAlign:"center", headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.inv.asetqty}]]"	 , field:"asetQty"	, hozAlign:"right" , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.inv.noasetqty}]]", field:"noAsetQty", hozAlign:"right" , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.inv.reqr}]]"	 , field:"invReqr"	, visible:false },					 	
+					 	{title:"newYn"							 , field:"newYn" 	, visible:false},
+				 	],
+				});						
+
+				/*------------- Grid Events -------------*/
+				//row click
+				grid.on("rowClick", function(e, row){	
+					var rowData = row.getData();					
+					openAsetList(row.getData());
+				});	
+				
+				
+				/*------------- Button Events -------------*/
+	         	//조회
+	    	    $(".btn_srch").on("click",function (){
+	    	    	grid.replaceData();
+		        });
+		        
+	    	    //팝업창 닫기
+				$("#btn_close_pop").on("click",function(){ 
+					window.close();
+				});
+		        
+	          	//리셋 버튼
+	    	    $(".btn_reset").click(function() {
+	    	    	$("#invNo").val("");
+	    	    	$("#invTtl").val("");
+	    	    	$("#poNo").val("");
+	    	    	$("#mfgdNm").val("");
+	    	    	$("#deptNm").val("");
+	    	    	$("#deptCd").val("");
+	    	    	$("#userNm").val("");
+	    	    	$("#userId").val("");
+	    	    	$("#fromDate").val("");
+	    	    	$("#toDate").val("");
+	    	    	$("#regYn").val("");
+	    	    });
+	          	
+				//담당자 
+	    	    $("#openUserFilterPopup").on("click", function() { 	    	    	
+	    	        var url = "/common/popup/userFilterPopup";
+	    	        var popId = "userPopup";
+	    	        var args = {
+	    	        	width  : 800,	
+	    	        	height : 416,
+	    	        };	    	        
+	    	        var param = {userId:"#userId", userNm:"#userNm"};	    	        
+	    	        openPopup2("userPopup", url, args, param);	    	    	
+	    	    });
+				
+	    	  	//부서
+	     	    $("#openDeptPopup").on("click", function() { 
+	     	    	let url = "/common/popup/deptTreePopup";
+	     	    	let args = {
+		     	    		width  : 500, 
+		     	    		height : 450,
+		     	    	};	    	        
+	     	    	let param = {
+	    	        	searchType:"DEPT", 
+	    	        	deptCd:"#deptCd", 
+	    	        	deptNm:"#deptNm"
+	    	        };	    	        
+	    	        openPopup2("DeptPopup", url, args, param);
+	     	    });
+	     	    
+	    	  	//엑셀 다운로드
+	     	    $("#excelDown").on("click",function() {	       					       
+	     	    	grid.download("xlsx", "InvestAsset.xlsx", {sheetName:"투자자산"});
+				});
+	    	});
+
+			function enterkey() {
+		    	if (window.event.keyCode == 13) {
+		    		if (validationCheck() == '202') {
+		    			grid.replaceData();
+		    		}
+		        }
+		    }
+			 
+			// 유효성 검사
+		    function validationCheck() {
+		    	let code = '202';				
+		    	let fromDate = $("#fromDate").val().replaceAll("-", "");
+		    	let toDate = $("#toDate").val().replaceAll("-", "");
+		    	
+				if(fromDate > toDate) {
+					alert("[[#{screen.info.status.date.fail}]]");
+					$("#toDate").focus();
+					code = '200';
+				}
+				return code;
+		    }
+			
+		    function returnResult(item) {
+				opener.selectAsetList(item);
+				window.close();
+		    }
+		    
+		    function openAsetList(val){
+
+		       	event.preventDefault();
+		       	
+		       	let saveParams = {
+		       		"condition": condition,
+		       		"fromDate" : $("#fromDate").val(), 
+		       		"toDate"   : $("#toDate").val(),
+		       		"menuId"   : "[[${menuId}]]" ,
+		       		"menuNm"   : "[[${menuNm}]]",
+		       		"menuDesc" : "[[${menuDesc}]]",
+		       		"newYn"    : val.newYn,
+		       	}
+		       	
+		       	$.commSaveSearchParams(SCREEN_NM, saveParams);
+		       	
+	            let url = "/asset/regist/invest/regAset";
+				let menuId = "[[${menuId}]]";
+	            
+				var $form = $('<form></form>'); 
+					$form.attr('action', url); 
+					$form.attr('method', 'Post'); 
+					$form.attr('target', '_self'); 
+					
+				var inputStr = $('<input type="hidden" value="' + val.poNo + '" name="poNo">');
+					$form.append(inputStr);
+	 				inputStr = $('<input type="hidden" value="' + menuId + '" name="menuId">');
+					$form.append(inputStr); 					
+					$form.appendTo('body'); 					
+					$form.submit();
+		    }
+		    
+	        function getParams(){
+	            return {
+	    				"invNo"   	   : $("#invNo").val(),
+	    				"invTtl"   	   : $("#invTtl").val(),
+	    				"poNo"         : $("#poNo").val(),
+	    				"mfgdNm"   	   : $("#mfgdNm").val(),
+	    				"deptCd"       : $("#deptCd").val(),
+	    				"userId"   	   : $("#userId").val(),
+	    			    "fromDate"     : $("#fromDate").val().replaceAll("-", ""),
+					    "toDate"       : $("#toDate").val().replaceAll("-", ""),
+					    "regYn"	   	   : $("#regYn").val()             
+	                 }
+	         }   
+	    
+	    </script>	
+	</th:block>
+
+	<div layout:fragment="content">
+		<!-- contents_head -->
+		<div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div>
+		<h3><span th:text="${menuNm}"></span></h3>
+		<!-- //contents_head -->
+		
+		<!-- search -->
+		<div class="srch_wrap">
+			<!-- search_form -->
+			<div class="srch_form">
+				<table class="srch_table">
+					<colgroup>
+						<col width="10%"/>
+						<col width="20%"/>
+						<col width="15%"/>
+						<col width="20%"/>
+						<col width="15%"/>
+						<col width=""/>
+					</colgroup>
+					<tr>
+						<th>[[#{screen.text.inv.no}]]</th>
+						<td><input type="text" id="invNo" onkeyup="enterkey()" style="width:100%;"></td>
+						<th>[[#{screen.text.inv.ttl}]]</th>
+						<td><input type="text" id="invTtl" onkeyup="enterkey()" style="width:100%;"></td>
+						<th>[[#{screen.text.po.no}]]</th>
+						<td><input type="text" id="poNo" onkeyup="enterkey()" style="width:100%;"></td>
+					</tr>
+					<tr>
+						<th>[[#{screen.text.po.mfgdnm}]]</th>
+						<td><input type="text" id="mfgdNm" onkeyup="enterkey()" style="width:100%;"></td>
+						<th>[[#{screen.text.dept.nm}]]</th>
+						<td th:if="${session.MenuRoleCheck.roleId}=='ROLE_ADMIN'">
+							<input type="hidden" id="deptCd"/>
+							<div class="inqr_popup_btn">
+								<input type="text" id="deptNm" style="width:100%; border-right: 1px none;" />
+								<a href="#" id="openDeptPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+							</div>
+						</td>
+						<td th:if="${session.MenuRoleCheck.roleId}!='ROLE_ADMIN'">
+							<input type="text" id="deptNm" style="width:100%;" />
+						</td>
+						<th>[[#{screen.text.inv.reqr}]]</th>
+						<td>
+							<div class="inqr_popup_btn">
+								<input type="hidden" id="userId"/>
+								<input type="text" id="userNm" style="width:100%; border-right: 1px none;" />
+								<a href="#" id="openUserFilterPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>							
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th>[[#{screen.text.inv.dt}]]</th>
+						<td>
+						<div class="form_wrap_date"><input type="date" id="fromDate" class="aset_date"><input type="date" id="toDate" class="aset_date"></div>
+						</td>
+						<th>[[#{screen.text.inv.asetinqr}]]</th>
+						<td>
+							<select id="regYn" style="width:100%;">
+								<option value="">[[#{screen.text.comm.choice}]]</option>
+								<option value="Y">Y</option>
+								<option value="N">N</option>
+							</select>
+						</td>
+						<td colspan="2"></td>
+					</tr>
+				</table>
+				<!-- search_button -->
+				<div class="button">
+					<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+					<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>										
+								
+				</div>
+				<!-- //search_button -->
+			</div>
+			<!-- //search_form -->
+		</div>
+		<!-- //search -->			
+
+		<div class="list_head">
+			<div class="result">Totals : 0,000</div>
+			<div class="button">
+				<a class="btn_list_rd" id="excelDown">[[#{screen.btn.excel}]]</a>
+			</div>
+			<!-- list_button -->
+		</div>
+		<div id="data-table"></div>
+		</div>
+
+</html>
