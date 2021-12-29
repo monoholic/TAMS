@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.co.trito.tams.web.asset.regist.outofbook.service.OutOfBookService;
+import kr.co.trito.tams.web.user.dto.UserDto;
+import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -29,8 +31,8 @@ public class OutOfBookController {
 		view.addObject("menuNm"  , request.getParameter("menuNm"));
 		view.addObject("menuDesc", request.getParameter("menuDesc"));
 		view.addObject("url"     , request.getParameter("url"));
-		//UserDto userDto = ((UserInfo) authentication.getPrincipal()).getDto();
-		//view.addObject("userDto" , userDto);		
+		UserDto userDto = ((UserInfo) authentication.getPrincipal()).getDto();
+		view.addObject("userDto" , userDto);		
 		view.setViewName(viewPath.concat("outOfBook"));		
 		return view;
 	}		
