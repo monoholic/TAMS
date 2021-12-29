@@ -8,7 +8,7 @@
 		select 1	
 	</select>	 	   		
 	
-	<select id="selectOutOfBookList" resultType="kr.co.trito.tams.web.asset.regist.outofbook.dto.AssetMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+	<select id="selectOutOfBookList" resultType="kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
 		select * 
 		from tb_aset_mas
 	</select>	
