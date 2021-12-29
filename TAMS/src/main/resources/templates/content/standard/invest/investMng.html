@@ -81,7 +81,7 @@
 				/*------------------------- Grid Events -------------------------*/
 				//row click
 				grid.on("rowClick", function(e, row){	
-					var rowData = row.getData();					
+					var rowData = row.getData();		
 					showDetailForm(row.getData());
 				});					
 				
@@ -140,7 +140,6 @@
 
 	    			$.request(params)
     				 .then((res) => {
-    					console.log(res);
     					alert("[[#{screen.info.status.delete.success}]]");
     					$('.btn_srch').click();
     				 })
@@ -162,7 +161,7 @@
 				/*------------------------- 팝업 -------------------------*/
 		        
 		     	// 팝업창 저장 버튼 처리
-	            $('.save_btn').on('click', function (e) {
+	            $('#dt_add').on('click', function (e) {
 	            		                
 	                if(validationCheck() != '200'){
 		            	
@@ -173,7 +172,7 @@
 				    	sub_item.invAmt     =   $(".detail_table").find("#invAmt").val();
 				    	sub_item.actgYear 	=   $(".detail_table").find("#actgYear").val();
 				    	sub_item.poNo		=   $(".detail_table").find("#poNo").val();
-				    	sub_item.mfgdNm	 	=   $(".detail_table").find("#codeNm").val();
+				    	sub_item.mfgdNm	 	=   $(".detail_table").find("#mfgdNm").val();
 				    	sub_item.qty	 	=   $(".detail_table").find("#qty").val();
 				    	sub_item.poAmt	 	=   $(".detail_table").find("#poAmt").val();
 				    	sub_item.invDt	 	=   $(".detail_table").find("#invDt").val().replaceAll("-", "");
@@ -196,14 +195,42 @@
 		    		      });				    		
 		        	}
 	            });
+		     	// 팝업창 삭제 버튼 처리
+	            $('#dt_delete').on('click', function (e) {
 
+	            	if($("#poAsetYn").val() == 'Y') {
+    	    			alert('[[#{screen.info.status.error.inv.has.registered.item}]]');
+    	    			return false;	            		
+	            	}
+	            		    	    	
+	            	let chooseVal = confirm("[[#{screen.info.status.default.delete.yn}]]");
+	    	    	let params = {
+		    	    		url : "/standard/invest/investMng/investMngDelete",
+		    	    		reqType : 'POST',
+		    	    		data : JSON.stringify([cur_item]),
+		    	    	}
+	    	    	
+	            	if(chooseVal) {
+		    			$.request(params)
+	    				 .then((res) => {
+		    				$('.btn_srch').click();
+		    				$('#dt_close').click();
+	    					alert("[[#{screen.info.status.delete.success}]]");
+	    				 })
+	    				 .catch((error) => {
+	    					alert("[[#{screen.info.status.error.occur}]]");
+	    					console.log(error);
+	    				 }) 		            	
+	            	}
+	            });
+				
+				
 		     	// 팝업창 닫기 버튼 처리
-	            $('.close_btn').on('click', function (e) {
-	                e.preventDefault();
+	            $('#dt_close').on('click', function (e) {
 	                clearDetailForm();
 	                $(this).parents("#detailForm").hide();
 	            });
-		     	
+		     			     	
 	            //drag 활성화
 		     	$("#detailForm").draggable();
 	            
@@ -280,7 +307,7 @@
 		    	}
 		    }
 		    
-	    	let items = ['invNo','invTtl','invQty','invAmt','actgYear','poNo','codeNm','qty','poAmt','invDt','deptNm', 'codeNm', 'codeCd', 'userNm','userId','vendNm','reqDt','dlvDt'];
+	    	let items = ['invNo','invTtl','invQty','invAmt','actgYear','poNo','mfgdNm','qty','poAmt','invDt','deptNm', 'userNm','userId','vendNm','reqDt','dlvDt', 'poAsetYn'];
 	    	
 		    //입력폼 초기화
 		    function clearDetailForm() {		    
@@ -290,12 +317,13 @@
 		    }
 			
 		    let save_mode = "";
+		    let cur_item;
+		    
 		    function showDetailForm(item) {
-				console.log(item);    	
-		    	let title = "[[#{screen.text.inv.mng.insert.title}]]";
-		    	var readOnly = false;
+
+		    	clearDetailForm();		    	
 		    	
-		    	clearDetailForm();
+		    	let title = "[[#{screen.text.inv.mng.insert.title}]]";
 		    	
 		    	if( item != null ) {
 					save_mode = "update";
@@ -306,6 +334,9 @@
 			    	});					
 			    	
 					$("#invNo").attr("readOnly", true);
+					
+					cur_item = item;					
+					
 		    	} else {
 		    		save_mode = "insert";
 		    		$("#invNo").attr("readOnly", false);		    		 
@@ -343,12 +374,11 @@
 			//팝업에서 받은 결과 처리
 			function setResult2(obj) {
 				$("#codeCd").val(obj.codeCd);
-				$("#codeNm").val(obj.codeNm);
+				$("#mfgdNm").val(obj.codeNm);
 			}
 			
 			//선택 버튼클릭시 
 			function selectItem(obj) {
-				console.log(obj);
 				opener.setResult(obj); //부모창에 구현
 				window.close();
 			}
@@ -453,9 +483,9 @@
 					<h6><span id="head_title" ></span></h6>
 					<!-- list_button -->
 						<div class="button">
-							<a class="btn_list save_btn">[[#{screen.btn.save}]]</a>
-							<a class="btn_list close_btn">[[#{screen.btn.delete}]]</a>
-							<a class="btn_list close_btn">[[#{screen.btn.close}]]</a>
+							<a id="dt_add" class="btn_list">[[#{screen.btn.save}]]</a>
+							<a id="dt_delete" class="btn_list">[[#{screen.btn.delete}]]</a>
+							<a id="dt_close" class="btn_list">[[#{screen.btn.close}]]</a>
 						</div>
 					<!-- list_button -->
 				</div>
@@ -498,7 +528,7 @@
 							<th>[[#{screen.text.inv.mng.item.nm}]]</th>
 							<td>
 								<div style='display:flex'>
-									<input type="text" id="codeNm" name="codeNm" style="width:100%"/><input type="hidden" id="codeCd" name="codeCd"/>
+									<input type="text" id="mfgdNm" name="mfgdNm" style="width:100%"/><input type="hidden" id="codeCd" name="codeCd"/>
 									<a href="#" id="openCommCodePopup" style="margin-left: 10px;"><img title="[[#{screen.text.inv.mng.item.nm}]]" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 								</div>
 							</td>
@@ -533,6 +563,7 @@
 							<td><input type="date" id="dlvDt" style="width:100%"/></td>
 						</tr>
 					</table>
+					<input type="hidden" id="poAsetYn" />
 				<!-- //detail_table -->
 	     	</div>
      	</div>
