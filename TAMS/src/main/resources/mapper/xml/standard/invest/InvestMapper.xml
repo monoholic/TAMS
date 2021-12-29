@@ -2,1008 +2,153 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.co.trito.tams.web.asset.regist.invest.mapper.InvestRegistMapper">
-	
-	<select id="selectCountInvest" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-			    SELECT COUNT(*)
-				  FROM    
-					    (
-					    	SELECT a.rn
-					      		 , a.inv_no
-					    		 , a.inv_ttl
-					    		 , date_format(a.inv_dt, '%Y-%m-%d')as inv_dt
-					    		 , a.po_no
-					    		 , a.mfgd_nm
-					    		 , a.qty
-					    		 , a.po_amt
-					    		 , a.upp_dept_cd
-					    		 , a.dept_cd
-					    		 , a.dept_nm
-					    		 , a.inv_reqr
-					    		 , a.user_nm
-					    		 , a.user_id
-					    		 , IFNULL((SELECT SUM(qty)
-					    	 		FROM tb_po_aset B
-					    	 		WHERE 1 = 1
-					    	 		AND B.PO_NO = A.PO_NO), 0) as asetQty
-					    	  FROM (
-					    				SELECT ROW_NUMBER() OVER(ORDER BY CAST(b.po_no AS int) DESC) as rn
-					    				  	 , a.inv_no
-					    					 , a.inv_ttl
-					    					 , b.po_no
-					    					 , b.mfgd_nm
-					    					 , b.qty
-					    					 , a.inv_dt
-					    					 , b.po_amt
-					    					 , e.upp_dept_cd
-					    					 , e.dept_cd
-					    					 , e.dept_nm
-					    					 , a.inv_reqr
-					    			 		 , d.user_nm
-					    			 		 , d.user_id
-					    				FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
-					    				WHERE 1 = 1
-					    				AND A.inv_no = B.inv_no
-					    		        AND D.use_yn = 'Y'
-					    				AND E.use_yn = 'Y'
-					    				AND A.regr = D.user_id
-					    				AND D.dept_cd = E.dept_cd
-					    				<if test="params.invNo != '' and params.invNo != null">
-					    				AND a.inv_no LIKE CONCAT('%', #{params.invNo}, '%')
-					    				</if>
-					    				<if test="params.invTtl != '' and params.invTtl != null">
-					    				AND a.inv_ttl LIKE CONCAT('%', #{params.invTtl}, '%')
-					    				</if>
-					    				<if test="params.poNo != '' and params.poNo != null">
-					    				AND B.po_no LIKE CONCAT('%', #{params.poNo}, '%')
-					    				</if>
-					    				<if test="params.mfgdNm != '' and params.mfgdNm != null">
-					    				AND B.mfgd_nm LIKE CONCAT('%', #{params.mfgdNm}, '%')
-					    				</if>
-					    				<if test="params.deptCd != '' and params.deptCd != null">
-					    				AND E.dept_cd LIKE CONCAT('%', #{params.deptCd}, '%')
-					    				</if>
-					    				<if test="params.userId != '' and params.userId != null">
-					    				AND D.user_id LIKE CONCAT('%', #{params.userId}, '%')
-					    				</if>
-					    				<if test="params.fromDate != '' and params.fromDate != null">
-					    				AND A.inv_dt BETWEEN #{params.fromDate} AND #{params.toDate}
-					    				</if>								
-					    			) AS a
-					    ) AS b	
-					LEFT OUTER JOIN TB_DEPT F
-					ON f.use_yn = 'Y'
-					AND f.dept_cd = b.upp_dept_cd
-					WHERE 1 = 1
-					<if test="params.regYn != '' and params.regYn != null">
-						<if test='params.regYn != "N"'>
-							AND B.asetQty = 0
-						</if>
-					</if>
-	</select>
-	
-	<select id="selectInvestRegList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-		select c.*
-		from (
-	             select b.rn as rn
-	           	    , b.inv_no 	    as invNo
-	           	    , b.inv_ttl 	as invTtl
-	           	    , b.inv_dt      as invDt
-	           	    , b.po_no 		as poNo
-	           	    , b.mfgd_nm 	as mfgdNm
-	           	    , b.qty 		as qty
-	           	    , format(b.po_amt, 0) as poAmt
-	           	    , f.dept_nm     as uppDeptNm
-	           	    , b.upp_dept_cd as uppDeptCd 
-	           	    , b.dept_nm 	as deptNm
-	           	    , b.dept_cd 	as deptCd
-	           	    , b.inv_reqr 	as invReqr
-	           	    , b.user_nm 	as userNm
-	           	    , b.user_id    as userId
-	           	    , b.asetQty
-	           	    , b.qty - b.asetQty as noAsetQty
-	           	    , ifnull((select max(new_yn) from tb_po_aset x where x.po_no = b.po_no), '') as newYn
-	           	 from (
-	       				select a.rn
-	       			  		 , a.inv_no
-	       					 , a.inv_ttl
-	       					 , date_format(a.inv_dt, '%Y-%m-%d')as inv_dt
-	       					 , a.po_no
-	       					 , a.mfgd_nm
-	       					 , a.qty
-	       					 , a.po_amt
-	       					 , a.upp_dept_cd
-	       					 , a.dept_cd
-	       					 , a.dept_nm
-	       					 , a.inv_reqr
-	       					 , a.user_nm
-	       					 , a.user_id
-	       					 , ifnull((select sum(qty)
-	       				 			   from tb_po_aset b
-	       				 		       where 1 = 1
-	       				 		       and b.po_no = a.po_no), 0) as asetQty
-	           			 from (
-	                     		select row_number() over(order by cast(b.inv_no as int) desc) as rn
-	     						 	 , a.inv_no
-	     						     , a.inv_ttl
-	     							 , b.po_no
-	     							 , b.mfgd_nm
-	     							 , b.qty
-	     							 , a.inv_dt
-	     							 , b.po_amt
-	     							 , e.upp_dept_cd
-	     							 , e.dept_cd
-	     							 , e.dept_nm
-	     							 , a.inv_reqr
-	     						 	 , d.user_nm
-	     						 	 , d.user_id
-	     						from tb_inv_mas a, tb_po b, tb_user d, tb_dept e
-	     						where 1 = 1
-	     						  and a.inv_no = b.inv_no
-	     					      and d.use_yn = 'Y'
-	     						  and e.use_yn = 'Y'
-	     						  and a.regr = d.user_id
-	   							  and d.dept_cd = e.dept_cd
-	      						  <if test="params.invNo != '' and params.invNo != null">
-	      							and a.inv_no like concat('%', #{params.invNo}, '%')
-	      						  </if>
-	      						  <if test="params.invTtl != '' and params.invTtl != null">
-	      						    and a.inv_ttl like concat('%', #{params.invTtl}, '%')
-	      						  </if>
-	      						  <if test="params.poNo != '' and params.poNo != null">
-	      							and b.po_no like concat('%', #{params.poNo}, '%')
-	      						  </if>
-	      						  <if test="params.mfgdNm != '' and params.mfgdNm != null">
-	      						    and b.mfgd_nm like concat('%', #{params.mfgdNm}, '%')
-	      						  </if>
-	      						  <if test="params.deptCd != '' and params.deptCd != null">
-	      							and e.dept_cd like concat('%', #{params.deptCd}, '%')
-	      						  </if>
-	      						  <if test="params.userId != '' and params.userId != null">
-	      						    and d.user_id like concat('%', #{params.userId}, '%')
-	      						  </if>
-	      						  <if test="params.fromDate != '' and params.fromDate != null">
-	      							and A.inv_dt between #{params.fromDate} and #{params.toDate}
-	      						  </if>
-	      						) as a
-	           			) as b	
-	           	left outer join tb_dept f
-	           	  on f.use_yn = 'Y'
-	           	 and f.dept_cd = b.upp_dept_cd
-	           	where rn between #{start} and #{end}
-	           	<if test="params.regYn != '' and params.regYn != null">
-	           		<if test='params.regYn != "N"'>
-	           			and B.asetQty = 0
-	           		</if>
-	           	</if>
-	    ) as c
-	    <choose> 
-	    	<when test="params.sortField != null">
-	    		order by ${params.sortField} ${params.sortOrder}
-	    	</when>
-	    	<otherwise>
-	    		order by c.invNo desc, c.poNo
-	    	</otherwise>
-	    </choose>
-	</select>
-	
-	<select id="selectInvestReg" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-			    SELECT c.*
-			      FROM
-						 (
-						    SELECT b.rn as rn
-								 , b.inv_no 	    as invNo
-								 , b.inv_ttl 	as invTtl
-								 , b.inv_dt      as invDt
-								 , b.po_no 		as poNo
-								 , b.mfgd_nm 	as mfgdNm
-								 , b.qty 		as qty
-								 , b.po_amt     as poAmt
-								 , f.dept_nm     as uppDeptNm
-								 , b.upp_dept_cd as uppDeptCd 
-								 , b.dept_nm 	as deptNm
-								 , b.dept_cd 	as deptCd
-								 , b.inv_reqr 	as invReqr
-								 , b.user_nm 	as userNm
-								 , b.user_id    as userId
-								 , b.asetQty
-								 , b.qty - b.asetQty as noAsetQty
-								   FROM    
-										(
-											SELECT a.rn
-										  		 , a.inv_no
-												 , a.inv_ttl
-												 , date_format(a.inv_dt, '%Y-%m-%d')as inv_dt
-												 , a.po_no
-												 , a.mfgd_nm
-												 , a.qty
-												 , a.po_amt
-												 , a.upp_dept_cd
-												 , a.dept_cd
-												 , a.dept_nm
-												 , a.inv_reqr
-												 , a.user_nm
-												 , a.user_id
-												 , IFNULL((SELECT SUM(qty)
-											 		FROM tb_po_aset B
-											 		WHERE 1 = 1
-											 		AND B.PO_NO = A.PO_NO), 0) as asetQty
-											FROM (
-														SELECT ROW_NUMBER() OVER(ORDER BY CAST(b.po_no AS int) DESC) as rn
-														  	 , a.inv_no
-															 , a.inv_ttl
-															 , b.po_no
-															 , b.mfgd_nm
-															 , b.qty
-															 , a.inv_dt
-															 , b.po_amt
-															 , e.upp_dept_cd
-															 , e.dept_cd
-															 , e.dept_nm
-															 , a.inv_reqr
-													 		 , d.user_nm
-													 		 , d.user_id
-														FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
-														WHERE 1 = 1
-														AND A.inv_no = B.inv_no
-												        AND D.use_yn = 'Y'
-														AND E.use_yn = 'Y'
-														AND A.regr = D.user_id
-														AND D.dept_cd = E.dept_cd
-														<if test="params.poNo != '' and params.poNo != null">
-														AND B.po_no = #{params.poNo}
-				                                        </if>
-												  ) AS a
-										 ) AS b	
-							LEFT OUTER JOIN TB_DEPT F
-							ON f.use_yn = 'Y'
-							AND f.dept_cd = b.upp_dept_cd
-						  ) as c
-	</select>
-	
-	<select id="selectCountAsetList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-		select count(*)
-		from tb_aset_mas a
-		inner join tb_po_aset b
-		   on a.aset_no = b.aset_no
-		where 1 = 1
-		  and b.po_no = #{params.poNo}					
-	</select>
-	
-	<select id="selectAsetList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.AsetListDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-		select c.*
-		from (
-				select a.asetNo
-			         , c.code_nm as asetType1
-			         , d.code_nm as asetType2
-			         , e.code_nm as asetType3
-			         , a.mftco
-			         , a.model
-			         , a.sn
-			         , f.dept_nm as uppDeptNm
-			         , g.dept_nm as deptNm
-			         , a.chrgr
-				     , (select case 
-				               when count(*) > 0 then 'Y'
-				               else 'N' end
-				         from tb_tag_mas c
-			             where c.aset_no = a.asetno
-			           ) as tagYn
-			         , h.code_nm as asetStus
-				from
-						(
-							select straight_join
-							       row_number() over(order by cast(a.aset_no as int) asc) as rn
-							     , a.aset_no as asetno
-							     , a.aset_type1 as asettype1
-							     , a.aset_type2 as asettype2
-							     , a.aset_type3 as asettype3
-							     , a.mftco as mftco
-							     , a.model as model
-							     , a.sn as sn
-							     , a.biz_dept_cd as bizdeptcd
-							     , a.dept_cd as deptcd
-							     , a.chrgr as chrgr
-							     , a.aset_stus as asetstus
-							from tb_aset_mas a
-							inner join tb_po_aset b
-							   on a.aset_no = b.aset_no
-							where 1 = 1
-							  and B.po_no = #{params.poNo}
-						) a
-				left outer join tb_com_code c
-				  on c.use_yn = 'Y'
-				 and c.code_id = a.asetType1
-				left outer join tb_com_code d
-				  on d.use_yn = 'Y'
-				 and d.code_id = a.asetType2
-				left outer join tb_com_code e
-				  on e.use_yn = 'Y'
-				 and e.code_id = a.asetType3
-				left outer join tb_dept f
-				  on f.use_yn = 'Y'
-				 and f.dept_cd = a.bizDeptCd
-				left outer join tb_dept g
-				  on g.use_yn = 'Y'
-				 and g.dept_cd = a.deptCd
-				left outer join tb_com_code h
-				  on h.use_yn = 'Y'
-				 and h.code_id = a.asetStus
-				 and h.code_grp_id = 'AS_STATUS'
-				where rn between #{start} and #{end}
-			) c	
-		order by c.asetNo desc		
-	</select>
-	
-	<select id="selectInvInqrExcelList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-			    SELECT b.rn as rn
-					 , b.inv_no 	    as invNo
-					 , b.inv_ttl 	as invTtl
-					 , b.inv_dt      as invDt
-					 , b.po_no 		as poNo
-					 , b.mfgd_nm 	as mfgdNm
-					 , b.qty 		as qty
-					 , b.po_amt     as poAmt
-					 , f.dept_nm     as uppDeptNm
-					 , b.upp_dept_cd as uppDeptCd 
-					 , b.dept_nm 	as deptNm
-					 , b.dept_cd 	as deptCd
-					 , b.inv_reqr 	as invReqr
-					 , b.user_nm 	as userNm
-					 , b.user_id    as userId
-					 , b.asetQty
-					 , b.qty - b.asetQty as noAsetQty
-					   FROM    
-							(
-								SELECT a.rn
-							  		 , a.inv_no
-									 , a.inv_ttl
-									 , date_format(a.inv_dt, '%Y-%m-%d')as inv_dt
-									 , a.po_no
-									 , a.mfgd_nm
-									 , a.qty
-									 , a.po_amt
-									 , a.upp_dept_cd
-									 , a.dept_cd
-									 , a.dept_nm
-									 , a.inv_reqr
-									 , a.user_nm
-									 , a.user_id
-									 , IFNULL((SELECT SUM(qty)
-								 		FROM tb_po_aset B
-								 		WHERE 1 = 1
-								 		AND B.PO_NO = A.PO_NO), 0) as asetQty
-								  FROM (
-											SELECT ROW_NUMBER() OVER(ORDER BY CAST(b.po_no AS int) DESC) as rn
-											  	 , a.inv_no
-												 , a.inv_ttl
-												 , b.po_no
-												 , b.mfgd_nm
-												 , b.qty
-												 , a.inv_dt
-												 , b.po_amt
-												 , e.upp_dept_cd
-												 , e.dept_cd
-												 , e.dept_nm
-												 , a.inv_reqr
-										 		 , d.user_nm
-										 		 , d.user_id
-											FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
-											WHERE 1 = 1
-											AND A.inv_no = B.inv_no
-									        AND D.use_yn = 'Y'
-											AND E.use_yn = 'Y'
-											AND A.regr = D.user_id
-											AND D.dept_cd = E.dept_cd
-											<if test="params.invNo != '' and params.invNo != null">
-											AND a.inv_no LIKE CONCAT('%', #{params.invNo}, '%')
-											</if>
-											<if test="params.invTtl != '' and params.invTtl != null">
-											AND a.inv_ttl LIKE CONCAT('%', #{params.invTtl}, '%')
-											</if>
-											<if test="params.poNo != '' and params.poNo != null">
-											AND B.po_no LIKE CONCAT('%', #{params.poNo}, '%')
-											</if>
-											<if test="params.mfgdNm != '' and params.mfgdNm != null">
-											AND B.mfgd_nm LIKE CONCAT('%', #{params.mfgdNm}, '%')
-											</if>
-											<if test="params.deptCd != '' and params.deptCd != null">
-											AND E.dept_cd LIKE CONCAT('%', #{params.deptCd}, '%')
-											</if>
-											<if test="params.userId != '' and params.userId != null">
-											AND D.user_id LIKE CONCAT('%', #{params.userId}, '%')
-											</if>
-											<if test="params.fromDate != '' and params.fromDate != null">
-											AND A.inv_dt BETWEEN #{params.fromDate} AND #{params.toDate}
-											</if>
-										) AS a
-							) AS b	
-					LEFT OUTER JOIN TB_DEPT F
-					ON f.use_yn = 'Y'
-					AND f.dept_cd = b.upp_dept_cd
-					WHERE rn BETWEEN #{start} AND #{end}
-					<if test="params.regYn != '' and params.regYn != null">
-						<if test='params.regYn != "N"'>
-							AND B.asetQty = 0
-						</if>
-					</if>
-	</select>
+<mapper namespace="kr.co.trito.tams.web.standard.invest.mapper.InvestMapper">
+   
+   <select id="selectCountInvest" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+      SELECT COUNT(*)
+      FROM (
+            SELECT a.inv_no
+                , a.inv_ttl            
+                , e.dept_nm
+                , b.po_no
+                , b.mfgd_nm
+                 , d.user_nm as inv_reqr
+            FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
+            WHERE 1 = 1
+            AND A.inv_no = B.inv_no
+            AND D.use_yn = 'Y'
+            AND A.inv_reqr = D.user_id
+            AND D.dept_cd = E.dept_cd      
+      ) a
+      WHERE 1=1 
+      <if test="params.searchType != 'none'">
+      AND ${params.searchType} LIKE CONCAT('%', #{params.searchText}, '%')
+      </if>
+      <if test="params.searchType2 != 'none'">
+      AND ${params.searchType2} LIKE CONCAT('%', #{params.searchText2}, '%')
+      </if>   
+   </select>
+   
+   <select id="selectInvestMngList" resultType="kr.co.trito.tams.web.standard.invest.dto.InvestDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+      SELECT a.inv_no    as invNo
+          , a.inv_ttl    as invTtl
+          , date_format(a.inv_dt, '%Y-%m-%d') as invDt
+          , FORMAT(a.inv_qty, 0) as invQty
+           , FORMAT(a.inv_amt, 0) as invAmt
+          , a.actg_year  as actgYear
+          , a.po_no       as poNo
+          , a.mfgd_nm    as mfgdNm
+          , a.qty       as qty
+          , FORMAT(a.po_amt, 0) as poAmt
+          , a.dept_nm    as deptNm
+          , a.vend_nm    as vendNm
+          , date_format(a.req_dt, '%Y-%m-%d') as reqDt
+          , date_format(a.dlv_dt, '%Y-%m-%d') as dlvDt
+          , a.inv_reqr    as invReqr
+          , a.user_nm    as userNm
+          , (SELECT CASE 
+                        WHEN COUNT(*) >= 1 THEN 'Y'
+                        ELSE 'N' END
+             FROM TB_PO_ASET
+             WHERE po_no = a.po_no
+            )          as poAsetYn
+          , date_format(a.reg_dt, '%Y-%m-%d') as regDt
+      FROM (
+            SELECT ROW_NUMBER() OVER(ORDER BY CAST(a.inv_no AS int)) as rn
+                  , a.inv_no
+                , a.inv_ttl
+                , a.inv_dt
+                , a.inv_qty
+                , a.inv_amt
+                , a.actg_year
+                , b.po_no
+                , b.mfgd_nm
+                , b.qty
+                , b.po_amt
+                , e.dept_nm
+                , a.inv_reqr
+                , b.vend_nm
+                , b.req_dt
+                , b.dlv_dt
+                 , d.user_nm
+                , b.reg_dt
+            FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
+            WHERE 1 = 1
+            AND A.inv_no = B.inv_no
+            AND D.use_yn = 'Y'
+            AND A.inv_reqr = D.user_id
+            AND D.dept_cd = E.dept_cd
+         ) AS a
+      WHERE rn BETWEEN #{start} AND #{end}
+      <if test="params.searchType != 'none'">
+      AND ${params.searchType} LIKE CONCAT('%', #{params.searchText}, '%')
+      </if>
+      <if test="params.searchType2 != 'none'">
+      AND ${params.searchType2} LIKE CONCAT('%', #{params.searchText2}, '%')
+      </if>
+      <choose> 
+      <when test="params.sortField != null">
+         ORDER BY ${params.sortField} ${params.sortOrder}
+      </when>
+      <otherwise>
+         ORDER BY inv_no desc, po_no asc
+      </otherwise>
+      </choose>
+   </select>
+   
+   <!-- TB_PO 정보등록 -->
+   <insert id="saveInvestInfo" parameterType="kr.co.trito.tams.web.standard.invest.dto.InvestDto">
+      INSERT INTO TB_INV_MAS(INV_NO, INV_TTL, INV_QTY, INV_AMT, ACTG_YEAR, INV_DT, INV_REQR, REG_DT, REGR)
+                VALUES
+                ( #{invNo}
+                , #{invTtl}
+                , CAST(REPLACE(#{invQty}, ',', '') as int)
+                , CAST(REPLACE(#{invAmt}, ',', '') as int)
+                , #{actgYear}
+                , #{invDt}
+                , #{regr}
+                , now()
+                , #{regr} )
+                ON DUPLICATE KEY
+                UPDATE INV_TTL = #{invTtl}
+                     , INV_DT = #{invDt}
+                     , INV_QTY = CAST(REPLACE(#{invQty}, ',', '') as int)
+                     , INV_AMT = CAST(REPLACE(#{invAmt}, ',', '') as int)
+                     , INV_REQR = #{regr}
+                     , UPDR = #{updr}
+                     , UP_DT = now()
+   </insert>
+   
+   <!-- TB_PO 정보등록 -->
+   <insert id="savePoInfo" parameterType="kr.co.trito.tams.web.standard.invest.dto.InvestDto">
+      INSERT INTO TB_PO(PO_NO, INV_NO, MFGD_NM, QTY, PO_AMT, PO_CHRGR, VEND_NM, REQ_DT, DLV_DT, REGR)
+                VALUES 
+                ( #{poNo}
+                , #{invNo}
+                , #{mfgdNm}
+                , CAST(REPLACE(#{qty}, ',', '') as int)
+                , CAST(REPLACE(#{poAmt}, ',', '') as int)
+                , #{regr} 
+                , #{vendNm}
+                , REPLACE(#{reqDt}, '-', '')
+                , REPLACE(#{dlvDt}, '-', '')
+                , #{regr} )
+                ON DUPLICATE KEY
+                UPDATE PO_CHRGR = #{regr}
+                     , MFGD_NM = #{mfgdNm}
+                     , QTY = CAST(REPLACE(#{qty}, ',', '') as int)
+                     , PO_AMT = CAST(REPLACE(#{poAmt}, ',', '') as int)
+                     , VEND_NM = #{vendNm}
+                     , REQ_DT = REPLACE(#{reqDt}, '-', '')
+                     , DLV_DT = REPLACE(#{dlvDt}, '-', '')
+                     , UPDR = #{updr}
+                     , UP_DT = now()
+   </insert>
 
-	<select id="selectAsetTypeInfo" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.AsetTypeInfoDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-				WITH aset_tmp as (
-						SELECT a.code_nm as c1
-						     , a.code_id as c2
-						FROM tb_com_code a
-						WHERE a.upp_code_id = #{asetType}
-						ORDER BY 2 ASC		
-				) 
-				
-				SELECT MAX(CASE WHEN rn2 = 1 THEN c1  else null END) as code1
-				     , MAX(CASE WHEN rn2 = 1 THEN c2  else null END) as codeVal1
-				     , MAX(CASE WHEN rn2 = 2 THEN c1  else null END) as code2
-				     , MAX(CASE WHEN rn2 = 2 THEN c2  else null END) as codeVal2
-				     , MAX(CASE WHEN rn2 = 3 THEN c1  else null END) as code3
-				     , MAX(CASE WHEN rn2 = 3 THEN c2  else null END) as codeVal3
-				FROM (
-						SELECT CASE
-									WHEN MOD(rn, 3) = 0 THEN 3
-									ELSE MOD(rn, 3) 
-							   END as rn2
-							 , CEIL(rn / 3) as groupRn
-						     , b.*
-						FROM (
-								SELECT ROW_NUMBER() OVER(ORDER BY c2) as rn 
-								     , a.* 
-								FROM aset_tmp a
-					      ) b
-					 ) c
-				GROUP BY c.groupRn
-	</select>
-	
-	<insert id="savePoAset" parameterType="Map">
-				INSERT INTO TB_PO_ASET(PO_NO, ASET_NO, NEW_YN, QTY, APPV_DOC_ID, REGR, REG_DT)
-						        VALUES 
-						        ( #{poNo}
-						        ,(case 
-						        	when substring(#{asetNo}, 1, 1) = 'A' then #{asetNo}
-						         	else concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
-						          end)	 						        
-						        , 'Y'
-						        , CAST(#{qty} as int)
-						        , #{appvDocId}
-						        , #{regr}
-						        , now()
-						        )
-						        ON DUPLICATE KEY
-						        UPDATE QTY 	       = CAST(#{qty} as int)
-						             , UPDR 	   = #{updr}
-						             , UP_DT       = now()     
-	</insert>
-	
-	<insert id="saveAsetMas" parameterType="Map">
-				INSERT INTO TB_ASET_MAS(ASET_NO, ASET_NM, ASET_TYPE1, ASET_TYPE2, ASET_TYPE3, MFTCO
-					                  , MODEL, SN, BIZ_DEPT_CD, DEPT_CD, CHRGR, BSPLC, BULD, FLOOR
-					                  , LOC, EXP_DEPT_CD, EXP_ACCT, DUR_YEAR, ACQ_PRC, SVAL_PRC
-					                  , DPRC_PRC, ACQ_DT, ASET_OUT_BOOK_YN, ASET_STUS, REGR, REG_DT)
-				                 VALUES 
-				                 ( 
-						           (case 
-						        	  when substring(#{asetNo}, 1, 1) = 'A' then #{asetNo}
-						         	  else concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
-						            end)				                 
-				                 , #{asetNm}
-				                 , #{asetType1}
-				                 , #{asetType2}
-				                 , #{asetType3}
-				                 , #{mftco}
-				                 , #{model}
-				                 , #{sn}
-				                 , #{bizDeptCd}
-				                 , #{deptCd}
-				                 , #{chrgr}
-				                 , #{bsplc}
-				                 , #{buld}
-				                 , #{floor}
-				                 , #{loc}
-				                 , #{expDeptCd} 
-				                 , #{expAcct}
-				                 , #{durYear}
-				                 , (case when #{acqPrc} = '' then null else #{acqPrc} end)
-				                 , (case when #{svalPrc} = '' then null else #{svalPrc} end)
-				                 , (case when #{dprcPrc} = '' then null else #{dprcPrc} end)					                 
-				                 , replace(#{acqDt}, '-', '')
-				                 , 'N'
-				                 , '10'
-				                 , #{regr}
-				                 , now()
-				                   )
-				                 ON DUPLICATE KEY
-				                 UPDATE ASET_NM     = #{asetNm}
-				                      , ASET_TYPE1  = #{asetType1}
-				                      , ASET_TYPE2  = #{asetType2}
-				                      , ASET_TYPE3  = #{asetType3}
-				                      , MFTCO 	    = #{mftco}
-				                      , MODEL       = #{model}
-				                      , SN          = #{sn}
-				                      , BIZ_DEPT_CD = #{bizDeptCd}
-				                      , DEPT_CD     = #{deptCd}
-				                      , CHRGR       = #{chrgr}
-				                      , BSPLC       = #{bsplc}
-				                      , BULD        = #{buld}
-				                      , FLOOR       = #{floor}
-				                      , LOC         = #{loc}
-				                      , EXP_DEPT_CD = #{expDeptCd}
-				                      , EXP_ACCT    = #{expAcct}
-				                      , DUR_YEAR    = #{durYear}
-				                      , ACQ_PRC     = (case when #{acqPrc} = '' then null else #{acqPrc} end)
-				                      , SVAL_PRC    = (case when #{svalPrc} = '' then null else #{svalPrc} end) 
-				                      , DPRC_PRC    = (case when #{dprcPrc} = '' then null else #{dprcPrc} end) 
-				                      , ACQ_DT      = replace(#{acqDt}, '-', '')
-				                      , UPDR 	    = #{updr}
-				                      , UP_DT 	    = now()
-	</insert>
-	
-	<insert id="saveAsetReq" parameterType="Map">
-				INSERT INTO TB_ASET_REQ(ASET_NO, REQ_NO, ASET_NM, ASET_TYPE1, ASET_TYPE2, ASET_TYPE3
-									  , MFTCO, MODEL, SN, BIZ_DEPT_CD, DEPT_CD, CHRGR, BSPLC, BULD
-									  , FLOOR, LOC, EXP_DEPT_CD, EXP_ACCT, DUR_YEAR, ACQ_PRC, SVAL_PRC
-									  , DPRC_PRC, ACQ_DT, ASET_OUT_BOOK_YN, ASET_STUS, REGR, REG_DT)
-				                 VALUES 
-				                 ( 
-						           (case 
-						        	  when substring(#{asetNo}, 1, 1) = 'A' then #{asetNo}
-						         	  else concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
-						            end)					                 				                 
-				                 , #{reqNo}
-				                 , #{asetNm}
-				                 , #{asetType1}
-				                 , #{asetType2}
-				                 , #{asetType3}
-				                 , #{mftco}
-				                 , #{model}
-				                 , #{sn}
-				                 , #{bizDeptCd}
-				                 , #{deptCd}
-				                 , #{chrgr}
-				                 , #{bsplc}
-				                 , #{buld}
-				                 , #{floor}
-				                 , #{loc}
-				                 , #{expDeptCd} 
-				                 , #{expAcct}
-				                 , #{durYear}
-				                 , (case when #{acqPrc} = '' then null else #{acqPrc} end)
-				                 , (case when #{svalPrc} = '' then null else #{svalPrc} end)
-				                 , (case when #{dprcPrc} = '' then null else #{dprcPrc} end)				                 
-				                 , replace(#{acqDt}, '-', '')
-				                 , 'N'
-				                 , '10'
-				                 , #{regr}
-				                 , now()
-				                   )
-				                 ON DUPLICATE KEY
-				                 UPDATE ASET_NM     = #{asetNm}
-				                      , ASET_TYPE1  = #{asetType1}
-				                      , ASET_TYPE2  = #{asetType2}
-				                      , ASET_TYPE3  = #{asetType3}
-				                      , MFTCO       = #{mftco}
-				                      , MODEL       = #{model}
-				                      , SN 	        = #{sn}
-				                      , BIZ_DEPT_CD = #{bizDeptCd}
-				                      , DEPT_CD     = #{deptCd}
-				                      , CHRGR       = #{chrgr}
-				                      , BSPLC       = #{bsplc}
-				                      , BULD        = #{buld}
-				                      , FLOOR       = #{floor}
-				                      , LOC         = #{loc}
-				                      , EXP_DEPT_CD = #{expDeptCd}
-				                      , EXP_ACCT    = #{expAcct}
-				                      , DUR_YEAR    = #{durYear}
-				                      , ACQ_PRC     = (case when #{acqPrc} = '' then null else #{acqPrc} end)
-				                      , SVAL_PRC    = (case when #{svalPrc} = '' then null else #{svalPrc} end)
-				                      , DPRC_PRC    = (case when #{dprcPrc} = '' then null else #{dprcPrc} end)
-				                      , ACQ_DT      = replace(#{acqDt}, '-', '')
-				                      , UPDR        = #{updr}
-				                      , UP_DT       = now()  
-	</insert>
-	
-	<insert id="saveAsetDtl" parameterType="Map">
-				INSERT INTO TB_ASET_DTL(ASET_NO, ASET_TYPE, DTL_INFO1, DTL_INFO2, DTL_INFO3, DTL_INFO4
-				                      , DTL_INFO5, DTL_INFO6, DTL_INFO7, DTL_INFO8, DTL_INFO9, DTL_INFO10
-				                      , DTL_INFO11, DTL_INFO12, DTL_INFO13, DTL_INFO14, DTL_INFO15, DTL_INFO16
-				                      , DTL_INFO17, DTL_INFO18, DTL_INFO19, DTL_INFO20, DTL_INFO21, DTL_INFO22
-				                      , DTL_INFO23, DTL_INFO24, DTL_INFO25, DTL_INFO26, DTL_INFO27, DTL_INFO28
-				                      , DTL_INFO29, DTL_INFO30, DTL_INFO31, DTL_INFO32, DTL_INFO33, DTL_INFO34
-				                      , DTL_INFO35, DTL_INFO36, DTL_INFO37, DTL_INFO38, DTL_INFO39, DTL_INFO40
-				                      , DTL_INFO41, DTL_INFO42, DTL_INFO43, DTL_INFO44, DTL_INFO45, DTL_INFO46
-				                      , DTL_INFO47, DTL_INFO48, DTL_INFO49, DTL_INFO50, REGR, REG_DT)
-				                 VALUES 
-				                 ( 
-						           (case 
-						        	  when substring(#{asetNo}, 1, 1) = 'A' then #{asetNo}
-						         	  else concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
-						            end)					                 				                 
-				                 , #{asetType3}
-				                 , #{dtlInfo1}
-								 , #{dtlInfo2}
-								 , #{dtlInfo3}
-								 , #{dtlInfo4}
-								 , #{dtlInfo5}
-								 , #{dtlInfo6}
-								 , #{dtlInfo7}
-								 , #{dtlInfo8}
-								 , #{dtlInfo9}
-								 , #{dtlInfo10}
-								 , #{dtlInfo11}
-								 , #{dtlInfo12}
-								 , #{dtlInfo13}
-								 , #{dtlInfo14}
-								 , #{dtlInfo15}
-								 , #{dtlInfo16}
-								 , #{dtlInfo17}
-								 , #{dtlInfo18}
-								 , #{dtlInfo19}
-								 , #{dtlInfo20}
-								 , #{dtlInfo21}
-								 , #{dtlInfo22}
-								 , #{dtlInfo23}
-								 , #{dtlInfo24}
-								 , #{dtlInfo25}
-								 , #{dtlInfo26}
-								 , #{dtlInfo27}
-								 , #{dtlInfo28}
-								 , #{dtlInfo29}
-								 , #{dtlInfo30}
-								 , #{dtlInfo31}
-								 , #{dtlInfo32}
-								 , #{dtlInfo33}
-								 , #{dtlInfo34}
-								 , #{dtlInfo35}
-								 , #{dtlInfo36}
-								 , #{dtlInfo37}
-								 , #{dtlInfo38}
-								 , #{dtlInfo39}
-								 , #{dtlInfo40}
-								 , #{dtlInfo41}
-								 , #{dtlInfo42}
-								 , #{dtlInfo43}
-								 , #{dtlInfo44}
-								 , #{dtlInfo45}
-								 , #{dtlInfo46}
-								 , #{dtlInfo47}
-								 , #{dtlInfo48}
-								 , #{dtlInfo49}
-								 , #{dtlInfo50}
-				                 , #{regr}
-				                 , now()
-				                   )
-				                 ON DUPLICATE KEY
-				                 UPDATE ASET_TYPE = #{asetType3}
-								 	 , DTL_INFO1 = #{dtlInfo1}
-								 	 , DTL_INFO2 = #{dtlInfo2}
-								 	 , DTL_INFO3 = #{dtlInfo3}
-								 	 , DTL_INFO4 = #{dtlInfo4}
-								 	 , DTL_INFO5 = #{dtlInfo5}
-								 	 , DTL_INFO6 = #{dtlInfo6}
-								 	 , DTL_INFO7 = #{dtlInfo7}
-								 	 , DTL_INFO8 = #{dtlInfo8}
-								 	 , DTL_INFO9 = #{dtlInfo9}
-								 	 , DTL_INFO10 = #{dtlInfo10}
-								 	 , DTL_INFO11 = #{dtlInfo11}
-								 	 , DTL_INFO12 = #{dtlInfo12}
-								 	 , DTL_INFO13 = #{dtlInfo13}
-								 	 , DTL_INFO14 = #{dtlInfo14}
-								 	 , DTL_INFO15 = #{dtlInfo15}
-								 	 , DTL_INFO16 = #{dtlInfo16}
-								 	 , DTL_INFO17 = #{dtlInfo17}
-								 	 , DTL_INFO18 = #{dtlInfo18}
-								 	 , DTL_INFO19 = #{dtlInfo19}
-								 	 , DTL_INFO20 = #{dtlInfo20}
-								 	 , DTL_INFO21 = #{dtlInfo21}
-								 	 , DTL_INFO22 = #{dtlInfo22}
-								 	 , DTL_INFO23 = #{dtlInfo23}
-								 	 , DTL_INFO24 = #{dtlInfo24}
-								 	 , DTL_INFO25 = #{dtlInfo25}
-								 	 , DTL_INFO26 = #{dtlInfo26}
-								 	 , DTL_INFO27 = #{dtlInfo27}
-								 	 , DTL_INFO28 = #{dtlInfo28}
-								 	 , DTL_INFO29 = #{dtlInfo29}
-								 	 , DTL_INFO30 = #{dtlInfo30}
-								 	 , DTL_INFO31 = #{dtlInfo31}
-								 	 , DTL_INFO32 = #{dtlInfo32}
-								 	 , DTL_INFO33 = #{dtlInfo33}
-								 	 , DTL_INFO34 = #{dtlInfo34}
-								 	 , DTL_INFO35 = #{dtlInfo35}
-								 	 , DTL_INFO36 = #{dtlInfo36}
-								 	 , DTL_INFO37 = #{dtlInfo37}
-								 	 , DTL_INFO38 = #{dtlInfo38}
-								 	 , DTL_INFO39 = #{dtlInfo39}
-								 	 , DTL_INFO40 = #{dtlInfo40}
-								 	 , DTL_INFO41 = #{dtlInfo41}
-								 	 , DTL_INFO42 = #{dtlInfo42}
-								 	 , DTL_INFO43 = #{dtlInfo43}
-								 	 , DTL_INFO44 = #{dtlInfo44}
-								 	 , DTL_INFO45 = #{dtlInfo45}
-								 	 , DTL_INFO46 = #{dtlInfo46}
-								 	 , DTL_INFO47 = #{dtlInfo47}
-								 	 , DTL_INFO48 = #{dtlInfo48}
-								 	 , DTL_INFO49 = #{dtlInfo49}
-								 	 , DTL_INFO50 = #{dtlInfo50}
-				                     , UPDR = #{updr}
-				                     , UP_DT = now() 
-	</insert>
-	
-	<insert id="saveAsetDtlReq" parameterType="Map">
-				INSERT INTO TB_ASET_DTL_REQ(ASET_NO, REQ_NO, ASET_TYPE, DTL_INFO1, DTL_INFO2, DTL_INFO3, DTL_INFO4
-					                      , DTL_INFO5, DTL_INFO6, DTL_INFO7, DTL_INFO8, DTL_INFO9, DTL_INFO10
-					                      , DTL_INFO11, DTL_INFO12, DTL_INFO13, DTL_INFO14, DTL_INFO15, DTL_INFO16
-					                      , DTL_INFO17, DTL_INFO18, DTL_INFO19, DTL_INFO20, DTL_INFO21, DTL_INFO22
-					                      , DTL_INFO23, DTL_INFO24, DTL_INFO25, DTL_INFO26, DTL_INFO27, DTL_INFO28
-					                      , DTL_INFO29, DTL_INFO30, DTL_INFO31, DTL_INFO32, DTL_INFO33, DTL_INFO34
-					                      , DTL_INFO35, DTL_INFO36, DTL_INFO37, DTL_INFO38, DTL_INFO39, DTL_INFO40
-					                      , DTL_INFO41, DTL_INFO42, DTL_INFO43, DTL_INFO44, DTL_INFO45, DTL_INFO46
-					                      , DTL_INFO47, DTL_INFO48, DTL_INFO49, DTL_INFO50, REGR, REG_DT)
-					                 VALUES 
-					                 ( 
-							           (case 
-							        	  when substring(#{asetNo}, 1, 1) = 'A' then #{asetNo}
-							         	  else concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
-							            end)						                 					                 
-					                 , #{reqNo}
-					                 , #{asetType}
-					                 , #{dtlInfo1}
-									 , #{dtlInfo2}
-									 , #{dtlInfo3}
-									 , #{dtlInfo4}
-									 , #{dtlInfo5}
-									 , #{dtlInfo6}
-									 , #{dtlInfo7}
-									 , #{dtlInfo8}
-									 , #{dtlInfo9}
-									 , #{dtlInfo10}
-									 , #{dtlInfo11}
-									 , #{dtlInfo12}
-									 , #{dtlInfo13}
-									 , #{dtlInfo14}
-									 , #{dtlInfo15}
-									 , #{dtlInfo16}
-									 , #{dtlInfo17}
-									 , #{dtlInfo18}
-									 , #{dtlInfo19}
-									 , #{dtlInfo20}
-									 , #{dtlInfo21}
-									 , #{dtlInfo22}
-									 , #{dtlInfo23}
-									 , #{dtlInfo24}
-									 , #{dtlInfo25}
-									 , #{dtlInfo26}
-									 , #{dtlInfo27}
-									 , #{dtlInfo28}
-									 , #{dtlInfo29}
-									 , #{dtlInfo30}
-									 , #{dtlInfo31}
-									 , #{dtlInfo32}
-									 , #{dtlInfo33}
-									 , #{dtlInfo34}
-									 , #{dtlInfo35}
-									 , #{dtlInfo36}
-									 , #{dtlInfo37}
-									 , #{dtlInfo38}
-									 , #{dtlInfo40}
-									 , #{dtlInfo41}
-									 , #{dtlInfo42}
-									 , #{dtlInfo43}
-									 , #{dtlInfo44}
-									 , #{dtlInfo45}
-									 , #{dtlInfo46}
-									 , #{dtlInfo47}
-									 , #{dtlInfo48}
-									 , #{dtlInfo49}
-									 , #{dtlInfo50}
-					                 , #{regr}
-					                 , now()
-					                   )
-					                 ON DUPLICATE KEY
-					                 UPDATE ASET_TYPE = #{asetType}
-									 	 , DTL_INFO1 = #{dtlInfo1}
-									 	 , DTL_INFO2 = #{dtlInfo2}
-									 	 , DTL_INFO3 = #{dtlInfo3}
-									 	 , DTL_INFO4 = #{dtlInfo4}
-									 	 , DTL_INFO5 = #{dtlInfo5}
-									 	 , DTL_INFO6 = #{dtlInfo6}
-									 	 , DTL_INFO7 = #{dtlInfo7}
-									 	 , DTL_INFO8 = #{dtlInfo8}
-									 	 , DTL_INFO9 = #{dtlInfo9}
-									 	 , DTL_INFO10 = #{dtlInfo10}
-									 	 , DTL_INFO11 = #{dtlInfo11}
-									 	 , DTL_INFO12 = #{dtlInfo12}
-									 	 , DTL_INFO13 = #{dtlInfo13}
-									 	 , DTL_INFO14 = #{dtlInfo14}
-									 	 , DTL_INFO15 = #{dtlInfo15}
-									 	 , DTL_INFO16 = #{dtlInfo16}
-									 	 , DTL_INFO17 = #{dtlInfo17}
-									 	 , DTL_INFO18 = #{dtlInfo18}
-									 	 , DTL_INFO19 = #{dtlInfo19}
-									 	 , DTL_INFO20 = #{dtlInfo20}
-									 	 , DTL_INFO21 = #{dtlInfo21}
-									 	 , DTL_INFO22 = #{dtlInfo22}
-									 	 , DTL_INFO23 = #{dtlInfo23}
-									 	 , DTL_INFO24 = #{dtlInfo24}
-									 	 , DTL_INFO25 = #{dtlInfo25}
-									 	 , DTL_INFO26 = #{dtlInfo26}
-									 	 , DTL_INFO27 = #{dtlInfo27}
-									 	 , DTL_INFO28 = #{dtlInfo28}
-									 	 , DTL_INFO29 = #{dtlInfo29}
-									 	 , DTL_INFO30 = #{dtlInfo30}
-									 	 , DTL_INFO31 = #{dtlInfo31}
-									 	 , DTL_INFO32 = #{dtlInfo32}
-									 	 , DTL_INFO33 = #{dtlInfo33}
-									 	 , DTL_INFO34 = #{dtlInfo34}
-									 	 , DTL_INFO35 = #{dtlInfo35}
-									 	 , DTL_INFO36 = #{dtlInfo36}
-									 	 , DTL_INFO37 = #{dtlInfo37}
-									 	 , DTL_INFO38 = #{dtlInfo38}
-									 	 , DTL_INFO40 = #{dtlInfo40}
-									 	 , DTL_INFO41 = #{dtlInfo41}
-									 	 , DTL_INFO42 = #{dtlInfo42}
-									 	 , DTL_INFO43 = #{dtlInfo43}
-									 	 , DTL_INFO44 = #{dtlInfo44}
-									 	 , DTL_INFO45 = #{dtlInfo45}
-									 	 , DTL_INFO46 = #{dtlInfo46}
-									 	 , DTL_INFO47 = #{dtlInfo47}
-									 	 , DTL_INFO48 = #{dtlInfo48}
-									 	 , DTL_INFO49 = #{dtlInfo49}
-									 	 , DTL_INFO50 = #{dtlInfo50}
-					                     , UPDR = #{updr}
-					                     , UP_DT = now()
-	</insert>
-	
-	<select id="selectMaxAsetNo" resultType="int">
-		select max(maxAsetNo) as maxAsetNo
-		from (
-				select 1 as maxAsetNo
-				union all
-				select cast(substring(aset_no, 6) as int) + 1 as maxAsetNo 
-				from tb_aset_mas   
-				where aset_no like concat('A', substring(date_format(now(),'%Y%m'), 3), '%')
-			 ) a        
-	</select>
-	
-   	<select id="selectAssetMas" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.AssetMasDto">
-		 select aset_no as asetNo
-			,aset_nm as asetNm
-			,aset_type1 as asetType1
-			,aset_type2 as asetType2
-			,aset_type3 as asetType3
-			,mftco 
-			,model 
-			,sn 
-			,biz_dept_cd as bizDeptCd
-		    ,biz_dept_nm as bizDeptNm 
-			,dept_cd as deptCd
-		    ,dept_nm as deptNm
-			,chrgr
-		    ,chrgr_nm as chrgrNm
-			,bsplc
-			,buld
-			,floor
-			,loc
-			,exp_dept_cd as expDeptCd
-		    ,exp_dept_nm as expDeptNm
-			,exp_acct as expAcct
-			,dur_year as durYear
-			,acq_prc as acqPrc
-			,sval_prc as svalPrc
-			,dprc_prc as dprcPrc
-			,DATE_FORMAT(acq_dt, '%Y-%m-%d') as acqDt
-			,aset_out_book_yn as asetOutBookYn
-			,aset_stus as asetStus
-		    ,(
-				select count(*) 
-				from tb_com_code 
-				where code_grp_id = 'AS_CLASS_CHTRS'
-				  and upp_code_id = x.aset_type3    
-		     ) as propCnt			
-			,updr
-			,up_dt as upDt
-			,regr
-			,reg_dt as regDt
-		from (
-				select a.*
-				     , b.dept_nm as biz_dept_nm
-				     , c.dept_nm as dept_nm
-				     , d.user_nm as chrgr_nm
-				     , e.dept_nm as exp_dept_nm
-				from tb_aset_mas a
-				left outer join tb_dept b 
-				  on a.biz_dept_cd = b.dept_cd
-				left outer join tb_dept c 
-				  on a.dept_cd = c.dept_cd  
-				left outer join tb_user d
-				  on a.chrgr = d.user_id  
-				left outer join tb_dept e 
-				  on a.exp_dept_cd = e.dept_cd    
-				where aset_no = #{assetNo}
-			 ) x
-   	</select>	
-	
-   	<select id="selectAssetDtl" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.AssetDtlDto">
-		select aset_no as asetNo 
-			,aset_type as asetType 
-			,dtl_info1 as dtlInfo1
-			,dtl_info2 as dtlInfo2
-			,dtl_info3 as dtlInfo3
-			,dtl_info4 as dtlInfo4
-			,dtl_info5 as dtlInfo5
-			,dtl_info6 as dtlInfo6
-			,dtl_info7 as dtlInfo7
-			,dtl_info8 as dtlInfo8
-			,dtl_info9 as dtlInfo9
-			,dtl_info10 as dtlInfo10
-			,dtl_info11 as dtlInfo11
-			,dtl_info12 as dtlInfo12
-			,dtl_info13 as dtlInfo13
-			,dtl_info14 as dtlInfo14
-			,dtl_info15 as dtlInfo15
-			,dtl_info16 as dtlInfo16
-			,dtl_info17 as dtlInfo17 
-			,dtl_info18 as dtlInfo18
-			,dtl_info19 as dtlInfo19
-			,dtl_info20 as dtlInfo20
-			,dtl_info21 as dtlInfo21
-			,dtl_info22 as dtlInfo22
-			,dtl_info23 as dtlInfo23
-			,dtl_info24 as dtlInfo24
-			,dtl_info25 as dtlInfo25
-			,dtl_info26 as dtlInfo26
-			,dtl_info27 as dtlInfo27
-			,dtl_info28 as dtlInfo28
-			,dtl_info29 as dtlInfo29
-			,dtl_info30 as dtlInfo30
-			,dtl_info31 as dtlInfo31
-			,dtl_info32 as dtlInfo32
-			,dtl_info33 as dtlInfo33
-			,dtl_info34 as dtlInfo34
-			,dtl_info35 as dtlInfo35
-			,dtl_info36 as dtlInfo36
-			,dtl_info37 as dtlInfo37
-			,dtl_info38 as dtlInfo38
-			,dtl_info39 as dtlInfo39
-			,dtl_info40 as dtlInfo40
-			,dtl_info41 as dtlInfo41
-			,dtl_info42 as dtlInfo42
-			,dtl_info43 as dtlInfo43
-			,dtl_info44 as dtlInfo44
-			,dtl_info45 as dtlInfo45
-			,dtl_info46 as dtlInfo46
-			,dtl_info47 as dtlInfo47
-			,dtl_info48 as dtlInfo48
-			,dtl_info49 as dtlInfo49
-			,dtl_info50 as dtlInfo50
-			,updr
-			,up_dt as upDt 
-			,regr
-			,reg_dt as regDt
-		from (
-			select *		
-			from tb_aset_dtl a
-			where a.aset_no = #{assetNo}		
-		) x			 
-   	</select>	
-   		
-   	<delete id="deletePoAset" parameterType="Map">
-   		delete from tb_po_aset
-   		where po_no = #{poNo}
-   		  and aset_no = #{assetNo}
-   	</delete>
-   	
-   	<delete id="deleteAsetDtl" parameterType="Map">
-   		delete from tb_aset_dtl
-   		where aset_no = #{assetNo}
-   	</delete>   
+   <!-- TB_PO 정보등록 -->
+   <delete id="deletePoInfo" parameterType="kr.co.trito.tams.web.standard.invest.dto.InvestDto">
+      DELETE FROM TB_PO
+        WHERE  PO_NO = #{poNo}
+   </delete>
 
-   	<delete id="deleteAsetMas" parameterType="Map">
-   		delete from tb_aset_mas
-   		where aset_no = #{assetNo}
-   	</delete>   	   		
 </mapper>
