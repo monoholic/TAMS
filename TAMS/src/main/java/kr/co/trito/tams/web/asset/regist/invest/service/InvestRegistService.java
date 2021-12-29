@@ -127,6 +127,7 @@ public class InvestRegistService {
 			
 			param.put("regr", userId);
 			param.put("updr", userId);
+			param.put("qty" , "1");
 			
 			if(isNew) 
 				param.put("asetNo", maxAssetNo);
@@ -171,5 +172,18 @@ public class InvestRegistService {
 		mapper.deletePoAset(param);
 		mapper.deleteAsetDtl(param);
 		mapper.deleteAsetMas(param);
+	}	
+	
+	/** 
+	 * 개조자산 등록
+	 * */
+	public void saveRemodelAset(String userId, List<Map<String, Object>> params){		
+		for (Map<String, Object> param : params) {			
+			param.put("regr", userId);
+			param.put("updr", userId);			
+			this.savePoAset(param);
+		}
 	}		
+	
+	
 }

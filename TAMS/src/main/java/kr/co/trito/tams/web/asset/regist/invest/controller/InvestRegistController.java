@@ -238,6 +238,22 @@ public class InvestRegistController {
 		return view;
 	}
 
+	
+	/** 개조자산 저장 */
+	@PostMapping("/saveRemodelAset")
+	@ResponseBody
+	@ApiOperation(value = "투자자산등록(팝업 : 개조자산 등록) 화면 / 저장버튼", notes = "개조자산 정보을 등록한다")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> saveRemodelAset(
+			@ApiParam(value = "필터 / 페이징 값", required = false) @RequestBody List<Map<String, Object>> params,
+			@AuthenticationPrincipal UserDetails userDetail) {				
+		String userId = ((UserInfo)userDetail).getDto().getUserId();
+		investRegistService.saveRemodelAset(userId, params);		
+		return responseService.success(null);
+	}	
+	
+	
 	/** 자산유형 특성정보 조회 */
 	@GetMapping(value = "/asetTypeInfo")
 	@ResponseBody

@@ -54,4 +54,6 @@ public interface InvestRegistMapper {
 	public int deleteAsetDtl(Map<String, Object> param);
 	
 	public int deleteAsetMas(Map<String, Object> param);
+	
+	public int saveRemodelAset(Map<String, Object> param);	
 }

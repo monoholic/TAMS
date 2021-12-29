@@ -59,7 +59,7 @@
 					 	{title:"[[#{screen.text.asset.bizDeptCd}]]"	, field:"bizDeptNm"	 , hozAlign:"left"  , headerHozAlign:"center"},
 					 	{title:"[[#{screen.text.asset.deptCd}]]"	, field:"deptNm"	 , hozAlign:"left"	, headerHozAlign:"center"},
 					 	{title:"[[#{screen.text.asset.chrgr}]]"	 	, field:"chrgrNm"	 , hozAlign:"center", headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.comm.qty}]]"		, field:"asetQty"	 , hozAlign:"right"	, headerHozAlign:"center", editor:"input", validator:"integer"},
+					 	{title:"[[#{screen.text.comm.qty}]]"		, field:"qty"	 	 , hozAlign:"right"	, headerHozAlign:"center", editor:"input", validator:"integer"},
 
 				 	],
 				});				    					
@@ -88,6 +88,26 @@
 	    	    		return;	
 	    	    	}
 	    	    	
+	    	    	for(var row of selectedData){
+	    	    		
+	    	    		if(row.asetQty == "" || row.qty == "0"){
+	    	    			alert('개조자산 수량을 입력해 주세요.');
+	    	    			return;
+	    	    		}
+	    	    		
+	    	    		row.poNo = invData.poNo;
+	    	    	}
+	    	    	
+	    	    	console.log(selectedData);	    	    	
+	   		       	
+					$.commRequest("/asset/regist/invest/saveRemodelAset", "POST", JSON.stringify(selectedData))
+					 .then((res) => {
+						alert("[[#{screen.info.status.save.success}]]");							
+						opener.parent.search();
+						window.close();
+					 }).catch((error) => {
+							console.log("[[#{screen.info.status.error.occur}]]");
+					 });    					    
 	    	    });				    
 			    
 			    //삭제
