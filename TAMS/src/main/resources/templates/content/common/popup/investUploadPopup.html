@@ -7,154 +7,58 @@
 <title>[[#{screen.text.inv.mng.upload.screen.title}]]</title>
 
 	<!-- css -->
-	<th:block layout:fragment="css">
-		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="/css/jsgrid.css" />
+	<th:block layout:fragment="css">	
+	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="/css/theme.css" />
-	</th:block>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.8/css/tabulator.min.css" rel="stylesheet"> 
+	</th:block>  
 
 	 <th:block layout:fragment="script">
-	 	<script src="/js/jsgrid/db.js"></script>
-	    <script src="/js/jsgrid/jsgrid.core.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.field.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
 	 
 		<script>
 		
-		    var excelUpData = new FormData();
+	    	let grid;
+		    let excelUpData = new FormData();
 		    
-			var InvestDtoField = [
-					{ name: "rownum"	, type: "number" , width:  30 ,align: "right" , title: "No."
-					 ,itemTemplate: function(value, item) {
-						 //console.log("###");
-		              return $("<span>").attr("id","row_"+item.poNo).text( getIndex(item)   );
-					 }
-					},
-					{ name: "invNo"		, type: "text"   , width: 70 , align: "center", title: "[[#{screen.text.inv.mng.no}]]"},
-					{ name: "invTtl"	, type: "text"   , width: 140 , align: "left"  , title: "[[#{screen.text.inv.mng.nm}]]"},
-	                { name: "invDt"   	, type: "text"	 , width: 70 , align: "center"  , title: "[[#{screen.text.inv.mng.dt}]]"},
-					{ name: "invQty"	, type: "text"	 , width: 50  , align: "right"  , title: "[[#{screen.text.inv.mng.qty}]]"},
-	                { name: "invAmt"	, type: "text"	 , width: 80  , align: "right"  , title: "[[#{screen.text.inv.mng.amt}]]"},
-	                { name: "actgYear"	, type: "text"	 , width: 70  , align: "center"  , title: "[[#{screen.text.inv.mng.financial.year}]]"},
-	                { name: "poNo"		, type: "text"   , width: 70 , align: "center", title: "[[#{screen.text.inv.mng.po.no}]]"},
-					{ name: "mfgdNm"	, type: "text"   , width: 100 , align: "left"  , title: "[[#{screen.text.inv.mng.item.nm}]]"},
-					{ name: "qty"		, type: "number" , width: 50 , align: "right" , title: "[[#{screen.text.inv.mng.po.qty}]]"},
-					{ name: "poAmt"		, type: "number" , width: 80 , align: "right" , title: "[[#{screen.text.inv.mng.po.amt}]]"},
-					//{ name: "groupNm"	, type: "text"   , width: 100 , align: "center", title: "사업부"   },
-					//{ name: "deptNm"	, type: "text"   , width: 100 , align: "center", title: "부서"	 },					
-					{ name: "invReqr"	, type: "text"   , width: 100 , align: "center", title: "[[#{screen.text.inv.mng.charger}]]"},
-					{ name: "vendNm"	, type: "text"   , width: 80 , align: "left", title: "[[#{screen.text.inv.mng.vendor.nm}]]"},
-					{ name: "reqDt" 	, type: "text"   , width: 70 , align: "center", title: "[[#{screen.text.inv.mng.order.dt}]]"},
-					{ name: "dlvDt"		, type: "text"   , width: 70 , align: "center", title: "[[#{screen.text.inv.mng.ship.dt}]]"},
-					{ name: "chkResult"	, type: "text"   , width: 150 , align: "left"  , title: "[[#{screen.text.inv.mng.upload.valid}]]" 
-					 ,itemTemplate : function(value,item) {
-						 return "<span class='red'>"+value+"</span>";
-					 }
-					},
-				];
-			
-			function getGridBody() {
-				return {
-			        	height: "580",
-			            width: "100%",
-			            data: excelItems, 
-			            autoload: false,
-			            loadonce: false,
-			            updateOnResize: true, 
-			           /*  rowClass:function(item,itemIndex){
-			            	console.log("@@@@ "+item.poNo);
-			            	$(".jsgrid-table").find("#row_"+item.poNo).text(itemIndex+1);
-			            	//return itemIndex;
-			            }, */
-			            fields: InvestDtoField
-			            ,onDataLoaded: rowCount()
-			    	};
-			}
-			
-			function getIndex(item) {
-				var idx= -1;
-				$.each(excelItems, function(index, el){
-					if( item.poNo == el.poNo) idx = index; 
-				});
-				//console.log(item.poNo+" >> idx : "+idx);
-				return idx+1;
-			}
-			
-			//파일 다운로드
-			function excelFormDownload() {
-				
-				event.preventDefault();
-				
-				var fileName = "upload_invest.xlsx";
-				var orgFileName = "투자정보업로드양식.xlsx";
-				
-				var downUrl = "/file/download";
-	        	var $form = $('<form></form>'); 
-				$form.attr('action', downUrl); 
-				$form.attr('target','#downTarget'); 
-				$form.attr('method','post'); 
-				$form.appendTo('body'); 
-				var str = $("<input name='fileName' value='"+fileName+"'/>");
-				var str2 = $("<input name='orgFileName' value='"+orgFileName+"'/>");
-				$form.append(str).append(str2);
-				$form.submit(); 		
-			}
-			
-			function excelUploadProcess() {
-				
-				console.log(excelUpData);
-				
-				let url = "/common/invest/readExcel";
-				let reqType = "POST";	
-				$.commRequestFile(url, reqType, excelUpData)
-					.then((res) => {
-						console.log('엑셀 업로드 성공!!');
-						console.log(res);
-						
-						bak.length = 0;
-						$.each(res, function(index,element){ bak.push(element); });
-						
-						showUploadExcelData(res, "#jsGrid");
-					})
-					.catch((error) => {
-						console.log('엑셀 업로드 실패!!');
-					});
-				
-				excelUpData.delete("file");
-				$("[name='excelNm']").val("");
-			
-			
-			}
-			
-			
-			function rowCount() {    
-			    var count = excelItems.length; 
-			    $("#uploadCnt").html(count);
-			}
-			
-			
-			var bak = []; 
-		
 			$(function() {
 				
-				//////////////////////////////////////////////////////////////////
-				$("#jsGrid").jsGrid(getGridBody());				
-				//////////////////////////////////////////////////////////////////
-			
-				$("#addFile").on("click", function(){
-					
+				grid = new Tabulator("#data-table", {
+				 	locale:true,
+				    langs: $.commGridLocalization(),								
+				 	height:"95%",
+				 	layout:"fitColumns",
+				 	movableColumns:true,
+				 	placeholder:"No Data Set",	
+				 	index:"asetNo",				 	
+				 	columns:[
+				 		{formatter:"rownum", hozAlign:"center", width:40, headerSort:false},			 		
+						{ title: "[[#{screen.text.inv.mng.no}]]"			, field: "invNo"	, hozAlign: "center", headerHozAlign:"center"},
+						{ title: "[[#{screen.text.inv.mng.nm}]]"			, field: "invTtl"	, hozAlign: "left"  , headerHozAlign:"center"},
+			            { title: "[[#{screen.text.inv.mng.dt}]]"			, field: "invDt"   	, hozAlign: "center", headerHozAlign:"center"},
+						{ title: "[[#{screen.text.inv.mng.qty}]]"			, field: "invQty"	, hozAlign: "right" , headerHozAlign:"center"},
+			            { title: "[[#{screen.text.inv.mng.amt}]]"			, field: "invAmt"	, hozAlign: "right" , headerHozAlign:"center"},
+			            { title: "[[#{screen.text.inv.mng.financial.year}]]", field: "actgYear"	, hozAlign: "center", headerHozAlign:"center"},
+			            { title: "[[#{screen.text.inv.mng.po.no}]]"			, field: "poNo"		, hozAlign: "center", headerHozAlign:"center"},
+						{ title: "[[#{screen.text.inv.mng.item.nm}]]"		, field: "mfgdNm"	, hozAlign: "left"  , headerHozAlign:"center"},
+						{ title: "[[#{screen.text.inv.mng.po.qty}]]"		, field: "qty"		, hozAlign: "right" , headerHozAlign:"center"},
+						{ title: "[[#{screen.text.inv.mng.po.amt}]]"		, field: "poAmt"	, hozAlign: "right" , headerHozAlign:"center"},
+						{ title: "[[#{screen.text.inv.mng.charger}]]"		, field: "invReqr"	, hozAlign: "center", headerHozAlign:"center"},
+						{ title: "[[#{screen.text.inv.mng.vendor.nm}]]"		, field: "vendNm"	, hozAlign: "left"	, headerHozAlign:"center"},
+						{ title: "[[#{screen.text.inv.mng.order.dt}]]"		, field: "reqDt" 	, hozAlign: "center", headerHozAlign:"center"},
+						{ title: "[[#{screen.text.inv.mng.ship.dt}]]"		, field: "dlvDt"	, hozAlign: "center", headerHozAlign:"center"},
+						{ title: "[[#{screen.text.inv.mng.upload.valid}]]"	, field: "chkResult", hozAlign: "left"  , headerHozAlign:"center"},
+						{ title: "", field: "chkFlag", visible:false}
+				 	],
+				});		
+				
+
+				/*---------------------- Events ----------------------*/
+				
+				$("#addFile").on("click", function(){					
 					excelItems.length = 0;
-					
-					console.log("addFile");
 					$("#upFile").click();
-					
 				});
 				
 				$("#upFile").on("change", function(e){
@@ -162,7 +66,7 @@
 					var addFiles = obj.files;
 					excelUpData.append("file",addFiles[0]);
 					$("[name='excelNm']").val(addFiles[0].name);
-					console.log(excelItems);
+
 					//파일선택후 엑셀업로드 처리한다.
 					excelUploadProcess()
 				});
@@ -173,20 +77,24 @@
 				});
 				
 				//업로드된 엑셀 데이터 db에 저장한다...
-				$("#btnSave").on("click",function (){ 
+				$("#btnSave").on("click",function (){ 				
+					let invalidData = grid.searchData("chkFlag", "=", "Y");
+					let gridData = grid.getData();
+	    	    	let params = {
+		    	    		url : "/standard/invest/investMng/investMngSave",
+		    	    		reqType : 'POST',
+		    	    		data : JSON.stringify(gridData),
+		    	    	}					
 					
-					let url = "/standard/invest/investMng/investMngSave";
-					let reqType = "POST";
-					
-					if(excelItems.filter(arr => arr.chkFlag == 'Y').length == 0){
-						$.commRequest(url, reqType, JSON.stringify(excelItems))
+					if(invalidData.length == 0){
+						$.request(params)
 							.then((res) => {
 								console.log('저장 성공!!');
 								window.opener.location.reload();
 								window.close();
 							})
 							.catch((error) => {
-								console.log('저장 실패!!');
+								alert('[[#{screen.info.status.error.occur}]]');	
 							}); 
 					}else{
 						alert("[[#{screen.info.status.error.inv.upload.invalid}]]");
@@ -198,27 +106,57 @@
 				});
 				
 				
-				$("#errChk").on("change", function(){
-					var tmp = [];
-					if( $(this).is(":checked") ) { 
-						tmp = excelItems.filter(chkFlag);
-						excelItems.length = 0;
-						$.each(tmp, function(index,element){ excelItems.push(element); });
-					} else {
-						excelItems.length = 0;
-						$.each(bak, function(index,element){ excelItems.push(element); });
-					}
+				//오류건만 보기 버튼
+				$("#errChk").on("click", function(){
 					
-					$("#jsGrid").jsGrid(getGridBody());		
+					let status = $("#errChk").html();					
+					if(status == "[[#{screen.text.inv.mng.view.invalid}]]") {
+						grid.setFilter("chkFlag", "=", "Y");
+						$("#errChk").html("[[#{screen.text.inv.mng.view.all}]]");
+					}else{
+						grid.removeFilter("chkFlag", "=", "Y");
+						$("#errChk").html("[[#{screen.text.inv.mng.view.invalid}]]");
+					}
 				});
 				
-
-			});
+			});		    
+	
+			//엑셀 업로드
+			function excelUploadProcess() {
+				let url = "/common/invest/readExcel";
+				let reqType = "POST";	
+				$.commRequestFile(url, reqType, excelUpData)
+					.then((res) => {
+						//console.log(res);
+						grid.setData(res);		
+						$("#uploadCnt").html("Total : " + res.length);												
+					})
+					.catch((error) => {
+						alert('[[#{screen.info.status.error.occur}]]');						
+					});
+				
+				excelUpData.delete("file");
+				$("[name='excelNm']").val("");
+			}			
 			
-			function chkFlag(item) {
-				return item.chkFlag == "Y";
+			
+			//파일 다운로드
+			function excelFormDownload() {				
+				event.preventDefault();
+				
+				var fileName = "upload_invest.xlsx";
+				var orgFileName = "투자정보업로드양식.xlsx";				
+				var downUrl = "/file/download";
+	        	var $form = $('<form></form>'); 	        	
+				$form.attr('action', downUrl); 
+				$form.attr('target','#downTarget'); 
+				$form.attr('method','post'); 
+				$form.appendTo('body'); 
+				var str = $("<input name='fileName' value='"+fileName+"'/>");
+				var str2 = $("<input name='orgFileName' value='"+orgFileName+"'/>");
+				$form.append(str).append(str2);
+				$form.submit(); 		
 			}
-			
 		</script>
 	</th:block> 
 
@@ -229,64 +167,60 @@
 
 	<!-- pop_alert -->
 	<div id="pop_wrap" >
-	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
-					<!-- head -->
-					<h3>[[#{screen.text.inv.mng.upload.screen.title}]]
-						 <a href="#;" id="btn_close_pop" class="pop_close" title="[[#{screen.text.comm.close}]]">[[#{screen.text.comm.close}]]</a>
-					</h3>
-					<!-- //head -->
-					<!-- contents -->
-					<div id="contents">
-	
-						<!-- search -->
-						<div class="srch_wrap">
-							<!-- search_form -->
-							<div class="srch_form">
-								<table class="srch_table" >
-									<colgroup>
-											<col width="15%"/>
-											<col width="50%"/>
-											<col width="15%"/>
-									</colgroup>
-									<tr>
-										<th>[[#{screen.text.comm.upload.cnt}]] : <span id="uploadCnt" class="tr">0</span></th>
-										<td valign="top">
-											<table>
-												<tr>
-													<th>[[#{screen.text.comm.upload}]]&nbsp;&nbsp;</th> 
-													<td><input type="text" name="excelNm" id="excelNm" style="width:200px" readOnly > <input type="file" id="upFile" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;"></td>
-													<td>&nbsp;&nbsp;<a href="#;" id="addFile" class="btn_srch">[[#{screen.text.comm.file.search}]]</a></td>
-													<td>&nbsp;&nbsp;<input type="checkbox" id="errChk" >&nbsp;[[#{screen.text.inv.mng.view.invalid}]]</td>
-												</tr>
-											</table>
-										</td>
-										<td align="right">
-											<!-- search_button -->
-												<a href="#;" class="btn_download">[[#{screen.text.comm.download.sample}]]</a>
-												<a href="#;" class="btn_srch" id="btnSave">[[#{screen.text.comm.save}]]</a>
-											<!-- //search_button -->
-										</td>
-									</tr>
-								</table>
-							 </div> 
-							<!-- //search_form -->
-							
-						</div>
-						<!-- //search -->
 
-						<!-- list 1 -->
-						<div id="jsGrid"></div>
-						<!-- //list 1 -->
-	
+		<!-- head -->
+		<h3>[[#{screen.text.inv.mng.upload.screen.title}]]
+			 <a href="#;" id="btn_close_pop" class="pop_close" title="[[#{screen.text.comm.close}]]">[[#{screen.text.comm.close}]]</a>
+		</h3>
+		<!-- //head -->
+		<!-- contents -->
+		<div id="contents">
+			<!-- 일괄업로드 -->
+			<table class="form_table_NLine">
+				<colgroup>
+					<col style="width:15%;">
+					<col style="width:25%;">
+					<col style="width:15%;">
+					<col>
+				</colgroup>
+				<tbody>
+					<tr class="line">
+						<th>[[#{screen.text.comm.download.sample}]]</th>
+						<td><a href="#;" class="btn_download">[[#{screen.text.comm.download.sample}]]</a></td>
+						<th>[[#{screen.text.comm.upload}]]</th>
+						<td>
+							<input type="text" name="excelNm" id="excelNm" style="width:200px" readOnly >
+							<input type="file" id="upFile" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;">
+							<a href="#;" id="addFile" class="btn_srch">[[#{screen.text.comm.file.search}]]</a>						
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- //일괄업로드 -->
+			
+			<p class="space10"></p>
+
+			<!-- list 1 -->
+			<div class="list_wrap">
+				<!-- list_head -->
+				<div class="list_head">
+					<div id="uploadCnt" class="result">Total : 1009</div>
+					<!-- list_button -->
+					<div class="button">
+						<a href="#;" id="errChk" class="btn_add">[[#{screen.text.inv.mng.view.invalid}]]</a>
+						<a href="#;" id="btnSave" class="btn_add">[[#{screen.text.comm.save}]]</a>
 					</div>
-					<!-- contents -->
-					<!-- button -->
-					<!-- <div class="pop_button">
-						<p>
-						<a href="#;" id="btn_close_pop" class="btn_list_rd">닫기</a>
-						</p>
-					</div> -->
-					<!-- //button -->
+					<!-- list_button -->
+				</div>
+				<!-- //list_head -->
+
+				<div id="data-table"></div>
+
+			</div>
+			<!-- //list 1 -->
+
+		</div>
+
 	</div>
 	<div id="downTarget"></div>
 	<!-- //pop_alert -->
