@@ -27,9 +27,9 @@
 		    
 		    let grid;
 		    let loadParams; //Local Storage에 저장된 파라미터 정보
-		    
-		    var condition = {};
-		 	var prevCondition = {};
+		    let requestUrl = "/asset/regist/invest/investReg/investRegList"; 
+		    let condition = {};
+		 	let prevCondition = {};
 		 	
 		    $(function(){
 		    	
@@ -65,7 +65,7 @@
 				 	movableColumns:true,
 				 	pagination:true,
 				 	paginationMode:"remote",
-				 	ajaxURL:"/asset/regist/invest/investReg/investRegList",			
+				 	ajaxURL:requestUrl,			
 				 	ajaxParams: getParams(),
 				 	paginationSize:20,				    
 				 	paginationSizeSelector:[20, 50, 100, 500],			
@@ -107,7 +107,7 @@
 				/*------------- Button Events -------------*/
 	         	//조회
 	    	    $(".btn_srch").on("click",function (){
-	    	    	grid.replaceData();
+	    	    	grid.setData(requestUrl, getParams());
 		        });
 		        
 	    	    //팝업창 닫기
@@ -124,24 +124,11 @@
 	    	    	$("#deptNm").val("");
 	    	    	$("#deptCd").val("");
 	    	    	$("#userNm").val("");
-	    	    	$("#userId").val("");
 	    	    	$("#fromDate").val("");
 	    	    	$("#toDate").val("");
 	    	    	$("#regYn").val("");
 	    	    });
-	          	
-				//담당자 
-	    	    $("#openUserFilterPopup").on("click", function() { 	    	    	
-	    	        var url = "/common/popup/userFilterPopup";
-	    	        var popId = "userPopup";
-	    	        var args = {
-	    	        	width  : 800,	
-	    	        	height : 416,
-	    	        };	    	        
-	    	        var param = {userId:"#userId", userNm:"#userNm"};	    	        
-	    	        openPopup2("userPopup", url, args, param);	    	    	
-	    	    });
-				
+
 	    	  	//부서
 	     	    $("#openDeptPopup").on("click", function() { 
 	     	    	let url = "/common/popup/deptTreePopup";
@@ -166,7 +153,7 @@
 			function enterkey() {
 		    	if (window.event.keyCode == 13) {
 		    		if (validationCheck() == '202') {
-		    			grid.replaceData();
+		    			grid.setData(requestUrl, getParams());
 		    		}
 		        }
 		    }
@@ -223,17 +210,12 @@
 		    }
 		    
 	        function getParams(){
-	            return {
-	    				"invNo"   	   : $("#invNo").val(),
-	    				"invTtl"   	   : $("#invTtl").val(),
-	    				"poNo"         : $("#poNo").val(),
-	    				"mfgdNm"   	   : $("#mfgdNm").val(),
-	    				"deptCd"       : $("#deptCd").val(),
-	    				"userId"   	   : $("#userId").val(),
-	    			    "fromDate"     : $("#fromDate").val().replaceAll("-", ""),
-					    "toDate"       : $("#toDate").val().replaceAll("-", ""),
-					    "regYn"	   	   : $("#regYn").val()             
-	                 }
+	        	console.log('getParams called....');
+	        	let params = {}
+	        	let elements = ['invNo', 'invTtl', 'poNo', 'mfgdNm', 'deptCd', 'userNm', 'fromDate', 'toDate', 'regYn'];	        	
+
+	        	elements.forEach(item => {params[item] = $("#"+item).val();});	        	
+				return params;
 	         }   
 	    
 	    </script>	
@@ -282,11 +264,7 @@
 						</td>
 						<th>[[#{screen.text.inv.reqr}]]</th>
 						<td>
-							<div class="inqr_popup_btn">
-								<input type="hidden" id="userId"/>
-								<input type="text" id="userNm" style="width:100%; border-right: 1px none;" />
-								<a href="#" id="openUserFilterPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>							
-							</div>
+							<input type="text" id="userNm" style="width:100%; border-right: 1px none;" />
 						</td>
 					</tr>
 					<tr>

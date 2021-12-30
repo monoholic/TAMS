@@ -63,11 +63,11 @@
 					    				<if test="params.deptCd != '' and params.deptCd != null">
 					    				AND E.dept_cd LIKE CONCAT('%', #{params.deptCd}, '%')
 					    				</if>
-					    				<if test="params.userId != '' and params.userId != null">
-					    				AND D.user_id LIKE CONCAT('%', #{params.userId}, '%')
+					    				<if test="params.userNm != '' and params.userNm != null">
+					    				AND D.user_nm LIKE CONCAT('%', #{params.userNm}, '%')
 					    				</if>
 					    				<if test="params.fromDate != '' and params.fromDate != null">
-					    				AND A.inv_dt BETWEEN #{params.fromDate} AND #{params.toDate}
+					    				AND A.inv_dt BETWEEN replace(#{params.fromDate}, '-', '') AND replace(#{params.toDate, '-', '')}
 					    				</if>								
 					    			) AS a
 					    ) AS b	
@@ -159,11 +159,11 @@
 	      						  <if test="params.deptCd != '' and params.deptCd != null">
 	      							and e.dept_cd like concat('%', #{params.deptCd}, '%')
 	      						  </if>
-	      						  <if test="params.userId != '' and params.userId != null">
-	      						    and d.user_id like concat('%', #{params.userId}, '%')
+	      						  <if test="params.userNm != '' and params.userNm != null">
+	      						    and d.user_nm like concat('%', #{params.userNm}, '%')
 	      						  </if>
 	      						  <if test="params.fromDate != '' and params.fromDate != null">
-	      							and A.inv_dt between #{params.fromDate} and #{params.toDate}
+	      							and A.inv_dt between replace(#{params.fromDate},'-', '') and replace(#{params.toDate, '-', '')}
 	      						  </if>
 	      						) as a
 	           			) as b	

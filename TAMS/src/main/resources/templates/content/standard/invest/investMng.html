@@ -21,14 +21,15 @@
 	    <script>
 	    
 	    	let grid;
-	    
+	    	let requestUrl = "/standard/invest/investMng/investMngList";
+	    	
 		    $(function(){
 		    	
-	            let url = "/common/comm/selectBox";
+	            let commUrl = "/common/comm/selectBox";
 				let reqType = 'GET';	
 	
-				$.commRequestSelectbox(url, reqType, "#searchType", "INV_MAS_MNG");
-				$.commRequestSelectbox(url, reqType, "#searchType2", "INV_MAS_MNG");
+				$.commRequestSelectbox(commUrl, reqType, "#searchType", "INV_MAS_MNG");
+				$.commRequestSelectbox(commUrl, reqType, "#searchType2", "INV_MAS_MNG");
 				
 				grid = new Tabulator("#data-table", {
 				 	locale:true,
@@ -38,7 +39,7 @@
 				 	movableColumns:true,
 				 	pagination:true,
 				 	paginationMode:"remote",
-				 	ajaxURL:"/standard/invest/investMng/investMngList",			
+				 	ajaxURL:requestUrl,			
 				 	ajaxParams: getParams(),
 				 	paginationSize:20,				    
 				 	paginationSizeSelector:[20, 50, 100, 500],			
@@ -97,7 +98,7 @@
 		        	   alert("[[#{screen.info.status.error.input.search.text}]]");
 		        	   $("#searchTxt2").focus();
 		           }else{
-		        	   grid.replaceData();
+		        	   grid.setData(requestUrl, getParams());
 		           }
 		        });				
 				
@@ -188,7 +189,7 @@
 		    		      .then((res) => {
 		    		    	  //console.log(res);
 		    		    	  $(this).parents("#detailForm").hide();
-		    		    	  grid.replaceData();
+		    		    	  $('.btn_srch').click();
 		    		      })
 		    		      .catch((error) => {
 		    		    	console.log(error);
@@ -358,7 +359,7 @@
 		    function enterkey() {
 		    	if (window.event.keyCode == 13) {
 			        if($("#searchType").val() != 'none'){
-			        	grid.replaceData();
+			        	$('.btn_srch').click();
 			        }else{
 			       	   alert("[[#{screen.info.status.error.search.condition}]]");
 			        }

@@ -52,19 +52,18 @@
 				 		return res;
 				 	},					 	
 				 	columns:[ 
-					 	{title:"[[#{screen.text.inv.no}]]"		 , field:"invNo"	, hozAlign:"center", headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.inv.ttl}]]"		 , field:"invTtl"	, hozAlign:"left"  , headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.inv.dt}]]"		 , field:"invDt" 	, hozAlign:"center", headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.po.no}]]"	 	 , field:"poNo"		, hozAlign:"center", headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.po.mfgdnm}]]"	 , field:"mfgdNm"	, hozAlign:"left"  , headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.po.qty}]]"	 	 , field:"qty"		, hozAlign:"right" , headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.po.amt}]]"	 	 , field:"poAmt"	, hozAlign:"right" , headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.dept.nm}]]"	     , field:"deptNm"	, hozAlign:"left"  , headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.inv.reqr}]]"	 , field:"userNm"	, hozAlign:"center", headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.inv.asetqty}]]"	 , field:"asetQty"	, hozAlign:"right" , headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.inv.noasetqty}]]", field:"noAsetQty", hozAlign:"right" , headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.inv.reqr}]]"	 , field:"invReqr"	, visible:false },					 	
-					 	{title:"newYn"							 , field:"newYn" 	, visible:false},
+					 	{title:"[[#{screen.text.outofbook.asetNo}]]"	, field:"asetNo"	, hozAlign:"center"	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.asetType1}]]"	, field:"asetType1"	, hozAlign:"left"  	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.asetType2}]]"	, field:"asetType2"	, hozAlign:"left"  	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.asetType3}]]"	, field:"asetType3"	, hozAlign:"left"  	, headerHozAlign:"center"},
+					 	{title:"[[#{creen.text.outofbook.mftco}]]"		, field:"mftco" 	, hozAlign:"left"	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.model}]]"	 	, field:"model"		, hozAlign:"left"	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.sn}]]"	 	, field:"sn"		, hozAlign:"left"  	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.bizDept}]]"	, field:"bizDeptnM"	, hozAlign:"left" 	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.dept}]]"	 	, field:"deptnM"	, hozAlign:"left" 	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.chrgr}]]"	    , field:"chrgrNm"	, hozAlign:"center" , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.tagYn}]]"	 	, field:"tagYn"		, hozAlign:"center"	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.asetStus}]]"	, field:"asetStus"	, hozAlign:"center" , headerHozAlign:"center"},
 				 	],
 				});						
 
@@ -189,15 +188,15 @@
 		    //검색조건
 	        function getParams(){
 	            return {
-	    				"invNo"   	   : $("#invNo").val(),
-	    				"invTtl"   	   : $("#invTtl").val(),
-	    				"poNo"         : $("#poNo").val(),
-	    				"mfgdNm"   	   : $("#mfgdNm").val(),
-	    				"deptCd"       : $("#deptCd").val(),
-	    				"userId"   	   : $("#userId").val(),
-	    			    "fromDate"     : $("#fromDate").val().replaceAll("-", ""),
-					    "toDate"       : $("#toDate").val().replaceAll("-", ""),
-					    "regYn"	   	   : $("#regYn").val()             
+        				"asetNo"   	: $("#asetNo").val(),
+	    			    "fromDate"  : $("#fromDate").val().replaceAll("-", ""),
+					    "toDate"    : $("#toDate").val().replaceAll("-", ""),        				
+    				    "asetType1"	: $("#asetType1").val(),
+    				    "asetType2"	: $("#asetType2").val(),
+    				    "asetType3"	: $("#asetType3").val(),
+    				    "bizDeptCd"	: $("#bizDeptCd").val(),
+    				    "deptCd"	: $("#deptCd").val(),
+    				    "chrgr"		: $("#chrgr").val(),        				    
 	                 }
 	         }   
 	    
@@ -280,7 +279,7 @@
 							<input type="hidden" id="deptCd"/>
 							<input type="text" id="deptNm" style="width:91%;" readonly/>						
 						</td>
-						<th>[[#{screen.text.outofbook.charger}]]</th>
+						<th>[[#{screen.text.outofbook.chrgr}]]</th>
 						<td>
 							<input type="text" id="userNm" style="width:100%; border-right: 1px none;" />
 						</td>

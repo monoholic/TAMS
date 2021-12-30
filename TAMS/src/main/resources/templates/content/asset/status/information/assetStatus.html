@@ -20,7 +20,9 @@
 		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
 	
 		<script>
-
+			
+			let requestUrl = "/asset/status/information/assetStatusList";
+	
 			$(function(){
 				
 		        //자산유형1 코드 조회
@@ -103,15 +105,15 @@
     	        
 	          	//조회 버튼
 	    	    $(".btn_srch").on("click",function (){
-	    	    	table.replaceData();
+	    	    	table.setData(requestUrl, getParams());
 		        });	          	
 	          	
 				//엔터키
 	    	    $(document).keypress(function(event){	    	    	
 	    	        var keycode = (event.keyCode ? event.keyCode : event.which);
-	    	        console.log(event);
+	    	        //console.log(event);
 	    	        if(keycode == '13'){
-	    	        	table.replaceData();
+	    	        	table.setData(requestUrl, getParams());
 	    	        }
 	    	    }); 	
 				
@@ -132,10 +134,10 @@
 				 	movableColumns:true,
 				 	pagination:true,
 				 	paginationMode:"remote",
-				 	ajaxURL:"/asset/status/information/assetStatusList",				 	
+				 	ajaxURL:requestUrl,				 	
 				 	ajaxParams: getParams(),
-				 	paginationSize:2,				    
-				 	paginationSizeSelector:[10, 25, 50, 100, 500],			
+				 	paginationSize:20,				    
+				 	paginationSizeSelector:[20, 50, 100, 500],			
 				 	dataSendParams:{
 				        "page":"currentPage",
 				        "size":"numOfRows"
@@ -183,7 +185,7 @@
 				 				cell.getRow().update({"asetType1":asetType1[i].codeId});		
 				 			}	
 						});
-				 		console.log(cell.getRow().getCell('asetType1').getValue());
+				 		//console.log(cell.getRow().getCell('asetType1').getValue());
 					}
 					
 					//table 전체 row 조회

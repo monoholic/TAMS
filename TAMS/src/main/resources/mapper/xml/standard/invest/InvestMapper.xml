@@ -12,7 +12,7 @@
                 , e.dept_nm
                 , b.po_no
                 , b.mfgd_nm
-                 , d.user_nm as inv_reqr
+                , d.user_nm as inv_reqr
             FROM TB_INV_MAS A, TB_PO B, TB_USER D, TB_DEPT E
             WHERE 1 = 1
             AND A.inv_no = B.inv_no
