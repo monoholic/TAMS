@@ -430,7 +430,7 @@
 						{ name: "sn", 		 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.sn}]]"},
 						{ name: "bizDeptNm", type:"text",   width: 40 ,align: "left", title:"[[#{screen.text.modify.asset.biz.dept}]]", editing: false},
 						{ name: "deptNm", 	 type:"text",   width: 40 ,align: "left", title:"[[#{screen.text.modify.asset.dept}]]",	    editing: false},
-						{ name: "chrgr", 	 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.chrgr}]]",  editing: false, visible:false,
+						{ name: "chrgr", 	 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.charger}]]",  editing: false, visible:false,
 							
 							itemTemplate : function(value, item) {
 							let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
@@ -452,7 +452,7 @@
 		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
 							}
 						},
-						{ name: "chrgrNm" , type:"text",   width: 25 ,align: "left", title:"[[#{screen.text.modify.asset.chrgr}]]", editing: false },
+						{ name: "chrgrNm" , type:"text",   width: 25 ,align: "left", title:"[[#{screen.text.modify.asset.charger}]]", editing: false },
 						{ name: "control" , type: "control", width: 15, align: "center", modeSwitchButton: false, deleteButton: false, editing: false },
 		            ]
 		        });
