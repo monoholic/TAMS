@@ -65,7 +65,7 @@ public class AssetModifyController {
 	BCryptPasswordEncoder encoder;
 	
 	/** 자산정보수정 화면 */
-	@PostMapping("/requestListView")
+	@PostMapping("/list")
 	public ModelAndView requestListView(HttpServletRequest request,
 			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
 		

@@ -147,7 +147,7 @@ public class ApprovalController {
 		
 		items.put("appvId", appvId);
 		if (reqNoCnt < 1)
-			items.put("appvId", "DC2112001");
+			items.put("appvId", "MO2112001");
 		
 		// 결재 상신 버튼
 		if("F".equals(stus)) {
