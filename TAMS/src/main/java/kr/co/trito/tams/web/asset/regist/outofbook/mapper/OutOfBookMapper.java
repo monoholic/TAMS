@@ -10,6 +10,6 @@ import kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookDto;
 @Mapper
 public interface OutOfBookMapper {
 	
-	public int selectOutOfBookCount(SearchCondition condition);	
+	public int selectCountOutOfBook(SearchCondition condition);	
 	public List<OutOfBookDto> selectOutOfBookList(SearchCondition condition);
 }

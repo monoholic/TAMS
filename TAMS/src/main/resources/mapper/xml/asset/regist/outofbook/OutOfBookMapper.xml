@@ -4,13 +4,125 @@
 
 <mapper namespace="kr.co.trito.tams.web.asset.regist.outofbook.mapper.OutOfBookMapper">
 	 	 
-	<select id="selectOutOfBookCount" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-		select 1	
+	<select id="selectCountOutOfBook" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		select count(a.aset_no) cnt
+		from tb_aset_mas a
+		left outer join tb_com_code b  
+		  on a.aset_type1 = b.code_id
+		 and b.code_grp_id = 'AS_CLASS'
+		left outer join tb_com_code c  
+		  on a.aset_type2 = c.code_id
+		 and c.code_grp_id = 'AS_CLASS'
+		left outer join tb_com_code d  
+		  on a.aset_type2 = d.code_id
+		 and d.code_grp_id = 'AS_CLASS'
+		left outer join tb_user e
+		  on a.chrgr = e.user_id
+		inner join tb_com_code f
+		  on a.aset_stus = f.code_id
+		 and f.code_grp_id = 'AS_STATUS'                
+		where 1=1
+		  and a.aset_out_book_yn = 'Y'
+		  <if test="params.asetNo != '' and params.asetNo != null">
+		  and a.aset_no = #{params.asetNo}
+		  </if>
+		  <if test="params.fromDate != '' and params.fromDate != null">
+		  and a.reg_dt between #{params.fromDate} and #{params.toDate}
+		  </if>
+		  <if test="params.asetType1 != 'ALL' and params.asetType1 != ''">
+		  and a.aset_type1 = #{params.asetType1}
+		  </if>
+		  <if test="params.asetType2 != 'ALL' and params.asetType2 != ''">
+		  and a.aset_type2 = #{params.asetType2}
+		  </if>
+		  <if test="params.asetType3 != 'ALL' and params.asetType3 != ''">
+		  and a.aset_type3 = #{params.asetType3}
+		  </if>
+		  <if test="params.bizDeptCd != '' and params.bizDeptCd != null">
+		  and a.biz_dept_cd = #{params.bizDeptCd}
+		  </if>
+		  <if test="params.deptCd != '' and params.deptCd != null">
+		  and a.dept_cd = #{params.deptCd}  
+		  </if>
+		  <if test="params.chrgr != '' and params.chrgr != null">
+		  and e.user_nm like concat('%', #{params.chrgr}, '%')	
+		  </if>
 	</select>	 	   		
 	
 	<select id="selectOutOfBookList" resultType="kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-		select * 
-		from tb_aset_mas
+		select w.*
+		     , x.dept_nm as bizDeptNm
+		     , y.dept_nm as deptNm     
+		     , case
+		     	when (select count(*) cnt from tb_tag_mas x where x.aset_no = w.asetNo) > 0 then 'Y'
+		        else 'N'
+		       end as tagYn      
+		from (
+				select row_number() over(order by aset_no desc) as rn
+				     , a.aset_no as asetNo
+				     , a.aset_type1 as asetType1
+				     , b.code_nm as asetTypeNm1
+				     , a.aset_type2 as asetType2
+				     , c.code_nm as asetTypeNm2     
+				     , a.aset_type3 as asetType3
+				     , d.code_nm as asetTypeNm3     
+				     , a.mftco
+				     , a.model
+				     , a.sn
+				     , a.biz_dept_cd as bizDeptCd
+				     , a.dept_cd as deptCd
+				     , a.chrgr
+				     , e.user_nm  as chrgrNm
+				     , a.aset_stus as asetStus
+		     		 , f.code_nm as asetStusNm             
+		             , date_format(a.reg_dt, '%Y-%m-%d') as regDt
+				from tb_aset_mas a
+				left outer join tb_com_code b  
+				  on a.aset_type1 = b.code_id
+				 and b.code_grp_id = 'AS_CLASS'
+				left outer join tb_com_code c  
+				  on a.aset_type2 = c.code_id
+				 and c.code_grp_id = 'AS_CLASS'
+				left outer join tb_com_code d  
+				  on a.aset_type2 = d.code_id
+				 and d.code_grp_id = 'AS_CLASS'
+				left outer join tb_user e
+				  on a.chrgr = e.user_id
+				inner join tb_com_code f
+				  on a.aset_stus = f.code_id
+				 and f.code_grp_id = 'AS_STATUS'                
+				where 1=1
+				  and a.aset_out_book_yn = 'Y'
+				  <if test="params.asetNo != '' and params.asetNo != null">
+				  and a.aset_no = #{params.asetNo}
+				  </if>
+				  <if test="params.fromDate != '' and params.fromDate != null">
+				  and a.reg_dt between #{params.fromDate} and #{params.toDate}
+				  </if>
+				  <if test="params.asetType1 != 'ALL' and params.asetType1 != ''">
+				  and a.aset_type1 = #{params.asetType1}
+				  </if>
+				  <if test="params.asetType2 != 'ALL' and params.asetType2 != ''">
+				  and a.aset_type2 = #{params.asetType2}
+				  </if>
+				  <if test="params.asetType3 != 'ALL' and params.asetType3 != ''">
+				  and a.aset_type3 = #{params.asetType3}
+				  </if>
+				  <if test="params.bizDeptCd != '' and params.bizDeptCd != null">
+				  and a.biz_dept_cd = #{params.bizDeptCd}
+				  </if>
+				  <if test="params.deptCd != '' and params.deptCd != null">
+				  and a.dept_cd = #{params.deptCd}  
+				  </if>
+				  <if test="params.chrgrNm != '' and params.chrgrNm != null">
+				  and e.user_nm like concat('%', #{params.chrgrNm}, '%')	
+				  </if>       
+		     ) w
+		left outer join tb_dept x
+		  on w.bizDeptCd = x.dept_cd
+		left outer join tb_dept y
+		  on w.deptCd = y.dept_cd
+		where rn between #{start} and #{end}
 	</select>	
 	
 </mapper>

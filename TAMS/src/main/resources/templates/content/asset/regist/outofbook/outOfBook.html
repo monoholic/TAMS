@@ -20,10 +20,10 @@
 		
 	    <script>
 	    
-		    // 공통코드(자산유형 1레벨 출력)
-		    let menuId = "[[${menuId}]]";		    
 		    let grid;
-		 	
+		    let menuId = "[[${menuId}]]";
+		    let requestUrl = "/asset/regist/outofbook/outOfBookList";
+		    
 		    $(function(){
 		    	
 		    	//자산유형1
@@ -32,12 +32,12 @@
 				grid = new Tabulator("#data-table", {
 				 	locale:true,
 				    langs: $.commGridLocalization(),								
-				 	height:"95%",
+				 	height:"560",
 				 	layout:"fitColumns",
 				 	movableColumns:true,
 				 	pagination:true,
 				 	paginationMode:"remote",
-				 	ajaxURL:"/asset/regist/invest/investReg/investRegList",			
+				 	ajaxURL:requestUrl,			
 				 	ajaxParams: getParams(),
 				 	paginationSize:20,				    
 				 	paginationSizeSelector:[20, 50, 100, 500],			
@@ -52,25 +52,25 @@
 				 		return res;
 				 	},					 	
 				 	columns:[ 
-					 	{title:"[[#{screen.text.outofbook.asetNo}]]"	, field:"asetNo"	, hozAlign:"center"	, headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.outofbook.asetType1}]]"	, field:"asetType1"	, hozAlign:"left"  	, headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.outofbook.asetType2}]]"	, field:"asetType2"	, hozAlign:"left"  	, headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.outofbook.asetType3}]]"	, field:"asetType3"	, hozAlign:"left"  	, headerHozAlign:"center"},
-					 	{title:"[[#{creen.text.outofbook.mftco}]]"		, field:"mftco" 	, hozAlign:"left"	, headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.outofbook.model}]]"	 	, field:"model"		, hozAlign:"left"	, headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.outofbook.sn}]]"	 	, field:"sn"		, hozAlign:"left"  	, headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.outofbook.bizDept}]]"	, field:"bizDeptnM"	, hozAlign:"left" 	, headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.outofbook.dept}]]"	 	, field:"deptnM"	, hozAlign:"left" 	, headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.outofbook.chrgr}]]"	    , field:"chrgrNm"	, hozAlign:"center" , headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.outofbook.tagYn}]]"	 	, field:"tagYn"		, hozAlign:"center"	, headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.outofbook.asetStus}]]"	, field:"asetStus"	, hozAlign:"center" , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.asetNo}]]"   , field:"asetNo"	 	, hozAlign:"center"	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.asetType1}]]", field:"asetTypeNm1", hozAlign:"left"  	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.asetType2}]]", field:"asetTypeNm2", hozAlign:"left"  	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.asetType3}]]", field:"asetTypeNm3", hozAlign:"left"  	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.mftco}]]"	   , field:"mftco" 		, hozAlign:"left"	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.model}]]"	   , field:"model"		, hozAlign:"left"	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.sn}]]"	   , field:"sn"			, hozAlign:"left"  	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.bizDept}]]"  , field:"bizDeptNm"	, hozAlign:"left" 	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.dept}]]"	   , field:"deptNm"		, hozAlign:"left" 	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.chrgr}]]"	   , field:"chrgrNm"	, hozAlign:"center" , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.tagYn}]]"	   , field:"tagYn"		, hozAlign:"center"	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.asetStus}]]" , field:"asetStusNm"	, hozAlign:"center" , headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.outofbook.regDt}]]"	   , field:"regDt"		, hozAlign:"center" , headerHozAlign:"center"},
 				 	],
 				});						
 
 				/*------------- Grid Events -------------*/
 				//row click
-				grid.on("rowClick", function(e, row){	
-					var rowData = row.getData();					
+				grid.on("rowClick", function(e, row){						
 					openAsetList(row.getData());
 				});	
 				
@@ -102,8 +102,9 @@
 				
 				
 	         	//조회
-	    	    $(".btn_srch").on("click",function (){
-	    	    	grid.replaceData();
+	    	    $(".btn_srch").on("click",function (){	    	    	
+	    	    	if(validationCheck())
+	    	    		grid.setData(requestUrl, getParams());
 		        });
 		        
 	    	    //팝업창 닫기
@@ -113,7 +114,7 @@
 		        
 	          	//리셋 버튼
 	    	    $(".btn_reset").click(function() {
-	    	    	let elements = ['asetNo', 'fromDate', 'toDate', 'bizDeptCd', 'bizDeptNm', 'deptCd', 'deptNm', 'userNm']
+	    	    	let elements = ['asetNo', 'fromDate', 'toDate', 'bizDeptCd', 'bizDeptNm', 'deptCd', 'deptNm', 'chrgrNm']
 
 	    	    	elements.forEach((item) => {$("#"+item).val('')});
 	    	    	
@@ -130,9 +131,9 @@
     	        //사업부 조회
 	     	    $("#bizDeptPopup").on("click", function() {
 			     	var params = {
-	        	        searchType:"BIZ_DEPT",
-	     	        	deptCd:"#bizDeptCd",
-	     	        	deptNm:"#bizDeptNm" 	  	        	        	         	    		
+	        	        searchType : "BIZ_DEPT",
+	     	        	deptCd     : "#bizDeptCd",
+	     	        	deptNm     : "#bizDeptNm" 	  	        	        	         	    		
 	         	    }; 	        		        	        
 	        	    openPopup2(dept_pop, dept_url, dept_args, params);
 	         	 });	
@@ -140,9 +141,9 @@
     	        //부서 조회
 	     	    $("#deptPopup").on("click", function() {
 			     	var params = {
-	        	        searchType:"DEPT",
-	     	        	deptCd:"#deptCd",
-	     	        	deptNm:"#deptNm" 	  	        	        	         	    		
+	        	        searchType : "DEPT",
+	     	        	deptCd     : "#deptCd",
+	     	        	deptNm     : "#deptNm" 	  	        	        	         	    		
 	         	    }; 	        		        	        
 	        	    openPopup2(dept_pop, dept_url, dept_args, params);
 	         	 });	     	    
@@ -164,40 +165,29 @@
 		    
 		    //엔터		    
 			function enterkey() {
-		    	if (window.event.keyCode == 13) {
-		    		if (validationCheck() == '202') {
-		    			grid.replaceData();
-		    		}
-		        }
+		    	if (window.event.keyCode == 13 && validationCheck())
+		    		$('.btn_srch').click();
 		    }
 			 
 			// 유효성 검사
-		    function validationCheck() {
-		    	let code = '202';				
+		    function validationCheck() {				
 		    	let fromDate = $("#fromDate").val().replaceAll("-", "");
 		    	let toDate = $("#toDate").val().replaceAll("-", "");
 		    	
 				if(fromDate > toDate) {
 					alert("[[#{screen.info.status.date.fail}]]");
 					$("#toDate").focus();
-					code = '200';
+					return false;
 				}
-				return code;
+				return true;
 		    }
 
 		    //검색조건
 	        function getParams(){
-	            return {
-        				"asetNo"   	: $("#asetNo").val(),
-	    			    "fromDate"  : $("#fromDate").val().replaceAll("-", ""),
-					    "toDate"    : $("#toDate").val().replaceAll("-", ""),        				
-    				    "asetType1"	: $("#asetType1").val(),
-    				    "asetType2"	: $("#asetType2").val(),
-    				    "asetType3"	: $("#asetType3").val(),
-    				    "bizDeptCd"	: $("#bizDeptCd").val(),
-    				    "deptCd"	: $("#deptCd").val(),
-    				    "chrgr"		: $("#chrgr").val(),        				    
-	                 }
+	        	let params = {}
+	        	let elements = ['asetNo', 'fromDate', 'toDate', 'asetType1', 'asetType2', 'asetType3', 'bizDeptCd', 'deptCd', 'chrgrNm'];	        	
+	        	elements.forEach(item => {params[item] = $("#"+item).val();});	        	
+				return params;		    	
 	         }   
 	    
 	    </script>	
@@ -281,7 +271,7 @@
 						</td>
 						<th>[[#{screen.text.outofbook.chrgr}]]</th>
 						<td>
-							<input type="text" id="userNm" style="width:100%; border-right: 1px none;" />
+							<input type="text" id="chrgrNm" style="width:100%; border-right: 1px none;" />
 						</td>
 					</tr>
 				</table>

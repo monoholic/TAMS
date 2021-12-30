@@ -60,7 +60,7 @@
 				grid = new Tabulator("#data-table", {
 				 	locale:true,
 				    langs: $.commGridLocalization(),								
-				 	height:"95%",
+				 	height:"560",
 				 	layout:"fitColumns",
 				 	movableColumns:true,
 				 	pagination:true,
@@ -98,8 +98,7 @@
 
 				/*------------- Grid Events -------------*/
 				//row click
-				grid.on("rowClick", function(e, row){	
-					var rowData = row.getData();					
+				grid.on("rowClick", function(e, row){						
 					openAsetList(row.getData());
 				});	
 				
@@ -210,7 +209,6 @@
 		    }
 		    
 	        function getParams(){
-	        	console.log('getParams called....');
 	        	let params = {}
 	        	let elements = ['invNo', 'invTtl', 'poNo', 'mfgdNm', 'deptCd', 'userNm', 'fromDate', 'toDate', 'regYn'];	        	
 
