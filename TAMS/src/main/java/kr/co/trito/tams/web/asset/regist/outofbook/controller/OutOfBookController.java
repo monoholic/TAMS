@@ -24,8 +24,8 @@ public class OutOfBookController {
 	
 	private String viewPath = "/content/asset/regist/outofbook/";
 	
-	@PostMapping("/outOfBook")
-	public ModelAndView outOfBookView(Authentication authentication, HttpServletRequest request) {
+	@PostMapping("/list")
+	public ModelAndView outOfBookList(Authentication authentication, HttpServletRequest request) {
 		ModelAndView view = new ModelAndView();		
 		UserDto userDto = ((UserInfo) authentication.getPrincipal()).getDto();		
 		view.addObject("menuId"  , request.getParameter("menuId"));

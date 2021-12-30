@@ -63,7 +63,7 @@ public class InvestRegistController {
 	private ExcelReader excelReader;
 
 	/** 투자자산등록 화면 */
-	@PostMapping("/investReg")
+	@PostMapping("/list")
 	public ModelAndView asetinqrView(HttpServletRequest request,
 			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
 

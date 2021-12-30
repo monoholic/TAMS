@@ -49,7 +49,7 @@ public class AssetInfomationController {
 	@Autowired
 	AssetInformationService assetInformationService;
 	
-	@PostMapping("assetStatus")
+	@PostMapping("list")
 	public ModelAndView assetStatusView(Authentication authentication, HttpServletRequest request) {
 		
 		ModelAndView view = new ModelAndView();

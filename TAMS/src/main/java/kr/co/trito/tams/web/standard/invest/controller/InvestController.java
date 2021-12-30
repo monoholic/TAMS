@@ -44,7 +44,7 @@ public class InvestController {
 	InvestService investService;
 	
 	/** 투자정보관리 화면 */
-	@PostMapping("/investMng")
+	@PostMapping("/list")
 	public ModelAndView investMngView(HttpServletRequest request) {
 	
 		ModelAndView view = new ModelAndView();
