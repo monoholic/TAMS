@@ -85,21 +85,11 @@
 		        
 	          	//리셋 버튼
 	    	    $(".btn_reset").click(function() {
-	    	    	$("#asetNo").val("");
-	    	    	
+	    	    	let elements = ['asetNo', 'bizDeptCd', 'bizDeptNm', 'bizDeptCd', 'deptCd', 'deptNm', 'chrgr', 'mftco', 'model']
+	    	    	elements.forEach((item) => {$("#"+item).val('')});
 	    	    	$('#asetType1').val("ALL").attr("selected", "selected");
 	    	    	$('#asetType2').children('option:not(:first)').remove();
-	    	    	$('#asetType3 ').children('option:not(:first)').remove();
-	    	    		    	    	
-	    	    	$("#bizDeptCd").val("");
-	    	    	$("#bizDeptNm").val("");
-	    	    	$("#deptCd").val("");
-	    	    	$("#deptNm").val("");
-	    	    	
-	    	    	$("#chrgr").val("");
-	    	    	$("#mftco").val("");
-	    	    	$("#model").val("");
-	    	    		    	    	
+	    	    	$('#asetType3 ').children('option:not(:first)').remove();		    	    	
 	    	    	$('#asetStatus').val("ALL").attr("selected", "selected");
 	    	    });    	        
     	        
@@ -323,18 +313,10 @@
 			});
 
 			function getParams(){
-				return {
-        				"asetNo"   	 : $("#asetNo").val(),
-    				    "asetType1"	 : $("#asetType1").val(),
-    				    "asetType2"	 : $("#asetType2").val(),
-    				    "asetType3"	 : $("#asetType3").val(),
-    				    "bizDeptCd"	 : $("#bizDeptCd").val(),
-    				    "deptCd"	 : $("#deptCd").val(),
-    				    "chrgr"		 : $("#chrgr").val(),        				    
-        			    "mftco"      : $("#mftco").val(),
-    				    "model"      : $("#model").val(),
-    				    "asetStatus" : $("#asetStatus").val(),        				    
-        			}
+	        	let params = {}
+	        	let elements = ['asetNo', 'asetType1', 'asetType2', 'asetType3', 'bizDeptCd', 'deptCd', 'chrgr', 'mftco', 'model', 'asetStatus'];	        	
+	        	elements.forEach(item => {params[item] = $("#"+item).val();});	        	
+				return params;					
 			}	
 
 			function getCommCode(id, code, level, upperCodeId){				
