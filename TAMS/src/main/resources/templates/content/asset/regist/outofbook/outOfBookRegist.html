@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/popup2">
+
+	<head>
+	    <title>[[#{screen.text.outofbook.screen.title2}]]</title>
+	</head>
+        
+	<!-- css -->
+	<th:block layout:fragment="css">
+	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/jsgrid.css" />
+		<link rel="stylesheet" href="/css/theme.css" />
+		
+	</th:block>
+	
+	<th:block layout:fragment="script">
+	
+		<script>
+			
+			//자산유형 특성 정보수
+			let propertyLength = 0;
+					
+			$(function(){
+				
+				//공통코드 조회
+		        getCommCode("#bsplc"	, "SITE"		, ""	, "");
+		        getCommCode("#buld"		, "BUILDING"	, ""	, "");
+		        getCommCode("#floor"	, "FLOOR"		, ""	, "");
+		        getCommCode("#expDeptCd", "COST_CENTER"	, ""	, "");
+		        getCommCode("#expAcct"	, "COST_ACCOUNT", ""	, "");
+
+		        
+		        /*------------------------ Event ------------------------*/
+	    	  		    	  	
+	    	  	//자산유형1 change 이벤트
+	    	  	asetType1ChangeOn = function(){
+			        $("#asetType1").change(function(){
+			        	let type1 = $("#asetType1").val();
+		        		$('#asetType2').children('option:not(:first)').remove();
+		        		$('#asetType3').children('option:not(:first)').remove();	        		
+			        	if(type1 != '') {
+			        		getCommCode("#asetType2", "AS_CLASS", "2", type1);
+			        		defaultAssetProperty(chooseAsset);
+			        	}
+			        });	    	  		
+	    	  	}
+	    	  	
+	    	  	//자산유형2 change 이벤트
+	    	  	asetType2ChangeOn = function(){
+			        $("#asetType2").change(function(){
+			        	let type2 = $("#asetType2").val();		        	
+			        	$('#asetType3').children('option:not(:first)').remove();		        	
+			        	if(type2 != '') {		        		
+			        		getCommCode("#asetType3", "AS_CLASS", "3", type2);
+			        		defaultAssetProperty(chooseAsset);
+			        	}
+			        });
+	    	  	}	    	  	
+		        
+		        //자산유형3 change 이벤트
+		       	asetType3ChangeOn = function(){
+			        $("#asetType3").change(function(){			        	
+			        	let type3 = $("#asetType3").val();			        	
+			        	if(type3 != '') {		    			        		
+			        		getAssetProperty(type3)
+			        		 .then((len) => {
+			        			 //console.log(len);
+			        		 });
+			        	}else{
+			        		defaultAssetProperty(chooseAsset);
+			        	}
+			        });			        	
+		        }
+	        		    	
+		        		        
+		    	//사용자 선택
+	    	    $("#openUserPopup").on("click", function() { 
+	    	        var url = "/common/popup/userPopup";
+	    	        var popId = "userPopup";
+	    	        var args = {
+	    	        	width  : 650,	
+	    	        	height : 416,
+		    	    	pheight: window.opener.innerHeight,
+		    	    	pwidth : window.opener.innerWidth,	  
+	    	        };	    	        
+	    	        var param = {userId:"#chrgr", userNm:"#chrgrNm"};	    	        
+	    	        openPopup2(popId, url, args, param);
+	    	    });		    	
+		    	
+		    	
+		    	let dept_url = "/common/popup/deptTreePopup";
+		    	let dept_pop = "DeptPopup";
+		    	
+	    	  	//사업부 선택
+	     	    $("#openDeptPopup1").on("click", function() { 
+	    	       var args = {
+	    	    		width  : 500, 
+	    	    		height : 450,
+	    	    		pheight: window.opener.innerHeight,
+	    	    		pwidth : window.opener.innerWidth,	    	    		
+	    	       };
+	    	       var param = {searchType:"BIZ_DEPT", deptCd:"#bizDeptCd", deptNm:"#bizDeptNm"};	         	  
+	 	           openPopup2(dept_pop, dept_url, args, param);
+	     	    });		
+	    	  	
+	    	  	//부서 
+	     	    $("#openDeptPopup").on("click", function() {
+	     	    	var args = {
+	     	    		width  : 500, 
+	     	    		height : 450,
+		    	    	pheight: window.opener.innerHeight,
+		    	    	pwidth : window.opener.innerWidth,	  	     	    		
+	     	    	};
+	     	    	var param = {searchType:"DEPT", deptCd:"#deptCd", deptNm:"#deptNm"};	    	        
+	    	        openPopup2(dept_pop, dept_url, args, param);
+	     	    });	    	  	
+	    	  	
+		        //팝업종료
+				$(".pop_close").on("click",function(){ 
+					window.close();
+				});		        
+		        
+		        //저장
+	     	    $("#saveNewAset").on("click",function() {
+
+	     	    	let data = [saveParams()];	     	    	
+	   		       	//console.log(data);
+	   		       	
+	   		       	//저장전 체크로직 추후구현
+	   		       	
+					$.commRequest("/asset/regist/invest/saveNewAset", "POST", JSON.stringify(data))
+						.then((res) => {
+							alert("[[#{screen.info.status.save.success}]]");							
+							opener.parent.search();
+							window.close();
+						}).catch((error) => {
+							console.log("[[#{screen.info.status.error.occur}]]");
+						});    					
+    			});		        
+		        
+		        //삭제
+		        $("#delNewAset").on("click",function() {
+		        	let chooseVal = confirm("[[#{screen.info.status.default.delete.yn}]]");
+		        	
+		        	if(chooseVal) {
+		        		let params = {		        				
+			    				url     : "/asset/regist/invest/deleteNewAset",
+			    				reqType : "GET",
+			    			   	data    : { 
+			    			   		        poNo    : $("#poNo").html(),
+			    			   		        assetNo : "[[${assetNo}]]"
+			    			   		      }			        		
+		        		}
+		        		
+				    	$.request(params)
+						  .then(res => {
+								alert("[[#{screen.info.status.delete.success}]]");							
+								opener.parent.search();
+								window.close();
+						  })
+						  .catch(error => {
+							  console.log("[[#{screen.info.status.error.occur}]]");
+						  });		        		
+		        	}
+		        });
+		        
+		        
+	     	   /*------------------------ 상세정보 조회 ------------------------*/
+		       if("[[${assetNo}]]" != null && "[[${assetNo}]]" != ""){
+		    	   
+		    	   let params = {
+		    				url     : "/asset/regist/invest/assetDetailInfo",
+		    				reqType : "GET",
+		    			   	data    : {assetNo:"[[${assetNo}]]"}
+		    		   }
+		    	   $.request(params)
+					.then(getAssetProperty)
+					.then(res => {			
+						
+						//1.자산유형 select-box 설정
+						appendAssetType("#asetType1", res.data.assetType1);
+						appendAssetType("#asetType2", res.data.assetType2);
+						appendAssetType("#asetType3", res.data.assetType3);
+												
+						//2.항목값 설정
+						let mas = res.data.mas;
+						//console.log(mas);
+						
+						$("#asetNo").val(mas.asetNo);
+						$("#asetNm").val(mas.asetNm);
+						$("#asetType1").val(mas.asetType1);
+						$("#asetType2").val(mas.asetType2);
+						$("#asetType3").val(mas.asetType3);
+						$("#mftco").val(mas.mftco);
+						$("#model").val(mas.model);
+						$("#sn").val(mas.sn);
+						$("#bizDeptCd").val(mas.bizDeptCd);
+						$("#bizDeptNm").val(mas.bizDeptNm);
+						$("#deptCd").val(mas.deptCd);
+						$("#deptNm").val(mas.deptNm);
+						$("#chrgr").val(mas.chrgr);
+						$("#chrgrNm").val(mas.chrgrNm);
+						$("#bsplc").val(mas.bsplc);
+						$("#buld").val(mas.buld);
+						$("#floor").val(mas.floor);
+						$("#loc").val(mas.loc);
+						$("#expDeptCd").val(mas.expDeptCd);
+						$("#expAcct").val(mas.expAcct);
+						$("#durYear").val(mas.durYear);
+						$("#acqPrc").val(mas.acqPrc);
+						$("#svalPrc").val(mas.svalPrc);
+						$("#acqDt").val(mas.acqDt);
+						
+						let dtl = res.data.dtl;
+						//console.log(dtl);
+						
+						for(var i=0; i<mas.propCnt; i++){							
+							var key = "dtlInfo" + (i+1);
+							$("#"+key).val(dtl[key]);
+						}
+						
+						propertyLength = mas.propCnt;
+						
+						//3.자산유형 select-box 이벤트 설정		
+				    	 asetType1ChangeOn();
+				    	 asetType2ChangeOn();
+				    	 asetType3ChangeOn();						
+				    	 
+					}).catch((error) => {
+						console.log("[[#{screen.info.status.error.occur}]]");
+					}); 		    	   
+		    	   
+		       }else{
+		    	   $("#delNewAset").hide();
+		    	   
+			       getCommCode("#asetType1", "AS_CLASS"	, "1"	, "")
+			         .then(() => {
+			        	 //자산유형 select-box 이벤트 설정
+				    	 asetType1ChangeOn();
+				    	 asetType2ChangeOn();
+				    	 asetType3ChangeOn();		    	   			        	 
+			         });		    	   		    	   
+		       } 		        
+			});
+		
+		
+			function saveParams(){
+				
+				let field = ["asetNo","asetNm","asetType1","asetType2","asetType3","mftco","model","sn","bizDeptCd",
+							 "deptCd","chrgr","bsplc","buld","floor","loc","expDeptCd","expAcct","durYear","acqPrc","svalPrc","acqDt"];
+								
+				let params = {
+					"poNo"      : invData.poNo,
+					"propLength": propertyLength,				
+				}
+				//자산 입력항목
+				field.forEach(id => {
+					params[id] = $("#"+id).val();
+				});
+				
+				//자산유형 특성
+				let prefix = "dtlInfo";				
+				for(var i=0; i<50; i++){
+					var keyname = prefix + (i+1);					
+					if(i<propertyLength){
+						params[keyname] = $("#"+keyname).val();	
+					}else{
+						params[keyname] = "";
+					}
+				}
+								
+				return params;
+			}
+			
+			async function getCommCode(id, code, level, upperCodeId){	
+				let url = "/common/comm/selectBox";
+				let reqType = 'GET';
+				return await $.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);
+			}
+			
+			function getAssetProperty(param){
+				
+				let type;
+				
+				//param은 object 또는 string으로 전달됨.	
+				if(typeof(param) == 'string')
+					type = param;
+				else 
+					type = param.data.mas.asetType3;
+
+				console.log(type);
+				
+        		return new Promise(function(resolve, reject){
+        			let params = {
+		    				url     : "/asset/regist/invest/ ",
+		    				reqType : "GET",
+		    			   	data    : {asetType:type}
+		    			}        
+        			//자산유형3에 해당하는 특성정보 조회
+            		$.request(params)
+        				.then((res) => {			        				        				
+	        				if(res.data.length > 0)
+	        					buildAssetProperty(res.data);
+	        				else
+	        					defaultAssetProperty(noAssetProperty);	 
+	        				resolve(param);
+        			}).catch((error) => {
+        				console.log('----------');
+        				reject(error);
+        			});				        			
+        		});
+			}			
+			
+			function appendAssetType(target, data){
+				var str = '';
+	            $.each(data, function(i){
+	                str += '<option value="' + data[i].codeId + '">' + data[i].codeNm + '</option>';
+	             })
+	             $(target).append(str);				
+			}
+			
+			function buildAssetProperty(data){			
+				let idx = 0;				
+				let html = "<colgroup>"
+				
+				html += "  <col style='width:12%' />";
+				html += "  <col style='width:20%' />";
+				html += "  <col style='width:12%' />";
+				html += "  <col style='width:20%' />";					
+				html += "  <col style='width:12%' />";
+				html += "  <col />";
+				html += "</colgroup>";
+				
+				data.forEach(
+					(row) => {
+
+						html += "<tr>";
+						html += "	<th>" + row.code1 + "</th>";
+						html += "	<td><input type='text' id='dtlInfo" + ++idx + "' style='width:100%;'></td>";
+						
+						if(row.code2 == '' || row.code2 == null){
+							html += "	<th />";							
+							html += "	<td />";							
+						}else{
+							html += "	<th>" + row.code2 + "</th>";
+							html += "	<td><input type='text' id='dtlInfo" + ++idx + "' style='width:100%;'></td>";							
+						}
+
+						if(row.code3 == '' || row.code3 == null){
+							html += "	<th />";							
+							html += "	<td />";							
+						}else{
+							html += "	<th>" + row.code3 + "</th>";
+							html += "	<td><input type='text' id='dtlInfo" + ++idx + "' style='width:100%;'></td>";
+						}
+
+						html += "</tr>";				
+					}
+				);
+				
+				propertyLength = idx;
+				
+		    	$('#append_table').empty();
+		    	$('#append_table').append(html);				
+			}
+			
+			function defaultAssetProperty(msg){
+				let html = "<colgroup>"
+					html += "  <col style='width:12%' />";
+					html += "  <col style='width:20%' />";
+					html += "  <col style='width:12%' />";
+					html += "  <col style='width:20%' />";					
+					html += "  <col style='width:12%' />";
+					html += "  <col />";
+					html += "</colgroup>";
+					html += "<tr><td colspan='6' style='text-align:center;'>" + msg+ "</th></tr>";
+			    $('#append_table').empty();
+			    $('#append_table').append(html);									
+			}
+			
+		</script>
+	
+	</th:block>
+
+	<div layout:fragment="content">
+
+		<!-- container -->
+		<div id="container-pop">
+			<!-- contents -->
+			<div id="contents">
+				<!-- contents_head -->
+				<h3>[[#{screen.text.inv.screen.title2}]]<a href="#;" class="pop_close" title="닫기">[[#{screen.text.comm.close}]]</a></h3>				
+				<!-- //contents_head -->
+				
+				<!-- list -->
+				<div class="list_wrap">
+					<!-- list_head -->
+					<div class="list_head">
+						<h6>[[#{screen.text.inv.screen.subtitle1}]]</h6>
+						<!-- list_button -->
+						<div class="button">
+							<a id="saveNewAset" class="btn_list">[[#{screen.btn.save}]]</a>
+							<a id="delNewAset" class="btn_list">[[#{screen.btn.delete}]]</a>
+						</div>
+						<!-- list_button -->
+					</div>
+					<!-- //list_head -->
+
+					<!-- detail_table -->
+					<table class="detail_table form_s">
+						<colgroup>
+						<col style="width:12%" />
+						<col style="width:20%" />
+						<col style="width:12%" />
+						<col style="width:20%" />
+						<col style="width:12%" />
+						<col />
+						</colgroup>
+						<tr>
+							<th>[[#{screen.popup.text.asset.no}]]</th>
+							<td><input type="text" id="asetNo" style="width:100%;" readOnly></td>
+							<th>[[#{screen.text.aset.nm2}]]</th>
+							<td colspan="3"><input type="text" id="asetNm" style="width:100%;"></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.popup.text.asset.type1}]]</th>
+							<td>
+								<select id="asetType1" style="width:100%;">
+									<option value="">[[#{screen.text.comm.choice}]]</option>
+								</select>
+							</td>
+							<th>[[#{screen.popup.text.asset.type2}]]</th>
+							<td>
+								<select id="asetType2" style="width:100%;">
+									<option value="">[[#{screen.text.comm.choice}]]</option>
+								</select>	
+							</td>
+							<th>[[#{screen.popup.text.asset.type3}]]</th>
+							<td>
+								<select id="asetType3" style="width:100%;">
+									<option value="">[[#{screen.text.comm.choice}]]</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.asset.mftco}]]</th>
+							<td><input type="text" id="mftco" style="width:100%;" value=""></td>
+							<th>[[#{screen.text.asset.model}]]</th>
+							<td><input type="text" id="model" style="width:100%;" value=""></td>
+							<th>[[#{screen.text.asset.sn}]]</th>
+							<td><input type="text" id="sn" style="width:100%;" value=""></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.asset.bizDeptCd}]]</th>
+							<td>
+								<input type="hidden" id="bizDeptCd"/>
+								<div class="inqr_popup_btn">
+									<input type="text" id="bizDeptNm" style="width:100%; border-right: 1px none;" />
+									<a href="#" id="openDeptPopup1" ><img title="사업부 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+								</div>
+							</td>
+							<th>[[#{screen.text.asset.deptCd}]]</th>
+							<td>
+								<input type="hidden" id="deptCd"/>
+								<div class="inqr_popup_btn">
+									<input type="text" id="deptNm" style="width:100%; border-right: 1px none;" />
+									<a href="#" id="openDeptPopup" ><img title="부서 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+								</div>
+							</td>
+							<th>[[#{screen.text.asset.asetChrgr}]]</th>
+							<td>
+								<input type="hidden" id="chrgr"/>
+								<div class="inqr_popup_btn">
+									<input type="text" id="chrgrNm" style="width:100%; border-right: 1px none;"/>
+									<a href="#" id="openUserPopup" ><img title="사용자검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.aset.bspic}]]</th>
+							<td>
+	                            <select id="bsplc" style="width:100%;">
+	                            	<option value="">[[#{screen.text.comm.choice}]]</option>
+	                            </select>
+							</td>
+							<th>[[#{screen.text.aset.buld}]]</th>
+							<td>
+	                            <select id="buld" style="width:100%;">
+	                            	<option value="">[[#{screen.text.comm.choice}]]</option>
+	                            </select>
+							</td>
+							<th>[[#{screen.text.aset.floor}]]</th>
+							<td>
+	                            <select id="floor" style="width:100%;">
+	                            	<option value="">[[#{screen.text.comm.choice}]]</option>
+	                            </select>
+							</td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.aset.loc}]]</th>
+							<td colspan="5"><input type="text" id="loc" style="width:100%;" value=""></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.aset.expDeptCd}]]</th>
+							<td>
+	                            <select id="expDeptCd" style="width:100%;">
+	                            	<option value="">[[#{screen.text.comm.choice}]]</option>
+	                            </select>
+							</td>
+							<th>[[#{screen.text.aset.expAcct}]]</th>
+							<td>
+	                            <select id="expAcct" style="width:100%;">
+	                            	<option value="">선택</option>
+	                            </select>
+							</td>
+							<th>[[#{screen.text.aset.durYear}]]</th>
+							<td><input type="text" id="durYear" style="width:100%;"></td>
+						</tr>
+						<tr>
+							<th>[[#{screen.text.aset.acqPrc}]]</th>
+							<td><input type="text" id="acqPrc" style="width:100%;"></td>
+							<th>[[#{screen.text.aset.svalPrc}]]</th>
+							<td><input type="text" id="svalPrc" style="width:100%;"></td>
+							<th>[[#{screen.text.aset.acqDt}]]</th>
+							<td><input type="date" id="acqDt" style="width:100%;"></td>
+						</tr>
+					</table>
+					<!-- //detail_table -->
+				</div>
+				<!-- //list -->
+
+				<p class="space10"></p>
+
+				<!-- list -->
+				<div class="list_wrap">
+					<!-- list_head -->
+					<div class="list_head">
+						<h6>[[#{screen.text.inv.screen.subtitle2}]]</h6>
+					</div>
+					<!-- //list_head -->
+
+					<!-- detail_table -->
+					<table id="append_table" class="detail_table form_s">
+						<colgroup>
+						<col style="width:12%" />
+						<col style="width:20%" />
+						<col style="width:12%" />
+						<col style="width:20%" />						
+						<col style="width:12%" />
+						<col />
+						</colgroup>
+						<tr>
+							<td colspan="6" style="text-align:center;">[[#{screen.info.status.inv.choose.assettype3}]]</th>
+						</tr>				
+					</table>
+				</div>
+				<!-- //list -->
+
+			</div>
+			<!-- //contents -->
+		</div>
+		<!-- //container -->
+	</div>			
+</html>

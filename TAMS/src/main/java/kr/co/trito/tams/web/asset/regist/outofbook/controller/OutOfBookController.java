@@ -55,6 +55,16 @@ public class OutOfBookController {
 		return view;
 	}		
 	
+	//신규자산 등록
+	@GetMapping("/newAsetRegist")
+	public ModelAndView newAsetRegist(
+			@ApiParam(value = "자산번호", required = true) @RequestParam Map<String, Object> params) {
+		ModelAndView view = new ModelAndView();
+		view.addObject("assetNo", params.get("assetNo"));
+		view.setViewName(viewPath.concat("outOfBookRegist"));		
+		return view;
+	}
+	
 	
 	@GetMapping(value = "/outOfBookList")
 	@ResponseBody

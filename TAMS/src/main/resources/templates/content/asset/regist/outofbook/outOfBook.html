@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>[[#{screen.text.outofbook.screen.title}]]</title>
+	    <title>[[#{screen.text.outofbook.screen.title1}]]</title>
 	</head>
         
 	<!-- css -->
@@ -70,8 +70,8 @@
 
 				/*------------- Grid Events -------------*/
 				//row click
-				grid.on("rowClick", function(e, row){						
-					openAsetList(row.getData());
+				grid.on("rowClick", function(e, row){					
+					openNewAssetPopup({assetNo : row.getData().asetNo});
 				});	
 				
 				
@@ -153,8 +153,20 @@
 	     	    $("#excelDown").on("click",function() {	       					       
 	     	    	grid.download("xlsx", "InvestAsset.xlsx", {sheetName:"투자자산"});
 				});
+	    	  	
+				//신규자산
+	    	    $("#asetRegist").on("click", function() {	  
+	    	    	openNewAssetPopup({assetNo : ""});
+	    	    });	    	  	
+	    	  	
 	    	});
 
+	        function openNewAssetPopup(params){
+    	        var url = "/asset/regist/outofbook/newAsetRegist";
+    	        var args = {width:1200, height:600};	    	        
+    	        openPopup2("newAsetRegist", url, args, params);	        	
+	        }		    
+		    
 		    //공통코드-selectbox
 			function getCommCode(id, code, level, upperCodeId){				
 				let url = "/common/comm/selectBox";
