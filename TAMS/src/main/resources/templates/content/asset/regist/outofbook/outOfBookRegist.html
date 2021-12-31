@@ -19,6 +19,10 @@
 	
 		<script>
 			
+			//message
+	  		const chooseAsset = "[[#{screen.info.status.inv.choose.assettype3}]]";
+	  		const noAssetProperty = "[[#{screen.info.status.inv.no.asset.property}]]"		
+		
 			//자산유형 특성 정보수
 			let propertyLength = 0;
 					
@@ -168,7 +172,7 @@
 		        
 		        
 	     	   /*------------------------ 상세정보 조회 ------------------------*/
-		       if("[[${assetNo}]]" != null && "[[${assetNo}]]" != ""){
+		       if(!$.isNull("[[${assetNo}]]")){
 		    	   
 		    	   let params = {
 		    				url     : "/asset/regist/invest/assetDetailInfo",
@@ -186,8 +190,6 @@
 												
 						//2.항목값 설정
 						let mas = res.data.mas;
-						//console.log(mas);
-						
 						$("#asetNo").val(mas.asetNo);
 						$("#asetNm").val(mas.asetNm);
 						$("#asetType1").val(mas.asetType1);
@@ -289,25 +291,22 @@
 					type = param;
 				else 
 					type = param.data.mas.asetType3;
-
-				console.log(type);
 				
         		return new Promise(function(resolve, reject){
         			let params = {
-		    				url     : "/asset/regist/invest/ ",
+        					url     : "/asset/regist/invest/asetTypeInfo",
 		    				reqType : "GET",
 		    			   	data    : {asetType:type}
 		    			}        
         			//자산유형3에 해당하는 특성정보 조회
             		$.request(params)
-        				.then((res) => {			        				        				
+        				.then((res) => {			        				        				        					
 	        				if(res.data.length > 0)
 	        					buildAssetProperty(res.data);
 	        				else
 	        					defaultAssetProperty(noAssetProperty);	 
 	        				resolve(param);
         			}).catch((error) => {
-        				console.log('----------');
         				reject(error);
         			});				        			
         		});

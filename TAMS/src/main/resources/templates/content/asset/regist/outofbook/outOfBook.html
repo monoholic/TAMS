@@ -162,8 +162,13 @@
 	    	});
 
 	        function openNewAssetPopup(params){
-    	        var url = "/asset/regist/outofbook/newAsetRegist";
-    	        var args = {width:1200, height:600};	    	        
+    	        var url = "/asset/regist/outofbook/outOfBookRegist";
+    	        var args = {
+	    	        	width  : 1200,	
+	    	        	height : 600,
+		    	    	pheight: window.innerHeight,
+		    	    	pwidth : window.innerWidth,	  
+	    	        };	  
     	        openPopup2("newAsetRegist", url, args, params);	        	
 	        }		    
 		    

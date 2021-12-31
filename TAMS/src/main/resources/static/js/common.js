@@ -169,6 +169,14 @@
 		}
   };
   
+  //Null 체크 함수(true/false)   
+  $.isNull = function(str) {
+	if(str == "" || str == null || typeof str == "undefined") {
+		return true;	
+	}	
+	return false
+}
+  
   $.fn.center = function () {
   	this.css("position","absolute");
     this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
