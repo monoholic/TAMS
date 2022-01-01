@@ -34,7 +34,7 @@
 				grid = new Tabulator("#data-table", {
 				 	locale:true,
 				    langs: $.commGridLocalization(),								
-				 	height:"95%",
+				 	height:"560",
 				 	layout:"fitColumns",
 				 	movableColumns:true,
 				 	pagination:true,
@@ -57,23 +57,23 @@
 			 	        	headerSort:false, width:30, cellClick:function(e, cell){
 			 	         		cell.getRow().toggleSelect();
 			 	        }},					 		
-		            	{title:"[[#{screen.text.inv.mng.no}]]" 				, field:"invNo"   , hozAlign: "center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.nm}]]"  			, field:"invTtl"  , hozAlign: "left"  	, headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.dt}]]" 				, field:"invDt"   , hozAlign: "center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.qty}]]"  			, field:"invQty"  , hozAlign: "right"  	, headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.amt}]]"  			, field:"invAmt"  , hozAlign: "right"  	, headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.financial.year}]]" 	, field:"actgYear", hozAlign: "center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.po.no}]]"  			, field:"poNo"	  , hozAlign: "center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.item.nm}]]" 	   	, field:"mfgdNm"  , hozAlign: "left"  	, headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.po.qty}]]"  		, field:"qty"	  , hozAlign: "right"  	, headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.po.amt}]]"  		, field:"poAmt"	  , hozAlign: "right"  	, headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.dept}]]" 	   		, field:"deptNm"  , hozAlign: "left"  	, headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.charger}]]"   		, field:"userNm"  , hozAlign: "center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.vendor.nm}]]"   	, field:"vendNm"  , hozAlign: "left"  	, headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.order.dt}]]"		, field:"reqDt"   , hozAlign: "center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.ship.dt}]]"   		, field:"dlvDt"   , hozAlign: "center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.inv.mng.asset.regist.yn}]]"	, field:"poAsetYn", hozAlign: "center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.comm.regdt}]]"  			, field:"regDt"   , hozAlign: "center"  , headerHozAlign:"center"},
+		            	{title:"[[#{screen.text.inv.mng.no}]]" 					, field:"invNo"   	, hozAlign: "center" 	, headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.nm}]]"  					, field:"invTtl"  		, hozAlign: "left"  		, headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.dt}]]" 						, field:"invDt"   		, hozAlign: "center" 	, headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.qty}]]"  					, field:"invQty"  	, hozAlign: "right"  	, headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.amt}]]"  					, field:"invAmt"  	, hozAlign: "right"  	, headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.financial.year}]]" 	, field:"actgYear"	, hozAlign: "center"  , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.po.no}]]"  				, field:"poNo"	  	, hozAlign: "center"  , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.item.nm}]]" 	   		, field:"mfgdNm"  , hozAlign: "left"  		, headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.po.qty}]]"  				, field:"qty"	  		, hozAlign: "right"  	, headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.po.amt}]]"  			, field:"poAmt"	  	, hozAlign: "right"  	, headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.dept}]]" 	   				, field:"deptNm"  	, hozAlign: "left"  		, headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.charger}]]"   			, field:"userNm"  	, hozAlign: "center"  , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.vendor.nm}]]"   		, field:"vendNm"  	, hozAlign: "left"  		, headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.order.dt}]]"				, field:"reqDt"   	, hozAlign: "center"  , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.ship.dt}]]"   			, field:"dlvDt"   		, hozAlign: "center"  , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.inv.mng.asset.regist.yn}]]"	, field:"poAsetYn"	, hozAlign: "center"  , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.comm.regdt}]]"  					, field:"regDt"   	, hozAlign: "center"  , headerHozAlign:"center"},
 		                {title: "[[#{screen.text.inv.mng.charger.id}]]"		, field:"invReqr" , visible: false },
 		                
 				 	],
@@ -122,7 +122,7 @@
 	    	    	//console.log(selectedData);
 	    	    	
 	    	    	if(selectedData.length == 0){
-	    	    		alert('[[#{screen.info.status.error.inv.no.selected.item}]]');
+	    	    		alert('[[#{screen.info.status.no.selected.item}]]');
 	    	    		return;
 	    	    	}	    	    	
 	    	    	
