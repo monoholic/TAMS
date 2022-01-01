@@ -8,374 +8,266 @@
 	</head>
         
 	<!-- css -->
-	<th:block layout:fragment="css">
+	<th:block layout:fragment="css">	
 	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="/css/jsgrid.css" />
 		<link rel="stylesheet" href="/css/theme.css" />
-		
-	</th:block>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.8/css/tabulator.min.css" rel="stylesheet"> 
+	</th:block>    
 	
 	<th:block layout:fragment="script">
-		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
-		<script src="/js/jsgrid/db.js"></script>
-	    <script src="/js/jsgrid/jsgrid.core.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.field.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
+		<script type="text/javascript" src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
 		
 	    <script>
-	    let numOfRows = 30;
-	    var status = true;
-        var selectedItems = [];
-	 	var insertedItems = [];
-	 	var updatedItems = [];
-	 	var codeGrpMngList = [];
-	 	
-		// 공통코드 그룹 출력                                                                                    
-		$(document).ready(function(){                                                                    
-			let url = '/standard/code/codeGrpList';                                                      
-		 	let reqType = 'POST';                                                                        
-		 	let data = {                                                                                 
-		 		"email" : ""                                                                             
-		 	};                                                                                           
-		 	$.commRequest(url, reqType, JSON.stringify(data))                                            
-		 		.then((res) => {                                                                         
-		 			$.each(res.data, function(i){                                                        
-		 				var codeGrpList = res.data[i];                                                  
-		 				$("#codeGrpId").append('<option value='+codeGrpList.codeGrpId+'>'+codeGrpList.codeGrpId+'</option>');
-		 			})
-		 		})
-		 		.catch((error) => {                                                                      
-		 			alert('[[#{screen.info.status.error.occur}]]');                                                                  
-		 		});
-		});
-	 	
-	    $(function(){
-	        $("#jsGrid").jsGrid({
-	        	height: "600",
-                width: "100%",
-                filtering: false,
-                editing: true,
-                inserting: true,
-                sorting: true,
-                paging: true,
-                sorter: "number",
-                pageIndex:1,
-                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
-                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
-                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
-                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
-                pagerFormat: "{first} {prev} {pages} {next} {last}",
-                pagerContainer:null,
-                pageLoading: true,
-                pager: "#pager",
-                autoload: status,
-                pageSize: numOfRows,
-                pageButtonCount: 5,
-                loadonce: true,
-                updateOnResize: true, 
-	            rowClick: function(args) {
-	            	var target = args.event.target;
-	            	
-					if(target instanceof HTMLTableCellElement) {
-						showDetailForm(args.item);
-						
-					} else {
-					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
-					                .on("change", function () {
-						  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
-						});
-					}
-	            }, 
-	            pagerContainerClass: "paginate",
-	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
-	            },
-	            controller:  {
-	                loadData: function(filter) {
-	                    var d = $.Deferred();
-	                    
-	                    currentPage = filter.pageIndex; 
-               			
-	                    let url = "/standard/code/codeMng/codeList";
-						let reqType = 'GET';	
-						let data = {
-            				"currentPage"  : filter.pageIndex,
-            				"numOfRows"    : numOfRows,
-            				"searchText"   : $("#searchText").val(),
-            				"searchOption" : $("#searchOption option:selected").val(),
-            				"useYnOption"  : $("#useYnOption option:selected").val(),
-            				"sortField"    : filter.sortField,
-            				"sortOrder"    : filter.sortOrder
-            			}
-						$.commRequest(url, reqType, data)
-							.then((res) => {
-								codeGrpMngList = res.data;
-								$(".result").text("Totals : " + res.condition.totalCount);
-								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
-							})
-							.catch((error) => {
-								console.log('조회 실패!!');
-							});						
-	                    
-	                    return d.promise();
-	                },
 
-	            updateItem: function(item) { 
-                	let url = "/standard/code/codeMng/codeMerge";
-                	let reqType = 'GET';
-                	$.commRequest(url, reqType, item)
-                		.then((res) => {
-                			unselectItem(item);
-                			
-                			alert("[[#{screen.info.status.update.success}]]");
-                			selectedItems = [];
-                			$("#jsGrid").jsGrid("loadData");
-                		})
-                		.catch((error) => {
-                			console.log(error);
-                		})
-                },
+		    let grid;
+		    let requestUrl = "/standard/code/codeMng/codeList";	    
+	    
+			// 공통코드 그룹 출력                                                                                    
+			$(document).ready(function(){                                                                    
+				let url = '/standard/code/codeGrpList';                                                      
+			 	let reqType = 'POST';                                                                        
+			 	let data = {                                                                                 
+			 		"email" : ""                                                                             
+			 	};                                                                                           
+			 	$.commRequest(url, reqType, JSON.stringify(data))                                            
+			 		.then((res) => {                                                                         
+			 			$.each(res.data, function(i){                                                        
+			 				var codeGrpList = res.data[i];                                                  
+			 				$("#codeGrpId").append('<option value='+codeGrpList.codeGrpId+'>'+codeGrpList.codeGrpId+'</option>');
+			 			})
+			 		})
+			 		.catch((error) => {                                                                      
+			 			alert('[[#{screen.info.status.error.occur}]]');                                                                  
+			 		});
+			});
+	 	
+		    $(function(){
 
-             	insertItem: function(item) { 
-        			let url = "/standard/code/codeMng/codeMerge";
-        			let reqType = 'GET';
-        			
-        			$.commRequest(url, reqType, item)
-        				.then((res) => {
-        					$("#jsGrid").jsGrid("loadData");
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        				})
-            	}
-        		    
-            },
-	            fields: [
-	            	{  	   name : "chk"
-	                	 , align: "center"
-	                	 , width: 10
-	                	 , title: ""
-	                	 , editing: false
-	                	 , sorting: false
-	                	 , filtering: false
-	                	 , itemTemplate: function(value, item) {
-	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-	                       .prop("checked", $.inArray(item.firstName, selectedItems) > -1)
-	                       .on("change", function () {
-	  					  		$(this).is(":checked") ? selectItem(item) : unselectItem(item);
-	  					  		});
-	            		   }
-	                	 , headerTemplate : function ()  { 
-						  	return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
-		                     .on("change", function (item) {
-		             	    	selectedItems = [];
-		            	    	if(this.checked) { // check select status
-		            	            $('.singleCheckbox').each(function() { 
-		            	                this.checked = true;   
-		            	                selectItem($(this).parent().next().text());           
-		            	            });			         
-		            	        }else {
-		            	            $('.singleCheckbox').each(function() { 
-		            	                this.checked = false;      
-		            	                unselectItem(item);
-		            	        	});  
-		            	            selectedItems = [];
-		            	    	}
-		    				});
-						} ,
-	                },
-	                { name:"codeId",    type:"text",   align:"left",   width:35,  title:"[[#{screen.text.code.id}]]"},
-	                { name:"codeGrpId", type:"text",   align:"left",   width:40,  title:"[[#{screen.text.code.grp.id}]]"},
-	                { name:"codeNm",    type:"text",   align:"left",   width:50,  title:"[[#{screen.text.code.nm}]]"},
-	                { name:"codeEngNm", type:"text",   align:"left",   width:50,  title:"[[#{screen.text.code.eng.nm}]]"},
-	                { name:"uppCodeId", type:"text",   align:"left",   width:30,  title:"[[#{screen.text.code.upper.id}]]"},
-	                { name:"codeLvl",   type:"number", align:"center", width:20,  title:"[[#{screen.text.code.level}]]"},
-	                { name:"codeDesc",  type:"text",   align:"left",   width:120, title:"[[#{screen.text.code.desc}]]"},
-	                { name:"sortOdr",   type:"number", align:"center", width:20,  title:"[[#{screen.text.code.sort}]]"},
-	                { name:"useYn",     type:"select", align:"center", width:20,
-	                	items: [
-			            	{ Name: "[[#{screen.text.comm.ues}]]",  Id: "Y"},
-			            	{ Name: "[[#{screen.text.comm.unuesd}]]", Id: "N"},
-			            	],
-	                	valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1, title: "[[#{screen.text.comm.useyn}]]"},
-	                { name:"updr",  type:"text", align:"center", width:20, title:"[[#{screen.text.comm.updr}]]"},
-	                { name:"upDt",  type:"text", align:"center", width:30, title:"[[#{screen.text.comm.updt}]]"},
-	                { name:"regr",  type:"text", align:"center", width:20, title:"[[#{screen.text.comm.regr}]]"},
-	                { name:"regDt", type:"text", align:"center", width:30, title:"[[#{screen.text.comm.regdt}]]"},
-	            ]
-            	
-	        });
-	        
-		    var selectItem = function(item) {
-		    	if(!selectedItems.includes(item))
-			    	selectedItems.push(item);
+		    	getCodeGrp();
 		    	
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             $("#selectAllCheckbox").prop("checked", true);
-	         } else {
-	             $("#selectAllCheckbox").prop("checked", false);
-	         }
-			};
-		     
-		    var unselectItem = function(item) {
-			    selectedItems = $.grep(selectedItems, function(i) {
-			  		return i !== item;
-			    });
-			    
-			    if(selectedItems.length == 0) {
-			    	$('#selectAllCheckbox').attr('checked', false);
-			    }
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             $("#selectAllCheckbox").prop("checked", true);
-	         } else {
-	             $("#selectAllCheckbox").prop("checked", false);
-	         }
-		    };
-	        
-	        $("#pager").on("change", function() {
-	            var page = parseInt($(this).val(), 10);
-	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
-	        });
+	            //drag 활성화
+		     	$("#detailForm").draggable();
+	            
+				grid = new Tabulator("#data-table", {
+				 	locale:true,
+				    langs: $.commGridLocalization(),								
+				 	height:"560",
+				 	layout:"fitColumns",
+				 	movableColumns:true,
+				 	pagination:true,
+				 	paginationMode:"remote",
+				 	ajaxURL:requestUrl,			
+				 	ajaxParams: getParams(),
+				 	paginationSize:20,				    
+				 	paginationSizeSelector:[20, 50, 100, 500],			
+				 	dataSendParams:{
+				        "page":"currentPage",
+				        "size":"numOfRows"
+				    } ,							    
+				 	placeholder:"No Data Set",				 	
+				 	ajaxResponse:function(url, params, res){
+				 		$(".result").text("Totals : " + res.condition.totalCount);				 						 						 		
+				 		return res;
+				 	},					 	
+				 	columns:[ 
+			 	        {formatter:"rowSelection", titleFormatter:"rowSelection", hozAlign:"center", headerHozAlign:"center", 
+			 	        	headerSort:false, width:30, cellClick:function(e, cell){
+			 	         		cell.getRow().toggleSelect();
+			 	        }},					 		
+		                { title:"[[#{screen.text.code.id}]]"       		, field:"codeId"   			,  hozAlign:"left"  		, headerHozAlign:"center"},
+		                { title:"[[#{screen.text.code.grp.id}]]"   		, field:"codeGrpId"		,  hozAlign:"left"  		, headerHozAlign:"center"},
+		                { title:"[[#{screen.text.code.nm}]]"       	, field:"codeNm"  		 	,  hozAlign:"left"  		, headerHozAlign:"center"},
+		                { title:"[[#{screen.text.code.eng.nm}]]"   	, field:"codeEngNm"	,  hozAlign:"left"  		, headerHozAlign:"center"},
+		                { title:"[[#{screen.text.code.upper.id}]]" 	, field:"uppCodeId"		,  hozAlign:"left"  		, headerHozAlign:"center"},
+		                { title:"[[#{screen.text.code.level}]]"    		, field:"codeLvl"  			,  hozAlign:"center"	, headerHozAlign:"center"},
+		                { title:"[[#{screen.text.code.desc}]]"     	, field:"codeDesc"		,  hozAlign:"left"  		, headerHozAlign:"center"},
+		                { title:"[[#{screen.text.code.sort}]]"     		, field:"sortOdr"  			,  hozAlign:"center"	, headerHozAlign:"center"},
+		                { title:"[[#{screen.text.comm.useyn}]]"   	, field:"useYn"    			,  hozAlign:"center"	, headerHozAlign:"center"},
+		                { title:"[[#{screen.text.comm.updr}]]"     	, field:"updr"     			,  hozAlign:"center"	, headerHozAlign:"center"},
+		                { title:"[[#{screen.text.comm.updt}]]"     	, field:"upDt"     			,  hozAlign:"center"	, headerHozAlign:"center"},
+		                { title:"[[#{screen.text.comm.regr}]]"     	, field:"regr"     				,  hozAlign:"center"	, headerHozAlign:"center"},
+		                { title:"[[#{screen.text.comm.regdt}]]"    	, field:"regDt"    			,  hozAlign:"center"	, headerHozAlign:"center"},
+				 	],
+				});			    	
+		    	
+				/*------------------------- Grid Events -------------------------*/
+				//row click
+				grid.on("rowClick", function(e, row){	
+					var rowData = row.getData();		
+					showDetailForm(row.getData());
+				});				            
+	            
+		    	/* ------------------------ UI Events  ------------------------*/
+		    	
+		    	//조회버튼
+	    	    $(".btn_srch").on("click",function (){
+	    	    	grid.setData(requestUrl, getParams());
+		        });
+		    	
+		    	//등록
+	    	    $(".btn_add").click(function() {
+	    	    	showDetailForm();
+	    	    });
+		        
+		    	//삭제
+	    	    $(".btn_del").click(function() {
+	    	    	
+	    	    	let selectedData  = grid.getSelectedData();
+	    	    	let items = [];	    	    	
+	    	    	
+	    	    	if(selectedData.length == 0){
+	    	    		alert('[[#{screen.info.status.no.selected.item}]]');
+	    	    		return;
+	    	    	}
+	    	    	
+	    	    	let params = {
+		    	    		url : "/standard/code/codeMng/codeDelete",
+		    	    		reqType : 'POST',
+		    	    		data : JSON.stringify(selectedData),
+		    	    	}
 
-    	    $(".btn_add").click(function() {
-    	    	showDetailForm();
-    	    });
-	        
-    	    $(".btn_del").click(function() {
+					$.request(params)
+	   				 .then((res) => {
+	    					alert("[[#{screen.info.status.delete.success}]]");
+	    					$('.btn_srch').click();
+	   				 })
+	   				 .catch((error) => {
+	    					alert("[[#{screen.info.status.error.occur}]]");
+	    					console.log(error);
+	   				 }) 	   	    	    	
+	    	    });
+		        
+	    	    //저장
+	            $('.save_btn').on('click', function (e) {
+	            	
+	            	let url = '';
+	            	
+	            	if (validationCheck()) {
+		                
+		                var item = {};
+		                item.codeId 	  = $(".detail_table").find("#codeId").val();
+		                item.codeGrpId = $("#codeGrpId option:selected").text();
+		                item.codeNm 	  = $(".detail_table").find("#codeNm").val();
+		                item.codeEngNm = $(".detail_table").find("#codeEngNm").val();
+		                item.uppCodeId = $(".detail_table").find("#uppCodeId").val();
+		                item.codeLvl   = $(".detail_table").find("#codeLvl").val();
+		                item.codeDesc  = $(".detail_table").find("#codeDesc").val();
+		                item.sortOdr   = $(".detail_table").find("#sortOdr").val();
+		                item.resv1     = $(".detail_table").find("#resv1").val();
+		                item.resv2     = $(".detail_table").find("#resv2").val();
+		                item.resv3     = $(".detail_table").find("#resv3").val();
+		                item.useYn 	  = $(".detail_table").find("#useYn").val();
+		                item.regr      = $(".detail_table").find("#regr").val();
+		                item.regDt     = $(".detail_table").find("#regDt").val();
+						
+				    	if(save_mode == "insert") {
+				    		url = "/standard/code/codeMng/codeMerge";
+				    	}else if(save_mode == "update") {
+				    		url = "/standard/code/codeMng/codeMerge";
+				    	}				    		
+				    		
+		    	    	let params = {
+			    	    		url : url,
+			    	    		reqType : 'GET',
+			    	    		data : item,
+			    	    	}				        
+				    	
+		    			$.request(params)
+	    				 .then((res) => {
+				            $("#detailForm").hide();	    					 	    					 
+	    					$('.btn_srch').click();
+	    				 })
+	    				 .catch((error) => {
+	    					alert("[[#{screen.info.status.error.occur}]]");
+	    					console.log(error);
+	    				 }) 					    	
+		          	}
+	            });
+		     	
+	    	  	//수정 버튼
+	    	    $(".btn_update").click(function() {
+	    	    	let selectedData  = grid.getSelectedData();	    
+	    	    	if(selectedData.length > 0){
+	    	    		showDetailForm(selectedData[0]);
+	    	    	}
+	    	    });
+	          	
+	          	//리셋 버튼
+	    	    $(".btn_reset").click(function() {
+	    	    	$("#searchText").val("");
+	    	    	$("#searchOption option:eq(0)").prop("selected",true);
+	    	    	$("#useYnOption option:eq(0)").prop("selected",true);
+	    	    });
+		     	
+		     	// 팝업창 닫기 버튼 처리
+	            $('.close_btn').on('click', function (e) {
+	            	$("#detailForm").hide();
+	            });
+		     	
+	            
+	         	// 정렬 순서 유효성 검사
+	            $("#codeLvl").on("input", function() {
+	        		$(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+	        	});
+	        	
+	            $("#sortOdr").on("input", function() {
+	        		$(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
+	        	}); 
+	    	});
+
+		    //검색조건
+			function getParams(){
+				return  {
+						"searchText"   : $("#searchText").val(),
+						"searchOption" : $("#searchOption option:selected").val(),
+						"useYnOption"  : $("#useYnOption option:selected").val(),	
+        			}				
+			}			    
+		    
+		    //공통코드 그룹 조회
+		    function getCodeGrp(){
+    	    	let params = {
+	    	    		url : '/standard/code/codeGrpList',
+	    	    		reqType : 'POST',
+	    	    		data : {"email" : ""},
+	    	    	}
     	    	
-    	    	var arr_item = [];
-    	    	var items = [];
-    	    	
-    	    	let url = "/standard/code/codeMng/codeDelete";
-    			let reqType = 'POST';
-    			dataType: 'json';
-    			
-    			$.commRequest(url, reqType, JSON.stringify(selectedItems))
-    				.then((res) => {
-    					selectedItems = [];
-    					alert("[[#{screen.info.status.delete.success}]]");
-    					$('.btn_srch').click();
-    				})
-    				.catch((error) => {
-    					alert("[[#{screen.info.status.error.occur}]]");
-    					console.log(error);
-    				})
-    	    });
-    	    
-    	    $(".btn_srch").on("click",function (){
-	    	   $("#jsGrid").jsGrid().trigger("loadData");
-	        });
-	        
-            $('.save_btn').on('click', function (e) {
-            	if (validationCheck() == '202') {
-	            	e.preventDefault();
-	                
-	                var insert_item = {};
-		                insert_item.codeId 	  = $(".detail_table").find("#codeId").val();
-		                insert_item.codeGrpId = $("#codeGrpId option:selected").text();
-			    		insert_item.codeNm 	  = $(".detail_table").find("#codeNm").val();
-			    		insert_item.codeEngNm = $(".detail_table").find("#codeEngNm").val();
-			    		insert_item.uppCodeId = $(".detail_table").find("#uppCodeId").val();
-			    		insert_item.codeLvl   = $(".detail_table").find("#codeLvl").val();
-			    		insert_item.codeDesc  = $(".detail_table").find("#codeDesc").val();
-			    		insert_item.sortOdr   = $(".detail_table").find("#sortOdr").val();
-			    		insert_item.resv1     = $(".detail_table").find("#resv1").val();
-			    		insert_item.resv2     = $(".detail_table").find("#resv2").val();
-			    		insert_item.resv3     = $(".detail_table").find("#resv3").val();
-			    		insert_item.useYn 	  = $(".detail_table").find("#useYn").val();
-			    		insert_item.regr      = $(".detail_table").find("#regr").val();
-			    		insert_item.regDt     = $(".detail_table").find("#regDt").val();
-					
-			        var action = "";
-			        
-			    	if(save_mode == "insert") {
-			    		action = "insertItem";
-			    	}else if(save_mode == "update") {
-			    		action = "updateItem";
-			    	}
-	    			
-	    			$("#jsGrid").jsGrid(action, insert_item);
-	                
-		    		clearDetailForm();
-	                $(this).parents("#detailForm").hide();
-	                save_mode = "";
-	          	}
-            });
-	     	
-    	  	//수정 버튼
-    	    $(".btn_update").click(function() {
-    	    	var items = $("#jsGrid").jsGrid("option", "data");
-    	    	var item = items.filter(arr => arr.codeId == selectedItems[0].codeId);
-    	    	showDetailForm(item[0]);
-    	    });
-          	
-          	//리셋 버튼
-    	    $(".btn_reset").click(function() {
-    	    	$("#searchText").val("");
-    	    	$("#searchOption option:eq(0)").prop("selected",true);
-    	    	$("#useYnOption option:eq(0)").prop("selected",true);
-    	    });
-	     	
-	     	// 팝업창 닫기 버튼 처리
-            $('.close_btn').on('click', function (e) {
-                e.preventDefault();
-                clearDetailForm();
-                $(this).parents("#detailForm").hide();
-                selectedItems = [];
-            });
-	     	
-            //drag 활성화
-	     	$("#detailForm").draggable();
-            
-            //팝업 가운데로 띄우기
-            jQuery.fn.center = function () {
-                this.css("position","absolute");
-                this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
-                this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
-                return this;
-            }
-            
-         	// 정렬 순서 유효성 검사
-            $("#codeLvl").on("input", function() {
-        		$(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
-        	});
-        	
-            $("#sortOdr").on("input", function() {
-        		$(this).val($(this).val().replace( /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]|[a-zA-Z]|[-]/g,''));
-        	}); 
-    	});
-	    
-	    function clearDetailForm() {
-    	    $(".detail_table").find("#codeId").val("");
-    		$(".detail_table").find("#codeNm").val("");
-   			$(".detail_table").find("#codeGrpId").val("");
-    		$(".detail_table").find("#codeNm").val("");
-    		$(".detail_table").find("#codeEngNm").val("");
-    		$(".detail_table").find("#uppCodeId").val("");
-    		$(".detail_table").find("#codeLvl").val("");
-    		$(".detail_table").find("#codeDesc").val("");
-    		$(".detail_table").find("#sortOdr").val("");
-    		$(".detail_table").find("#resv1").val("");
-    		$(".detail_table").find("#resv2").val("");
-    		$(".detail_table").find("#resv3").val("");
-	    }
-	    
-	    let save_mode = "";
-	    function showDetailForm(item) {
-	    		
-	    	if(selectedItems.length <= 1){
+    			$.request(params)
+				 .then((res) => {
+			 			$.each(res.data, function(i){                                                        
+			 				var codeGrpList = res.data[i];                                                  
+			 				$("#codeGrpId").append('<option value='+codeGrpList.codeGrpId+'>'+codeGrpList.codeGrpId+'</option>');
+			 			})
+				 })
+				 .catch((error) => {
+					console.log(error);
+				 })     	    	
+		    }
+		    
+		    function clearDetailForm() {
+	    	    $(".detail_table").find("#codeId").val("");
+	    		$(".detail_table").find("#codeNm").val("");
+	   			$(".detail_table").find("#codeGrpId").val("");
+	    		$(".detail_table").find("#codeNm").val("");
+	    		$(".detail_table").find("#codeEngNm").val("");
+	    		$(".detail_table").find("#uppCodeId").val("");
+	    		$(".detail_table").find("#codeLvl").val("");
+	    		$(".detail_table").find("#codeDesc").val("");
+	    		$(".detail_table").find("#sortOdr").val("");
+	    		$(".detail_table").find("#resv1").val("");
+	    		$(".detail_table").find("#resv2").val("");
+	    		$(".detail_table").find("#resv3").val("");
+	    		save_mode = "";
+		    }
+		    
+		    let save_mode = "";
+		    function showDetailForm(item) {
+		    		
+		    	clearDetailForm();
 		    	
 		    	let title = "[[#{screen.text.code.insert.title}]]";
-		    	 var readOnly = false;
-		    	 
+		    	
 		    	 if( item != null ) {
 		    		 title = "[[#{screen.text.code.update.title}]]";
 		    		 save_mode = "update";
@@ -412,42 +304,40 @@
 	                 width	 : "650px",
 	                 height	 : "auto",
 	                 border  : "2px solid navy"
-	             }).center().show();
-	    	}else{
-	    		alert("[[#{screen.info.status.modify.just.one}]]");
-	    	}
-	    }
-	    
-	    function enterkey() {
-	    	if (window.event.keyCode == 13) {
-	    		$("#jsGrid").jsGrid().trigger("loadData");
-	        }
-	    }
-	    
-	 	// 유효성 검사
-	    function validationCheck() {
-	    	let code = '202';
-			
-			if($("#codeId").val() == "") {
-				alert("[[#{screen.info.status.error.code.id}]]");
-				$("#codeId").focus();
-				code = '200';
-			}else if($("#codeNm").val() == "") {
-				alert("[[#{screen.info.status.error.code.nm}]]");
-				$("#codeNm").focus();
-				code = '200';
-			}else if($("#codeLvl").val() == "") {
-				alert("[[#{screen.info.status.error.code.level}]]");
-				$("#codeLvl").focus();
-				code = '200';
-			}else if($("#sortOdr").val() == "") {
-				alert("[[#{screen.info.status.error.code.sort}]]");
-				$("#sortOdr").focus();
-				code = '200';
-			}
-			
-			return code;
-	    }
+	             }).center().show();		    	
+
+		    }
+		    
+		    function enterkey() {
+		    	if (window.event.keyCode == 13) {
+		    		$("#jsGrid").jsGrid().trigger("loadData");
+		        }
+		    }
+		    
+		 	// 유효성 검사
+		    function validationCheck() {
+		    	let isValid = true;
+				
+				if($("#codeId").val() == "") {
+					alert("[[#{screen.info.status.error.code.id}]]");
+					$("#codeId").focus();
+					isValid = false;
+				}else if($("#codeNm").val() == "") {
+					alert("[[#{screen.info.status.error.code.nm}]]");
+					$("#codeNm").focus();
+					isValid = false;
+				}else if($("#codeLvl").val() == "") {
+					alert("[[#{screen.info.status.error.code.level}]]");
+					$("#codeLvl").focus();
+					isValid = false;
+				}else if($("#sortOdr").val() == "") {
+					alert("[[#{screen.info.status.error.code.sort}]]");
+					$("#sortOdr").focus();
+					isValid = false;
+				}
+				
+				return isValid;
+		    }
 	    </script>	
 	</th:block>
 
@@ -500,7 +390,7 @@
 		<!-- //search -->
 
 		<!-- list -->
-		<div id="jsGrid"></div>
+		<div id="data-table"></div>
 		<input type="hidden" id="curr_Idx"/>
 		<!-- //list -->
 	

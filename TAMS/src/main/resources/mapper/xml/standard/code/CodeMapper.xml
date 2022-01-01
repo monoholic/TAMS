@@ -80,7 +80,7 @@
 		 		</if>    
 		     ) AS a
 		WHERE rn BETWEEN #{start} AND #{end}
-		ORDER BY CODE_GRP_ID, CODE_LVL, SORT_ODR
+		ORDER BY CODE_GRP_ID, SORT_ODR, CODE_ID
 	</select>
 	
 	<!-- 공통코드관리 카운트 -->
