@@ -46,7 +46,7 @@ public class CodeController {
 	CodeService codeService;
 	
 	/** 공통코드관리 화면 */
-	@PostMapping("/codeMng")
+	@PostMapping("/list")
 	public ModelAndView codeMngView(HttpServletRequest request) {
 		
 		ModelAndView view = new ModelAndView();

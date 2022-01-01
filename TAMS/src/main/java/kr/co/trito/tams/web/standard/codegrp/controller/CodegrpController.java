@@ -42,7 +42,7 @@ public class CodegrpController {
 	CodegrpService codegrpService;
 	
 	/** 공통코드 그룹 관리 화면 */
-	@PostMapping("/codegrpMng")
+	@PostMapping("/list")
 	public ModelAndView codegrpMngView(HttpServletRequest request) {
 		
 		ModelAndView view = new ModelAndView();
