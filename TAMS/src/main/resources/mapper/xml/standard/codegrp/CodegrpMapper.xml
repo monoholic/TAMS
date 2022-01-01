@@ -60,7 +60,7 @@
 				 		</if>
 		) As a
 		WHERE rn BETWEEN #{start} AND #{end}
-		ORDER BY a.sort_odr, a.code_grp_id
+		ORDER BY a.code_grp_id, a.sort_odr
    	</select>
    	
    	<!-- 공통코드그룹관리 카운트 -->
