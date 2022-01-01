@@ -104,7 +104,7 @@
 	         	//조회
 	    	    $(".btn_srch").on("click",function (){	    	    	
 	    	    	if(validationCheck())
-	    	    		grid.setData(requestUrl, getParams());
+	    	    		search();
 		        });
 		        
 	    	    //팝업창 닫기
@@ -161,6 +161,11 @@
 	    	  	
 	    	});
 
+		    //조회
+		    function search(){
+		    	grid.setData(requestUrl, getParams());
+		    }
+		    
 	        function openNewAssetPopup(params){
     	        var url = "/asset/regist/outofbook/outOfBookRegist";
     	        var args = {

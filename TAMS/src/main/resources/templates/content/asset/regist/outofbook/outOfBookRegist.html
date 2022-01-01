@@ -43,8 +43,8 @@
 			        $("#asetType1").change(function(){
 			        	let type1 = $("#asetType1").val();
 		        		$('#asetType2').children('option:not(:first)').remove();
-		        		$('#asetType3').children('option:not(:first)').remove();	        		
-			        	if(type1 != '') {
+		        		$('#asetType3').children('option:not(:first)').remove();
+			        	if(!$.isNull(type1)) {		        		
 			        		getCommCode("#asetType2", "AS_CLASS", "2", type1);
 			        		defaultAssetProperty(chooseAsset);
 			        	}
@@ -55,8 +55,8 @@
 	    	  	asetType2ChangeOn = function(){
 			        $("#asetType2").change(function(){
 			        	let type2 = $("#asetType2").val();		        	
-			        	$('#asetType3').children('option:not(:first)').remove();		        	
-			        	if(type2 != '') {		        		
+			        	$('#asetType3').children('option:not(:first)').remove();		        			   
+			        	if(!$.isNull(type2)) {	
 			        		getCommCode("#asetType3", "AS_CLASS", "3", type2);
 			        		defaultAssetProperty(chooseAsset);
 			        	}
@@ -67,7 +67,7 @@
 		       	asetType3ChangeOn = function(){
 			        $("#asetType3").change(function(){			        	
 			        	let type3 = $("#asetType3").val();			        	
-			        	if(type3 != '') {		    			        		
+			        	if(!$.isNull(type3)) {		    			        		
 			        		getAssetProperty(type3)
 			        		 .then((len) => {
 			        			 //console.log(len);
@@ -127,14 +127,14 @@
 				});		        
 		        
 		        //저장
-	     	    $("#saveNewAset").on("click",function() {
+	     	    $("#saveAset").on("click",function() {
 
 	     	    	let data = [saveParams()];	     	    	
-	   		       	//console.log(data);
+	   		       	console.log(data);
 	   		       	
 	   		       	//저장전 체크로직 추후구현
 	   		       	
-					$.commRequest("/asset/regist/invest/saveNewAset", "POST", JSON.stringify(data))
+					$.commRequest("/asset/regist/outofbook/saveOutOfBookAset", "POST", JSON.stringify(data))
 						.then((res) => {
 							alert("[[#{screen.info.status.save.success}]]");							
 							opener.parent.search();
@@ -145,17 +145,14 @@
     			});		        
 		        
 		        //삭제
-		        $("#delNewAset").on("click",function() {
+		        $("#delAset").on("click",function() {
 		        	let chooseVal = confirm("[[#{screen.info.status.default.delete.yn}]]");
 		        	
 		        	if(chooseVal) {
 		        		let params = {		        				
-			    				url     : "/asset/regist/invest/deleteNewAset",
+			    				url     : "/asset/regist/outofbook/deleteOutOfBookAset",
 			    				reqType : "GET",
-			    			   	data    : { 
-			    			   		        poNo    : $("#poNo").html(),
-			    			   		        assetNo : "[[${assetNo}]]"
-			    			   		      }			        		
+			    			   	data    : { assetNo : "[[${assetNo}]]"}			        		
 		        		}
 		        		
 				    	$.request(params)
@@ -173,6 +170,8 @@
 		        
 	     	   /*------------------------ 상세정보 조회 ------------------------*/
 		       if(!$.isNull("[[${assetNo}]]")){
+
+		    	   $("#popTitle").html("[[#{screen.text.outofbook.screen.title3}]]");		    	   
 		    	   
 		    	   let params = {
 		    				url     : "/asset/regist/invest/assetDetailInfo",
@@ -235,7 +234,7 @@
 					}); 		    	   
 		    	   
 		       }else{
-		    	   $("#delNewAset").hide();
+		    	   $("#delAset").hide();
 		    	   
 			       getCommCode("#asetType1", "AS_CLASS"	, "1"	, "")
 			         .then(() => {
@@ -254,8 +253,7 @@
 							 "deptCd","chrgr","bsplc","buld","floor","loc","expDeptCd","expAcct","durYear","acqPrc","svalPrc","acqDt"];
 								
 				let params = {
-					"poNo"      : invData.poNo,
-					"propLength": propertyLength,				
+					"propLength": propertyLength				
 				}
 				//자산 입력항목
 				field.forEach(id => {
@@ -390,7 +388,7 @@
 			<!-- contents -->
 			<div id="contents">
 				<!-- contents_head -->
-				<h3>[[#{screen.text.inv.screen.title2}]]<a href="#;" class="pop_close" title="닫기">[[#{screen.text.comm.close}]]</a></h3>				
+				<h3><span id="popTitle">[[#{screen.text.outofbook.screen.title2}]]</span><a href="#;" class="pop_close" title="닫기">[[#{screen.text.comm.close}]]</a></h3>				
 				<!-- //contents_head -->
 				
 				<!-- list -->
@@ -400,8 +398,8 @@
 						<h6>[[#{screen.text.inv.screen.subtitle1}]]</h6>
 						<!-- list_button -->
 						<div class="button">
-							<a id="saveNewAset" class="btn_list">[[#{screen.btn.save}]]</a>
-							<a id="delNewAset" class="btn_list">[[#{screen.btn.delete}]]</a>
+							<a id="saveAset" class="btn_list">[[#{screen.btn.save}]]</a>
+							<a id="delAset" class="btn_list">[[#{screen.btn.delete}]]</a>
 						</div>
 						<!-- list_button -->
 					</div>

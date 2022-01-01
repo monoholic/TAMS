@@ -125,4 +125,213 @@
 		where rn between #{start} and #{end}
 	</select>	
 	
+	<select id="selectMaxAsetNo" resultType="int">
+		select max(maxAsetNo) as maxAsetNo
+		from (
+				select 1 as maxAsetNo
+				union all
+				select cast(substring(aset_no, 6) as int) + 1 as maxAsetNo 
+				from tb_aset_mas   
+				where aset_no like concat('A', substring(date_format(now(),'%Y%m'), 3), '%')
+			 ) a        
+	</select>	
+	
+	<insert id="saveAsetMas" parameterType="Map">
+				insert into tb_aset_mas(aset_no, aset_nm, aset_type1, aset_type2, aset_type3, mftco
+					                  , model, sn, biz_dept_cd, dept_cd, chrgr, bsplc, buld, floor
+					                  , loc, exp_dept_cd, exp_acct, dur_year, acq_prc, sval_prc
+					                  , dprc_prc, acq_dt, aset_out_book_yn, aset_stus, regr, reg_dt)
+				                 values 
+				                 ( 
+						           (case 
+						        	  when substring(#{asetNo}, 1, 1) = 'A' then #{asetNo}
+						         	  else concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
+						            end)				                 
+				                 , #{asetNm}
+				                 , #{asetType1}
+				                 , #{asetType2}
+				                 , #{asetType3}
+				                 , #{mftco}
+				                 , #{model}
+				                 , #{sn}
+				                 , #{bizDeptCd}
+				                 , #{deptCd}
+				                 , #{chrgr}
+				                 , #{bsplc}
+				                 , #{buld}
+				                 , #{floor}
+				                 , #{loc}
+				                 , #{expDeptCd} 
+				                 , #{expAcct}
+				                 , #{durYear}
+				                 , (case when #{acqPrc} = '' then null else #{acqPrc} end)
+				                 , (case when #{svalPrc} = '' then null else #{svalPrc} end)
+				                 , (case when #{dprcPrc} = '' then null else #{dprcPrc} end)					                 
+				                 , replace(#{acqDt}, '-', '')
+				                 , 'N'
+				                 , '10'
+				                 , #{regr}
+				                 , now()
+				                   )
+				                 on duplicate key
+				                 update aset_nm = #{asetNm}
+				                      , aset_type1 = #{asetType1}
+				                      , aset_type2 = #{asetType2}
+				                      , aset_type3 = #{asetType3}
+				                      , mftco = #{mftco}
+				                      , model = #{model}
+				                      , sn = #{sn}
+				                      , biz_dept_cd = #{bizDeptCd}
+				                      , dept_cd = #{deptCd}
+				                      , chrgr = #{chrgr}
+				                      , bsplc = #{bsplc}
+				                      , buld = #{buld}
+				                      , floor = #{floor}
+				                      , loc = #{loc}
+				                      , exp_dept_cd = #{expDeptCd}
+				                      , exp_acct = #{expAcct}
+				                      , dur_year = #{durYear}
+				                      , acq_prc = (case when #{acqPrc} = '' then null else #{acqPrc} end)
+				                      , sval_prc = (case when #{svalPrc} = '' then null else #{svalPrc} end) 
+				                      , dprc_prc= (case when #{dprcPrc} = '' then null else #{dprcPrc} end) 
+				                      , acq_dt = replace(#{acqDt}, '-', '')
+				                      , updr = #{updr}
+				                      , up_dt = now()
+	</insert>	
+	
+	<insert id="saveAsetDtl" parameterType="Map">
+				insert into tb_aset_dtl(aset_no, aset_type, dtl_info1, dtl_info2, dtl_info3, dtl_info4
+				                      , dtl_info5, dtl_info6, dtl_info7, dtl_info8, dtl_info9, dtl_info10
+				                      , dtl_info11, dtl_info12, dtl_info13, dtl_info14, dtl_info15, dtl_info16
+				                      , dtl_info17, dtl_info18, dtl_info19, dtl_info20, dtl_info21, dtl_info22
+				                      , dtl_info23, dtl_info24, dtl_info25, dtl_info26, dtl_info27, dtl_info28
+				                      , dtl_info29, dtl_info30, dtl_info31, dtl_info32, dtl_info33, dtl_info34
+				                      , dtl_info35, dtl_info36, dtl_info37, dtl_info38, dtl_info39, dtl_info40
+				                      , dtl_info41, dtl_info42, dtl_info43, dtl_info44, dtl_info45, dtl_info46
+				                      , dtl_info47, dtl_info48, dtl_info49, dtl_info50, regr, reg_dt)
+				                 values 
+				                 ( 
+						           (case 
+						        	  when substring(#{asetNo}, 1, 1) = 'A' then #{asetNo}
+						         	  else concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
+						            end)					                 				                 
+				                 , #{asetType3}
+				                 , #{dtlInfo1}
+								 , #{dtlInfo2}
+								 , #{dtlInfo3}
+								 , #{dtlInfo4}
+								 , #{dtlInfo5}
+								 , #{dtlInfo6}
+								 , #{dtlInfo7}
+								 , #{dtlInfo8}
+								 , #{dtlInfo9}
+								 , #{dtlInfo10}
+								 , #{dtlInfo11}
+								 , #{dtlInfo12}
+								 , #{dtlInfo13}
+								 , #{dtlInfo14}
+								 , #{dtlInfo15}
+								 , #{dtlInfo16}
+								 , #{dtlInfo17}
+								 , #{dtlInfo18}
+								 , #{dtlInfo19}
+								 , #{dtlInfo20}
+								 , #{dtlInfo21}
+								 , #{dtlInfo22}
+								 , #{dtlInfo23}
+								 , #{dtlInfo24}
+								 , #{dtlInfo25}
+								 , #{dtlInfo26}
+								 , #{dtlInfo27}
+								 , #{dtlInfo28}
+								 , #{dtlInfo29}
+								 , #{dtlInfo30}
+								 , #{dtlInfo31}
+								 , #{dtlInfo32}
+								 , #{dtlInfo33}
+								 , #{dtlInfo34}
+								 , #{dtlInfo35}
+								 , #{dtlInfo36}
+								 , #{dtlInfo37}
+								 , #{dtlInfo38}
+								 , #{dtlInfo39}
+								 , #{dtlInfo40}
+								 , #{dtlInfo41}
+								 , #{dtlInfo42}
+								 , #{dtlInfo43}
+								 , #{dtlInfo44}
+								 , #{dtlInfo45}
+								 , #{dtlInfo46}
+								 , #{dtlInfo47}
+								 , #{dtlInfo48}
+								 , #{dtlInfo49}
+								 , #{dtlInfo50}
+				                 , #{regr}
+				                 , now()
+				                   )
+				                 on duplicate key
+				                 update  aset_type = #{asetType3}
+								 	 , dtl_info1 = #{dtlInfo1}
+								 	 , dtl_info2 = #{dtlInfo2}
+								 	 , dtl_info3 = #{dtlInfo3}
+								 	 , dtl_info4 = #{dtlInfo4}
+								 	 , dtl_info5 = #{dtlInfo5}
+								 	 , dtl_info6 = #{dtlInfo6}
+								 	 , dtl_info7 = #{dtlInfo7}
+								 	 , dtl_info8 = #{dtlInfo8}
+								 	 , dtl_info9 = #{dtlInfo9}
+								 	 , dtl_info10 = #{dtlInfo10}
+								 	 , dtl_info11 = #{dtlInfo11}
+								 	 , dtl_info12 = #{dtlInfo12}
+								 	 , dtl_info13 = #{dtlInfo13}
+								 	 , dtl_info14 = #{dtlInfo14}
+								 	 , dtl_info15 = #{dtlInfo15}
+								 	 , dtl_info16 = #{dtlInfo16}
+								 	 , dtl_info17 = #{dtlInfo17}
+								 	 , dtl_info18 = #{dtlInfo18}
+								 	 , dtl_info19 = #{dtlInfo19}
+								 	 , dtl_info20 = #{dtlInfo20}
+								 	 , dtl_info21 = #{dtlInfo21}
+								 	 , dtl_info22 = #{dtlInfo22}
+								 	 , dtl_info23 = #{dtlInfo23}
+								 	 , dtl_info24 = #{dtlInfo24}
+								 	 , dtl_info25 = #{dtlInfo25}
+								 	 , dtl_info26 = #{dtlInfo26}
+								 	 , dtl_info27 = #{dtlInfo27}
+								 	 , dtl_info28 = #{dtlInfo28}
+								 	 , dtl_info29 = #{dtlInfo29}
+								 	 , dtl_info30 = #{dtlInfo30}
+								 	 , dtl_info31 = #{dtlInfo31}
+								 	 , dtl_info32 = #{dtlInfo32}
+								 	 , dtl_info33 = #{dtlInfo33}
+								 	 , dtl_info34 = #{dtlInfo34}
+								 	 , dtl_info35 = #{dtlInfo35}
+								 	 , dtl_info36 = #{dtlInfo36}
+								 	 , dtl_info37 = #{dtlInfo37}
+								 	 , dtl_info38 = #{dtlInfo38}
+								 	 , dtl_info39 = #{dtlInfo39}
+								 	 , dtl_info40 = #{dtlInfo40}
+								 	 , dtl_info41 = #{dtlInfo41}
+								 	 , dtl_info42 = #{dtlInfo42}
+								 	 , dtl_info43 = #{dtlInfo43}
+								 	 , dtl_info44 = #{dtlInfo44}
+								 	 , dtl_info45 = #{dtlInfo45}
+								 	 , dtl_info46 = #{dtlInfo46}
+								 	 , dtl_info47 = #{dtlInfo47}
+								 	 , dtl_info48 = #{dtlInfo48}
+								 	 , dtl_info49 = #{dtlInfo49}
+								 	 , dtl_info50 = #{dtlInfo50}
+				                     , updr = #{updr}
+				                     , up_dt = now() 
+	</insert>	
+
+   	<delete id="deleteAsetMas" parameterType="Map">
+   		delete from tb_aset_mas
+   		where aset_no = #{assetNo}
+   	</delete>   	  	
+	
+   	<delete id="deleteAsetDtl" parameterType="Map">
+   		delete from tb_aset_dtl
+   		where aset_no = #{assetNo}
+   	</delete>   
 </mapper>
