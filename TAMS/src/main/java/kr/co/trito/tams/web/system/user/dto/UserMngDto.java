@@ -24,6 +24,7 @@ public class UserMngDto {
 	private String email;	
 	private String telno;	
 	private String sex;
+	private String sexNm;
 	private String useYn;
 	private String regr;
 	private String regdt;

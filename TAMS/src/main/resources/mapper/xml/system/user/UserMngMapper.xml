@@ -38,25 +38,32 @@
 		SELECT *
 		FROM (
 			 SELECT ROW_NUMBER() OVER(ORDER BY CAST(USER_ID AS int)) AS rn
-			     , USER_ID      AS userId
-			     , USER_PW      AS userPw
-			     , DEPT_CD      AS deptCd
-			     , (SELECT B.DEPT_NM FROM TB_DEPT B WHERE B.DEPT_CD = A.DEPT_CD)          AS deptNm
-			     , CLPST 		AS clpst
-			     , (SELECT C.CODE_NM FROM TB_COM_CODE C 
-			        WHERE C.CODE_GRP_ID = "USER_CLPST"
-			        AND C.CODE_ID = A.CLPST) 	AS clpstNm
-			     , USER_NM      AS userNm
-			     , EMAIL        AS email
-			     , TELNO        AS telno 
-			     , SEX          AS sex
-			     , USE_YN       AS useYn
-			     , REGR         AS regr
-			     , REGDT       AS regdt
-			     , UPDR         AS updr
-			     , UPDT        AS updt
-			     ,'' as chk
+			     , A.USER_ID    	AS userId
+			     , A.USER_PW 	AS userPw
+			     , A.DEPT_CD 	AS deptCd
+			     , D.DEPT_NM  	AS deptNm
+			     , CLPST 		  	AS clpst
+			     , C.CODE_NM 	AS clpstNm
+			     , A.USER_NM     AS userNm
+			     , A.EMAIL        	AS email
+			     , A.TELNO        	AS telno 
+			     , A.SEX          		AS sex
+                 , B.CODE_NM   	AS sexNm
+			     , A.USE_YN       	AS useYn
+			     , A.REGR         	AS regr
+			     , DATE_FORMAT(A.REGDT, '%Y-%m-%d')as regdt
+			     , A.UPDR         	AS updr
+			     , DATE_FORMAT(A.UPDT, '%Y-%m-%d')as updt
+			     ,''              			AS chk
 			  FROM TB_USER A
+              LEFT OUTER JOIN TB_COM_CODE B
+                ON A.SEX = B.CODE_ID
+               AND B.CODE_GRP_ID = 'SEX'
+              LEFT OUTER JOIN TB_COM_CODE C
+                ON A.CLPST = C.CODE_ID 
+               AND C.CODE_GRP_ID = 'USER_CLPST'
+              LEFT OUTER JOIN TB_DEPT D
+                ON A.DEPT_CD = D.DEPT_CD 
 			 WHERE 1=1
 				 <if test="params.searchText != null">
 					AND ( USER_ID LIKE CONCAT('%', #{params.searchText}, '%')		

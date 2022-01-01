@@ -8,498 +8,253 @@
 	</head>
         
 	<!-- css -->
-	<th:block layout:fragment="css">
+	<th:block layout:fragment="css">	
 	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="/css/jsgrid.css" />
 		<link rel="stylesheet" href="/css/theme.css" />
-	</th:block>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.8/css/tabulator.min.css" rel="stylesheet"> 
+	</th:block>    
 	
 	<th:block layout:fragment="script">
-		<script src="/js/jsgrid/db.js"></script>
-	    <script src="/js/jsgrid/jsgrid.core.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.field.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
+		<script type="text/javascript" src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
+		
 	    <script>
-	    
-	    let numOfRows = 20;
-	    let pageIdx = 1;
-	    var status = true;
-        var selectedItems = [];
-	 	var insertedItems = [];
-	 	var updatedItems = [];
-	    
-	 	// 공통코드 그룹 출력                                                                                    
-		$(document).ready(function(){                                                                    
-			let url = '/system/user/codeClpstList';                                                      
-			let reqType = 'POST';                                                                        
-			let data = {                                                                                 
-				"email" : ""                                                                             
-			};                                                                                           
-			$.commRequest(url, reqType, JSON.stringify(data))                                            
-				.then((res) => {                                                                         
-					$.each(res.data, function(i){                                                        
-						var clpstList = res.data[i];
-						$("#clpstNm").append('<option value="'+clpstList.codeId+'">' + clpstList.codeNm+ '</option>');
-					})
-				})
-				.catch((error) => {                                                                      
-					alert('[[#{screen.info.status.error.search.comcode}]]');                                                                  
-				});
-		});
-	 	
-	    $(function(){
-	    	$("#jsGrid").jsGrid({
-	        	height: "600",
-                width: "100%",
-                filtering: false,
-                editing: true,
-                inserting: true,
-                sorting: true,
-                paging: true,
-                sorter: "number",
-                pageIndex:pageIdx,
-                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
-                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
-                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
-                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
-                pagerFormat: "{first} {prev} {pages} {next} {last}",
-                pagerContainer:null,
-                pageLoading: true,
-                pager: "#pager",
-                autoload: status,
-                pageSize: numOfRows,
-                pageButtonCount: 5,
-                loadonce: true,
-                updateOnResize: true, 
-	            rowClick: function(args) {
-	            	var target = args.event.target;
-	            	
-					if(target instanceof HTMLTableCellElement) {
-						//detail form
-						showDetailForm(args.item);
-					} else {
-						
-					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
-					                .on("change", function () {
-						  	 $(this).is(":checked") ? selectItem($(this).parent().next().text()) : unselectItem($(this).parent().next().text());
-						});
-						
-					}
 
-	            }, 
-	            pagerContainerClass: "paginate",
-	            deleteConfirm: function(item) {
-	                return "\""+item.userNm+"("+userId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
-	            },
-	            controller:  {
-	                loadData: function(filter) { 
-	                    var d = $.Deferred();
-	                    
-	                    currentPage = filter.pageIndex; 
-               
-	                    let url = "/system/user/usermng/userlist";
-						let reqType = 'GET';	
-						let data = {
-            				"currentPage": filter.pageIndex,
-            				"numOfRows"  : numOfRows,
-            				"searchText" : $("#searchText").val(),
-            				"sortField"  : filter.sortField,
-            				"sortOrder"  : filter.sortOrder
-            			}
-						$.commRequest(url, reqType, data)
-							.then((res) => {
-								$(".result").text("Totals : " + res.condition.totalCount);
-								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
-							})
-							.catch((error) => {
-								console.log('[[#{screen.info.status.error.search.user}]]');
-							});
-	                    
-	                    return d.promise();
-	                },
-	            updateItem: function(item) { 
-            		pageIdx = $("#jsGrid").jsGrid("option", "pageIndex");
-                	let url = "/system/user/usermng/userupdate";
-                	let reqType = 'post';
-                	$.commRequest(url, reqType, JSON.stringify(item))
-                		.then((res) => {
-                			console.log(res);
-                			alert("[[#{screen.info.status.update.success}]]");
-                			$("#jsGrid").jsGrid("loadData");
-                		})
-                		.catch((error) => {
-                			console.log(error);
-                		})
-                	
-                },
-             	deleteItem: function(item) { 
-        			let url = "/system/user/usermng/userdelete";
-        			let reqType = 'POST';
-        			$.commRequest(url, reqType, JSON.stringify(item))
-        				.then((res) => {
-        					console.log(res);
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        				})
-        			
-            	},
-             	insertItem: function(item) { 
-        		    let url = "/system/user/usermng/userinsert";
-        		    let reqType = 'POST';
-        		    $.commRequest(url, reqType, JSON.stringify(item))
-        		    	.then((res) => {
-        		    		console.log(res);
-        		    		$("#jsGrid").jsGrid().trigger("loadData"); 
-        		    	})
-        		    	.catch((error) => {
-        		    		console.log(error);
-        		    	})
-            	    }
-        		    
-            	},
-	            fields: [
-	            	{  name : "chk"
-	                	 , align: "center"
-	                	 , width: 20
-	                	 , title: ""
-	                	 , editing: false
-	                	 , sorting: false
-	                	 , filtering: false
-	                	 , itemTemplate: function(value, item) {
-	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-	                       .prop("checked", $.inArray(item.firstName, selectedItems) > -1)
-	                       .on("change", function () {
-	  					  	 $(this).is(":checked") ? selectItem($(this).parent().next().text()) : unselectItem($(this).parent().next().text());
-	  					  	 });
-	            		   }
-	                	 , headerTemplate : function ()  { 
-						  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
-		                     .on("change", function (item) {
-		             	    	selectedItems = [];
-		            	    	if(this.checked) { // check select status
-		            	            $('.singleCheckbox').each(function() { 
-		            	                this.checked = true;   
-		            	                selectItem($(this).parent().next().text());           
-		            	            });			         
-		            	        }else {
-		            	        	
-		            	            $('.singleCheckbox').each(function() { 
-		            	                this.checked = false;      
-		            	                unselectItem(item);
-		            	            });  
-		            	            selectedItems = [];
-		            	        }
-		    				   });
-					 	 } ,
-	                	},
-	                { name: "userId", type: "text", width: 50, align: "center", readOnly:true , title: "[[#{screen.text.user.id}]]" },
-	                { name: "userNm", type: "text", width: 90 ,align: "left"  , title: "[[#{screen.text.user.nm}]]" },
-	                { name: "deptNm", type: "text", width: 80 ,align: "left"  , title: "[[#{screen.text.user.dept}]]" },
-	                { name: "clpstNm", type: "text", width: 80 ,align: "left"  , title: "[[#{screen.text.user.position}]]" },
-	                { name: "email", type: "text", width: 120 ,align: "left"  , title: "[[#{screen.text.user.email}]]" },
-	                { name: "telno", type: "text", width: 100 ,align: "center"  , title: "[[#{screen.text.user.telno}]]" },
-	                { name: "sex", type: "select", width: 50 ,align: "center"
-	                	   , items: [
-			                    { Name: "[[#{screen.text.user.male}]]",  Id: "M"},
-			                    { Name: "[[#{screen.text.user.female}]]", Id: "F"},
-			                  ],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1 , title: "[[#{screen.text.user.sex}]]" },
-	                { name: "useYn", type: "select", width: 40 ,align: "center"
-	                	   , items: [
-			                    { Name: "[[#{screen.text.comm.ues}]]",  Id: "Y"},
-			                    { Name: "[[#{screen.text.comm.unuesd}]]", Id: "N"},
-			                  ],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "[[#{screen.text.user.useyn}]]" },
-	                { name: "regr", type: "text", width: 60, align: "center"  , readOnly:true, title: "[[#{screen.text.comm.regr}]]" },
-	                { name: "regdt", type: "date", width: 80, align: "center", readOnly:true  , title: "[[#{screen.text.comm.regdt}]]" },
-	                { name: "updr", type: "text", width: 60, align: "center", readOnly:true  , title: "[[#{screen.text.comm.updr}]]" },
-	                { name: "updt", type: "date", width: 80, align: "center", readOnly:true  , title: "[[#{screen.text.comm.updt}]]" }
-	            ]
-	        });
-	    	
-		    var selectItem = function(item) {
-		    	if(!selectedItems.includes(item))
-			    selectedItems.push(item);
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             $("#selectAllCheckbox").prop("checked", true);
-	         } else {
-	             $("#selectAllCheckbox").prop("checked", false);
-	         }
-			};
-		     
-		    var unselectItem = function(item) {
+		    let grid;
+		    let requestUrl = "/system/user/usermng/userlist";	    
+
+		    $(function(){
 		    	
-			    selectedItems = $.grep(selectedItems, function(i) {
-			    return i !== item;
-			    });
-			    
-			    if(selectedItems.length == 0) {
-			    	$('#selectAllCheckbox').attr('checked', false);
-			    }
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             	$("#selectAllCheckbox").prop("checked", true);
-		        } else {
-		            $("#selectAllCheckbox").prop("checked", false);
-		        }
-			    
-		    };
-	        
-	        $("#pager").on("change", function() {
-	            var page = parseInt($(this).val(), 10);
-	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
-	        });
+	            //drag 활성화
+		     	$("#detailForm").draggable();
+		     	$(".modal-body").draggable();		    	
+		     	
+		     	getCommCode("#clpstNm", "USER_CLPST", "1", "");
+				
+				grid = new Tabulator("#data-table", {
+				 	locale:true,
+				    langs: $.commGridLocalization(),								
+				 	height:"560",
+				 	layout:"fitColumns",
+				 	movableColumns:true,
+				 	pagination:true,
+				 	paginationMode:"remote",
+				 	ajaxURL:requestUrl,			
+				 	ajaxParams: getParams(),
+				 	paginationSize:20,				    
+				 	paginationSizeSelector:[20, 50, 100, 500],			
+				 	dataSendParams:{
+				        "page":"currentPage",
+				        "size":"numOfRows"
+				    } ,							    
+				 	placeholder:"No Data Set",				 	
+				 	ajaxResponse:function(url, params, res){
+				 		$(".result").text("Totals : " + res.condition.totalCount);				 						 						 		
+				 		return res;
+				 	},					 	
+				 	columns:[ 
+			 	        {formatter:"rowSelection", titleFormatter:"rowSelection", hozAlign:"center", headerHozAlign:"center", 
+			 	        	headerSort:false, width:30, cellClick:function(e, cell){
+			 	         		cell.getRow().toggleSelect();
+			 	        }},					 		
+		                { title: "[[#{screen.text.user.id}]]"      	, field: "userId"  	, hozAlign: "center" 	, headerHozAlign:"center" },
+		                { title: "[[#{screen.text.user.nm}]]"      	, field: "userNm"  , hozAlign: "left"   	, headerHozAlign:"center" },
+		                { title: "[[#{screen.text.user.dept}]]"    	, field: "deptNm"  , hozAlign: "left"   		, headerHozAlign:"center" },
+		                { title: "[[#{screen.text.user.position}]]", field: "clpstNm" , hozAlign: "left"   		, headerHozAlign:"center" },
+		                { title: "[[#{screen.text.user.email}]]"   , field: "email"   	, hozAlign: "left"   	, headerHozAlign:"center" },
+		                { title: "[[#{screen.text.user.telno}]]"   	, field: "telno"   		, hozAlign: "center" , headerHozAlign:"center" },
+		                { title: "[[#{screen.text.user.sex}]]"     	, field: "sexNm"	, hozAlign: "center" , headerHozAlign:"center" },
+		                { title: "[[#{screen.text.user.useyn}]]"   , field: "useYn"   	, hozAlign: "center" , headerHozAlign:"center" },
+		                { title: "[[#{screen.text.comm.regr}]]"  , field: "regr"    		, hozAlign: "center",  headerHozAlign:"center" },
+		                { title: "[[#{screen.text.comm.regdt}]]", field: "regdt"   		, hozAlign: "center",  headerHozAlign:"center" },
+		                { title: "[[#{screen.text.comm.updr}]]" , field: "updr"    		, hozAlign: "center",  headerHozAlign:"center" },
+		                { title: "[[#{screen.text.comm.updt}]]" , field: "updt"    		, hozAlign: "center",  headerHozAlign:"center" },
+				 	],
+				});				    	
+				/*------------------------- Grid Events -------------------------*/
+				//row click
+				grid.on("rowClick", function(e, row){	
+					var rowData = row.getData();		
+					showDetailForm(row.getData());
+				});					
+				
+				
+				/*--------------------- Main Button Events ---------------------*/
+				
+	    	    //조회
+		        $(".btn_srch").on("click",function (){
+		        	grid.setData(requestUrl, getParams());
+		        });				
+				
+				//등록
+	    	    $(".btn_add").click(function() {
+	    	    	showDetailForm();
+	    	    });
+		        
+				//삭제
+	    	    $(".btn_del").click(function() {
+	    	    	
+	    	    	let selectedData  = grid.getSelectedData();	    	    	
+	    	    	
+	    	    	if(selectedData.length == 0){
+	    	    		alert('[[#{screen.info.status.no.selected.item}]]');
+	    	    		return;
+	    	    	}	    	    	
+	    	    		    	    	
+	    	    	let params = {
+		    	    		url : "/system/user/usermng/userdelete",
+		    	    		reqType : 'POST',
+		    	    		data : JSON.stringify(selectedData),
+		    	    	}
 
-    	    $(".btn_add").click(function() {
-    	    	showDetailForm();
-    	    });
-	        
-    	    $(".btn_del").click(function() {
-    	    	
-    	    	var items = [];
-    	    	
-   	    		var gridDatas = $("#jsGrid").jsGrid("option", "data");
-    	    	$.each(selectedItems, function(index,item){
-    	    		$.each(gridDatas, function(idx,rowItem){
-    	    			if( item == rowItem.userId ) {
-    	    				items.push(rowItem);
-    	    			}
-    	    		});
-    	    	});
-    	    	
-    	    	//별도 호출
-    	    	let url = "/system/user/usermng/userdelete";
-    			let reqType = 'POST';
-    			dataType: 'json';
-    			$.commRequest(url, reqType, JSON.stringify(items))
-    				.then((res) => {
-    					console.log(res);
-    					alert("[[#{screen.info.status.delete.success}]]");
-    					$('.btn_srch').click();
-    				})
-    				.catch((error) => {
-    					alert("[[#{screen.info.status.error.occur}]]");
-    					console.log(error);
-    				})
-    	    	
-    	    	
-    	    });
-    	    
-	        $(".btn_srch").on("click",function (){
-	    	   $("#jsGrid").jsGrid().trigger("loadData");
-	        });
-	        
-	        
-	        
-	     	// 팝업창 저장 버튼 처리
-            $('.save_btn').on('click', function (e) {
-                e.preventDefault();
-                
-                var insert_item = {};
-                insert_item.userId 		= $(".detail_table").find("#userId").val();
-	    		insert_item.userNm 		= $(".detail_table").find("#userNm").val();
-	    		insert_item.userPw 		= $(".detail_table").find("#userPw").val();
-	    		insert_item.passRe 		= $(".detail_table").find("#passRe").val();
-	    		insert_item.deptCd 		= $(".detail_table").find("#deptCd").val();
-	    		insert_item.clpst		= $(".detail_table").find("#clpstNm").val();
-	    		insert_item.email 		= $(".detail_table").find("#email").val();
-	    		insert_item.telno 		= $(".detail_table").find("#telno").val();
-	    		insert_item.sex		 	= $(".detail_table").find("#sex").val();
-	    		insert_item.useYn	 	= $(".detail_table").find("#useYn").val();
-	    	
-	    		// <--- 유효성 검사..
-		    	if( save_mode == "insert" ) {	
-		    		//validation check
-		    		var required    = ["userId", "userNm", "userPw", "passRe"   ,"deptCd", "clpst", "email"];
-		    		var requiredStr = ["[[#{screen.text.user.id}]]", 
-		    						   "[[#{screen.text.user.nm}]]", 
-		    						   "[[#{screen.text.user.pw}]]", 
-		    						   "[[#{screen.text.user.pw.check}]]", 
-		    						   "[[#{screen.text.user.dept}]]", 
-		    						   "[[#{screen.text.user.position}]]", 
-		    						   "[[#{screen.text.user.email}]]"];
-		    		var invalidCnt = 0;
-		    		var invalidMsg = "";
-		    		for(var i=0; i<required.length; i++) {
-		    			if( insert_item[required[i]] == "" || insert_item[required[i]] == null ) {
-		    				invalidMsg += requiredStr[i]+"[[#{screen.info.status.required.input}]] \n";
-		    				invalidCnt++;
-		    			}
-		    		}
-		    		
-		    		if( invalidCnt > 0 ) {
-		    			alert(invalidMsg);
-		    			return false;
-		    		}
-		    	}
-		    		if( insert_item.userPw != insert_item.passRe ) {
-		    			alert("[[#{screen.info.status.pw.not.match}]]");
-		    			return false;
-		    		}
-	          // <--- 유효성 검사..	    		
-
-		        var action = "";
-		    	if(save_mode == "insert") {
-		    		action = "insertItem";
-		    	}else if(save_mode == "update") {
-		    		action = "updateItem";
-		    	}
-    	
-    			$("#jsGrid").jsGrid(action, insert_item);
-                
-	    		clearDetailForm();
-                $("#detailForm").hide();
-                save_mode = "";
-            });
-	     	
-          	//일괄저장
-    	    $(".btn_saveall").click(function() {
-    	    	
-    	    	if( insertedItems.length > 0 ) {
-        			let url = "/system/user/usermng/userinsert";
-        			let reqType = 'GET';
-        			let data = {
-        				"items": JSON.stringify(insertedItems)
-        			};
-        			$.commRequest(url, reqType, data)
-        				.then((res) => {
-        					console.log(res);
-        					alert("[[#{screen.info.status.save.success}]]");
-        					$(".btn_srch").click();
-        					insertedItems = [];
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        					alert("[[#{screen.info.status.error.occur}]] "+error);
-        				})
-    	    	}
-    	    	
-    	    	if( updatedItems.length > 0 ) {
-    	    		let url = "/system/user/userumng/userupdate";
-        			let reqType = 'GET';
-        			let data = {
-        				"items": JSON.stringify(updatedItems)
-        			};
-        			$.commRequest(url, reqType, data)
-        				.then((res) => {
-        					console.log(res);
-        					alert("[[#{screen.info.status.save.success}]]");
-        					updatedItems = [];
-        					$(".btn_srch").click();
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        					alert("[[#{screen.info.status.error.occur}]]");
-        				})
-    	    	}
-    	    	
-    	    });
-
-          	//수정 버튼
-    	    $(".btn_update").click(function() {
-    	    	var items = $("#jsGrid").jsGrid("option", "data");
-    	    	var item = items.filter(arr => arr.userId == selectedItems[0]);
-    	    	showDetailForm(item[0]);
-    	    });
-          	
-    	 	//검색어 입력후 키를 누를 경우
-            $("#searchText").keydown(function(key) {
-                //키의 코드가 13번일 경우 (13번은 엔터키)
-                if (key.keyCode == 13) {
-                	 $("#jsGrid").jsGrid().trigger("loadData"); 
-                }
-            });
-    	 
-          	//리셋 버튼
-    	    $(".btn_reset").click(function() {
-    	    	$("#searchText").val("");
-    	    });
-	     	
-	     	// 팝업창 닫기 버튼 처리
-            $('.close_btn').on('click', function (e) {
-                e.preventDefault();
-                clearDetailForm();
-                $("#detailForm").hide();
-                selectedItems = [];
-            });
-	     	
-            //drag 활성화
-	     	$("#detailForm").draggable();
-	     	$(".modal-body").draggable();
-
-            
-            //팝업 가운데로 띄우기
-             $.fn.center = function () {
-                this.css("position","absolute");
-                this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
-                this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
-                return this;
-            } 
-            
-            
-            
-          //모달 팝업 호출 
-    	    $("#openModalPopup").on("click", function() { 
-    	        // 팝업 호출 url
-    	        var url = "/common/popup/deptPopup";
-    	        
-    	        // 팝업 호출
-    	        $(".modal-body").load(url, function() {
-    	        	
-    	        	var modal =  $(".modal-body");
-    	        	modal.center();
-    	        	
-    	            $("#ModalPopup").css( "style", "width:'100%'" );
-    	            $("#ModalPopup").css( "style", "height:'100%'" );
-    	            $("#ModalPopup").css( "style", "top:'0px'" );
-    	            $("#ModalPopup").css( "style", "left:'0px'" );
-    	            $("#ModalPopup").css( "zIndex", 999 );
-    	            $("#ModalPopup").show(); 
-    	        }); 
-    	        
-    	    });
-          
-    	    
+	    			$.request(params)
+    				 .then((res) => {
+	    					alert("[[#{screen.info.status.delete.success}]]");
+	    					$('.btn_srch').click();
+    				 })
+    				 .catch((error) => {
+	    					alert("[[#{screen.info.status.error.occur}]]");
+	    					console.log(error);
+    				 }) 	    	    	
+	    	    });
 	    	    
-    	});
-	    
-	    //상세팝업 초기화
-	    function clearDetailForm() {
-    	    $(".detail_table").find("#userId").val("");
-    		$(".detail_table").find("#userNm").val("");
-    		$(".detail_table").find("#userPw").val("");
-    		$(".detail_table").find("#passRe").val("");
-    		$(".detail_table").find("#deptCd").val("");
-    		$(".detail_table").find("#clpstNm").val("");
-    		$(".detail_table").find("#deptNm").val("");
-    		$(".detail_table").find("#email").val("");
-    		$(".detail_table").find("#telno").val("");
-    		$(".detail_table").find("#sex").val("");
-    		$(".detail_table").find("#useYn").val("");
-	    }
-	    
-	    let save_mode = "";
-	    //상세팝업 보여주기(등록/수정)
-	    function showDetailForm(item) {
-	    	
-	    	if(selectedItems.length <= 1){
+		     	// 팝업창 저장 버튼 처리
+	            $('.save_btn').on('click', function (e) {
+	                var item = {};
+	                item.userId 		= $(".detail_table").find("#userId").val();
+	                item.userNm 	= $(".detail_table").find("#userNm").val();
+	                item.userPw 	= $(".detail_table").find("#userPw").val();
+	                item.passRe 	= $(".detail_table").find("#passRe").val();
+	                item.deptCd 	= $(".detail_table").find("#deptCd").val();
+		    		item.clpst			= $(".detail_table").find("#clpstNm").val();
+		    		item.email 		= $(".detail_table").find("#email").val();
+		    		item.telno 		= $(".detail_table").find("#telno").val();
+		    		item.sex		 	= $(".detail_table").find("#sex").val();
+		    		item.useYn	 	= $(".detail_table").find("#useYn").val();
 		    	
+		    		if(validationCheck()){
+		    			
+				    	if(save_mode == "insert") {
+				    		url = "/system/user/usermng/userinsert";
+				    	}else if(save_mode == "update") {
+				    		url = "/system/user/usermng/userupdate";
+				    	}
+		    			
+		    	    	let params = {
+			    	    		url : url,
+			    	    		reqType : 'POST',
+			    	    		data : JSON.stringify(item),
+			    	    	}
+		    	    	
+		    			$.request(params)
+	    				 .then((res) => {
+	    		                $("#detailForm").hide();	    					 	    					 
+	    						$('.btn_srch').click();
+	    				 })
+	    				 .catch((error) => {
+	    					alert("[[#{screen.info.status.error.occur}]]");
+	    					console.log(error);
+	    				 })		    			
+		    		}		
+	            });
+	
+	          	//수정 버튼
+	    	    $(".btn_update").click(function() {
+	    	    	let selectedData  = grid.getSelectedData();	    
+	    	    	if(selectedData.length > 0){
+	    	    		showDetailForm(selectedData[0]);
+	    	    	}	    	    	
+	    	    });
+	          	
+	    	 	//검색어 입력후 키를 누를 경우
+	            $("#searchText").keydown(function(key) {
+	                //키의 코드가 13번일 경우 (13번은 엔터키)
+	                if (key.keyCode == 13) {
+	                	$('.btn_srch').click();
+	                }
+	            });
+	    	 
+	          	//리셋 버튼
+	    	    $(".btn_reset").click(function() {
+	    	    	$("#searchText").val("");
+	    	    });
+		     	
+		     	// 팝업창 닫기 버튼 처리
+	            $('.close_btn').on('click', function (e) {
+	                $("#detailForm").hide();
+	            });
+		     	
+	            
+	          //모달 팝업 호출 
+	    	    $("#openModalPopup").on("click", function() { 
+					console.log("openModelPopup..............");
+					
+	    	        // 팝업 호출 url
+	    	        var url = "/common/popup/deptPopup";
+	    	        
+	    	        // 팝업 호출
+	    	        $(".modal-body").load(url, function() {
+	    	        	
+	    	        	var modal =  $(".modal-body");
+	    	        	modal.center();
+	    	        	
+	    	            $("#ModalPopup").css( "style", "width:'100%'" );
+	    	            $("#ModalPopup").css( "style", "height:'100%'" );
+	    	            $("#ModalPopup").css( "style", "top:'0px'" );
+	    	            $("#ModalPopup").css( "style", "left:'0px'" );
+	    	            $("#ModalPopup").css( "zIndex", 999 );
+	    	            $("#ModalPopup").show(); 
+	    	        }); 					
+					
+	    	    });
+	          
+				$("#excelDown").on("click", function(){
+					grid.download("xlsx", "UserList.xlsx", {sheetName:"사용자 리스트"});					
+				});	    	    
+	    	});
+		    
+		    //검색조건
+	        function getParams(){
+	        	return {
+	        		"searchText" : $("#searchText").val(),
+	        	}   	
+	         }   		    
+		    
+		    //상세팝업 초기화
+		    function clearDetailForm() {
+	    	    $(".detail_table").find("#userId").val("");
+	    		$(".detail_table").find("#userNm").val("");
+	    		$(".detail_table").find("#userPw").val("");
+	    		$(".detail_table").find("#passRe").val("");
+	    		$(".detail_table").find("#deptCd").val("");
+	    		$(".detail_table").find("#clpstNm").val("");
+	    		$(".detail_table").find("#deptNm").val("");
+	    		$(".detail_table").find("#email").val("");
+	    		$(".detail_table").find("#telno").val("");
+	    		$(".detail_table").find("#sex").val("");
+	    		$(".detail_table").find("#useYn").val("");
+	    		save_mode = "";
+		    }
+		    
+		    //공통코드-selectbox
+			function getCommCode(id, code, level, upperCodeId){				
+				let url = "/common/comm/selectBox";
+				let reqType = 'GET';
+				$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);			
+			}		    
+		    
+		    let save_mode = "";
+		    //상세팝업 보여주기(등록/수정)
+		    function showDetailForm(item) {
+		    	
+		    	clearDetailForm();
 		    	let title = "[[#{screen.text.user.regist.title}]]";
-		    	 var readOnly = false;
-		    	 
+		    	
+		    	
 		    	 if( item != null ) {
 		    		 title = "[[#{screen.text.user.modify.title}]]";
 		    		 save_mode = "update";
-		    		 
-		    		 readOnly = false;
+
 		    		 $(".detail_table").find("#userId").val(item.userId);
 		    		 $(".detail_table").find("#userId").attr("readOnly", true);
 		    		 $(".detail_table").find("#userNm").val(item.userNm);
@@ -513,7 +268,6 @@
 		    	 } else {
 		    		 save_mode = "insert";
 		    		 $(".detail_table").find("#userId").attr("readOnly", false);
-		    		 
 		    	 }
 		    		 
 		    	 $(".list_head").find("#head_title").html(title);
@@ -529,43 +283,51 @@
 	             });
 		    	 //df = center(df);
 		    	 df.center();
-	             df.show();
-	    	}else{
-	    		alert("[[#{screen.info.status.modify.just.one}]]");
-	    	}
-	    } 
-	    
-		//모달 팝업 리턴값 세팅
-	    function setResult(rst){ 
-	    	$(".detail_table #deptCd").val(rst.deptCd);
-	    	$(".detail_table #deptNm").val(rst.deptNm);
-		}
-		
-		//모달 팝업 닫기
-	    function closePopup(obj){ 
-			$(obj).hide();
-		}
-	    
-		
-		$(function(){
+	             df.show();		    	
+		    } 
+		    
+			//모달 팝업 리턴값 세팅
+		    function setResult(rst){ 
+		    	$(".detail_table #deptCd").val(rst.deptCd);
+		    	$(".detail_table #deptNm").val(rst.deptNm);
+			}
 			
-			$("#excelDown").on("click", function(){
+			//모달 팝업 닫기
+		    function closePopup(obj){ 
+				$(obj).hide();
+			}
+
+			function validationCheck(){
 				
-		       	event.preventDefault();
-                let url = "/system/user/usermng/userlistExcel";
-				
-				var $form = $('<form id="downForm"></form>'); 
-					$form.attr('action', url); 
-					$form.attr('method', 'post'); 
-					$form.attr('target', '_self'); 
-					
-				var searchTextStr 	= $('<input type="hidden" value="'+$("#searchText").val()+'" name="searchText">'); 
-					$form.append(searchTextStr);
-					$form.appendTo('body'); 
-					$form.submit();
-			});
-			
-		});
+	    		let required    = ["userId", "userNm", "userPw", "passRe"   ,"deptCd", "clpstNm", "email", "useYn"];
+	    		let requiredStr = ["[[#{screen.text.user.id}]]", 
+	    						   "[[#{screen.text.user.nm}]]", 
+	    						   "[[#{screen.text.user.pw}]]", 
+	    						   "[[#{screen.text.user.pw.check}]]", 
+	    						   "[[#{screen.text.user.dept}]]", 
+	    						   "[[#{screen.text.user.position}]]", 
+	    						   "[[#{screen.text.user.email}]]",
+	    						   "[[#{screen.text.comm.useyn}]]"
+	    						   ];
+	    		
+	    		for(var i=0; i<required.length; i++){
+	    			console.log(required[i] + " - " + $.isNull($("#" + required[i]).val()));
+	    			
+	    			if($.isNull($("#" + required[i]).val())) {
+	    				alert(requiredStr[i]);
+	    				$("#" + required[i]).focus();
+	    				return false;
+	    			}
+	    		}
+	    		
+	    		if($("#userPw").val() != $("#passRe").val()) {
+	    			alert("[[#{screen.info.status.pw.not.match}]]");
+	    			$("#userPw").focus();
+	    			return false;
+	    		}	    		
+	    		
+	    		return true;
+			}
 	    </script>	
 	</th:block>
 
@@ -587,7 +349,7 @@
 					<td>
 						<div style="display: flex; align-items: stretch;">
 							<label for="searchText" class="menu_label" style="margin-top: 3px;">[[#{screen.text.user.nm}]]</label>
-							<input id="searchText" type="text" onkeyup="enterkey()" placeholder="검색어를 입력해주세요.">
+							<input id="searchText" type="text"  placeholder="검색어를 입력해주세요.">
 						</div>
 					</td>
 					<td class="search" colspan="4">
@@ -605,7 +367,7 @@
 		</div>
 
 		<!-- list -->
-		<div id="jsGrid"></div>
+		<div id="data-table"></div>
 		<input type="hidden" id="curr_Idx"/>
 		<!-- //list -->
 		
