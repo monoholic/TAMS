@@ -354,7 +354,6 @@
 									$("#reqNo").val((res.data)[0].reqNo);
 									$("#reqDt").val((res.data)[0].reqDt);
 									$("#deptNm").val((res.data)[0].deptNm);
-									$("#deptCd").val((res.data)[0].deptCd);
 									$("#reqtr").val((res.data)[0].reqtr);
 									$("#reqNm").val((res.data)[0].reqNm);
 									$("#reqRsn").val((res.data)[0].reqRsn);
@@ -421,7 +420,7 @@
 			    				   });
 						 	 } ,
 		                },
-		                { name: "asetNo",    type:"text",   width: 35 ,align: "left", title:"[[#{screen.text.modify.asetno}]]", 	 editing: false},
+		                { name: "asetNo",    type:"text",   width: 35 ,align: "center", title:"[[#{screen.text.modify.asetno}]]", 	 editing: false},
 		                { name: "asetType1", type:"select", width: 35, align: "left", title:"[[#{screen.text.modify.asset.type1}]]", items:asetArr1, valueField :"Id", textField : "Nm"},
 		                { name: "asetType2", type:"select", width: 35, align: "left", title:"[[#{screen.text.modify.asset.type2}]]", items:asetArr2, valueField :"Id", textField : "Nm"},
 						{ name: "asetType3", type:"select", width: 35, align: "left", title:"[[#{screen.text.modify.asset.type3}]]", items:asetArr3, valueField :"Id", textField : "Nm"},
@@ -430,7 +429,7 @@
 						{ name: "sn", 		 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.sn}]]"},
 						{ name: "bizDeptNm", type:"text",   width: 40 ,align: "left", title:"[[#{screen.text.modify.asset.biz.dept}]]", editing: false},
 						{ name: "deptNm", 	 type:"text",   width: 40 ,align: "left", title:"[[#{screen.text.modify.asset.dept}]]",	    editing: false},
-						{ name: "chrgr", 	 type:"text",   width: 30 ,align: "left", title:"[[#{screen.text.modify.asset.charger}]]",  editing: false, visible:false,
+						{ name: "chrgrNm", 	 type:"text",   width: 30 ,align: "center", title:"[[#{screen.text.modify.asset.charger}]]",  editing: false,
 							
 							itemTemplate : function(value, item) {
 							let idx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.asetNo == item.asetNo) + 1;
@@ -452,7 +451,6 @@
 		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
 							}
 						},
-						{ name: "chrgrNm" , type:"text",   width: 25 ,align: "left", title:"[[#{screen.text.modify.asset.charger}]]", editing: false },
 						{ name: "control" , type: "control", width: 15, align: "center", modeSwitchButton: false, deleteButton: false, editing: false },
 		            ]
 		        });
@@ -466,7 +464,7 @@
 	    
 	    //팝업에서 받은 결과 처리
 	    function setResult(obj) {
-	    	$("#jsGrid").jsGrid("updateItem", targetItem, {chrgr: obj.userId});
+	    	$("#jsGrid").jsGrid("updateItem", targetItem, {chrgrNm: obj.userNm});
 	    }
 	    
 	    function openUserPopup() {

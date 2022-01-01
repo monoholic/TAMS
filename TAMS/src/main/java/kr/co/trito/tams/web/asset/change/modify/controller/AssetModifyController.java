@@ -68,7 +68,6 @@ public class AssetModifyController {
 	@PostMapping("/list")
 	public ModelAndView requestListView(HttpServletRequest request,
 			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
-		
 		ModelAndView view = new ModelAndView();
 		if (params != null) {
 			view.addObject("menuId", params.get("menuId").toString());
