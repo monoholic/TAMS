@@ -61,7 +61,7 @@ public class BbsController {
 	BbsService bbsService;
 
 	/** 공지사항 관리 화면 */
-	@PostMapping("/bbsMng")
+	@PostMapping("/list")
 	public ModelAndView bbsMngView(HttpServletRequest request) {
 		
 		ModelAndView view = new ModelAndView();
