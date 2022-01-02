@@ -31,9 +31,5 @@ public interface ApprovalMapper {
 	
 	public int deleteAppvLine(String appvId);
 	
-	public String reqNoCheck(Map<String, Object> items);
-	
-	public String maxAppvId();
-	
-	public int reqNoCheckCnt();
+	public String maxAppvId(Map<String, Object> items);
 }

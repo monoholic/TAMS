@@ -177,8 +177,9 @@
 				"appr"        : arrAppr,
 				"agree"       : arrAgree,
 				"noti"        : arrNoti,
+				"appvId"	  : $("#appvId").val(),
 				"appvTtl"     : $("#appvTtl").val(),
-				"appvType"    : "MO",  //등록의뢰
+				"appvType"    : $("#appvType").val(),
 				"appvContent" : appvContent,
 				"status"      : status
 			};
@@ -346,6 +347,7 @@
 <body >
 	<div layout:fragment="content">
 	<span id="req_no" th:text='${param.req_no}' style="display: none;"></span>
+	<input id="appvType" th:value='${param.reqType}' style="display: none;">
 	<input type="hidden" id="appvId" name="appvId" />
 		<div id="pop_wrap" >
 			<h3><span id="popTitle"></span>&nbsp;[[#{screen.text.comm.approve}]]

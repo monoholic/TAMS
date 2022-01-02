@@ -127,16 +127,8 @@ public class ApprovalService {
 	public int deleteAppvLine(String appvId) {
 		return mapper.deleteAppvLine(appvId);
 	}
-	
-	public String reqNoCheck(Map<String, Object> items) {
-		return mapper.reqNoCheck(items);
-	}
-	
-	public String maxAppvId() {
-		return mapper.maxAppvId();
-	}
-	
-	public int reqNoCheckCnt() {
-		return mapper.reqNoCheckCnt();
+
+	public String maxAppvId(Map<String, Object> items) {
+		return mapper.maxAppvId(items);
 	}
 }

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.trito.tams.web.asset.change.move.mapper.AssetMoveMapper">
+	
+	<!-- 이동의뢰목록 리스트 출력 -->
+   	<select id="selectAssetMoveList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   		SELECT CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no
+		     , req_type
+		     , (SELECT code_nm FROM tb_com_code WHERE code_id = A.req_type) AS req_type_nm
+		     , req_nm
+		     , DATE_FORMAT(req_dt, '%Y-%m-%d') AS req_dt
+		     , reqtr
+		     , (SELECT dept_nm
+	              FROM tb_dept
+	             WHERE dept_cd = A.dept_cd ) AS reqtr_dept
+		     , appv_doc_id
+		     , req_rsn
+		     , req_stus
+		     , (SELECT code_nm
+		          FROM tb_com_code
+		         WHERE code_id = A.req_stus ) AS req_stus_nm
+		     , move_pupos
+		     , move_dt
+		     , tkout_sche_yn
+		     , tkout_sche_dt
+		     , tkout_yn
+		     , tkout_dt
+		     , rtkin_yn
+		     , rtkin_dt
+		     , prgs_dcont_yn
+		     , A.updr
+		     , A.up_dt
+		     , A.regr
+		     , A.reg_dt
+		     , A.dept_cd
+	         , (SELECT dept_nm
+	  			  FROM tb_dept
+	         	 WHERE dept_cd = A.dept_cd) AS dept_nm
+	         , upp_dept_cd
+	         , (SELECT dept_nm
+	  			  FROM tb_dept
+	         	 WHERE dept_cd = B.upp_dept_cd) AS upp_dept_nm
+		     , (SELECT count(*)
+		          FROM tb_aset_req
+		         WHERE req_no = A.req_no) AS aset_cnt
+		FROM (
+			SELECT
+			       req_no
+			     , req_type
+			     , req_nm
+			     , req_dt
+			     , reqtr
+			     , appv_doc_id
+			     , req_rsn
+			     , req_stus
+			     , move_pupos
+			     , move_dt
+			     , tkout_sche_yn
+			     , tkout_sche_dt
+			     , tkout_yn
+			     , tkout_dt
+			     , rtkin_yn
+			     , rtkin_dt
+			     , prgs_dcont_yn
+			     , a.updr
+			     , a.up_dt
+			     , a.regr
+			     , a.reg_dt
+			     , b.dept_cd
+			 FROM TB_REQ_MAS a
+			 INNER JOIN tb_user b
+			    ON a.reqtr = b.user_id
+			 <if test="params.userId != ''">
+				WHERE 1=1 AND req_type="MV"
+				AND (reqtr = #{params.userId} OR 
+		       		 dept_cd = (SELECT dept_cd FROM tb_user WHERE user_id = #{params.userId}))
+	     	 </if>
+	     ) AS A
+	     LEFT OUTER JOIN tb_dept B
+	       ON A.dept_cd = B.dept_cd
+	     WHERE 1=1
+	     	<if test="params.reqNo != ''">
+				AND (CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) LIKE CONCAT('%', #{params.reqNo}, '%'))
+		 	</if>
+		 	<if test="params.fromDate != '' and (params.toDate !='')">
+				AND (req_dt between #{params.fromDate} and #{params.toDate})
+	 		</if>
+	 		<if test="params.reqNm != ''">
+				AND (req_nm LIKE CONCAT('%', #{params.reqNm}, '%'))
+		 	</if>
+		 	<if test="params.deptCd1 != ''">
+				AND (A.dept_cd LIKE CONCAT(#{params.deptCd1}, '%'))
+		 	</if>
+		 	<if test="params.deptCd2 != ''">
+				AND (A.dept_cd LIKE CONCAT(#{params.deptCd2}, '%'))
+		 	</if>
+		 	<if test="params.reqtr != ''">
+				AND (reqtr LIKE CONCAT('%', #{params.reqtr}, '%'))
+		 	</if>
+		 	<if test="params.asetNo != ''">
+				AND ((SELECT req_no
+					   FROM tb_aset_req
+					  WHERE aset_no = #{params.asetNo}) = req_no)
+		 	</if>
+		 	<if test="params.reqStus != ''">
+				AND (req_stus LIKE CONCAT('%', #{params.reqStus}, '%'))
+		 	</if>
+	  	 ORDER BY req_no DESC
+   	</select>
+   	
+   	<!-- 이동의뢰목록 카운트 -->
+   	<select id="selectCountAssetMovetList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 	 	
+		SELECT COUNT(*) AS cnt
+		  FROM tb_req_mas a
+		 INNER JOIN tb_user b
+		    ON a.reqtr = b.user_id
+		   AND a.reqtr = #{params.userId}
+		   AND req_type = "MV"
+		  WHERE dept_cd = (SELECT dept_cd FROM tb_user WHERE user_id = #{params.userId})
+	     	<if test="params.reqNo != ''">
+				AND (CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) LIKE CONCAT('%', #{params.reqNo}, '%'))
+		 	</if>
+		 	<if test="params.fromDate != '' and (params.toDate !='')">
+				AND (req_dt between #{params.fromDate} and #{params.toDate})
+	 		</if>
+	 		<if test="params.reqNm != ''">
+				AND (req_nm LIKE CONCAT('%', #{params.reqNm}, '%'))
+		 	</if>
+		 	<if test="params.deptCd1 != ''">
+				AND (A.dept_cd LIKE CONCAT(#{params.deptCd1}, '%'))
+		 	</if>
+		 	<if test="params.deptCd2 != ''">
+				AND (A.dept_cd LIKE CONCAT(#{params.deptCd2}, '%'))
+		 	</if>
+		 	<if test="params.reqtr != ''">
+				AND (reqtr LIKE CONCAT('%', #{params.reqtr}, '%'))
+		 	</if>
+		 	<if test="params.asetNo != ''">
+				AND ((SELECT req_no
+					   FROM tb_aset_req
+					  WHERE aset_no = #{params.asetNo}) = req_no)
+		 	</if>
+		 	<if test="params.reqStus != ''">
+				AND (req_stus LIKE CONCAT('%', #{params.reqStus}, '%'))
+		 	</if>
+   	</select>
+   	
+   	<!-- 이동의뢰목록 작성 -->
+   	<insert id="assetMoveListInsert" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" useGeneratedKeys="true" keyProperty="req_no">
+   		INSERT INTO tb_req_mas (req_type, req_nm, req_dt, reqtr, req_rsn, req_stus, regr, reg_dt)
+   		VALUES (#{reqType}, #{reqNm}, current_timestamp(), #{reqtr}, #{reqRsn}, #{reqStus}, #{regr} , current_timestamp())
+   	</insert>
+   	
+   	<!-- 이동의뢰목록 삭제 -->
+   	<delete id="assetMoveListDelete" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto">
+		DELETE 
+		FROM TB_REQ_MAS
+        WHERE req_no = SUBSTRING(#{reqNo},6,3)+0
+	</delete>
+	
+	<!-- 이동의뢰목록작성 화면 조회 -->
+   	<select id="selectAssetMoveRegist" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   		SELECT    
+   	           (SELECT code_nm FROM tb_com_code WHERE code_id = A.req_type) AS req_type_nm
+		     , req_type 
+			 , CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no
+			 , DATE_FORMAT(req_dt, '%Y-%m-%d') AS req_dt
+			 , appv_doc_id
+			 , dept_cd
+			 , (SELECT dept_nm
+	  			  FROM tb_dept
+	         	 WHERE dept_cd = A.dept_cd) AS dept_nm
+			 , reqtr
+		     , req_nm
+			 , req_rsn
+		FROM (
+			SELECT
+			  	   req_type
+			     , req_no
+			     , req_dt
+			     , appv_doc_id
+			     , b.dept_cd
+			     , reqtr
+			     , req_nm
+			     , req_rsn
+			 FROM TB_REQ_MAS a
+			 INNER JOIN tb_user b
+			    ON a.reqtr = b.user_id
+	     ) AS A
+	   WHERE 1=1
+	   		<if test="params.reqNo != null">
+				AND A.req_no = #{params.reqNo}
+		 	</if>
+   	</select>
+   	
+   	<!-- 이동의뢰 대상자산목록 조회 -->
+   	<select id="selectAssetList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+	    SELECT aset_no
+			 , req_no
+			 , aset_nm
+		 	 , aset_type1
+		     , aset_type2
+		     , aset_type3
+		     , mftco
+		     , model
+		     , sn
+		     , biz_dept_cd
+		     , (SELECT dept_nm
+		 	      FROM tb_dept a
+		            WHERE dept_cd = b.biz_dept_cd) biz_dept_nm
+		     , b.dept_cd
+		     , (SELECT dept_nm
+		 	      FROM tb_dept a
+		            WHERE dept_cd = b.dept_cd) dept_nm
+		     , chrgr
+		     , c.user_nm as chrgr_nm
+		FROM tb_aset_req b
+		INNER JOIN tb_user c
+           ON c.user_id = b.chrgr
+		WHERE b.req_no = #{params.reqNo}
+		ORDER BY b.aset_no DESC;
+	</select>
+	
+	<!-- 이동의뢰 대상자산목록 조회 카운트 -->
+   	<select id="selectCountAssetList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 	 	
+		SELECT count(*) AS cnt
+		FROM tb_aset_req
+		WHERE req_no = #{params.reqNo};
+   	</select>
+   	
+   	<!-- 이동의뢰 작성 화면 : 의뢰정보 수정 -->
+   	<update id="assetMoveUpdate1" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto">
+   		UPDATE tb_req_mas     
+		   SET req_nm  = #{reqNm}
+		     , req_rsn = #{reqRsn}
+		 WHERE req_no = #{reqNo}
+   	</update>
+   	
+   	<!-- 이동의뢰 작성 화면 : 대상자산정보 수정 -->
+   	<update id="assetMoveUpdate2" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto">
+   		INSERT INTO tb_aset_req
+   			   SET aset_no     = #{asetNo}
+   			     , req_no	   = #{reqNo}
+   			     , aset_nm	   = #{asetNm}
+   			     , aset_type1  = #{asetType1}
+   			     , aset_type2  = #{asetType2}
+   			     , aset_type3  = #{asetType3}
+   			     , mftco	   = #{mftco}
+			     , model	   = #{model}
+			     , sn		   = #{sn}
+			     , chrgr	   = #{chrgr}
+			     , biz_dept_cd = #{bizDeptCd}
+			     , dept_cd	   = #{deptCd}
+			   ON  DUPLICATE KEY UPDATE
+			       aset_type1  = #{asetType1}
+		         , aset_type2  = #{asetType2}
+		         , aset_type3  = #{asetType3}
+		         , mftco	   = #{mftco}
+		         , model	   = #{model}
+		         , sn		   = #{sn}
+		         , chrgr	   = #{chrgr}
+   	</update>
+   	
+   	<!-- 이동의뢰 작성 화면 : 삭제 (화면 상단) -->
+   	<delete id="assetMoveDelete1" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto">
+       	DELETE FROM a, b 
+       		USING tb_req_mas AS a 
+       		LEFT JOIN tb_aset_req AS b 
+       		ON a.req_no = b.req_no 
+       	WHERE a.req_no = #{reqNo}
+   	</delete>
+   	
+   	<!-- 자산수정 의뢰작성 화면 : 삭제 (화면 하단) -->
+   	<delete id="assetMoveDelete2" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto">
+       	DELETE FROM tb_aset_req
+		 WHERE aset_no = #{asetNo}
+		  AND req_no = #{reqNo};
+   	</delete>
+</mapper>

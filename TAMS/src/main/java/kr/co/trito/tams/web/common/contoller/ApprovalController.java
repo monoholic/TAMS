@@ -141,19 +141,19 @@ public class ApprovalController {
 		
 		// 자산의뢰 결재 테이블 유무 확인.
 		String stus = items.get("status").toString();
-		String appvId = approvalService.reqNoCheck(items);
-		String maxAppvId = approvalService.maxAppvId();
-		int reqNoCnt = approvalService.reqNoCheckCnt();
+		String appvId = items.get("appvId").toString();
+		String maxAppvId = approvalService.maxAppvId(items);
 		
-		items.put("appvId", appvId);
-		if (reqNoCnt < 1)
-			items.put("appvId", "MO2112001");
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n");
+		System.out.println(items);
+		System.out.println(maxAppvId);
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n");
 		
 		// 결재 상신 버튼
 		if("F".equals(stus)) {
 			items.put("appvStus", "ING");
 			items.put("appvStep", "1");
-			if(appvId == null) {
+			if(StringUtils.isEmpty(appvId)) {
 				items.put("appvId", maxAppvId);
 				approvalService.insertAppv(items);
 				approvalService.insertReqAppv(items);
@@ -166,7 +166,7 @@ public class ApprovalController {
 		else {
 			items.put("appvStus", "TMP");
 			items.put("appvStep", "1");
-			if(appvId == null) {
+			if(StringUtils.isEmpty(appvId)) {
 				items.put("appvId", maxAppvId);
 				approvalService.insertAppv(items);
 				approvalService.insertReqAppv(items);

@@ -105,7 +105,6 @@
     	    
 			// 하단 삭제 버튼
 			$(".btn_del2").click(function() {
-	  	    	var arr_item =  [];
 	  	    	var items = [];
 	  	    	
 	  	    	var subReqNo = ($("#reqNo").val()).substr(5,3);
@@ -205,13 +204,12 @@
     	        args.resizable = "no";
     	        
     	        var param = {
-   	        		id : 'appv_id',
-       	    	    value : $("#appvId").val(),
-    	        	rcd : 'req_no',
-    	    	    rnm : $("#reqNo").val()
-    	        };
-   	        
-    	        openPopup(popId, url, args, param);
+    	        	appv_id : $("#appvId").val(),
+    	        	req_no : $("#reqNo").val(),
+    	        	reqType : $("#reqType").val()
+	    	    };
+   	        	
+    	        openPopup2(popId, url, args, param);
     	    });
 	     	
 			/*-------------------------------------------------------------------------*/			
@@ -350,13 +348,16 @@
 								.then((res) => {
 									console.log(res.data);
 									$("#appvId").val((res.data)[0].appvDocId);
-									$("#reqType").val((res.data)[0].reqTypeNm);
+									$("#reqType").val((res.data)[0].reqType);
+									$("#reqTypeNm").val((res.data)[0].reqTypeNm);
 									$("#reqNo").val((res.data)[0].reqNo);
 									$("#reqDt").val((res.data)[0].reqDt);
 									$("#deptNm").val((res.data)[0].deptNm);
 									$("#reqtr").val((res.data)[0].reqtr);
 									$("#reqNm").val((res.data)[0].reqNm);
 									$("#reqRsn").val((res.data)[0].reqRsn);
+									
+									console.log(res.data[0]);
 									
 									$(".result").text("Results : " + res.condition.totalCount);
 									
@@ -517,6 +518,7 @@
 		<div class="srch_wrap single">
 			<input id="req_no" type="hidden" th:value="${reqNo}">
 			<input id="appvId" type="hidden">
+			<input id="reqType" type="hidden">
 			<table class="srch_table">
 				<colgroup>
 					<col width="10%"/>
@@ -528,7 +530,7 @@
 				</colgroup>
 				<tr>
 					<th>[[#{screen.text.modify.type}]]</th>
-					<td><input type="text" id="reqType" style="width:100%;" readonly></td>
+					<td><input type="text" id="reqTypeNm" style="width:100%;" readonly></td>
 					<th>[[#{screen.text.modify.no}]]</th>
 					<td><input type="text" id="reqNo" style="width:100%;" readonly></td>
 					<th >[[#{screen.text.modify.dt}]]</th>
