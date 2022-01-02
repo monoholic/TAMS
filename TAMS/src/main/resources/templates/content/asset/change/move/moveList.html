@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>[[#{screen.text.inv.screen.title}]]</title>
+	    <title>[[#{screen.text.move.screen.title}]]</title>
 	</head>
         
 	<!-- css -->
@@ -90,14 +90,14 @@
 			 	        	headerSort:false, width:30, cellClick:function(e, cell){
 			 	         		cell.getRow().toggleSelect();
 			 	        }},
-				 		{title:"[[#{screen.text.modify.no}]]"      , field:"reqNo"     , hozAlign:"center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.modify.type}]]"    , field:"reqTypeNm" , hozAlign:"center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.modify.nm}]]"      , field:"reqNm"     , hozAlign:"left"    , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.modify.dept}]]"    , field:"reqtrDept" , hozAlign:"center" 	, headerHozAlign:"center"},
-		                {title:"[[#{screen.text.modify.reqtr}]]"   , field:"reqtr"     , hozAlign:"center" 	, headerHozAlign:"center"},
-		                {title:"[[#{screen.text.modify.dt}]]"      , field:"reqDt"     , hozAlign:"center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.modify.stus}]]"    , field:"reqStusNm" , hozAlign:"center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.modify.asetcnt}]]" , field:"asetCnt"   , hozAlign:"right"  	, headerHozAlign:"center"},
+				 		{title:"[[#{screen.text.move.no}]]"      , field:"reqNo"     , hozAlign:"center"  , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.move.type}]]"    , field:"reqTypeNm" , hozAlign:"center"  , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.move.nm}]]"      , field:"reqNm"     , hozAlign:"left"    , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.move.dept}]]"    , field:"reqtrDept" , hozAlign:"center" 	, headerHozAlign:"center"},
+		                {title:"[[#{screen.text.move.reqtr}]]"   , field:"reqtr"     , hozAlign:"center" 	, headerHozAlign:"center"},
+		                {title:"[[#{screen.text.move.dt}]]"      , field:"reqDt"     , hozAlign:"center"  , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.move.stus}]]"    , field:"reqStusNm" , hozAlign:"center"  , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.move.asetcnt}]]" , field:"asetCnt"   , hozAlign:"right"  	, headerHozAlign:"center"},
 				 	],
 				});						
 
@@ -357,7 +357,7 @@
 		    function showDetailForm(item) {
 		    	clearDetailForm();		    	
 		    	
-		    	let title = "[[#{screen.text.modify.insert.title}]]";
+		    	let title = "[[#{screen.text.move.insert.title}]]";
 		    	
 	    		save_mode = "insert";
 	    		
@@ -440,20 +440,20 @@
 					<col width=""/>
 				</colgroup>
 				<tr>
-					<th>[[#{screen.text.modify.no}]]</th>
+					<th>[[#{screen.text.move.no}]]</th>
 					<td><input type="text" id="req_no" onkeyup="enterkey()" style="width:100%;"></td>
-					<th>[[#{screen.text.modify.dt}]]</th>
+					<th>[[#{screen.text.move.dt}]]</th>
 					<td>
 						<div style='display:flex'>
 							<input type="date" id="fromDate" style="width:100%">
 							<input type="date" id="toDate" style="width:100%">
 						</div>
 					</td>
-					<th>[[#{screen.text.modify.nm}]]</th>
+					<th>[[#{screen.text.move.nm}]]</th>
 					<td><input type="text" id="req_nm" onkeyup="enterkey()" style="width:100%;"></td>
 				</tr>
 				<tr>
-					<th>[[#{screen.text.modify.bizDeptCd}]]</th>
+					<th>[[#{screen.text.move.bizDeptCd}]]</th>
 					<td>
 						<div style='display:flex'>
 							<input type="text" style="width:100%" id="deptNm1" readonly/>
@@ -461,7 +461,7 @@
 							<a href="#" id="openDeptPopup1" style="margin-left: 10px;"><img title="사업부 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 						</div>
 					</td>
-					<th>[[#{screen.text.modify.dept}]]</th>
+					<th>[[#{screen.text.move.dept}]]</th>
 					<td>
 						<div style='display:flex'>
 							<input type="text" style="width:100%" id="deptNm2" readonly/>
@@ -469,13 +469,13 @@
 							<a href="#" id="openDeptPopup2" style="margin-left: 10px;"><img title="부서 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
 						</div>
 					</td>
-					<th>[[#{screen.text.modify.reqtr}]]</th>
+					<th>[[#{screen.text.move.reqtr}]]</th>
 					<td><input type="text" id="Reqtr" onkeyup="enterkey()" style="width:100%;"></td>
 				</tr>
 				<tr>
-					<th>[[#{screen.text.modify.asetno}]]</th>
+					<th>[[#{screen.text.move.asetno}]]</th>
 					<td><input type="text" id="aset_no" onkeyup="enterkey()" style="width:100%;"/></td>
-					<th>[[#{screen.text.modify.stus}]]</th>
+					<th>[[#{screen.text.move.stus}]]</th>
 					<td>
 						<select id="req_stus" style="width:100%;">
 							<option value="">[[#{screen.text.comm.choice}]]</option>
@@ -498,7 +498,7 @@
 				<div class="result">Results : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
-					<a class="btn_add">[[#{screen.text.modify.insert.title}]]</a>
+					<a class="btn_add">[[#{screen.text.move.insert.title}]]</a>
 					<a class="btn_del">[[#{screen.btn.delete}]]</a>
 					<a class="btn_list_rd" id="excelDown">[[#{screen.btn.excel}]]</a>
 				</div>
@@ -525,22 +525,22 @@
 						<col style="width:80%" />
 					<col />
 					<tr>
-						<th>[[#{screen.text.modify.no}]]</th>
+						<th>[[#{screen.text.move.no}]]</th>
 						<td><input type="text" style="width:100%;" id="reqNo" placeholder="-------------------------자동생성-------------------------" /></td>
 					</tr>
 					<tr>
-						<th>[[#{screen.text.modify.type}]]</th>
+						<th>[[#{screen.text.move.type}]]</th>
 						<td>
 							<select id="reqType" style="width:100%;">
 							</select>
 						</td>
 					</tr>
 					<tr>
-						<th>[[#{screen.text.modify.nm}]]</th>
+						<th>[[#{screen.text.move.nm}]]</th>
 						<td><input type="text" style="width:100%" id="reqNm" /></td>
 					</tr>
 					<tr>
-						<th>[[#{screen.text.modify.reqtr}]]</th>
+						<th>[[#{screen.text.move.reqtr}]]</th>
 						<td>
 							<div style='display:flex'>
 								<input type="text" style="width:100%" id="reqtr" readonly/>
@@ -549,14 +549,14 @@
 						</td>
 					</tr>
 					<tr>
-						<th>[[#{screen.text.modify.stus}]]</th>
+						<th>[[#{screen.text.move.stus}]]</th>
 						<td>
 							<select id="reqStus" style="width:100%;">
 							</select>
 						</td>
 					</tr>
 					<tr>
-						<th>[[#{screen.text.modify.rsn}]]</th>
+						<th>[[#{screen.text.move.rsn}]]</th>
 						<td><input type="text" style="width:100%" id="reqRsn" /></td>
 					</tr>
 				</table>

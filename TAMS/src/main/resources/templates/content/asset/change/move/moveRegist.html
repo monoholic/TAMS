@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>[[#{screen.text.inv.screen.title}]]</title>
+	    <title>[[#{screen.text.move.screen.title2}]]</title>
 	</head>
         
 	<!-- css -->
@@ -81,16 +81,16 @@
 			 	        	headerSort:false, width:30, cellClick:function(e, cell){
 			 	         		cell.getRow().toggleSelect();
 			 	        }},
-				 		{title:"[[#{screen.text.modify.asetno}]]"            , field:"asetNo"    , hozAlign:"center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.modify.asset.type1}]]"       , field:"asetType1" , hozAlign:"center"  , headerHozAlign:"center", editor:"select", editorParams:{asetArr1}},
-		                {title:"[[#{screen.text.modify.asset.type2}]]"       , field:"asetType2" , hozAlign:"left"    , headerHozAlign:"center", editor:"select", editorParams:{asetArr2}},
-		                {title:"[[#{screen.text.modify.asset.type3}]]"       , field:"asetType3" , hozAlign:"center"  , headerHozAlign:"center", editor:"select", editorParams:{asetArr3}},
-		                {title:"[[#{screen.text.modify.asset.manufacture}]]" , field:"mftco"     , hozAlign:"center"  , headerHozAlign:"center", editor:"input"},
-		                {title:"[[#{screen.text.modify.asset.model}]]"       , field:"model"     , hozAlign:"center"  , headerHozAlign:"center", editor:"input"},
-		                {title:"[[#{screen.text.modify.asset.sn}]]"          , field:"sn"        , hozAlign:"center"  , headerHozAlign:"center", editor:"input"},
-		                {title:"[[#{screen.text.modify.asset.biz.dept}]]"    , field:"bizDeptNm" , hozAlign:"center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.modify.asset.dept}]]"	     , field:"deptNm"    , hozAlign:"right"   , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.modify.asset.charger}]]"     , field:"chrgrNm"     , hozAlign:"right"   , headerHozAlign:"center"},
+				 		{title:"[[#{screen.text.move.asetno}]]"            , field:"asetNo"    , hozAlign:"center"  , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.move.asset.type1}]]"       , field:"asetType1" , hozAlign:"center"  , headerHozAlign:"center", editor:"select", editorParams:{asetArr1}},
+		                {title:"[[#{screen.text.move.asset.type2}]]"       , field:"asetType2" , hozAlign:"left"    , headerHozAlign:"center", editor:"select", editorParams:{asetArr2}},
+		                {title:"[[#{screen.text.move.asset.type3}]]"       , field:"asetType3" , hozAlign:"center"  , headerHozAlign:"center", editor:"select", editorParams:{asetArr3}},
+		                {title:"[[#{screen.text.move.asset.manufacture}]]" , field:"mftco"     , hozAlign:"center"  , headerHozAlign:"center", editor:"input"},
+		                {title:"[[#{screen.text.move.asset.model}]]"       , field:"model"     , hozAlign:"center"  , headerHozAlign:"center", editor:"input"},
+		                {title:"[[#{screen.text.move.asset.sn}]]"          , field:"sn"        , hozAlign:"center"  , headerHozAlign:"center", editor:"input"},
+		                {title:"[[#{screen.text.move.asset.biz.dept}]]"    , field:"bizDeptNm" , hozAlign:"center"  , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.move.asset.dept}]]"	       , field:"deptNm"    , hozAlign:"right"   , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.move.asset.charger}]]"     , field:"chrgrNm"     , hozAlign:"right"   , headerHozAlign:"center"},
 		                // cellClick:function(e, cell){console.log("cell click")},
 				 	],
 				});						
@@ -229,10 +229,10 @@
 				window.close();
 		    }
 		  	
-		  	//팝업에서 받은 결과 처리
+		  	/* //팝업에서 받은 결과 처리
 		    function setResult(obj) {
 		    	$("#jsGrid").jsGrid("updateItem", targetItem, {chrgr: obj.userId});
-		    }
+		    } */
 		    
 		    // 사용자 선택 팝업에서 받은 결과 처리
 		    function setResult(obj) {
@@ -313,10 +313,10 @@
 	</th:block>
 
 	<div layout:fragment="content">
-		<h3><span>[[#{screen.text.modify.screen.title3}]]</span></h3>
+		<h3><span>[[#{screen.text.move.screen.title3}]]</span></h3>
 		<div class="list_head">
 			<div class="list_head">
-				<div><h6>[[#{screen.text.modify.screen.title4}]]</h6></div>
+				<div><h6>[[#{screen.text.move.screen.title4}]]</h6></div>
 			</div>
 			<div class="button">
 				<a class="btn_save">[[#{screen.text.comm.save}]]</a>
@@ -341,23 +341,23 @@
 					<col width=""/>
 				</colgroup>
 				<tr>
-					<th>[[#{screen.text.modify.type}]]</th>
+					<th>[[#{screen.text.move.type}]]</th>
 					<td><input type="text" id="reqTypeNm" style="width:100%;" readonly></td>
-					<th>[[#{screen.text.modify.no}]]</th>
+					<th>[[#{screen.text.move.no}]]</th>
 					<td><input type="text" id="reqNo" style="width:100%;" readonly></td>
-					<th >[[#{screen.text.modify.dt}]]</th>
+					<th>[[#{screen.text.move.dt}]]</th>
 					<td><input type="date" id="reqDt" style="width:100%;" readonly></td>
 				</tr>
 				<tr>
-					<th>[[#{screen.text.modify.dept}]]</th>
+					<th>[[#{screen.text.move.dept}]]</th>
 					<td><input type="text" style=" width:100%" id="deptNm" readonly/></td>
-					<th>[[#{screen.text.modify.reqtr}]]</th>
+					<th>[[#{screen.text.move.reqtr}]]</th>
 					<td><input type="text" style="width:100%" id="reqtr" readonly/></td>
-					<th>[[#{screen.text.modify.nm}]]</th>
+					<th>[[#{screen.text.move.nm}]]</th>
 					<td><input type="text" id="reqNm" style="width:100%;"></td>
 				</tr>
 				<tr>
-					<th>[[#{screen.text.modify.rsn}]]</th>
+					<th>[[#{screen.text.move.rsn}]]</th>
 					<td><input type="text" id="reqRsn" style="width:100%;"/></td>
 					<td colspan="2"></td>
 				</tr>
@@ -366,7 +366,7 @@
 		<!-- //search -->			
 		
 		<div class="list_head" style="display: flex;">
-			<div><h6>[[#{screen.text.modify.screen.title5}]]</h6></div>
+			<div><h6>[[#{screen.text.move.screen.title5}]]</h6></div>
 			<div class="result" style="margin-left: 20px;">Results : 0,000</div>
 			<div class="button">
 				<a class="btn_" id="openAsetMasPopup">[[#{screen.text.comm.add.asset}]]</a>
