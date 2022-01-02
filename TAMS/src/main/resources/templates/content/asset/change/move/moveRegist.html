@@ -81,23 +81,18 @@
 			 	        	headerSort:false, width:30, cellClick:function(e, cell){
 			 	         		cell.getRow().toggleSelect();
 			 	        }},
-				 		{title:"[[#{screen.text.move.asetno}]]"            , field:"asetNo"    , hozAlign:"center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.move.asset.type1}]]"       , field:"asetType1" , hozAlign:"center"  , headerHozAlign:"center", editor:"select", editorParams:{asetArr1}},
-		                {title:"[[#{screen.text.move.asset.type2}]]"       , field:"asetType2" , hozAlign:"left"    , headerHozAlign:"center", editor:"select", editorParams:{asetArr2}},
-		                {title:"[[#{screen.text.move.asset.type3}]]"       , field:"asetType3" , hozAlign:"center"  , headerHozAlign:"center", editor:"select", editorParams:{asetArr3}},
-		                {title:"[[#{screen.text.move.asset.manufacture}]]" , field:"mftco"     , hozAlign:"center"  , headerHozAlign:"center", editor:"input"},
-		                {title:"[[#{screen.text.move.asset.model}]]"       , field:"model"     , hozAlign:"center"  , headerHozAlign:"center", editor:"input"},
-		                {title:"[[#{screen.text.move.asset.sn}]]"          , field:"sn"        , hozAlign:"center"  , headerHozAlign:"center", editor:"input"},
-		                {title:"[[#{screen.text.move.asset.biz.dept}]]"    , field:"bizDeptNm" , hozAlign:"center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.move.asset.dept}]]"	       , field:"deptNm"    , hozAlign:"right"   , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.move.asset.charger}]]"     , field:"chrgrNm"   , hozAlign:"right"   , headerHozAlign:"center"},
-		                // cellClick:function(e, cell){console.log("cell click")},
+				 		{title:"[[#{screen.text.move.asetno}]]"            , field:"asetNo"    , hozAlign:"center" , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.move.asset.type1}]]"       , field:"asetType1" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:{asetArr1}},
+		                {title:"[[#{screen.text.move.asset.type2}]]"       , field:"asetType2" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:{asetArr2}},
+		                {title:"[[#{screen.text.move.asset.type3}]]"       , field:"asetType3" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:{asetArr3}},
+		                {title:"[[#{screen.text.move.asset.manufacture}]]" , field:"mftco"     , hozAlign:"left"   , headerHozAlign:"center", editor:"input"},
+		                {title:"[[#{screen.text.move.asset.model}]]"       , field:"model"     , hozAlign:"left"   , headerHozAlign:"center", editor:"input"},
+		                {title:"[[#{screen.text.move.asset.sn}]]"          , field:"sn"        , hozAlign:"left"   , headerHozAlign:"center", editor:"input"},
+		                {title:"[[#{screen.text.move.asset.biz.dept}]]"    , field:"bizDeptNm" , hozAlign:"left"   , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.move.asset.dept}]]"	       , field:"deptNm"    , hozAlign:"left"   , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.move.asset.charger}]]"     , field:"chrgrNm"   , hozAlign:"center" , headerHozAlign:"center", cellClick:function(e, cell){alert("cell click")},},
 				 	],
 				});						
-
-				/*------------- Grid Events -------------*/
-				//row click
-				
 				/*------------- Button Events -------------*/
 				// 저장 버튼 처리
 	            $('.btn_save').on('click', function (e) {
