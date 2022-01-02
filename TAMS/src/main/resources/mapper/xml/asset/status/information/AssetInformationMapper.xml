@@ -162,7 +162,7 @@
 				LEFT OUTER JOIN tb_com_code j
 				  ON a.expAcct = j.code_id
 				 AND j.use_yn = 'Y'			
-				 AND j.code_grp_id = 'COST_ACCOUNT'	 
+				 AND j.code_grp_id = 'ACCOUNT'	 
 				LEFT OUTER JOIN tb_dept k
 				  ON a.expDeptCd = k.dept_cd 
 				 AND k.use_yn = 'Y'
