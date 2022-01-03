@@ -160,24 +160,17 @@ public class MenuController {
 	@ApiOperation(value = "Web API Menu Mgr Delete", notes = "Web API Test")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String menumngDelete( 
+	public ResponseEntity<? extends Response>  menumngDelete( 
 			@ApiParam(value = "메뉴ID", required = true) @RequestParam(value = "items", required = true) List<String> items
 			) { 
 		
-		String code = "202";
-		
-		int cnt = 0;
-		
 		for(String menuId : items) {
-			System.out.println("@@@@@@@@@@ "+menuId);
 			MenuDto dto = new MenuDto();
 			dto.setMenuId(menuId);
-			if( menuService.menuMngDelete(dto) > 0 ) cnt++;
+			 menuService.menuMngDelete(dto); 
 		}
 		
-		if( cnt > 0) code = "200";
-		
-		return code;
+		return responseService.success(null);
 	}
 
 }
