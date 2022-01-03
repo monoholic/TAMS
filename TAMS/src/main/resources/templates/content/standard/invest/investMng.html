@@ -150,14 +150,6 @@
     				 }) 
 	    	    });
 	    	    
-	            //팝업 가운데로 띄우기
-	            jQuery.fn.center = function () {
-	                this.css("position","absolute");
-	                this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 4) + $(window).scrollTop()) + "px");
-	                this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
-	                return this;
-	            }				
-				
 				/*------------------------- 팝업 -------------------------*/
 		        
 		     	// 팝업창 저장 버튼 처리
@@ -204,13 +196,13 @@
 	            	}
 	            		    	    	
 	            	let chooseVal = confirm("[[#{screen.info.status.default.delete.yn}]]");
-	    	    	let params = {
-		    	    		url : "/standard/invest/investMng/investMngDelete",
-		    	    		reqType : 'POST',
-		    	    		data : JSON.stringify([cur_item]),
-		    	    	}
-	    	    	
 	            	if(chooseVal) {
+		    	    	let params = {
+			    	    		url : "/standard/invest/investMng/investMngDelete",
+			    	    		reqType : 'POST',
+			    	    		data : JSON.stringify([cur_item]),
+			    	    	}
+		    	    	
 		    			$.request(params)
 	    				 .then((res) => {
 		    				$('.btn_srch').click();

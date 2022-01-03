@@ -8,378 +8,222 @@
 	</head>
         
 	<!-- css -->
-	<th:block layout:fragment="css">
+	<th:block layout:fragment="css">	
 	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="/css/jsgrid.css" />
 		<link rel="stylesheet" href="/css/theme.css" />
-		
-	</th:block>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.8/css/tabulator.min.css" rel="stylesheet"> 
+	</th:block>        
 	
 	<th:block layout:fragment="script">
-		<script src="/js/jsgrid/db.js"></script>
-	    <script src="/js/jsgrid/jsgrid.core.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.field.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
+		<script type="text/javascript" src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
 		
 	    <script>
+		    
+		    let grid;
+		    let requestUrl = "/system/menu/menuMng/menuList";
 	    
-	    let numOfRows = 20;
-	    let pageIdx = 1;
-	    var status = true;
-        var selectedItems = [];
-	 	var insertedItems = [];
-	 	var updatedItems = [];
-	    
-	    $(function(){
-	    	
-	        $("#jsGrid").jsGrid({
-	        	height: "600",
-                width: "100%",
-                filtering: false,
-                editing: true,
-                inserting: true,
-                sorting: true,
-                paging: true,
-                sorter: "number",
-                pageIndex:pageIdx,
-                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
-                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
-                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
-                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
-                pagerFormat: "{first} {prev} {pages} {next} {last}",
-                pagerContainer:null,
-                pageLoading: true,
-                pager: "#pager",
-                autoload: status,
-                pageSize: numOfRows,
-                pageButtonCount: 5,
-                loadonce: true,
-                updateOnResize: true, 
-	            rowClick: function(args) {
-	            	var target = args.event.target;
-	            	
-					if(target instanceof HTMLTableCellElement) {
-						//detail form
-						showDetailForm(args.item);
-					} else {
-						
-					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
-					                .on("change", function () {
-						  	 $(this).is(":checked") ? selectItem($(this).parent().next().text()) : unselectItem($(this).parent().next().text());
-						});
-						
-					}
-
-	            }, 
-	            pagerContainerClass: "paginate",
-	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
-	            },
-	            controller:  {
-	                loadData: function(filter) {
-	                    var d = $.Deferred();
-	                    
-	                    currentPage = filter.pageIndex; 
-               
-	                    let url = "/system/menu/menuMng/menuList";
-						let reqType = 'GET';	
-						let data = {
-            				"currentPage": filter.pageIndex,
-            				"numOfRows"  : numOfRows,
-            				"searchText" : $("#searchText").val(),
-            				"sortField"  : filter.sortField,
-            				"sortOrder"  : filter.sortOrder
-            			}
-						$.commRequest(url, reqType, data)
-							.then((res) => {
-								$(".result").text("Totals : " + res.condition.totalCount);
-								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
-							})
-							.catch((error) => {
-								console.log('메뉴조회 실패!!');
-							});
-	                    
-	                    return d.promise();
-	                },
-	            updateItem: function(item) { 
-            		updatedItems.push(item);
-            		pageIdx = $("#jsGrid").jsGrid("option", "pageIndex");
-                	//$("#jsGrid").jsGrid("option", "pageIndex", $("#jsGrid").jsGrid("option", "pageIndex"));
-                	let url = "/system/menu/menuMng/menuUpdate";
-                	let reqType = 'GET';
-                	$.commRequest(url, reqType, item)
-                		.then((res) => {
-                			console.log(res);
-                			//$(".save_btn").click();
-                			alert("[[#{screen.info.status.update.success}]]");
-                			$("#jsGrid").jsGrid("loadData");
-                		})
-                		.catch((error) => {
-                			console.log(error);
-                		})
-                	
-                },
-             	deleteItem: function(item) { 
-        			let url = "/system/menu/menuMng/menuDelete";
-        			let reqType = 'GET';
-        			$.commRequest(url, reqType, item)
-        				.then((res) => {
-        					console.log(res);
-        				})
-        				.catch((error) => {
-        					console.log(error);
-        				})
-        			
-            	},
-             	insertItem: function(item) {
-        		    let url = "/system/menu/menuMng/menuInsert";
-        		    let reqType = 'GET';
-        		    $.commRequest(url, reqType, item)
-        		    	.then((res) => {
-        		    		console.log(res);
-        		    	})
-        		    	.catch((error) => {
-        		    		console.log(error);
-        		    	})
-            	    }
-        		    
-            	},
-	            fields: [
-	            	{  name : "chk"
-	                	 , align: "center"
-	                	 , width: 20
-	                	 , title: ""
-	                	 , editing: false
-	                	 , sorting: false
-	                	 , filtering: false
-	                	 , itemTemplate: function(value, item) {
-	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-	                       .prop("checked", $.inArray(item.firstName, selectedItems) > -1)
-	                       .on("change", function () {
-	  					  	 $(this).is(":checked") ? selectItem($(this).parent().next().text()) : unselectItem($(this).parent().next().text());
-	  					  	 });
-	            		   }
-	                	 , headerTemplate : function ()  { 
-						  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
-		                     .on("change", function (item) {
-		             	    	selectedItems = [];
-		            	    	if(this.checked) { // check select status
-		            	            $('.singleCheckbox').each(function() { 
-		            	                this.checked = true;   
-		            	                selectItem($(this).parent().next().text());           
-		            	            });			         
-		            	        }else {
-		            	        	
-		            	            $('.singleCheckbox').each(function() { 
-		            	                this.checked = false;      
-		            	                unselectItem(item);
-		            	            });  
-		            	        	selectedItems = [];
-		            	    	}
-		    				});
-						} ,
-	                },
-	                { name: "menuId",    type: "number", width: 25,  align: "center", readOnly:true , title: "[[#{screen.text.menu.id}]]"},
-	                { name: "menuNm",    type: "text",   width: 100, align: "left",   title: "[[#{screen.text.menu.nm}]]"},
-	                { name: "url",       type: "text",   width: 120, align: "left",   title: "[[#{screen.text.menu.url}]]"},
-	                { name: "menuDesc",  type: "text",   width: 120, align: "left",   title: "[[#{screen.text.menu.desc}]]"},
-	                { name: "uppMenuId", type: "number", width: 25,  align: "center", title: "[[#{screen.text.menu.upper.id}]]"},
-	                { name: "lvl",       type: "number", width: 20,  align: "center", title: "[[#{screen.text.menu.level}]]"},
-	                { name: "useYn",     type: "select", width: 40,  align: "center"
-                		, items: [
-		                	{ Name: "[[#{screen.text.comm.ues}]]",  Id: "Y"},
-		                	{ Name: "[[#{screen.text.comm.unuesd}]]", Id: "N"},
-		            	],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1, title: "[[#{screen.text.comm.useyn}]]"}
-	                ,{ name: "popupYn", type: "select", width: 40 ,align: "center"
-	                	, items: [
-			            	{ Name: "[[#{screen.text.comm.ues}]]",  Id: "Y"},
-			            	{ Name: "[[#{screen.text.comm.unuesd}]]", Id: "N"},
-			        	],
-	                  valueField: "Id", textField: "Name", autoSelect: true, selectedIndex: -1   , title: "[[#{screen.text.menu.ispopup}]]"},
-	                { name: "sortOdr", type: "number", width: 20, align: "center", title: "[[#{screen.text.menu.sort}]]"},
-	                { name: "regr",    type: "text",   width: 35, align: "center", readOnly:true, title: "[[#{screen.text.comm.regr}]]"},
-	                { name: "regDt",   type: "date",   width: 45, align: "center", readOnly:true, title: "[[#{screen.text.comm.regdt}]]"},
-	                { name: "updr",    type: "text",   width: 35, align: "center", readOnly:true, title: "[[#{screen.text.comm.updr}]]"},
-	                { name: "upDt",    type: "date",   width: 45, align: "center", readOnly:true, title: "[[#{screen.text.comm.updt}]]"}
-	            ]
-	        });
-	        
-		    var selectItem = function(item) {
+		    $(function(){
 		    	
-		    	if(!selectedItems.includes(item)){
-			    	selectedItems.push(item);
-		    	}
+	            //drag 활성화
+		     	$("#detailForm").draggable();		    	
 		    	
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             $("#selectAllCheckbox").prop("checked", true);
-	            } else {
-	                $("#selectAllCheckbox").prop("checked", false);
-	            }
-			};
-		     
-		    var unselectItem = function(item) {
+				grid = new Tabulator("#data-table", {
+				 	locale:true,
+				    langs: $.commGridLocalization(),								
+				 	height:"560",
+				 	layout:"fitColumns",
+				 	movableColumns:true,
+				 	pagination:true,
+				 	paginationMode:"remote",
+				 	ajaxURL:requestUrl,			
+				 	ajaxParams: getParams(),
+				 	paginationSize:20,				    
+				 	paginationSizeSelector:[20, 50, 100, 500],			
+				 	dataSendParams:{
+				        "page":"currentPage",
+				        "size":"numOfRows"
+				    } ,							    
+				 	placeholder:"No Data Set",				 	
+				 	ajaxResponse:function(url, params, res){
+				 		$(".result").text("Totals : " + res.condition.totalCount);
+						condition = res.condition;				 						 		
+				 		return res;
+				 	},					 	
+				 	columns:[ 
+			 	        {formatter:"rowSelection", titleFormatter:"rowSelection", hozAlign:"center", headerHozAlign:"center", 
+			 	        	headerSort:false, width:30, cellClick:function(e, cell){
+			 	         		cell.getRow().toggleSelect();
+			 	        }},	
+		                {title: "[[#{screen.text.menu.id}]]"      		, field:"menuId"    	, hozAlign: "center"	, headerHozAlign:"center", width:90},
+		                {title: "[[#{screen.text.menu.nm}]]"      	, field:"menuNm"    	, hozAlign: "left"  		, headerHozAlign:"center"},
+		                {title: "[[#{screen.text.menu.url}]]"     		, field:"url"       			, hozAlign: "left"  		, headerHozAlign:"center"},
+		                {title: "[[#{screen.text.menu.desc}]]"    	, field:"menuDesc"  , hozAlign: "left"  		, headerHozAlign:"center"},
+		                {title: "[[#{screen.text.menu.upper.id}]]"	, field:"uppMenuId" 	, hozAlign: "center"	, headerHozAlign:"center", width:100},
+		                {title: "[[#{screen.text.menu.level}]]"   		, field:"lvl"       			, hozAlign: "center"	, headerHozAlign:"center", width:100},
+		                {title: "[[#{screen.text.comm.useyn}]]"   	, field:"useYn"     		, hozAlign: "center"	, headerHozAlign:"center", width:90},
+		                {title: "[[#{screen.text.menu.ispopup}]]" 	, field:"popupYn"   	, hozAlign: "center"	, headerHozAlign:"center", width:90},
+		                {title: "[[#{screen.text.menu.sort}]]"    		, field:"sortOdr"   		, hozAlign: "center"	, headerHozAlign:"center", width:90},
+		                {title: "[[#{screen.text.comm.regr}]]"    	, field:"regr"      		, hozAlign: "center"	, headerHozAlign:"center", width:100},
+		                {title: "[[#{screen.text.comm.regdt}]]"   	, field:"regDt"     		, hozAlign: "center"	, headerHozAlign:"center", width:100},
+		                {title: "[[#{screen.text.comm.updr}]]"    	, field:"updr"      		, hozAlign: "center"	, headerHozAlign:"center", width:100},
+		                {title: "[[#{screen.text.comm.updt}]]"    	, field:"upDt"      		, hozAlign: "center"	, headerHozAlign:"center", width:100},
+				 	],
+				});				    	
 		    	
-			    selectedItems = $.grep(selectedItems, function(i) {
-			    return i !== item;
-			    });
-			    
-			    if(selectedItems.length == 0) {
-			    	$('#selectAllCheckbox').attr('checked', false);
-			    }
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             	$("#selectAllCheckbox").prop("checked", true);
-		        } else {
-		            $("#selectAllCheckbox").prop("checked", false);
-		        }
-		    };
-	        
-	        $("#pager").on("change", function() {
-	            var page = parseInt($(this).val(), 10);
-	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
-	        });
+				/*-------------------------- Grid Events --------------------------*/
+				//row click
+				grid.on("rowClick", function(e, row){					
+					var rowData = row.getData();		
+					showDetailForm(row.getData());
+				});	
+				
+				
+				/*-------------------------- UI Events --------------------------*/				
 
-    	    $(".btn_add").click(function() {
-    	    	//$("#jsGrid").jsGrid("option", "inserting", "true");
-    	    	showDetailForm();
-    	    });
-	        
-    	    $(".btn_del").click(function() {
-    	    	
-    	    	var arr_item = [];
-    	    	var items = [];
-    	    	
-    	    	//$("#jsGrid").jsGrid("deleteItem",delete_item);
-    	    	$.each(selectedItems, function(index,item){
-    	    		items.push(item);
-    	    	});
-    	    	
-    	    	//별도 호출
-    	    	let url = "/system/menu/menuMng/menuDelete";
-    			let reqType = 'GET';
-    			dataType: 'json';
-    			let data={
-    				"items": items.join(",")
-    			}
-    			$.commRequest(url, reqType, data)
-    				.then((res) => {
-    					console.log(res);
-    					alert("[[#{screen.info.status.delete.success}]]");
-    					$('.btn_srch').click();
-    				})
-    				.catch((error) => {
-    					alert("[[#{screen.info.status.error.occur}]]");
-    					console.log(error);
-    				})
-    	    	
-    	    	
-    	    });
-    	    
-	        $(".btn_srch").on("click",function (){
-	    	   $("#jsGrid").jsGrid().trigger("loadData");
-	        });
-	        
-	     	// 팝업창 저장 버튼 처리
-            $('.save_btn').on('click', function (e) {
-                e.preventDefault();
-                
-                var insert_item = {};
-	                insert_item.menuId 		= $(".detail_table").find("#menuId").val();
-		    		insert_item.menuNm 		= $(".detail_table").find("#menuNm").val();
-		    		insert_item.uppMenuId 	= $(".detail_table").find("#uppMenuId").val();
-		    		insert_item.menuDesc 	= $(".detail_table").find("#menuDesc").val();
-		    		insert_item.url 		= $(".detail_table").find("#url").val();
-		    		insert_item.lvl		 	= $(".detail_table").find("#menuLvl").val();
-		    		insert_item.useYn	 	= $(".detail_table").find("#useYn").val();
-		    		insert_item.popupYn	 	= $(".detail_table").find("#popupYn").val();
-		    		insert_item.sortOdr	 	= $(".detail_table").find("#sortOdr").val();
+				//조회
+		        $(".btn_srch").on("click",function (){
+		        	grid.setData(requestUrl, getParams());
+		        });
+				
+				
+				//등록
+				$(".btn_add").click(function() {
+	    	    	showDetailForm();
+	    	    });
+		        
+				//삭제
+	    	    $(".btn_del").click(function() {
 
-		        var action = "";
-		    	if(save_mode == "insert") {
-		    		action = "insertItem";
-		    		//insertedItems.push(insert_item); --일괄
-		    	}else if(save_mode == "update") {
-		    		action = "updateItem";
-		    		//updatedItems.push(insert_item); --일괄
-		    	}
-    	
-    			$("#jsGrid").jsGrid(action, insert_item);
-                
-	    		clearDetailForm();
-                $(this).parents("#detailForm").hide();
-                save_mode = "";
-            });
-
-          	//수정 버튼
-    	    $(".btn_update").click(function() {
-    	    	console.log(selectedItems);
-/*     	    	var items = $("#jsGrid").jsGrid("option", "data");
-    	    	var item = items.filter(arr => arr.menuId == selectedItems[0]);
-    	    	showDetailForm(item[0]); */
-    	    });
-          	
-          	//리셋 버튼
-    	    $(".btn_reset").click(function() {
-    	    	$("#searchText").val("");
-    	    });
-	     	
-	     	// 팝업창 닫기 버튼 처리
-            $('.close_btn').on('click', function (e) {
-                e.preventDefault();
-                clearDetailForm();
-                $(this).parents("#detailForm").hide();
-                selectedItems = [];
-            });
-	     	
-            //drag 활성화
-	     	$("#detailForm").draggable();
-            
-            //팝업 가운데로 띄우기
-            jQuery.fn.center = function () {
-                this.css("position","absolute");
-                this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
-                this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
-                return this;
-            }
+	    	    	let selectedData  = grid.getSelectedData();
+	    	    	let items = [];
+	    	    	
+	    	    	if(selectedData.length == 0){
+	    	    		alert('[[#{screen.info.status.no.selected.item}]]');
+	    	    		return;
+	    	    	}		    	    	
+	    	    	
+	            	let chooseVal = confirm("[[#{screen.info.status.default.delete.yn}]]");	    	    	
+	            	if(chooseVal) {
+		    	    	for(row of selectedData){
+		    	    		items.push(row.menuId);	    	    		
+		    	    	}	    		    	    	
+		    	    	
+		    	    	let params = {
+			    	    		url : "/system/menu/menuMng/menuDelete",
+			    	    		reqType : 'GET',
+			    	    		data : {	"items": items.join(",")	}
+			    	    	}	    	    	
+		    	    	
+						$.request(params)
+		   				 .then((res) => {
+		   					alert("[[#{screen.info.status.delete.success}]]");
+		   					$('.btn_srch').click();
+		   				 })
+		   				 .catch((error) => {
+		   					alert("[[#{screen.info.status.error.occur}]]");
+		   					console.log(error);
+		   				 }) 	            		
+	            	}
+	    	    });
 	    	    
-    	});
-	    
-	    function clearDetailForm() {
-    	    $(".detail_table").find("#menuId").val("");
-    		$(".detail_table").find("#menuNm").val("");
-    		$(".detail_table").find("#uppMenuId").val("");
-    		$(".detail_table").find("#menuDesc").val("");
-    		$(".detail_table").find("#url").val("");
-    		$(".detail_table").find("#menuLvl").val("");
-    		$(".detail_table").find("#useYn").val("");
-    		$(".detail_table").find("#popupYn").val("");
-    		$(".detail_table").find("#sortOdr").val("");
-	    }
+		        
+		     	// 팝업창 저장 버튼 처리
+	            $('.save_btn').on('click', function (e) {
+	            	
+	            	let url = '';	            	
+	                
+	            	if(validationCheck()){
+		                let item = {};
+		                item.menuId 		= $(".detail_table").find("#menuId").val();
+		                item.menuNm 	= $(".detail_table").find("#menuNm").val();
+		                item.uppMenuId 	= $(".detail_table").find("#uppMenuId").val();
+		                item.menuDesc 	= $(".detail_table").find("#menuDesc").val();
+		                item.url 				= $(".detail_table").find("#url").val();
+		                item.lvl		 			= $(".detail_table").find("#menuLvl").val();
+		                item.useYn	 		= $(".detail_table").find("#useYn").val();
+		                item.popupYn	 	= $(".detail_table").find("#popupYn").val();
+		                item.sortOdr	 	= $(".detail_table").find("#sortOdr").val();
 		
-	    let save_mode = "";
-	    function showDetailForm(item) {
-	    	
-	    	if(selectedItems.length <= 1){
+				    	if(save_mode == "insert") {
+				    		url = "/system/menu/menuMng/menuInsert";
+				    	}else if(save_mode == "update") {
+				    		url = "/system/menu/menuMng/menuUpdate";
+				    	}			    		
+				    		
+		    	    	let params = {
+			    	    		url : url,
+			    	    		reqType : 'GET',
+			    	    		data : item,
+			    	    	}
+		    	    	
+		    			$.request(params)
+	    				 .then((res) => {
+	    					alert("[[#{screen.info.status.save.success}]]");
+				            $("#detailForm").hide();	    					 	    					 
+	    					$('.btn_srch').click();
+	    				 })
+	    				 .catch((error) => {
+	    					alert("[[#{screen.info.status.error.occur}]]");
+	    					console.log(error);
+	    				 }) 		            		
+	            	}
+	            });
+	
+	          	//수정 버튼
+	    	    $(".btn_update").click(function() {
+	    	    	let selectedData  = grid.getSelectedData();	    
+	    	    	if(selectedData.length > 0){
+	    	    		showDetailForm(selectedData[0]);
+	    	    	}
+	    	    });
+	          	
+	          	//리셋 버튼
+	    	    $(".btn_reset").click(function() {
+	    	    	$("#searchText").val("");
+	    	    });
+		     	
+		     	// 팝업창 닫기 버튼 처리
+	            $('.close_btn').on('click', function (e) {
+	            	$("#detailForm").hide();
+	                clearDetailForm();
+	            });
+	    	});
+		    
+		    //검색조건
+	        function getParams(){
+				return {
+					"searchText" : $("#searchText").val(),
+				}		    	
+	         }   		    
+		    
+			//입력항목 초기화		    
+		    function clearDetailForm() {
+	    	    $(".detail_table").find("#menuId").val("");
+	    		$(".detail_table").find("#menuNm").val("");
+	    		$(".detail_table").find("#uppMenuId").val("");
+	    		$(".detail_table").find("#menuDesc").val("");
+	    		$(".detail_table").find("#url").val("");
+	    		$(".detail_table").find("#menuLvl").val("");
+	    		$(".detail_table").find("#useYn").val("");
+	    		$(".detail_table").find("#popupYn").val("");
+	    		$(".detail_table").find("#sortOdr").val("");
+	    		save_mode = "";
+		    }
+			
+		    let save_mode = "";
+		    function showDetailForm(item) {
+		    	
+		    	clearDetailForm();
 		    	
 		    	let title = "메뉴 등록";
-		    	 var readOnly = false;
-		    	 
+
 		    	 if( item != null ) {
 		    		 title = "메뉴 수정";
 		    		 save_mode = "update";
 		    		 
-		    		 readOnly = false;
 		    		 $(".detail_table").find("#menuId").val(item.menuId);
 		    		 $(".detail_table").find("#menuId").attr("readOnly", true);
-		    		 
 		    		 
 		    		 $(".detail_table").find("#menuNm").val(item.menuNm);
 		    		 $(".detail_table").find("#uppMenuId").val(item.uppMenuId);
@@ -406,22 +250,43 @@
 	                 height	 : "auto",
 	                 border  : "2px solid navy"
 	             }).center().show();
-	    	}else{
-	    		alert("수정은 1개이상 되지 않습니다.");
-	    	}
-	    }
-	    	
-	    function enterkey() {
-	    	if (window.event.keyCode == 13) {
-	    		$("#jsGrid").jsGrid().trigger("loadData");
-	        }
-	    }
-	    
-		window.onload = function(){
-			
-		    getMyRole();
-			
-		}
+		    }
+		    	
+		    function enterkey() {
+		    	if (window.event.keyCode == 13) {
+		    		$('.btn_srch').click();
+		        }
+		    }
+
+		    // 유효성 검사
+		    function validationCheck() {
+		    	let isValid = true;
+				
+				if($.isNull($("#menuId").val())){
+					alert("[[#{screen.text.menu.id}]]");
+					$("#menuId").focus();
+					isValid = false;
+				}else if($.isNull($("#menuNm").val())){
+					alert("[[#{screen.text.menu.nm}]]");
+					$("#menuNm").focus();
+					isValid = false;
+				}else if($.isNull($("#url").val())){					
+					alert("[[#{screen.text.menu.url}]]");
+					$("#url").focus();
+					isValid = false;
+				}else if($.isNull($("#menuLvl").val())){					
+					alert("[[#{screen.text.menu.level}]]");
+					$("#menuLvl").focus();
+					isValid = false;								
+				}else if($.isNull($("#useYn").val())){					
+					alert("[[#{screen.text.comm.useyn}]]");
+					$("#useYn").focus();
+					isValid = false;
+				}
+				
+				return isValid;
+		    }		    
+		    
 	    </script>	
 	</th:block>
 
@@ -469,7 +334,7 @@
 		<!-- //search -->
 
 		<!-- list -->
-		<div id="jsGrid"></div>
+		<div id="data-table"></div>
 		<input type="hidden" id="curr_Idx"/>
 		<!-- //list -->
 	

@@ -1,6 +1,7 @@
 package kr.co.trito.tams.web.system.menu.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,12 @@ public class MenuService {
 		return mapper.selectMenuMngList(condition);
 	}	
 	
-	public int menuMngInsert(MenuDto dto) {
-		return mapper.menuMngInsert(dto);
+	public int menuMngInsert(Map<String, Object> data) {
+		return mapper.menuMngInsert(data);
 	}
 	
-	public int menuMngUpdate(MenuDto dto) {
-		return mapper.menuMngUpdate(dto);
+	public int menuMngUpdate(Map<String, Object> data) {
+		return mapper.menuMngUpdate(data);
 	}
 	
 	public int menuMngDelete(MenuDto dto) {

@@ -99,33 +99,50 @@
 	</select>
 	
 	<insert id="menuMngInsert" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
-		INSERT INTO TB_COM_MENU (MENU_ID, MENU_NM, URL
-		                       <if test="uppMenuId != null and uppMenuId !=''">
-		                       , UPP_MENU_ID
-		                       </if>
-		                       , MENU_DESC, MENU_LVL, POPUP_YN, SORT_ODR, REGR)
-		                  VALUES(#{menuId}, #{menuNm}, #{url}
-		                       <if test="uppMenuId != null and uppMenuId !=''">
-		                       , #{uppMenuId}
-		                       </if>
-		                       , #{menuDesc}, #{lvl}, #{popupYn}, #{sortOdr}, #{regr})
+		INSERT INTO TB_COM_MENU (
+			  MENU_ID
+			, MENU_NM, URL
+            <if test="uppMenuId != null and uppMenuId !=''">
+            , UPP_MENU_ID
+            </if>
+            , MENU_DESC
+            , MENU_LVL
+            , POPUP_YN
+		    <if test="sortOdr != null and sortOdr !=''">            
+            , SORT_ODR
+            </if>
+            , REGR
+		) VALUES(
+			#{menuId}
+			, #{menuNm}
+			, #{url}
+            <if test="uppMenuId != null and uppMenuId !=''">
+            , #{uppMenuId}
+            </if>
+            , #{menuDesc}
+            , #{lvl}
+            , #{popupYn}
+		    <if test="sortOdr != null and sortOdr !=''">
+            ,  #{sortOdr}
+            </if>		     	              
+            , #{regr})
 	</insert>
 	
 	<update id="menuMngUpdate" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">
-		UPDATE TB_COM_MENU 
-		   SET MENU_NM	 	= #{menuNm}
-		     , URL	 		= #{url}
-             <if test="uppMenuId != null and uppMenuId !=''">
-             , UPP_MENU_ID	= #{uppMenuId}
-             </if>
-		     , MENU_DESC	= #{menuDesc}
-		     , MENU_LVL		= #{lvl}
-		     , POPUP_YN		= #{popupYn}
-		     , SORT_ODR		= #{sortOdr}
-		     , USE_YN		= #{useYn}
-		     , UPDR			= #{updr}
-		     , UP_DT		= current_timestamp()
-        WHERE  MENU_ID = #{menuId}
+		UPDATE TB_COM_MENU
+			SET MENU_NM = #{menuNm}
+			      , URL	= #{url}
+			      <if test="uppMenuId != null and uppMenuId !=''">
+             	 , UPP_MENU_ID	= #{uppMenuId}
+             	 </if>
+		     	 , MENU_DESC = #{menuDesc}
+		     	 , MENU_LVL = #{lvl}
+		     	 , POPUP_YN 	= #{popupYn}			      
+             	 , SORT_ODR = (case when #{sortOdr} = '' then null else #{sortOdr} end) 		     	 
+		     	 , USE_YN	= #{useYn}
+		     	 , UPDR	= #{updr}
+		     	 , UP_DT	= current_timestamp()
+		WHERE  MENU_ID = #{menuId}
 	</update>
 	
 	<delete id="menuMngDelete" parameterType="kr.co.trito.tams.web.system.menu.dto.MenuDto">

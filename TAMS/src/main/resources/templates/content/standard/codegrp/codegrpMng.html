@@ -77,6 +77,11 @@
 	            
 		    	/* ------------------------ UI Events  ------------------------*/
 	    	    
+		    	//조회
+	    	    $(".btn_srch").on("click",function (){
+	    	    	grid.setData(requestUrl, getParams());
+		        });		    	
+		    	
 		    	//등록
 		    	$(".btn_add").click(function() {
 	    	    	showDetailForm();
@@ -93,31 +98,30 @@
 	    	    		return;
 	    	    	}	    	    	
 	    	    	
-	    	    	for(row of selectedData){
-	    	    		items.push(row.codeGrpId);	    	    		
-	    	    	}	    	    	
-	    	    	
-	    	    	let params = {
-		    	    		url : "/standard/codegrp/codegrpMng/codegrpDelete",
-		    	    		reqType : 'GET',
-		    	    		data : {	"items": items.join(",")	}
-		    	    	}
+	            	let chooseVal = confirm("[[#{screen.info.status.default.delete.yn}]]");	    	    	
+	            	if(chooseVal) {
+		    	    	for(row of selectedData){
+		    	    		items.push(row.codeGrpId);	    	    		
+		    	    	}	    	    	
+		    	    	
+		    	    	let params = {
+			    	    		url : "/standard/codegrp/codegrpMng/codegrpDelete",
+			    	    		reqType : 'GET',
+			    	    		data : {	"items": items.join(",")	}
+			    	    	}
 
-					$.request(params)
-	   				 .then((res) => {
-	   					alert("[[#{screen.info.status.delete.success}]]");
-	   					$('.btn_srch').click();
-	   				 })
-	   				 .catch((error) => {
-	   					alert("[[#{screen.info.status.error.occur}]]");
-	   					console.log(error);
-	   				 }) 	    	    	
-	    	    	
+						$.request(params)
+		   				 .then((res) => {
+		   					alert("[[#{screen.info.status.delete.success}]]");
+		   					$('.btn_srch').click();
+		   				 })
+		   				 .catch((error) => {
+		   					alert("[[#{screen.info.status.error.occur}]]");
+		   					console.log(error);
+		   				 }) 	 	            		
+	            	}
 	    	    });
-	    	    
-	    	    $(".btn_srch").on("click",function (){
-	    	    	grid.setData(requestUrl, getParams());
-		        });
+
 		        
 		     	// 팝업창 저장 버튼 처리
 	            $('.save_btn').on('click', function (e) {
@@ -236,7 +240,7 @@
 		    
 		    function enterkey() {
 		    	if (window.event.keyCode == 13) {
-		    		$("#jsGrid").jsGrid().trigger("loadData");
+		    		$('.btn_srch').click();
 		        }
 		    }
 		    

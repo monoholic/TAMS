@@ -138,16 +138,8 @@ public class UserMngController {
 		for( UserMngExcelDto user: list) {
 			Map<String, String> m = objectMapper.convertValue(user, Map.class);
 			List<String> l = new ArrayList<>(m.values());
-			/*
-			 * List<String> l = new ArrayList<>(); l.add(user.getUserId());
-			 * l.add(user.getUserNm()); l.add(user.getDeptCd()); l.add(user.getDeptNm());
-			 * l.add(user.getEmail()); l.add(user.getTelno()); l.add(user.getSex());
-			 * l.add(user.getUseYn()); l.add(user.getRegr()); l.add("");
-			 * l.add(user.getUpdr()); l.add("");
-			 */
 			rows.add(l);
 		}
-		//log.error("@@@@ "+ rows.toString());
 		map.put(ExcelConstant.BODY, rows);
 		return map;
 	}	
@@ -168,23 +160,7 @@ public class UserMngController {
 		UserInfo userInfo = (UserInfo)userDetail;
 		String userId = userInfo.getDto().getUserId();
 		
-//		UserMngDto dto = new UserMngDto();
-//		try {
-//			JSONParser parser = new JSONParser(userInfo);
-//			LinkedHashMap obj = parser.parseObject();
-//			//System.out.println(obj.get("userId"));
-//			dto.setUserId(obj.get("userId").toString());
-//			dto.setUserNm(obj.get("userNm").toString());
-		
-			dto.setUserPw(encoder.encode(dto.getUserPw()));
-			
-//			dto.setDeptCd(obj.get("deptCd").toString());
-//			dto.setEmail (obj.get("email").toString());
-//			dto.setTelno (obj.get("telno").toString());
-//			dto.setSex   (obj.get("sex").toString());
-//			dto.setUseYn (obj.get("useYn").toString());
-//		} catch(Exception e) {e.printStackTrace();}
-
+		dto.setUserPw(encoder.encode(dto.getUserPw()));
 		dto.setRegr(userId); //임시
 		
 		int cnt = userService.userMngInsert(dto);
@@ -192,43 +168,6 @@ public class UserMngController {
 		
 		return code;
 	} 
-//	/** 사죵자 관리 화면 : 등록 */
-//	@GetMapping(value="/usermng/userinsert")
-//	@ResponseBody
-//	@ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
-//	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-//			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-//	public String userMngInsert( 
-//			@ApiParam(value = "사용자 정보", required = true) 
-//			@RequestParam(value = "userInfo", required = true) 
-//			String userInfo
-//			) { 
-//		
-//		String code = "202";
-//		
-//		UserMngDto dto = new UserMngDto();
-//		
-//		try {
-//			JSONParser parser = new JSONParser(userInfo);
-//			LinkedHashMap obj = parser.parseObject();
-//			//System.out.println(obj.get("userId"));
-//			dto.setUserId(obj.get("userId").toString());
-//			dto.setUserNm(obj.get("userNm").toString());
-//			dto.setUserPw(obj.get("userPw").toString());
-//			dto.setDeptCd(obj.get("deptCd").toString());
-//			dto.setEmail (obj.get("email").toString());
-//			dto.setTelno (obj.get("telno").toString());
-//			dto.setSex   (obj.get("sex").toString());
-//			dto.setUseYn (obj.get("useYn").toString());
-//		} catch(Exception e) {e.printStackTrace();}
-//		
-//		dto.setRegr("system"); //임시
-//		
-//		int cnt = userService.userMngInsert(dto);
-//		if( cnt > 0) code = "200";
-//		
-//		return code;
-//	} 
 	
 	/** 사용자 관리 화면 : 수정 */
 	@PostMapping(value="/usermng/userupdate")
@@ -246,22 +185,9 @@ public class UserMngController {
 		UserInfo userInfo = (UserInfo)userDetail;
 		String userId = userInfo.getDto().getUserId();
 		
-//		UserMngDto dto = new UserMngDto();
-//		try {
-//			JSONParser parser = new JSONParser(userInfo);
-//			LinkedHashMap obj = parser.parseObject();
-//			dto.setUserId(obj.get("userId").toString());
-//			dto.setUserPw(obj.get("userPw").toString());
 			if( !StringUtils.isEmpty(dto.getUserPw())) {
 	            dto.setUserPw(encoder.encode(dto.getUserPw()));
 	         }
-//			dto.setUserNm(obj.get("userNm").toString());
-//			dto.setDeptCd(obj.get("deptCd").toString());
-//			dto.setEmail (obj.get("email").toString());
-//			dto.setTelno (obj.get("telno").toString());
-//			dto.setSex   (obj.get("sex").toString());
-//			dto.setUseYn (obj.get("useYn").toString());
-//		} catch(Exception e) {e.printStackTrace();}
 		
 		dto.setUpdr(userId);
 			
@@ -270,42 +196,6 @@ public class UserMngController {
 		
 		return code;
 	} 	
-	
-//	/** 사용자 관리 화면 : 수정 */
-//	@PostMapping(value="/usermng/userupdate")
-//	@ResponseBody
-//	@ApiOperation(value = "Web API User Mgr Update", notes = "Web API Test")
-//	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-//			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-//	public String userMngUpdate( 
-//			@ApiParam(value = "사용자정보", required = true) @RequestParam(value = "userInfo", required = true) String userInfo
-//			) { 
-//		
-//		String code = "202";
-//		
-//		UserMngDto dto = new UserMngDto();
-//		
-//		try {
-//			JSONParser parser = new JSONParser(userInfo);
-//			LinkedHashMap obj = parser.parseObject();
-//			dto.setUserId(obj.get("userId").toString());
-//			dto.setUserPw(obj.get("userPw").toString());
-//			dto.setUserNm(obj.get("userNm").toString());
-//			dto.setDeptCd(obj.get("deptCd").toString());
-//			dto.setEmail (obj.get("email").toString());
-//			dto.setTelno (obj.get("telno").toString());
-//			dto.setSex   (obj.get("sex").toString());
-//			dto.setUseYn (obj.get("useYn").toString());
-//		} catch(Exception e) {e.printStackTrace();}
-//		
-//		dto.setUpdr("system");
-//		
-//		int cnt = userService.userMngUpdate(dto);
-//		if( cnt > 0) code = "200";
-//		
-//		return code;
-//	} 	
-	
 	
 	/** 사용자관리 화면 : 삭제 */
 	@PostMapping(value="/usermng/userdelete")
@@ -318,46 +208,15 @@ public class UserMngController {
 			) { 
 		
 		String code = "202";
-		
 		int cnt = 0;
 		
 		for(UserMngDto dto : users) {
-//			System.out.println("@@@@@@@@@@ "+dto.getUserId());
-//			UserMngDto dto = new UserMngDto();
-//			dto.setUserId(userId);
 			if( userService.userMngDelete(dto) > 0 ) cnt++;
 		}
 		
 		if( cnt > 0) code = "200";
-		
 		return code;
 	} 
-	
-//	/** 사용자관리 화면 : 삭제 */
-//	@GetMapping(value="/usermng/userdelete")
-//	@ResponseBody
-//	@ApiOperation(value = "Web API User Mgr Delete", notes = "Web API Test")
-//	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-//			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-//	public String userMngDelete( 
-//			@ApiParam(value = "User ID", required = true) @RequestParam(value = "items", required = true) List<String> items
-//			) { 
-//		
-//		String code = "202";
-//		
-//		int cnt = 0;
-//		
-//		for(String userId : items) {
-//			System.out.println("@@@@@@@@@@ "+userId);
-//			UserMngDto dto = new UserMngDto();
-//			dto.setUserId(userId);
-//			if( userService.userMngDelete(dto) > 0 ) cnt++;
-//		}
-//		
-//		if( cnt > 0) code = "200";
-//		
-//		return code;
-//	} 	
 	
 	/** 사용자관리 화면 : 직급 리스트 출력 */
 	@PostMapping("/codeClpstList")

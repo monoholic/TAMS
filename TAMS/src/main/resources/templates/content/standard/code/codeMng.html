@@ -121,21 +121,24 @@
 	    	    		return;
 	    	    	}
 	    	    	
-	    	    	let params = {
-		    	    		url : "/standard/code/codeMng/codeDelete",
-		    	    		reqType : 'POST',
-		    	    		data : JSON.stringify(selectedData),
-		    	    	}
+	            	let chooseVal = confirm("[[#{screen.info.status.default.delete.yn}]]");	    	    	
+	            	if(chooseVal) {
+		    	    	let params = {
+			    	    		url : "/standard/code/codeMng/codeDelete",
+			    	    		reqType : 'POST',
+			    	    		data : JSON.stringify(selectedData),
+			    	    	}
 
-					$.request(params)
-	   				 .then((res) => {
-	    					alert("[[#{screen.info.status.delete.success}]]");
-	    					$('.btn_srch').click();
-	   				 })
-	   				 .catch((error) => {
-	    					alert("[[#{screen.info.status.error.occur}]]");
-	    					console.log(error);
-	   				 }) 	   	    	    	
+						$.request(params)
+		   				 .then((res) => {
+		    					alert("[[#{screen.info.status.delete.success}]]");
+		    					$('.btn_srch').click();
+		   				 })
+		   				 .catch((error) => {
+		    					alert("[[#{screen.info.status.error.occur}]]");
+		    					console.log(error);
+		   				 }) 
+	            	}
 	    	    });
 		        
 	    	    //저장

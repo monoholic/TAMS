@@ -30,6 +30,7 @@ import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.system.menu.dto.MenuDto;
 import kr.co.trito.tams.web.system.menu.service.MenuService;
+import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -117,83 +118,37 @@ public class MenuController {
 	/** 메뉴관리 화면 : 등록 */
 	   @GetMapping(value="/menuMng/menuInsert")
 	   @ResponseBody
-	   @ApiOperation(value = "Web API Menu Mgr Insert", notes = "Web API Test")
+	   @ApiOperation(value = "메뉴 등록", notes = "신규 메뉴를 등록한다.")
 	   @ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	   @ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	   public String menuMgrInsert( 
-	         @ApiParam(value = "메뉴ID", required = true) @RequestParam(value = "menuId", required = true) String menuId,
-	         @ApiParam(value = "메뉴명", required = true) @RequestParam(value = "menuNm", required = true) String menuNm,
-	         @ApiParam(value = "상위메뉴ID", required = false) @RequestParam(value = "uppMenuId", required = true) String uppMenuId,
-	         @ApiParam(value = "메뉴설명", required = false) @RequestParam(value = "menuDesc", required = true) String menuDesc,
-	         @ApiParam(value = "메뉴경로", required = false) @RequestParam(value = "url", required = true) String url,
-	         @ApiParam(value = "메뉴레벨", required = false) @RequestParam(value = "lvl", required = true) String lvl,
-	         @ApiParam(value = "사용여부", required = false) @RequestParam(value = "useYn", required = true) String useYn,
-	         @ApiParam(value = "팝업구분", required = false) @RequestParam(value = "popupYn", required = true) String popupYn,
-	         @ApiParam(value = "정렬순서", required = false) @RequestParam(value = "sortOdr", required = true) String sortOdr
-	         ) { 
-	      
-	      String code = "202";
-	      
-	      MenuDto dto = new MenuDto();
-	      
-	      if (StringUtils.isNotEmpty(menuId)) dto.setMenuId(menuId);
-	      if (StringUtils.isNotEmpty(menuNm)) dto.setMenuNm(menuNm);
-	      
-	      dto.setUppMenuId(uppMenuId);
-	      dto.setMenuDesc(menuDesc);
-	      dto.setUrl(url);
-	      dto.setLvl(lvl);
-	      dto.setUseYn(useYn);
-	      dto.setPopupYn(popupYn);
-	      dto.setSortOdr(sortOdr);
-	      
-	      dto.setRegr("system"); //임시
-	      
-	      int cnt = menuService.menuMngInsert(dto);
-	      if( cnt > 0) code = "200";
-	      
-	      return code;
+	   public ResponseEntity<? extends Response> menuMgrInsert( 
+				@ApiParam(value = "메뉴 등록 데이터", required = true) @RequestParam Map<String, Object> items,
+				@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail			   
+	         ) {
+		   	UserInfo userInfo = (UserInfo)userDetail;
+			String userId = userInfo.getDto().getUserId();
+			items.put("regr", userId);
+			items.put("updr", userId);	      	      
+			menuService.menuMngInsert(items);
+			return responseService.success(null);
 	   } 
 	
 	/** 메뉴관리 화면 : 수정 */
 	@GetMapping(value="/menuMng/menuUpdate")
 	@ResponseBody
-	@ApiOperation(value = "Web API Menu Mgr Update", notes = "Web API Test")
+	   @ApiOperation(value = "메뉴 수정", notes = "메뉴 정보를 업데이트 한다.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public String menuMgrUpdate( 
-			@ApiParam(value = "메뉴ID", required = true) @RequestParam(value = "menuId", required = true) String menuId,
-			@ApiParam(value = "메뉴명", required = true) @RequestParam(value = "menuNm", required = true) String menuNm,
-			@ApiParam(value = "상위메뉴ID", required = false) @RequestParam(value = "uppMenuId", required = true) String uppMenuId,
-			@ApiParam(value = "메뉴설명", required = false) @RequestParam(value = "menuDesc", required = true) String menuDesc,
-			@ApiParam(value = "메뉴경로", required = false) @RequestParam(value = "url", required = true) String url,
-			@ApiParam(value = "메뉴레벨", required = false) @RequestParam(value = "lvl", required = true) String lvl,
-			@ApiParam(value = "사용여부", required = false) @RequestParam(value = "useYn", required = true) String useYn,
-			@ApiParam(value = "팝업구분", required = false) @RequestParam(value = "popupYn", required = true) String popupYn,
-			@ApiParam(value = "정렬순서", required = false) @RequestParam(value = "sortOdr", required = true) String sortOdr
+	public ResponseEntity<? extends Response>  menuMgrUpdate( 
+			@ApiParam(value = "메뉴 등록 데이터", required = true) @RequestParam Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail	
 			) { 
-		
-		String code = "202";
-		
-		MenuDto dto = new MenuDto();
-		
-		if (StringUtils.isNotEmpty(menuId)) dto.setMenuId(menuId);
-		if (StringUtils.isNotEmpty(menuNm)) dto.setMenuNm(menuNm);
-		
-		dto.setUppMenuId(uppMenuId);
-		dto.setMenuDesc(menuDesc);
-		dto.setUrl(url);
-		dto.setLvl(lvl);
-		dto.setUseYn(useYn);
-		dto.setPopupYn(popupYn);
-		dto.setSortOdr(sortOdr);
-		
-		dto.setUpdr("system"); //임시
-		
-		int cnt = menuService.menuMngUpdate(dto);
-		if( cnt > 0) code = "200";
-		
-		return code;
+	   	UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
+		items.put("regr", userId);
+		items.put("updr", userId);	      	 
+		menuService.menuMngUpdate(items);
+		return responseService.success(null);
 	} 	
 	
 	

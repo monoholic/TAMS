@@ -1,6 +1,7 @@
 package kr.co.trito.tams.web.system.menu.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,9 +16,9 @@ public interface MenuMapper {
 	
 	public List<MenuDto> selectMenuMngList(SearchCondition condtion);
 	
-	public int menuMngInsert(MenuDto dto);
+	public int menuMngInsert(Map<String, Object> data);
 	
-	public int menuMngUpdate(MenuDto dto);
+	public int menuMngUpdate(Map<String, Object> data);
 	
 	public int menuMngDelete(MenuDto dto);
 
