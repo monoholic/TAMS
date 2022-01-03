@@ -67,7 +67,7 @@ public class MenuController {
 	}
 	
 	/** 메뉴관리 화면 */
-	@PostMapping("/menuMng")
+	@PostMapping("/list")
 	public ModelAndView menumngView(HttpServletRequest request) {
 		
 		ModelAndView view = new ModelAndView();
