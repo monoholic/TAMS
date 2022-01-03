@@ -44,6 +44,20 @@ public class MenuController {
 	
 	@Autowired
 	ResponseService responseService;		
+
+	/** 메뉴관리 화면 */
+	@PostMapping("/list")
+	public ModelAndView menumngView(HttpServletRequest request) {
+		
+		ModelAndView view = new ModelAndView();
+		view.addObject("menuId", request.getParameter("menuId"));
+		view.addObject("menuNm", request.getParameter("menuNm"));
+		view.addObject("menuDesc", request.getParameter("menuDesc"));
+		view.setViewName("/content/system/menu/menuMng");
+		    
+		return view;
+	} 		
+	
 	
 	/** 메뉴 - 상단 메뉴 조회 */
 	@PostMapping("/menuList")
@@ -65,19 +79,7 @@ public class MenuController {
 		List<MenuDto> list = menuService.selectMenuList(roleId);
 		return responseService.success(list);
 	}
-	
-	/** 메뉴관리 화면 */
-	@PostMapping("/list")
-	public ModelAndView menumngView(HttpServletRequest request) {
-		
-		ModelAndView view = new ModelAndView();
-		view.addObject("menuId", request.getParameter("menuId"));
-		view.addObject("menuNm", request.getParameter("menuNm"));
-		view.addObject("menuDesc", request.getParameter("menuDesc"));
-		view.setViewName("/content/system/menu/menuMng");
-		    
-		return view;
-	} 	
+
 	
 	/** 메뉴관리 화면 : 조회 */
 	@GetMapping(value="/menuMng/menuList")
