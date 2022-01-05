@@ -33,9 +33,7 @@
 					</if>	
 			   ) AS a
 		WHERE rn BETWEEN #{start} AND #{end}
-		<if test="params.sortField != null">
-			ORDER BY ${params.sortField} ${params.sortOrder}
-		</if>	
+		ORDER BY a.role_id
 	</select>
 	
 	<insert id="roleMngInsert" parameterType="kr.co.trito.tams.web.system.role.dto.RoleDto">

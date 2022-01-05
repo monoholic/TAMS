@@ -70,14 +70,14 @@
 		                { title: "[[#{screen.text.comm.updr}]]" , field: "updr"    		, hozAlign: "center",  headerHozAlign:"center" },
 		                { title: "[[#{screen.text.comm.updt}]]" , field: "updt"    		, hozAlign: "center",  headerHozAlign:"center" },
 				 	],
-				});				    	
+				});				
+				
 				/*------------------------- Grid Events -------------------------*/
 				//row click
 				grid.on("rowClick", function(e, row){	
 					var rowData = row.getData();		
 					showDetailForm(row.getData());
 				});					
-				
 				
 				/*--------------------- Main Button Events ---------------------*/
 				

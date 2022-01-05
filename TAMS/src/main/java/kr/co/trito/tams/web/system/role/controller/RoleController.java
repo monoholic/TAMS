@@ -41,7 +41,7 @@ public class RoleController {
 	RoleService roleService;
 
 	/** 권한관리 화면 */
-	@PostMapping("/roleMng")
+	@PostMapping("/list")
 	public ModelAndView menumngView(HttpServletRequest request) {
 
 		ModelAndView view = new ModelAndView();
