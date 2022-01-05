@@ -56,7 +56,7 @@ public class UserMngController {
 	BCryptPasswordEncoder encoder;
 	
 	/** 사용자 관리 화면 */
-	@PostMapping("/usermng")
+	@PostMapping("/list")
 	public ModelAndView userMngView(@RequestParam(value="menuId"  , required=true) String menuId
 			                      , @RequestParam(value="menuNm"  , required=true) String menuNm
 			                      , @RequestParam(value="menuDesc", required=true) String menuDesc) {
