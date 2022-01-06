@@ -41,5 +41,7 @@ public class MenuRoleDto {
 	private String upDt;
 	@ApiModelProperty(value="그룹ID")
 	private String groupId;
+	@ApiModelProperty(value="Row Number")
+	private String rn;	
 }
 

@@ -56,25 +56,26 @@
 		     , menuId
 		     , menuDesc as menuNm
 		     , CASE 
-		       WHEN menuYn = '' THEN ''
-		       ELSE 'Y' END as menuYn
+		       WHEN menuYn = '' THEN false
+		       ELSE true END as menuYn
 		     , CASE 
-		       WHEN inqrYn = '' THEN ''
-		       ELSE 'Y' END as inqrYn
+		       WHEN inqrYn = '' THEN false
+		       ELSE true END as inqrYn
 		     , CASE 
-		       WHEN regYn = '' THEN ''
-		       ELSE 'Y' END as regYn
+		       WHEN regYn = '' THEN false
+		       ELSE true END as regYn
 		     , CASE 
-		       WHEN updYn = '' THEN ''
-		       ELSE 'Y' END as updYn
+		       WHEN updYn = '' THEN false
+		       ELSE true END as updYn
 		     , CASE 
-		       WHEN delYn = '' THEN ''
-		       ELSE 'Y' END as delYn
+		       WHEN delYn = '' THEN false
+		       ELSE true END as delYn
 		     , IFNULL(regr, '') as regr
 		     , IFNULL(regDt, '') as regDt
 		     , IFNULL(updr, '') as updr
 		     , IFNULL(upDt, '') as upDt
 		     , #{params.roleId} as groupId
+		     , rn
 		FROM (
 		 SELECT ROW_NUMBER() OVER(ORDER BY CAST(m.menuId AS int)) AS rn
 		      , m.*
@@ -99,14 +100,31 @@
 	
 	<insert id="menuRoleMngRoleSave" parameterType="kr.co.trito.tams.web.system.menurole.dto.MenuRoleDto">
 		INSERT INTO 
-		TB_COM_MENU_ROLE ( role_id, menu_id, menu_yn, inqr_yn, reg_yn, upd_yn, del_yn, regr )
-		VALUES ( #{groupId}, #{menuId}, #{menuYn}, #{inqrYn}, #{regYn}, #{updYn}, #{delYn}, #{regr} )
+		TB_COM_MENU_ROLE ( 
+			role_id
+			, menu_id
+			, menu_yn
+			, inqr_yn
+			, reg_yn
+			, upd_yn
+			, del_yn
+			, regr )
+		VALUES ( 
+			#{groupId}
+			, #{menuId}
+			, (case when #{menuYn} = 'true' or #{menuYn} = '1' then 'Y' else '' end)
+			, (case when #{inqrYn} = 'true' or #{inqrYn} = '1' then 'Y' else '' end)
+			, (case when #{regYn} = 'true' or #{regYn} = '1' then 'Y' else '' end)
+			, (case when #{updYn} = 'true' or #{updYn} = '1' then 'Y' else '' end)
+			, (case when #{delYn} = 'true' or #{delYn} = '1' then 'Y' else '' end)
+			, #{regr} 
+		)
 		ON DUPLICATE KEY
-		UPDATE menu_yn = #{menuYn}
-		  	 , inqr_yn = #{inqrYn}
-		  	 , reg_yn = #{regYn}
-		  	 , upd_yn = #{updYn}
-		  	 , del_yn = #{delYn}
+		UPDATE menu_yn = (case when #{menuYn} = 'true' or #{menuYn} = '1' then 'Y' else '' end)
+		  	 , inqr_yn = (case when #{inqrYn} = 'true' or #{inqrYn} = '1' then 'Y' else '' end)
+		  	 , reg_yn = (case when #{regYn} = 'true' or #{regYn} = '1' then 'Y' else '' end) 
+		  	 , upd_yn = (case when #{updYn} = 'true' or #{updYn} = '1' then 'Y' else '' end) 
+		  	 , del_yn = (case when #{delYn} = 'true' or #{delYn} = '1' then 'Y' else '' end) 
 		  	 , updr = #{updr}
 		  	 , up_dt = CURRENT_TIMESTAMP()
 	</insert>
