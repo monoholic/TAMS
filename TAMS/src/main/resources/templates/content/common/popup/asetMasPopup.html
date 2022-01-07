@@ -8,352 +8,250 @@
 	</head>
         
 	<!-- css -->
-	<th:block layout:fragment="css">
+	<th:block layout:fragment="css">	
 	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="/css/jsgrid.css" />
 		<link rel="stylesheet" href="/css/theme.css" />
-		
-	</th:block>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.8/css/tabulator.min.css" rel="stylesheet"> 
+	</th:block>    
 	
 	<th:block layout:fragment="script">
-		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
-		<script src="/js/jsgrid/db.js"></script>
-	    <script src="/js/jsgrid/jsgrid.core.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.field.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
+		<script type="text/javascript" src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
 		
 	    <script>
 	    
-	    // 공통코드(자산유형 1레벨 출력)
-	    let numOfRows = 10;
-	    var status = true;
-        var selectedItems = [];
-	 	var insertedItems = [];
-	 	var updatedItems = [];
-	 	
-	 	var asetType = [];
-	 	
-	    $(function(){
-	        $("#jsGrid").jsGrid({
-	        	height: "400",
-                width: "100%",
-                filtering: false,
-                editing: true,
-                inserting: true,
-                sorting: true,
-                paging: true,
-                sorter: "number",
-                pageIndex:1,
-                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
-                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
-                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
-                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
-                pagerFormat: "{first} {prev} {pages} {next} {last}",
-                pagerContainer:null,
-                pageLoading: true,
-                pager: "#pager",
-                autoload: status,
-                pageSize: numOfRows,
-                pageButtonCount: 5,
-                loadonce: true,
-                updateOnResize: true, 
-	            rowClick: function(args) {
-	            	var target = args.event.target;
-	            	
-					if(target instanceof HTMLTableCellElement) {
-						// detail form
-						/* alert(JSON.stringify(args)); */
-						// showDetailForm(args.item);
-						
-					} else {
-					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
-					                .on("change", function () {
-						  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
-						});
-					}
-	            }, 
-	            pagerContainerClass: "paginate",
-	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ "[[#{screen.info.status.delete.yn}]]";
-	            },
-	            controller:  {
-	                loadData: function(filter) {
-	                    var d = $.Deferred();
-	                    
-	                    currentPage = filter.pageIndex;
-	                    
-	                    let url = "/common/popup/asetMasPopupList";
-						let reqType = 'GET';	
-						let data = {
-            				"currentPage"  : filter.pageIndex,
-            				"numOfRows"    : numOfRows,
-            				"asetNo"       : $("#asetNo").val(),
-            				"reqStus"      : $("#reqStus").text(),
-            			    "fromDate"     : $("#fromDate").val(),
-        				    "toDate"       : $("#toDate").val(),
-        				    "asetType1"	   : $("#asetType1").val(),
-        				    "asetType2"	   : $("#asetType2").val(),
-        				    "asetType3"	   : $("#asetType3").val(),
-        				    "deptCd1"	   : $("#deptCd1").val(),
-        				    "deptCd2"	   : $("#deptCd2").val(),
-        				    "chrgr"		   : $("#chrgr").val(),
-        				    "chrgrNm"	   : $("#chrgrNm").val(),
-            				"sortField"    : filter.sortField,
-            				"sortOrder"    : filter.sortOrder
-            			}
-						$.commRequest(url, reqType, data)
-							.then((res) => {
-								$(".result").text("Results : " + res.condition.totalCount);
-								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
-
-							})
-							.catch((error) => {
-								console.log('조회 실패!!');
-							});						
-	                    
-	                    return d.promise();
-	                },
-            },
-	            fields: [
-	            	{  name : "chk"
-	                	 , align: "center"
-	                	 , width: 10
-	                	 , title: ""
-	                	 , editing: false
-	                	 , sorting: false
-	                	 , filtering: false
-	                	 , itemTemplate: function(value, item) {
-	                       return $("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-	                       .prop("checked", $.inArray(item.firstName, selectedItems) > -1)
-	                       .on("change", function () {
-	  					  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
-	  					  	 });
-	            		   }
-	                	 , headerTemplate : function ()  { 
-						  	 return  $("<input>").attr("type", "checkbox").attr("id","selectAllCheckbox")
-		                     .on("change", function (item) {
-		             	    	selectedItems = [];
-		            	    	if(this.checked) { // check select status
-		            	            $('.singleCheckbox').each(function() { 
-		            	                $(this).prop("checked", true).change();
-		            	            });			         
-		            	        }else {
-		            	            $('.singleCheckbox').each(function() { 
-		            	            	$(this).prop("checked", false).change();
-		            	            });  
-		            	            selectedItems = [];
-		            	        }
-		    				   });
-					 	 } ,
-	                },
-	                { name: "asetNo"	 , type: "text"   , width: 30 ,align: "center", title: "[[#{screen.popup.text.asset.no}]]"},
-					{ name: "asetTypeNm1", type: "text"   , width: 25 ,align: "left", title: "[[#{screen.popup.text.asset.type1}]]"},
-					{ name: "asetTypeNm2", type: "text"   , width: 25 ,align: "left", title: "[[#{screen.popup.text.asset.type2}]]"},
-					{ name: "asetTypeNm3", type: "text"   , width: 25 ,align: "left", title: "[[#{screen.popup.text.asset.type3}]]"},
-					{ name: "mftco"		 , type: "text"   , width: 20 ,align: "left", title: "[[#{screen.popup.text.asset.manufacture}]]"},
-					{ name: "model"		 , type: "text"   , width: 50 ,align: "left", title: "[[#{screen.popup.text.asset.model}]]"	},
-					{ name: "sn"		 , type: "number" , width: 50 ,align: "left", title: "[[#{screen.popup.text.asset.sn}]]"},
-					{ name: "bizDeptNm"	 , type: "date"   , width: 20 ,align: "left", title: "[[#{screen.popup.text.asset.biz.dept}]]"},
-					{ name: "deptNm"	 , type: "text"   , width: 20 ,align: "left", title: "[[#{screen.popup.text.asset.dept}]]"},
-					{ name: "chrgr"		 , type: "text"   , width: 20 ,align: "left", title: "[[#{screen.popup.text.asset.charger}]]", visible:false},
-					{ name: "chrgrNm"	 , type: "text"   , width: 20 ,align: "left", title: "[[#{screen.popup.text.asset.charger}]]"},
-					{ name: "asetStusNm" , type: "text"   , width: 20 ,align: "center", title: "[[#{screen.popup.text.asset.status}]]"}
-	            ]
-	        });
-	        
-		    var selectItem = function(item) {
-		    	if(!selectedItems.includes(item)){
-			    	selectedItems.push(item);
-		    	}
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             $("#selectAllCheckbox").prop("checked", true);
-	         } else {
-	             $("#selectAllCheckbox").prop("checked", false);
-	         }
-			};
-		     
-		    var unselectItem = function(item) {
-			    selectedItems = $.grep(selectedItems, function(i) {
-			    return i !== item;
-			    });
-			    if(selectedItems.length == 0) {
-			    	$('#selectAllCheckbox').attr('checked', false);
-			    }
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             $("#selectAllCheckbox").prop("checked", true);
-	         } else {
-	             $("#selectAllCheckbox").prop("checked", false);
-	         }
-	        
-		    };
-    	    $(".btn_srch").on("click",function (){
-    	    	if (validationCheck() == '202') {
-	    	   		$("#jsGrid").jsGrid().trigger("loadData");
-    	    	}
-	        });
-	        
-    	    //팝업창 닫기
-			$("#btn_close_pop").on("click",function(){ 
-				window.close();
-			});
-	        
-          	//리셋 버튼
-    	    $(".btn_reset").click(function() {
-    	    	$("#asetNo").val("");
-    	    	$("#fromDate").val("");
-    	    	$("#toDate").val("");
-    	    	$("#asetType1").val("");
-    	    	$("#asetType2").val("");
-    	    	$("#asetType3").val("");
-    	    	$("#deptCd1").val("");
-    	    	$("#deptNm1").val("");
-    	    	$("#deptCd2").val("");
-    	    	$("#deptNm2").val("");
-    	    	$("#chrgr").val("");
-    	    });
-          	
-    	    asetTypeList();
-    	    
-    		// 자산 유형 선택 2레벨 그리기
-    	    $('#asetType1').on('change', function() {
-    	    	var asetType1 = event.srcElement.value;
-    	    	
-    	    	makeAsetCombo("#asetType2", getAsetType(asetType1))
-    	    	makeAsetCombo("#asetType3", "")
-    	    	$("#asetType2").prepend('<option value="">' + "[[#{screen.text.comm.choice}]]" + '</option>');
-    	    	$('#asetType2 option:contains("[[#{screen.text.comm.choice}]]")').prop('selected', true);
-    	    });
-    		
-    	 	// 자산 유형 선택 3레벨 그리기
-    	    $('#asetType2').on('change', function() {
-    	    	var asetType2 = event.srcElement.value;
-    	    	
-    	    	makeAsetCombo("#asetType3", getAsetType(asetType2))
-    	    	$("#asetType3").prepend('<option value="">' + "[[#{screen.text.comm.choice}]]" + '</option>');
-    	    	$('#asetType3 option:contains("[[#{screen.text.comm.choice}]]")').prop('selected', true);
-    	    });
-    	 	
-    	  	//공통코드팝업(트리) 호출 
-     	    $("#openDeptPopup1").on("click", function() { 
-     	    	// 팝업 호출 url
-    	        var url = "/common/popup/deptTreePopup";
-    	        var popId = "DeptPopup";
-    	        var args = {
-    	        	width   : 500,
-    	        	height  : 450,
-    	        	pheight : window.opener.innerHeight,
-    	        	pwidth  : window.opener.innerWidth
-    	        };
-    	        
-    	        var param = {
-    	        	searchType : "BIZ_DEPT",
-    	        	deptCd     : "#deptCd1",
-    	        	deptNm     : "#deptNm1"
-    	        };
-    	        
- 	            openPopup2(popId, url, args, param);
-     	    });
-    	  	
-     	    $("#openDeptPopup2").on("click", function() { 
-        	    // 팝업 호출 url
-       	        var url = "/common/popup/deptTreePopup";
-       	        var popId = "DeptPopup";
-       	        var args = {
-   	        		width   : 500,
-       	        	height  : 450,
-       	        	pheight : window.opener.innerHeight,
-       	        	pwidth  : window.opener.innerWidth
-       	        };
-       	        
-       	     	var param = {
-       	     		searchType : "DEPT",
-    	        	deptCd     : "#deptCd2",
-    	        	deptNm     : "#deptNm2"
-       	     	};
-       	     	
- 	        	openPopup2(popId, url, args, param);
-        	});
-     	    
-     	    // 선택 버튼
-     	    $("#btn_sel").on("click",function() {
-     		  	returnResult(selectedItems);
-     		  	
-			});
-    	});
-	 			
-	 	// 자산 유형 부모 요소 찾아서 return
-	 	function getAsetType(asetType1) {
-	 		return asetType.filter( function(el) {
-	 			return el.uppCodeId == asetType1;
-	 		});
-	 	}
-	 	
-	 	// 자산 유형 옵션 그리기
-	 	function makeAsetCombo(objNm, arr) {
-	 		$(objNm).empty();
-	 		
-	 		$.each(arr, function(i, e) {
-	 			$(objNm).append('<option value="'+ e.codeId+'">' + e.codeNm+ '</option>');
-	 		});
-	 	}
-	 	
-	    // asetType 리스트 출력
-	    function asetTypeList(){                                                                    
-		 	let url = '/common/popup/asetType';                                                      
-		 	let reqType = 'POST';                                                                        
-		 	let data = {                                                                                 
-		 		"email" : ""                                                                             
-		 	};                                                                                           
-		 	$.commRequest(url, reqType, JSON.stringify(data))                                            
-		 		.then((res) => {
-		 			$.each(res.data, function(index, el){                                                        
-		 				asetType.push(el);
-		 				
-		 				if(el.codeLvl == '1') {
-			 				$("#asetType1").append('<option value="'+ el.codeId+'">' + el.codeNm+ '</option>');
-		 				}
-		 			})
-		 		})
-		 		.catch((error) => {                                                                      
-		 			alert('[[#{screen.info.status.error.occur}]]');                                                                  
-		 		});
-		 };
-		 
-		function enterkey() {
-	    	if (window.event.keyCode == 13) {
-	    		if (validationCheck() == '202') {
-	    			$("#jsGrid").jsGrid().trigger("loadData");
-	    		}
-	        }
-	    }
-		 
-		// 유효성 검사
-	    function validationCheck() {
-	    	let code = '202';
-			
-	    	var fromDate = $("#fromDate").val().replaceAll("-", "");
-	    	var toDate = $("#toDate").val().replaceAll("-", "");
+	    	let grid;
+	    	let requestUrl = "/common/popup/asetMasPopupList";	    	    
+	    	let asetType = [];
 	    	
-			if(fromDate > toDate) {
-				alert("[[#{screen.info.status.error.input.date}]]");
-				$("#toDate").focus();
-				code = '200';
-			}
-			return code;
-	    }
-		
-	    function returnResult(item) {
-			opener.selectAsetList(item);
-			window.close();
-	    }
+		    $(function(){
+		    	
+	    	    asetTypeList();
+		    	
+				grid = new Tabulator("#data-table", {
+				 	locale:true,
+				    langs: $.commGridLocalization(),								
+				 	height:"380",
+				 	layout:"fitColumns",
+				 	movableColumns:true,
+				 	pagination:true,
+				 	paginationMode:"remote",
+				 	ajaxURL:requestUrl,			
+				 	ajaxParams: getParams(),
+				 	paginationSize:20,				    
+				 	paginationSizeSelector:[20, 50, 100, 500],			
+				 	dataSendParams:{
+				        "page":"currentPage",
+				        "size":"numOfRows"
+				    } ,							    
+				 	placeholder:"No Data Set",				 	
+				 	ajaxResponse:function(url, params, res){
+				 		$(".result").text("Totals : " + res.condition.totalCount);				 						 						 		
+				 		return res;
+				 	},					 	
+				 	columns:[ 
+			 	        {formatter:"rowSelection", titleFormatter:"rowSelection", hozAlign:"center", headerHozAlign:"center", 
+			 	        	headerSort:false, width:30, cellClick:function(e, cell){
+			 	         		cell.getRow().toggleSelect();
+				 	        }},		
+				 	    {title: "[[#{screen.popup.text.asset.no}]]"         		, field: "asetNo"	   		, hozAlign: "center"	, headerHozAlign:"center", width:110},
+						{title: "[[#{screen.popup.text.asset.type1}]]"      		, field: "asetTypeNm1", hozAlign: "left"  		, headerHozAlign:"center"},
+						{title: "[[#{screen.popup.text.asset.type2}]]"      		, field: "asetTypeNm2", hozAlign: "left"  		, headerHozAlign:"center"},
+						{title: "[[#{screen.popup.text.asset.type3}]]"      		, field: "asetTypeNm3", hozAlign: "left"  		, headerHozAlign:"center"},
+						{title: "[[#{screen.popup.text.asset.manufacture}]]", field: "mftco"		   		, hozAlign: "left"  		, headerHozAlign:"center", width:110},
+						{title: "[[#{screen.popup.text.asset.model}]]"	     	, field: "model"		   		, hozAlign: "left"  		, headerHozAlign:"center", width:110},
+						{title: "[[#{screen.popup.text.asset.sn}]]"         		, field: "sn"		      		, hozAlign: "left"  		, headerHozAlign:"center"},
+						{title: "[[#{screen.popup.text.asset.biz.dept}]]"   		, field: "bizDeptNm"	 	, hozAlign: "left"  		, headerHozAlign:"center", width:110},
+						{title: "[[#{screen.popup.text.asset.dept}]]"       		, field: "deptNm"	   		, hozAlign: "left"  		, headerHozAlign:"center", width:110},
+						{title: "[[#{screen.popup.text.asset.charger}]]"    	, field: "chrgr"		   		, hozAlign: "left"  		, headerHozAlign:"center", visible:false},
+						{title: "[[#{screen.popup.text.asset.charger}]]"    	, field: "chrgrNm"	   		, hozAlign: "center"  , headerHozAlign:"center", width:100},
+						{title: "[[#{screen.popup.text.asset.status}]]"     		, field: "asetStusNm" 	, hozAlign: "center"	, headerHozAlign:"center", width:100},
+				 	],
+				});				
+				
+				/*------------------------- Grid Events -------------------------*/
+				//row click
+				grid.on("rowClick", function(e, row){	
+					//var rowData = row.getData();		
+				});					
+				
+				
+				/*--------------------- UI Events ---------------------*/
+		 
+	    	    $(".btn_srch").on("click",function (){
+	    	    	if (validationCheck()) {
+	    	    		grid.setData(requestUrl, getParams());
+	    	    	}
+		        });
+		        
+	    	    //팝업창 닫기
+				$("#btn_close_pop").on("click",function(){ 
+					window.close();
+				});
+		        
+	          	//리셋 버튼
+	    	    $(".btn_reset").click(function() {
+	    	    	$("#asetNo").val("");
+	    	    	$("#fromDate").val("");
+	    	    	$("#toDate").val("");
+	    	    	$("#asetType1").val("");
+	    	    	$("#asetType2").val("");
+	    	    	$("#asetType3").val("");
+	    	    	$("#deptCd1").val("");
+	    	    	$("#deptNm1").val("");
+	    	    	$("#deptCd2").val("");
+	    	    	$("#deptNm2").val("");
+	    	    	$("#chrgr").val("");
+	    	    });
+	          	
+	    		// 자산 유형 선택 2레벨 그리기
+	    	    $('#asetType1').on('change', function() {
+	    	    	var asetType1 = event.srcElement.value;
+	    	    	
+	    	    	makeAsetCombo("#asetType2", getAsetType(asetType1))
+	    	    	makeAsetCombo("#asetType3", "")
+	    	    	$("#asetType2").prepend('<option value="">' + "[[#{screen.text.comm.choice}]]" + '</option>');
+	    	    	$('#asetType2 option:contains("[[#{screen.text.comm.choice}]]")').prop('selected', true);
+	    	    });
+	    		
+	    	 	// 자산 유형 선택 3레벨 그리기
+	    	    $('#asetType2').on('change', function() {
+	    	    	var asetType2 = event.srcElement.value;
+	    	    	
+	    	    	makeAsetCombo("#asetType3", getAsetType(asetType2))
+	    	    	$("#asetType3").prepend('<option value="">' + "[[#{screen.text.comm.choice}]]" + '</option>');
+	    	    	$('#asetType3 option:contains("[[#{screen.text.comm.choice}]]")').prop('selected', true);
+	    	    });
+	    	 	
+	    	  	//공통코드팝업(트리) 호출 
+	     	    $("#openDeptPopup1").on("click", function() { 
+	     	    	// 팝업 호출 url
+	    	        var url = "/common/popup/deptTreePopup";
+	    	        var popId = "DeptPopup";
+	    	        var args = {
+	    	        	width   : 500,
+	    	        	height  : 450,
+	    	        	pheight : window.opener.innerHeight,
+	    	        	pwidth  : window.opener.innerWidth
+	    	        };
+	    	        
+	    	        var param = {
+	    	        	searchType : "BIZ_DEPT",
+	    	        	deptCd     : "#deptCd1",
+	    	        	deptNm     : "#deptNm1"
+	    	        };
+	    	        
+	 	            openPopup2(popId, url, args, param);
+	     	    });
+	    	  	
+	     	    $("#openDeptPopup2").on("click", function() { 
+	        	    // 팝업 호출 url
+	       	        var url = "/common/popup/deptTreePopup";
+	       	        var popId = "DeptPopup";
+	       	        var args = {
+	   	        		width   : 500,
+	       	        	height  : 450,
+	       	        	pheight : window.opener.innerHeight,
+	       	        	pwidth  : window.opener.innerWidth
+	       	        };
+	       	        
+	       	     	var param = {
+	       	     		searchType : "DEPT",
+	    	        	deptCd     : "#deptCd2",
+	    	        	deptNm     : "#deptNm2"
+	       	     	};
+	       	     	
+	 	        	openPopup2(popId, url, args, param);
+	        	});
+	     	    
+	     	    // 선택 버튼
+	     	    $("#btn_sel").on("click",function() {
+	    	    	let selectedData  = grid.getSelectedData();	     	    	
+	     		  	returnResult(selectedData);
+				});
+	    	});
+		 		
+		    function getParams(){
+		    	return {
+    				"asetNo"     	: $("#asetNo").val(),
+    				"reqStus"    	: $("#reqStus").text(),
+    			    "fromDate" 	: $("#fromDate").val(),
+				    "toDate"       : $("#toDate").val(),
+				    "asetType1"	: $("#asetType1").val(),
+				    "asetType2"	: $("#asetType2").val(),
+				    "asetType3"	: $("#asetType3").val(),
+				    "deptCd1"	: $("#deptCd1").val(),
+				    "deptCd2"	: $("#deptCd2").val(),
+				    "chrgr"		   	: $("#chrgr").val(),
+				    "chrgrNm"	: $("#chrgrNm").val(),		    		
+		    	}
+		    }
+		    
+		 	// 자산 유형 부모 요소 찾아서 return
+		 	function getAsetType(asetType1) {
+		 		return asetType.filter( function(el) {
+		 			return el.uppCodeId == asetType1;
+		 		});
+		 	}
+		 	
+		 	// 자산 유형 옵션 그리기
+		 	function makeAsetCombo(objNm, arr) {
+		 		$(objNm).empty();
+		 		
+		 		$.each(arr, function(i, e) {
+		 			$(objNm).append('<option value="'+ e.codeId+'">' + e.codeNm+ '</option>');
+		 		});
+		 	}
+		 	
+		    // asetType 리스트 출력
+		    function asetTypeList(){                        
+
+		    	let params = {
+	    	    		url : '/common/popup/asetType',
+	    	    		reqType : 'POST',
+	    	    		data : {	"email" : ""},
+	    	    	}
+    	    	
+    			$.request(params)
+				 .then((res) => {
+			 			$.each(res.data, function(index, el){                                                        
+			 				asetType.push(el);
+			 				
+			 				if(el.codeLvl == '1') {
+				 				$("#asetType1").append('<option value="'+ el.codeId+'">' + el.codeNm+ '</option>');
+			 				}
+			 			});
+				 })
+				 .catch((error) => {
+					 alert('[[#{screen.info.status.error.occur}]]');
+					 console.log(error);
+				 })				    	
+			 };
+			 
+			 //엔터 이벤트
+			function enterkey() {
+		    	if (window.event.keyCode == 13 && validationCheck()) {
+		    		$('.btn_srch').click();
+		        }
+		    }
+			 
+			// 유효성 검사
+		    function validationCheck() {
+		    	let fromDate = $("#fromDate").val().replaceAll("-", "");
+		    	let toDate = $("#toDate").val().replaceAll("-", "");
+		    	
+				if(fromDate > toDate) {
+					alert("[[#{screen.info.status.error.input.date}]]");
+					$("#toDate").focus();
+					return false
+				}
+				return true;
+		    }
+
+		    function returnResult(item) {
+				opener.selectAsetList(item);
+				window.close();
+		    }
 	    </script>	
 	</th:block>
 
@@ -445,7 +343,7 @@
 						</div>
 						
 					</div>
-					<div id="jsGrid"></div>					
+					<div id="data-table"></div>					
 			</div>
 		</div>
 	</div>
