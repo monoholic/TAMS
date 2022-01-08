@@ -100,11 +100,11 @@
 						alert("[[#{screen.info.status.error.inv.upload.invalid}]]");
 					}
 		        });
-				
+
+				//양식다운로드
 				$(".btn_download").on("click", function(){
 					excelFormDownload();
 				});
-				
 				
 				//오류건만 보기 버튼
 				$("#errChk").on("click", function(){
@@ -207,7 +207,7 @@
 					<div id="uploadCnt" class="result">Totals : 0,000</div>
 					<!-- list_button -->
 					<div class="button">
-						<a href="#;" id="errChk" class="btn_add">[[#{screen.text.inv.mng.view.invalid}]]</a>
+						<a href="#;" id="errChk" class="btn_add">[[#{screen.btn.error.list}]]</a>
 						<a href="#;" id="btnSave" class="btn_add">[[#{screen.text.comm.save}]]</a>
 					</div>
 					<!-- list_button -->
