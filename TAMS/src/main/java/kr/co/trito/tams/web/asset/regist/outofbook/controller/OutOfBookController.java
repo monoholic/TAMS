@@ -68,6 +68,15 @@ public class OutOfBookController {
 		return view;
 	}
 	
+	//신규자산 등록
+	@GetMapping("/outOfBookBatch")
+	public ModelAndView outOfBookBatch(
+			@ApiParam(value = "자산번호", required = true) @RequestParam Map<String, Object> params) {
+		ModelAndView view = new ModelAndView();
+		view.setViewName(viewPath.concat("outOfBookBatch"));		
+		return view;
+	}	
+	
 	
 	@GetMapping(value = "/outOfBookList")
 	@ResponseBody

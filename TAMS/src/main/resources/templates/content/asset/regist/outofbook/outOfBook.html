@@ -159,6 +159,11 @@
 	    	    	openNewAssetPopup({assetNo : ""});
 	    	    });	    	  	
 	    	  	
+				//일괄업로드
+	    	    $("#asetBatch").on("click", function() {	  
+	    	    	openOutOfBookBatch();
+	    	    });	    	  				
+				
 	    	});
 
 		    //조회
@@ -166,16 +171,31 @@
 		    	grid.setData(requestUrl, getParams());
 		    }
 		    
+		    //신규자산 등록 팝업
 	        function openNewAssetPopup(params){
-    	        var url = "/asset/regist/outofbook/outOfBookRegist";
-    	        var args = {
+    	        let url = "/asset/regist/outofbook/outOfBookRegist";
+    	        let args = {
 	    	        	width  : 1200,	
 	    	        	height : 600,
 		    	    	pheight: window.innerHeight,
 		    	    	pwidth : window.innerWidth,	  
 	    	        };	  
-    	        openPopup2("newAsetRegist", url, args, params);	        	
+    	        openPopup2("outOfBookRegist", url, args, params);	        	
 	        }		    
+		    
+		    //일괄업로드
+		    function openOutOfBookBatch(){
+		    	let url = "/asset/regist/outofbook/outOfBookBatch";
+		    	let args = {
+	    	        	width  : 1200,	
+	    	        	height : 600,
+		    	    	pheight: window.innerHeight,
+		    	    	pwidth : window.innerWidth,	  
+	    	        };	  
+    	        let params = {}
+    	        
+    	        openPopup2("outOfBookBatch", url, args, params);	        			    	
+		    }
 		    
 		    //공통코드-selectbox
 			function getCommCode(id, code, level, upperCodeId){				
