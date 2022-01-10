@@ -64,11 +64,15 @@ public class OutOfBookService {
 	//부외자산 업로드 저장
 	public void saveUploadExcel(String userId, List<OutOfBookBatchDto> list) {
 		
+		//이력삭제
 		mapper.deleteUploadHistory(userId);
 		
+		//업로드 데이터 저장
 		for(OutOfBookBatchDto dto : list) {
 			dto.setRegr(userId);
 			mapper.saveUploadExcel(dto);
-		}		
+		}
+		
+		//코드정보 조인 후 조회
 	}
 }
