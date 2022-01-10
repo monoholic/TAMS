@@ -94,6 +94,28 @@
 					//excelUploadProcess()
 				});				
 				
+				//일괄업로드
+				$("#btnUpload").on("click", function(){					
+
+					let url = "/asset/regist/outofbook/uploadExcel";
+					let reqType = "POST";	
+					$.commRequestFile(url, reqType, excelUpData)
+						.then((res) => {
+							console.log(res);
+							//grid.setData(res);		
+							$("#uploadCnt").html("Total : " + res.length);												
+						})
+						.catch((error) => {
+							alert('[[#{screen.info.status.error.occur}]]');						
+						});
+					
+					excelUpData.delete("file");
+					$("[name='excelNm']").val("");					
+					
+					
+				});				
+				
+				
 				//팝업창 닫기
 				$("#btn_close_pop").on("click",function(){ 
 					window.close();
@@ -108,8 +130,8 @@
 			
 			//파일 다운로드
 			function excelFormDownload() {				
-				var fileName = "upload_invest.xlsx";
-				var orgFileName = "투자정보업로드양식.xlsx";				
+				var fileName = "OutOfBookAsset.xlsx";
+				var orgFileName = "부외자산업로드양식.xlsx";				
 				var downUrl = "/file/download";
 	        	var $form = $('<form></form>'); 	        	
 				$form.attr('action', downUrl); 
@@ -122,9 +144,7 @@
 				$form.submit(); 		
 			}
 		</script>			
-			
-		</script>
-	
+
 	</th:block>
 
 	<div layout:fragment="content">
@@ -174,10 +194,10 @@
 						
 						<!-- list_head -->
 						<div class="list_head">
-							<div class="result">Totals : 0,000</div>
+							<div id="uploadCnt" class="result">Totals : 0,000</div>
 							<div class="button">
-								<a class="btn_list_rd">[[#{screen.btn.upload}]]</a>							
-								<a class="btn_icon_list" href="#;">[[#{screen.btn.error.list}]]</a>
+								<a id="btnUpload" class="btn_list_rd">[[#{screen.btn.upload}]]</a>							
+								<a id="btnError" class="btn_icon_list" href="#;">[[#{screen.btn.error.list}]]</a>
 								<a href="#;" id="btnSave" class="btn_add">[[#{screen.text.comm.save}]]</a>
 							</div>
 						</div>

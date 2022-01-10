@@ -1,10 +1,13 @@
 package kr.co.trito.tams.web.asset.regist.outofbook.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,17 +20,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import kr.co.trito.tams.comm.util.file.excel.ExcelReader;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookBatchDto;
 import kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookDto;
 import kr.co.trito.tams.web.asset.regist.outofbook.service.OutOfBookService;
+import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
 import kr.co.trito.tams.web.user.dto.UserDto;
 import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +49,9 @@ public class OutOfBookController {
 	
 	@Autowired
 	OutOfBookService outOfBookService;
+	
+	@Autowired
+	private ExcelReader excelReader;	
 	
 	private String viewPath = "/content/asset/regist/outofbook/";
 	
@@ -120,5 +130,27 @@ public class OutOfBookController {
 		outOfBookService.deleteOutOfBookAset(param);		
 		return responseService.success(null);
 	}
+	
+	@PostMapping("/uploadExcel")
+	@ResponseBody
+	public ResponseEntity<? extends Response> uploadExcel(@RequestParam("file") MultipartFile multipartFile, Authentication authentication) throws IOException, InvalidFormatException {
+		
+		List<OutOfBookBatchDto> result = null;
+		OutOfBookBatchDto dto = new OutOfBookBatchDto();
+		
+		UserDto userDto = ((UserInfo) authentication.getPrincipal()).getDto();	
+		
+		result = excelReader.readFileToList(multipartFile, dto::row);
+		result = result.stream()
+				 	.filter(d -> d.getIsNull().equals("N"))
+				 	.collect(Collectors.toList());
+		
+		if(result.size() > 1) {
+			result.remove(0);
+			outOfBookService.saveUploadExcel(userDto.getUserId(), result);
+		}
+		
+		return responseService.success(result);
+	}	
 	
 }

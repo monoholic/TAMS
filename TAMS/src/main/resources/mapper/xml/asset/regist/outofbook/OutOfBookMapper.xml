@@ -334,4 +334,91 @@
    		delete from tb_aset_dtl
    		where aset_no = #{assetNo}
    	</delete>   
+   	
+   	<delete id="deleteUploadHistory" parameterType="String">
+   		delete from tb_upload_outofbook
+   		where regr = #{userId}
+   	</delete>      	
+   	
+	<insert id="saveUploadExcel" parameterType="kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookBatchDto">
+				insert into tb_upload_outofbook(
+							 aset_no
+							,aset_nm
+							,aset_type1
+							,aset_type2
+							,aset_type3
+							,mftco
+							,model
+							,sn
+							,biz_dept_cd
+							,dept_cd
+							,chrgr
+							,bsplc
+							,buld
+							,floor
+							,loc
+							,acq_prc
+							,acq_dt
+							,dtl_info1
+							,dtl_info2
+							,dtl_info3
+							,dtl_info4
+							,dtl_info5
+							,dtl_info6
+							,dtl_info7
+							,dtl_info8
+							,dtl_info9
+							,dtl_info10
+							,dtl_info11
+							,dtl_info12
+							,dtl_info13
+							,dtl_info14
+							,dtl_info15
+							,dtl_info16
+							,dtl_info17
+							,dtl_info18
+							,dtl_info19
+							,dtl_info20
+							,regr				
+						) values ( 			                 				                 
+		                   #{asetNo}
+		                 , #{asetNm}
+						 , #{asetType1}
+						 , #{asetType2}
+						 , #{asetType3}
+						 , #{mftco}
+						 , #{model}
+						 , #{sn}
+						 , #{bizDeptCd}
+						 , #{deptCd}
+						 , #{chrgr}
+						 , #{bsplc}
+						 , #{buld}
+						 , #{floor}
+						 , #{loc}
+						 , #{acqPrc}
+						 , #{acqDt}
+						 , #{prop1}
+						 , #{prop2}
+						 , #{prop3}
+						 , #{prop4}
+						 , #{prop5}
+						 , #{prop6}
+						 , #{prop7}
+						 , #{prop8}
+						 , #{prop9}
+						 , #{prop10}
+						 , #{prop11}
+						 , #{prop12}
+						 , #{prop13}
+						 , #{prop14}
+						 , #{prop15}
+						 , #{prop16}
+						 , #{prop17}
+						 , #{prop18}
+						 , #{prop19}
+						 , #{prop20}
+		                 , #{regr}
+                   )				               
+	</insert>	   	
 </mapper>

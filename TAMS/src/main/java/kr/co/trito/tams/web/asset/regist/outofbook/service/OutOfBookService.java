@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookBatchDto;
 import kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookDto;
 import kr.co.trito.tams.web.asset.regist.outofbook.mapper.OutOfBookMapper;
 import lombok.RequiredArgsConstructor;
@@ -60,4 +61,14 @@ public class OutOfBookService {
 		mapper.deleteAsetMas(param);
 	}	
 	
+	//부외자산 업로드 저장
+	public void saveUploadExcel(String userId, List<OutOfBookBatchDto> list) {
+		
+		mapper.deleteUploadHistory(userId);
+		
+		for(OutOfBookBatchDto dto : list) {
+			dto.setRegr(userId);
+			mapper.saveUploadExcel(dto);
+		}		
+	}
 }
