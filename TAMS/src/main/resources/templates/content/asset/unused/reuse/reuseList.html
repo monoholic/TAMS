@@ -19,11 +19,11 @@
 		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
 		
 	    <script>
-	    	const SCREEN_NM = "REGIST_REQ_RIST";    
+	    	const SCREEN_NM = "REUSE_REQ_RIST";    
 		    
 		    let grid;
 		    let loadParams; //Local Storage에 저장된 파라미터 정보
-		    let requestUrl = "/asset/unused/regist/unusedRegistList";
+		    let requestUrl = "/asset/unused/reuse/unusedReuseList";
 		    
 		    var condition = {};
 		 	var prevCondition = {};
@@ -137,7 +137,7 @@
 	    	    	}
 	    	    	
 	    	    	let params = {
-	    	    		url : "/asset/unused/regist/unusedRegistDelete",
+	    	    		url : "/asset/unused/reuse/unusedReuseDelete",
 	    	    		reqType : 'POST',
 	    	    		data : JSON.stringify(selectedData),
 	    	    	}
@@ -186,7 +186,7 @@
 				    	sub_item.reqStus = $(".detail_table").find("#reqStus").val(); 
 				    	sub_item.reqRsn  = $(".detail_table").find("#reqRsn").val();  
 				    					    	
-		    		    let url = "/asset/unused/regist/unusedRegistInsert";
+		    		    let url = "/asset/unused/reuse/unusedReuseInsert";
 		    		    let reqType = 'POST';
 		    		    $.commRequest(url, reqType, JSON.stringify(sub_item))
 		    		      .then((res) => {
@@ -228,7 +228,7 @@
 	     	    
 	    	  	//엑셀 다운로드
 	     	    $("#excelDown").on("click",function() {	       					       
-	     	    	grid.download("xlsx", "UnusedRegist.xlsx", {sheetName:"유휴의뢰"});
+	     	    	grid.download("xlsx", "UnusedReuse.xlsx", {sheetName:"유휴의뢰"});
 				});
 	    	  	
 	     		// 사용자 팝업 호출
@@ -330,7 +330,7 @@
 		       	
 		       	$.commSaveSearchParams(SCREEN_NM, saveParams);
 		       	
-	            let url = "/asset/unused/regist/RegistRegList";
+	            let url = "/asset/unused/reuse/ReuseRegList";
 				let menuId = "[[${menuId}]]";
 	            
 				var $form = $('<form></form>'); 

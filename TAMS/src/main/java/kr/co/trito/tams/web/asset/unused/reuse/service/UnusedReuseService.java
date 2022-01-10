@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.asset.unused.regist.service;
+package kr.co.trito.tams.web.asset.unused.reuse.service;
 
 import java.util.List;
 import java.util.Map;
@@ -9,23 +9,25 @@ import org.springframework.stereotype.Service;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto;
 import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
-import kr.co.trito.tams.web.asset.unused.regist.mapper.UnusedRegistMapper;
+import kr.co.trito.tams.web.asset.unused.reuse.mapper.UnusedReuseMapper;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class UnusedRegistService {
+public class UnusedReuseService {
 	
 	@Autowired
-	UnusedRegistMapper mapper;
+	UnusedReuseMapper mapper;
 	
-	public int selectCountUnusedRegistList(SearchCondition condition) {
-		return mapper.selectCountUnusedRegistList(condition);
+	public int selectCountUnusedReuseList(SearchCondition condition) {
+		return mapper.selectCountUnusedReuseList(condition);
 	}
 	
-	public List<ReqMasDto> selectUnusedRegistList(SearchCondition condition){
-		return mapper.selectUnusedRegistList(condition);
+	public List<ReqMasDto> selectUnusedReuseList(SearchCondition condition){
+		return mapper.selectUnusedReuseList(condition);
 	}
+	
+	
 	
 	public int unusedRegistListInsert(Map<String, Object> data) {
 		return mapper.unusedRegistListInsert(data);

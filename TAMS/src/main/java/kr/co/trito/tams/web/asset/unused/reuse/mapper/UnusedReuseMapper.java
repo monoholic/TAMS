@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.asset.unused.regist.mapper;
+package kr.co.trito.tams.web.asset.unused.reuse.mapper;
 
 import java.util.List;
 import java.util.Map;
@@ -10,11 +10,13 @@ import kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto;
 import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
 
 @Mapper
-public interface UnusedRegistMapper {
+public interface UnusedReuseMapper {
 	
-	public int selectCountUnusedRegistList(SearchCondition condition);
+	public int selectCountUnusedReuseList(SearchCondition condition);
 	
-	public List<ReqMasDto> selectUnusedRegistList(SearchCondition condition);
+	public List<ReqMasDto> selectUnusedReuseList(SearchCondition condition);
+	
+	
 	
 	public int unusedRegistListInsert(Map<String, Object> data);
 	

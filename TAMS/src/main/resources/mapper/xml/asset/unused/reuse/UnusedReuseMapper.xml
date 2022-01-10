@@ -2,16 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.co.trito.tams.web.asset.unused.regist.mapper.UnusedRegistMapper">
+<mapper namespace="kr.co.trito.tams.web.asset.unused.reuse.mapper.UnusedReuseMapper">
 	
-   	<!-- 유휴의뢰목록 카운트 -->
-   	<select id="selectCountUnusedRegistList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 	 	
+   	<!-- 재활용의뢰목록 카운트 -->
+   	<select id="selectCountUnusedReuseList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 	 	
 		SELECT COUNT(*) AS cnt
 		  FROM tb_req_mas a
 		 INNER JOIN tb_user b
 		    ON a.reqtr = b.user_id
 		   AND a.reqtr = #{params.userId}
-		   AND req_type = "UR"
+		   AND req_type = "RU"
 		  WHERE dept_cd = (SELECT dept_cd FROM tb_user WHERE user_id = #{params.userId})
 	     	<if test="params.reqNo != ''">
 				AND (CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) LIKE CONCAT('%', #{params.reqNo}, '%'))
@@ -41,8 +41,8 @@
 		 	</if>
    	</select>	
 	
-	<!-- 유휴의뢰목록 리스트 출력 -->
-   	<select id="selectUnusedRegistList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+	<!-- 재활용의뢰목록 리스트 출력 -->
+   	<select id="selectUnusedReuseList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
    		SELECT CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no
 		     , req_type
 		     , (SELECT code_nm FROM tb_com_code WHERE code_id = A.req_type) AS req_type_nm
@@ -109,7 +109,7 @@
 			 INNER JOIN tb_user b
 			    ON a.reqtr = b.user_id
 			 <if test="params.userId != ''">
-			 	WHERE 1=1 AND req_type="UR"
+			 	WHERE 1=1 AND req_type="RU"
 			   	  AND (reqtr = #{params.userId} OR 
 			   	  	   dept_cd = (SELECT dept_cd FROM tb_user WHERE user_id = #{params.userId}))
 	     	 </if>

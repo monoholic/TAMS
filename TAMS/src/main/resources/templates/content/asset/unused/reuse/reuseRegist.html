@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/default">
+
+	<head>
+	    <title>[[#{screen.text.regist.screen.title2}]]</title>
+	</head>
+        
+	<!-- css -->
+	<th:block layout:fragment="css">	
+	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/theme.css" />
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.8/css/tabulator.min.css" rel="stylesheet"> 
+	</th:block>        
+	
+	<th:block layout:fragment="script">
+		<script type="text/javascript" src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
+		
+	    <script>
+		    let grid;
+		    let loadParams; //Local Storage에 저장된 파라미터 정보
+		    let requestUrl = "/asset/unused/reuse/unusedReuseRegist";
+		    
+		    let data = ['appvDocId', 'reqTypeNm', 'reqNo', 'reqDt', 'deptNm', 'reqtr', 'reqNm', 'reqRsn'];
+		    
+		    var condition = {};
+		 	var prevCondition = {};
+		 	var asetList = [];
+		 	
+		 	var asetType = [];
+		 	var asetArr1 = [];
+		 	var asetArr2 = [];
+		 	var asetArr3 = [];
+		 	
+		    $(function(){
+		    	
+		    	(async () => {	        	
+	  				await asetTypeList();
+	  				await grid;
+	  				})();	
+		    	
+		    	const SCREEN_NM = "REUSE_REQ_RIST";
+		    	loadParams = $.commLoadSearchParams(SCREEN_NM);
+		    	
+				grid = new Tabulator("#data-table", {
+				 	locale:true,
+				    langs: $.commGridLocalization(),								
+				 	height:"95%",
+				 	layout:"fitColumns",
+				 	movableColumns:true,
+				 	pagination:true,
+				 	paginationMode:"remote",
+				 	ajaxURL: requestUrl,			
+				 	ajaxParams: getParams(),
+				 	paginationSize:20,				    
+				 	paginationSizeSelector:[20, 50, 100, 500],			
+				 	dataSendParams:{
+				        "page":"currentPage",
+				        "size":"numOfRows"
+				    } ,							    
+				 	placeholder:"No Data Set",				 	
+				 	ajaxResponse:function(url, params, res){
+				 		$(".result").text("Totals : " + res.condition.totalCount);
+				 		
+				 		for (const [key, value] of Object.entries(res.data2[0])) {
+			 				$("#"+`${key}`).val(`${value}`);
+				 		};
+				 		
+				 		if(asetList.length < res.data.length)
+							asetList = res.data;
+						else
+							res.data = asetList;
+				 		
+						condition = res.condition;
+				 		return res;
+				 	},					 	
+				 	columns:[
+				 		{formatter:"rowSelection", titleFormatter:"rowSelection", hozAlign:"center", headerHozAlign:"center", 
+			 	        	headerSort:false, width:30, cellClick:function(e, cell){
+			 	         		cell.getRow().toggleSelect();
+			 	        }},
+				 		{title:"[[#{screen.text.regist.asetno}]]"            , field:"asetNo"    , hozAlign:"center" , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.regist.asset.type1}]]"       , field:"asetType1" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:{asetArr1}},
+		                {title:"[[#{screen.text.regist.asset.type2}]]"       , field:"asetType2" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:{asetArr2}},
+		                {title:"[[#{screen.text.regist.asset.type3}]]"       , field:"asetType3" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:{asetArr3}},
+		                {title:"[[#{screen.text.regist.asset.manufacture}]]" , field:"mftco"     , hozAlign:"left"   , headerHozAlign:"center", editor:"input"},
+		                {title:"[[#{screen.text.regist.asset.model}]]"       , field:"model"     , hozAlign:"left"   , headerHozAlign:"center", editor:"input"},
+		                {title:"[[#{screen.text.regist.asset.sn}]]"          , field:"sn"        , hozAlign:"left"   , headerHozAlign:"center", editor:"input"},
+		                {title:"[[#{screen.text.regist.asset.biz.dept}]]"    , field:"bizDeptNm" , hozAlign:"left"   , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.regist.asset.dept}]]"	     , field:"deptNm"    , hozAlign:"left"   , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.regist.asset.charger}]]"     , field:"chrgrNm"   , hozAlign:"center" , headerHozAlign:"center", cellClick:function(e, cell){alert("cell click")},},
+				 	],
+				});						
+				/*------------- Button Events -------------*/
+				// 저장 버튼 처리
+	            $('.btn_save').on('click', function (e) {
+	            	let selectedData  = grid.getSelectedData();
+	            	
+	            	let url = "/asset/unused/reuse/unusedReuseRegUpdate";
+		  			let reqType = 'POST';
+		  			
+			    	var subReqNo = ($("#reqNo").val()).substr(5,3);
+			    	
+			    	let data={
+	                		reqNo    : subReqNo,
+	                		reqNm    : $("#reqNm").val(),
+	                		reqRsn   : $("#reqRsn").val(),
+	                		asetList : selectedData
+	                };
+			    	$.commRequest(url, reqType, JSON.stringify(data))
+		  				.then((res) => {
+		  					grid.setData(requestUrl);
+		  				})
+		  				.catch((error) => {
+		  					alert("[[#{screen.info.status.error.occur}]]");
+		  					console.log(error);
+	  				})
+	            });
+				
+	    	    // 상단 삭제 버튼
+				$(".btn_del1").click(function() {
+					var subReqNo = ($("#reqNo").val()).substr(5,3);
+					
+		  	    	let url = "/asset/unused/reuse/unusedReuseRegDelete1";
+		  			let reqType = 'POST';
+		  			dataType: 'json';
+		  			let data={
+		  				reqNo : subReqNo
+		  			}
+		  			$.commRequest(url, reqType, JSON.stringify(data))
+		  				.then((res) => {
+		  					alert("[[#{screen.info.status.delete.success}]]");
+		  					
+		  					requestListView();
+		  				})
+		  				.catch((error) => {
+		  					alert("[[#{screen.info.status.error.occur}]]");
+		  					console.log(error);
+		  				})
+    	    	});
+	    	    
+				// 하단 삭제 버튼
+				$(".btn_del2").click(function() {
+					let selectedData  = grid.getSelectedData();
+		  	    	var items = [];
+		  	    	
+		  	    	var subReqNo = ($("#reqNo").val()).substr(5,3);
+		  	    	
+		  	    	$.each(selectedData, function(index,item){
+		  	    		items.push(item.asetNo);
+		  	    	});
+		  	    	
+		  	    	console.log(items);
+		  	    	
+		  	    	//별도 호출
+		  	    	let url = "/asset/unused/reuse/unusedReuseDelete2";
+		  			let reqType = 'POST';
+		  			dataType: 'json';
+		  			let data={
+		  				"reqNo" : subReqNo,
+		  				"asetNoList" : items
+		  			}
+		  			$.commRequest(url, reqType, JSON.stringify(data))
+		  				.then((res) => {
+		  					console.log(res);
+		  					alert("[[#{screen.info.status.delete.success}]]");
+		  					asetList = [];
+		  					grid.setData(requestUrl);
+		  				})
+		  				.catch((error) => {
+		  					alert("[[#{screen.info.status.error.occur}]]");
+		  					console.log(error);
+		  			})
+	    	    });
+	    	 	
+	    	 	// 자산선택(팝업-공통) 호출
+	    	    $("#openAsetMasPopup").on("click", function() { 
+	    	        // 팝업 호출 url
+	    	        var url = "/common/popup/asetMasPopup";
+	    	        var popId = "AsetMasPopup";
+	    	        var args = {
+	    	        	width : 1350,
+	    	    	    height : 600,
+	    	    	    fullscreen : "no",
+	    	    	    resizable : "no"
+	    	        };
+	    	        
+	    	        openPopup(popId, url, args);
+	    	    });
+	    	 	
+	    	  	//결재팝업 호출 
+	    	    $("#openApprovalPopup").on("click", function() { 
+	    	        // 팝업 호출 url
+	    	        var url = "/approval/approvalPopup";
+	    	        var popId = "approvalPopup";
+	    	        var args = {};
+	    	        args.width = 1100;
+	    	        args.height = 710;
+	    	        args.fullscreen = "no";
+	    	        args.resizable = "no";
+	    	        
+	    	        var param = {
+	    	        	appv_id : $("#appvDocId").val(),
+	    	        	req_no : $("#reqNo").val(),
+	    	        	reqType : $("#reqType").val()
+	    	        }
+	   	        	
+	    	        openPopup2(popId, url, args, param);
+	    	    });
+	    	});
+		    
+		    // 조회 조건
+		    function getParams(){
+		    	return {
+		    		"reqNo" : $("#req_no").val(),
+		    	}
+		    }
+		    
+		  	//선택 버튼클릭시 
+		    function selectItems(obj) {
+				opener.setResult(obj);
+				window.close();
+		    }
+		  	
+		  	/* //팝업에서 받은 결과 처리
+		    function setResult(obj) {
+		    	$("#jsGrid").jsGrid("updateItem", targetItem, {chrgr: obj.userId});
+		    } */
+		    
+		    // 사용자 선택 팝업에서 받은 결과 처리
+		    function setResult(obj) {
+				$("#reqtr").val(obj.userId);
+			}
+		    
+		 	// 삭제 시 이전 페이지로 이동
+	    	function requestListView() {
+		 		
+	    		let url = "/asset/unused/reuse/list";
+	    		
+	    		var $form = $('<form></form>'); 
+					$form.attr('action', url); 
+					$form.attr('method', 'post'); 
+					$form.attr('target', '_self'); 
+					inputStr = $('<input type="hidden" value="'+ loadParams.menuId + '" name="menuId">');
+					$form.append(inputStr);
+					inputStr = $('<input type="hidden" value="'+ loadParams.menuNm + '" name="menuNm">');	
+					$form.append(inputStr);
+					inputStr = $('<input type="hidden" value="'+ loadParams.menuDesc + '" name="menuDesc">');	
+					$form.append(inputStr);
+					inputStr = $('<input type="hidden" value="Y" name="loadParams">');
+					$form.append(inputStr);
+					$form.appendTo('body'); 
+					$form.submit();
+		    }
+		 	
+	    	// 자산번호 비교 및 자산 추가
+	    	function selectAsetList(obj) {
+	    		var asetNoChk = [];
+	    		
+	    		$.each(asetList, function(idx, el){
+	    			asetNoChk.push(el.asetNo);
+	    		});
+	    		
+	    		$.each(obj, function (idx, el){
+	    			if(!asetNoChk.includes(el.asetNo)) {
+	    				asetList.push(el);
+	    			}
+	    			else
+	    				alert("[[#{screen.info.status.error.modify.dup.asset}]]");
+	    		});
+	    		grid.setData(asetList);
+			}
+	    	
+	    	// asetType 리스트 출력
+	    	async function asetTypeList() {
+			 	let url = '/common/popup/asetType';                                                      
+			 	let reqType = 'POST';                                                                        
+			 	let data = {                                                                                 
+			 		"email" : ""                                                                             
+			 	};                                                                                           
+			 	await $.commRequest(url, reqType, JSON.stringify(data))                                            
+			 		.then((res) => {
+			 			
+			 			$.each(res.data, function(index, el){                                                        
+			 				asetType.push(el);
+			 				
+			 				if(el.codeLvl == '1') {
+				 				asetArr1.push({lable : el.codeId, value:el.codeNm});
+			 				}
+			 				
+			 				if(el.codeLvl == '2') {
+				 				asetArr2.push({Id : el.codeId, Nm:el.codeNm});
+			 				}
+			 				
+			 				if(el.codeLvl == '3') {
+				 				asetArr3.push({Id : el.codeId, Nm:el.codeNm});
+			 				}
+			 			})
+			 		})
+			 		.catch((error) => {                                                                      
+			 			alert('[[#{screen.info.status.error.search}]]');                                                                  
+		 		});
+			};
+	    
+	    </script>	
+	</th:block>
+
+	<div layout:fragment="content">
+		<h3><span>[[#{screen.text.regist.screen.title3}]]</span></h3>
+		<div class="list_head">
+			<div class="list_head">
+				<div><h6>[[#{screen.text.regist.screen.title4}]]</h6></div>
+			</div>
+			<div class="button">
+				<a class="btn_save">[[#{screen.text.comm.save}]]</a>
+				<a class="btn_del1">[[#{screen.btn.delete}]]</a>
+				<a class="btn_" id="openApprovalPopup">[[#{screen.text.comm.approve}]]</a>
+				<a class="btn_" id="requestBack" onclick="requestListView()">뒤로가기</a>
+			</div>
+		</div>
+		
+		<!-- search -->
+		<div class="srch_wrap single">
+			<input id="req_no" type="hidden" th:value="${reqNo}">
+			<input id="appvDocId" type="hidden">
+			<input id="reqType" type="hidden">
+			<table class="srch_table">
+				<colgroup>
+					<col width="10%"/>
+					<col width="20%"/>
+					<col width="15%"/>
+					<col width="20%"/>
+					<col width="15%"/>
+					<col width=""/>
+				</colgroup>
+				<tr>
+					<th>[[#{screen.text.regist.type}]]</th>
+					<td><input type="text" id="reqTypeNm" style="width:100%;" readonly></td>
+					<th>[[#{screen.text.regist.no}]]</th>
+					<td><input type="text" id="reqNo" style="width:100%;" readonly></td>
+					<th>[[#{screen.text.regist.dt}]]</th>
+					<td><input type="date" id="reqDt" style="width:100%;" readonly></td>
+				</tr>
+				<tr>
+					<th>[[#{screen.text.regist.dept}]]</th>
+					<td><input type="text" style=" width:100%" id="deptNm" readonly/></td>
+					<th>[[#{screen.text.regist.reqtr}]]</th>
+					<td><input type="text" style="width:100%" id="reqtr" readonly/></td>
+					<th>[[#{screen.text.regist.nm}]]</th>
+					<td><input type="text" id="reqNm" style="width:100%;"></td>
+				</tr>
+				<tr>
+					<th>[[#{screen.text.regist.rsn}]]</th>
+					<td><input type="text" id="reqRsn" style="width:100%;"/></td>
+					<td colspan="2"></td>
+				</tr>
+			</table>
+		</div>
+		<!-- //search -->			
+		
+		<div class="list_head" style="display: flex;">
+			<div><h6>[[#{screen.text.regist.screen.title5}]]</h6></div>
+			<div class="result" style="margin-left: 20px;">Results : 0,000</div>
+			<div class="button">
+				<a class="btn_" id="openAsetMasPopup">[[#{screen.text.comm.add.asset}]]</a>
+				<a class="btn_del2">[[#{screen.btn.delete}]]</a>
+			</div>
+		</div>
+		
+		<div id="data-table"></div>
+	</div>
+</html>

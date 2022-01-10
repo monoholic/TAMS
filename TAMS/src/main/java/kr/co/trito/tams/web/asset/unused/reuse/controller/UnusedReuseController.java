@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.asset.unused.regist.controller;
+package kr.co.trito.tams.web.asset.unused.reuse.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -28,7 +28,7 @@ import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto;
 import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
-import kr.co.trito.tams.web.asset.unused.regist.service.UnusedRegistService;
+import kr.co.trito.tams.web.asset.unused.reuse.service.UnusedReuseService;
 import kr.co.trito.tams.web.common.service.CommonService;
 import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.RequiredArgsConstructor;
@@ -36,11 +36,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/asset/unused/regist")
+@RequestMapping("/asset/unused/reuse")
 @Slf4j
-public class UnusedRegistController {
+public class UnusedReuseController {
 	@Autowired
-	UnusedRegistService registService; 
+	UnusedReuseService reuseService; 
 	
 	@Autowired
 	CommonService commonService;
@@ -48,9 +48,9 @@ public class UnusedRegistController {
 	@Autowired
 	ResponseService responseService;
 	
-	/** 유휴의뢰 목록 화면 */
+	/** 재활용의뢰 목록 화면 */
 	@PostMapping("/list")
-	public ModelAndView unusedRegistListView(HttpServletRequest request,
+	public ModelAndView unusedReuseListView(HttpServletRequest request,
 			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
 		ModelAndView view = new ModelAndView();
 		if (params != null) {
@@ -66,17 +66,17 @@ public class UnusedRegistController {
 		view.addObject("loadParams", StringUtils.defaultIfBlank(request.getParameter("loadParams"), "N"));
 		view.addObject("url", request.getParameter("url"));
 		
-		view.setViewName("/content/asset/unused/regist/registList");
+		view.setViewName("/content/asset/unused/reuse/reuseList");
 		return view;
 	}
 	
-	/** 유휴의뢰 목록 : 조회 */
-	@GetMapping(value = "/unusedRegistList")
+	/** 재활용의뢰 목록 : 조회 */
+	@GetMapping(value = "/unusedReuseList")
 	@ResponseBody
-	@ApiOperation(value = "유휴목록 화면 / 리스트", notes = "유휴목록 화면을 조회한다.")
+	@ApiOperation(value = "재활용목록 화면 / 리스트", notes = "재활용목록 화면을 조회한다.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> unusedRegistList(
+	public ResponseEntity<? extends Response> unusedReuseList(
 		@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params,
 		@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) {
 		
@@ -86,8 +86,8 @@ public class UnusedRegistController {
 		params.put("userId", userId);
 		
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);
-		condition.pageSetup(registService.selectCountUnusedRegistList(condition));
-		List<ReqMasDto> list = registService.selectUnusedRegistList(condition);
+		condition.pageSetup(reuseService.selectCountUnusedReuseList(condition));
+		List<ReqMasDto> list = reuseService.selectUnusedReuseList(condition);
 		return responseService.success(condition, list);
 	}
 	
@@ -105,7 +105,7 @@ public class UnusedRegistController {
 		String userId = userInfo.getDto().getUserId();
 		
 		items.put("regr", userId);
-		registService.unusedRegistListInsert(items); 
+		reuseService.unusedRegistListInsert(items); 
 		
 		return responseService.success(null);
 	}	
@@ -120,7 +120,7 @@ public class UnusedRegistController {
 			@ApiParam(value = "의뢰 번호", required = true) @RequestBody List<ReqMasDto> items) { 
 		
 		for(ReqMasDto reqNo : items) {
-			registService.unusedRegistListDelete(reqNo);
+			reuseService.unusedRegistListDelete(reqNo);
 		}
 		
 		return responseService.success(null);
@@ -148,10 +148,10 @@ public class UnusedRegistController {
 			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(),
 				params.get("numOfRows").toString(), params);
-		condition.pageSetup(registService.selectCountAssetList(condition));
+		condition.pageSetup(reuseService.selectCountAssetList(condition));
 
-		List<AsetReqDto> list = registService.selectAssetList(condition);
-		List<ReqMasDto> list2 = registService.selectUnusedRegistRegist(condition);
+		List<AsetReqDto> list = reuseService.selectAssetList(condition);
+		List<ReqMasDto> list2 = reuseService.selectUnusedRegistRegist(condition);
 
 		return responseService.success(condition, list, list2);
 	}
@@ -172,15 +172,15 @@ public class UnusedRegistController {
 		List<Map<String, Object>> list = (List<Map<String, Object>>)items.get("asetList");
 		
 		items.put("regr", userId);
-		registService.unusedRegistUpdate1(items);
+		reuseService.unusedRegistUpdate1(items);
 		System.out.println("====================== "+list.size()+" ==============================");
 		for(int i=0; i<list.size(); i++) {
 			if (list.get(i).containsKey("reqNo"))
-				registService.unusedRegistUpdate2(list.get(i));
+				reuseService.unusedRegistUpdate2(list.get(i));
 			
 			else
 				(list.get(i)).put("reqNo", items.get("reqNo").toString());
-			registService.unusedRegistUpdate2(list.get(i));
+			reuseService.unusedRegistUpdate2(list.get(i));
 		}
 		
 		return responseService.success(null);
@@ -195,7 +195,7 @@ public class UnusedRegistController {
 	public ResponseEntity<? extends Response> unusedRegisteDelete1( 
 			@ApiParam(value = "의뢰 번호", required = true) @RequestBody Map<String, Object> items) { 
 		
-		registService.unusedRegistDelete1(items);
+		reuseService.unusedRegistDelete1(items);
 		
 		return responseService.success(null);
 	}
@@ -215,7 +215,7 @@ public class UnusedRegistController {
 		
 		for(String asetNo : asetList) {
 			dto.setAsetNo(asetNo);
-			registService.unusedRegistDelete2(dto);
+			reuseService.unusedRegistDelete2(dto);
 		}
 		
 		return responseService.success(null);
