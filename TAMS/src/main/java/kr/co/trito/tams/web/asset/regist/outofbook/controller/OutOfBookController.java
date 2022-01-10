@@ -147,7 +147,9 @@ public class OutOfBookController {
 		
 		if(result.size() > 1) {
 			result.remove(0);
-			outOfBookService.saveUploadExcel(userDto.getUserId(), result);
+			result = outOfBookService.saveUploadExcel(userDto.getUserId(), result);
+		} else {
+			result = null;
 		}
 		
 		return responseService.success(result);

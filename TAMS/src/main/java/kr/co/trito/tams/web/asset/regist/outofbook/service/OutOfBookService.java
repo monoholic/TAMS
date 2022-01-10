@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import groovy.util.logging.Slf4j;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookBatchDto;
 import kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookDto;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
+@lombok.extern.slf4j.Slf4j
 public class OutOfBookService {
 
 	@Autowired
@@ -62,7 +64,7 @@ public class OutOfBookService {
 	}	
 	
 	//부외자산 업로드 저장
-	public void saveUploadExcel(String userId, List<OutOfBookBatchDto> list) {
+	public List<OutOfBookBatchDto> saveUploadExcel(String userId, List<OutOfBookBatchDto> list) {
 		
 		//이력삭제
 		mapper.deleteUploadHistory(userId);
@@ -74,5 +76,13 @@ public class OutOfBookService {
 		}
 		
 		//코드정보 조인 후 조회
+		List<OutOfBookBatchDto> result = mapper.selectUploadResultList(userId);
+		
+		//데이터 검증
+		for(OutOfBookBatchDto dto : result) {
+			dto.setDataVerification();
+		}
+		
+		return result;
 	}
 }

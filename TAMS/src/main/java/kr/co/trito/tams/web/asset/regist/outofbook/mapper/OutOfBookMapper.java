@@ -33,5 +33,7 @@ public interface OutOfBookMapper {
 	
 	//부외자산 업로드 등록
 	public int saveUploadExcel(OutOfBookBatchDto dto) ;	
-
+	
+	//업로드 결과 조회
+	public List<OutOfBookBatchDto> selectUploadResultList(String userId);
 }

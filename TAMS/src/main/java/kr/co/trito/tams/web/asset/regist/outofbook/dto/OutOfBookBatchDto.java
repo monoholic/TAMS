@@ -1,5 +1,6 @@
 package kr.co.trito.tams.web.asset.regist.outofbook.dto;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -69,45 +70,45 @@ public class OutOfBookBatchDto extends ExcelDto {
 	@ApiModelProperty(value="취득일자")
 	private String acqDt;
 	@ApiModelProperty(value="특성정보1")
-	private String prop1;
+	private String dtlInfo1;
 	@ApiModelProperty(value="특성정보2")
-	private String prop2;
+	private String dtlInfo2;
 	@ApiModelProperty(value="특성정보3")
-	private String prop3;
+	private String dtlInfo3;
 	@ApiModelProperty(value="특성정보4")
-	private String prop4;
+	private String dtlInfo4;
 	@ApiModelProperty(value="특성정보5")
-	private String prop5;
+	private String dtlInfo5;
 	@ApiModelProperty(value="특성정보6")
-	private String prop6;
+	private String dtlInfo6;
 	@ApiModelProperty(value="특성정보7")
-	private String prop7;
+	private String dtlInfo7;
 	@ApiModelProperty(value="특성정보8")
-	private String prop8;
+	private String dtlInfo8;
 	@ApiModelProperty(value="특성정보9")
-	private String prop9;
+	private String dtlInfo9;
 	@ApiModelProperty(value="특성정보10")
-	private String prop10;
+	private String dtlInfo10;
 	@ApiModelProperty(value="특성정보11")
-	private String prop11;
+	private String dtlInfo11;
 	@ApiModelProperty(value="특성정보12")
-	private String prop12;
+	private String dtlInfo12;
 	@ApiModelProperty(value="특성정보13")
-	private String prop13;
+	private String dtlInfo13;
 	@ApiModelProperty(value="특성정보14")
-	private String prop14;
+	private String dtlInfo14;
 	@ApiModelProperty(value="특성정보15")
-	private String prop15;
+	private String dtlInfo15;
 	@ApiModelProperty(value="특성정보16")
-	private String prop16;
+	private String dtlInfo16;
 	@ApiModelProperty(value="특성정보17")
-	private String prop17;
+	private String dtlInfo17;
 	@ApiModelProperty(value="특성정보18")
-	private String prop18;
+	private String dtlInfo18;
 	@ApiModelProperty(value="특성정보19")
-	private String prop19;
+	private String dtlInfo19;
 	@ApiModelProperty(value="특성정보20")
-	private String prop20;
+	private String dtlInfo20;
 	@ApiModelProperty(value="유효성검증")
 	private String chkResult;
 	@ApiModelProperty(value="Null Check")
@@ -138,26 +139,26 @@ public class OutOfBookBatchDto extends ExcelDto {
 	    			.loc(getCellValue(row.getCell(14)))
 	    			.acqPrc(getCellValue(row.getCell(15)))
 	    			.acqDt(getCellValue(row.getCell(16)))
-	    			.prop1(getCellValue(row.getCell(17)))
-	    			.prop2(getCellValue(row.getCell(18)))
-	    			.prop3(getCellValue(row.getCell(19)))
-	    			.prop4(getCellValue(row.getCell(20)))
-	    			.prop5(getCellValue(row.getCell(21)))
-	    			.prop6(getCellValue(row.getCell(22)))
-	    			.prop7(getCellValue(row.getCell(23)))
-	    			.prop8(getCellValue(row.getCell(24)))
-	    			.prop9(getCellValue(row.getCell(25)))
-	    			.prop10(getCellValue(row.getCell(26)))
-	    			.prop11(getCellValue(row.getCell(27)))
-	    			.prop12(getCellValue(row.getCell(28)))
-	    			.prop13(getCellValue(row.getCell(29)))
-	    			.prop14(getCellValue(row.getCell(30)))
-	    			.prop15(getCellValue(row.getCell(31)))
-	    			.prop16(getCellValue(row.getCell(32)))
-	    			.prop17(getCellValue(row.getCell(33)))
-	    			.prop18(getCellValue(row.getCell(34)))
-	    			.prop19(getCellValue(row.getCell(35)))
-	    			.prop20(getCellValue(row.getCell(36)))
+	    			.dtlInfo1(getCellValue(row.getCell(17)))
+	    			.dtlInfo2(getCellValue(row.getCell(18)))
+	    			.dtlInfo3(getCellValue(row.getCell(19)))
+	    			.dtlInfo4(getCellValue(row.getCell(20)))
+	    			.dtlInfo5(getCellValue(row.getCell(21)))
+	    			.dtlInfo6(getCellValue(row.getCell(22)))
+	    			.dtlInfo7(getCellValue(row.getCell(23)))
+	    			.dtlInfo8(getCellValue(row.getCell(24)))
+	    			.dtlInfo9(getCellValue(row.getCell(25)))
+	    			.dtlInfo10(getCellValue(row.getCell(26)))
+	    			.dtlInfo11(getCellValue(row.getCell(27)))
+	    			.dtlInfo12(getCellValue(row.getCell(28)))
+	    			.dtlInfo13(getCellValue(row.getCell(29)))
+	    			.dtlInfo14(getCellValue(row.getCell(30)))
+	    			.dtlInfo15(getCellValue(row.getCell(31)))
+	    			.dtlInfo16(getCellValue(row.getCell(32)))
+	    			.dtlInfo17(getCellValue(row.getCell(33)))
+	    			.dtlInfo18(getCellValue(row.getCell(34)))
+	    			.dtlInfo19(getCellValue(row.getCell(35)))
+	    			.dtlInfo20(getCellValue(row.getCell(36)))
 	    			.isNull("N")
 	    			.build();
     	} else {
@@ -167,6 +168,47 @@ public class OutOfBookBatchDto extends ExcelDto {
     	return dto;
     }
 	
+    public void setDataVerification() {
+    	StringBuffer sb = new StringBuffer();
+    	if(StringUtils.isEmpty(this.getAsetNo())) {
+    		sb.append("자산번호 오류").append(", ");
+    	}
+    	
+    	if(StringUtils.isEmpty(this.getAsetNm())) {
+    		sb.append("자산명 오류").append(", ");
+    	}  
+
+    	if(StringUtils.isEmpty(this.getAsetType1()) || StringUtils.isEmpty(this.getAsetTypeNm1())) {
+    		sb.append("자산유형1 오류").append(", ");
+    	}   
+    	
+    	if(StringUtils.isEmpty(this.getAsetType2()) || StringUtils.isEmpty(this.getAsetTypeNm2())) {
+    		sb.append("자산유형2 오류").append(", ");
+    	}   
+    	
+    	if(StringUtils.isEmpty(this.getAsetType3()) || StringUtils.isEmpty(this.getAsetTypeNm3())) {
+    		sb.append("자산유형3 오류").append(", ");
+    	}
+    	
+    	if(StringUtils.isEmpty(this.getBizDeptCd()) || (StringUtils.isEmpty(this.getBizDeptNm()))) {
+    		sb.append("사업부코드 오류").append(", ");
+    	}       
+    	
+    	if(StringUtils.isEmpty(this.getDeptCd()) || (StringUtils.isEmpty(this.getDeptNm()))) {
+    		sb.append("부서코드 오류").append(", ");
+    	}       
+    	      
+    	if(StringUtils.isEmpty(this.getAcqPrc())) {
+    		sb.append("취득금액 오류").append(", ");
+    	}     
+    	
+    	if(StringUtils.isEmpty(this.getAcqDt())) {
+    		sb.append("취득일자 오류");
+    	}         	
+    	
+    	this.setChkResult(sb.toString());
+    }
+    
     private String getCellValue(Cell cell) {
     	String returnValue = "";
     	if(cell != null) {
