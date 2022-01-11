@@ -426,6 +426,7 @@
 		select * 
 		from (
 				select a.aset_no as asetNo
+				    , (select count(*) from tb_aset_mas x where x.aset_no = a.aset_no) as asetNoCnt
 					,a.aset_nm as asetNm
 					,a.aset_type1 as asetType1
 				    ,b.code_nm as asetTypeNm1 
@@ -441,6 +442,7 @@
 					,a.dept_cd
 				    ,f.dept_nm as deptNm   
 					,a.chrgr
+					,g.user_nm as chrgrNm
 					,a.bsplc
 					,a.buld
 					,a.floor
@@ -482,6 +484,8 @@
 				  on a.biz_dept_cd = e.dept_cd  
 				left outer join tb_dept f
 				  on a.dept_cd = f.dept_cd    
+				left outer join tb_user g
+				  on a.chrgr = g.user_id				  
 				where a.regr = #{userId}   
 			 ) a        
 	</select>	

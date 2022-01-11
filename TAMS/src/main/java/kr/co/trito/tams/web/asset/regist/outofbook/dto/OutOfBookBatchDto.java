@@ -111,9 +111,12 @@ public class OutOfBookBatchDto extends ExcelDto {
 	private String dtlInfo20;
 	@ApiModelProperty(value="유효성검증")
 	private String chkResult;
+	@ApiModelProperty(value="자산번호 중복 카운트")
+	private int asetNoCnt;			
+	@ApiModelProperty(value="에러구분")
+	private String isError;				
 	@ApiModelProperty(value="Null Check")
 	private String isNull;		
-	
 	
     @Override
     public  OutOfBookBatchDto row(Row row) {	
@@ -174,6 +177,10 @@ public class OutOfBookBatchDto extends ExcelDto {
     		sb.append("자산번호 오류").append(", ");
     	}
     	
+    	if(this.getAsetNoCnt() > 0) {
+    		sb.append("자산번호 중복 오류").append(", ");
+    	}    	
+    	
     	if(StringUtils.isEmpty(this.getAsetNm())) {
     		sb.append("자산명 오류").append(", ");
     	}  
@@ -198,6 +205,11 @@ public class OutOfBookBatchDto extends ExcelDto {
     		sb.append("부서코드 오류").append(", ");
     	}       
     	      
+    	if(StringUtils.isEmpty(this.getChrgr()) || (StringUtils.isEmpty(this.getChrgrNm()))) {
+    		sb.append("담당자 오류").append(", ");
+    	}           	
+    	
+    	
     	if(StringUtils.isEmpty(this.getAcqPrc())) {
     		sb.append("취득금액 오류").append(", ");
     	}     
@@ -207,6 +219,7 @@ public class OutOfBookBatchDto extends ExcelDto {
     	}         	
     	
     	this.setChkResult(sb.toString());
+    	this.setIsError(sb.toString().length() > 0 ? "Y":"N");
     }
     
     private String getCellValue(Cell cell) {

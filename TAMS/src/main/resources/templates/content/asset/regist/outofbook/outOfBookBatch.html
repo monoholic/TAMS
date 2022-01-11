@@ -74,13 +74,14 @@
 					 	{title:"[[#{screen.text.outofbook.aset.prop19}]]"	, field:"dtlInfo19"		, hozAlign:"left" 		, headerHozAlign:"center"},
 					 	{title:"[[#{screen.text.outofbook.aset.prop20}]]"	, field:"dtlInfo20"		, hozAlign:"left" 		, headerHozAlign:"center"},
 						{title: "[[#{screen.text.outofbook.upload.valid}]]"	, field: "chkResult"	, hozAlign:"left"  		, headerHozAlign:"center"},
+						{ title: "", field: "isNull", visible:false},
 				 	],
 				});		
 				
 				/*---------------------- UI Events ----------------------*/
 				
 				$("#addFile").on("click", function(){					
-					excelItems.length = 0;
+					$("#upFile").val("");
 					$("#upFile").click();
 				});
 				
@@ -89,14 +90,14 @@
 					var addFiles = obj.files;
 					excelUpData.append("file",addFiles[0]);
 					$("[name='excelNm']").val(addFiles[0].name);
-
-					//파일선택후 엑셀업로드 처리한다.
-					//excelUploadProcess()
 				});				
 				
 				//일괄업로드
 				$("#btnUpload").on("click", function(){					
 
+					//그리드 초기화
+					grid.replaceData();
+					
 					let url = "/asset/regist/outofbook/uploadExcel";
 					let reqType = "POST";	
 					$.commRequestFile(url, reqType, excelUpData)
@@ -108,12 +109,18 @@
 						.catch((error) => {
 							alert('[[#{screen.info.status.error.occur}]]');						
 						});
-					
-					excelUpData.delete("file");
-					$("[name='excelNm']").val("");					
-					
-					
 				});				
+				
+				$("#btnError").on("click",function(){ 
+					let status = $("#btnError").html();
+					if(status == "[[#{screen.btn.error.list}]]"){
+						grid.setFilter("isNull", "=", "Y");
+						$("#btnError").html("[[#{screen.btn.all.list}]]");
+					}else{
+						grid.removeFilter("isNull", "=", "Y");
+						$("#btnError").html("[[#{screen.btn.error.list}]]");
+					}
+				});								
 				
 				
 				//팝업창 닫기
