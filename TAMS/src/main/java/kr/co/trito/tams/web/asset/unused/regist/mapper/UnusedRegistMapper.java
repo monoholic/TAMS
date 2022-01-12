@@ -6,25 +6,25 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto;
-import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
+import kr.co.trito.tams.web.asset.unused.regist.dto.RegistAsetReqDto;
+import kr.co.trito.tams.web.asset.unused.regist.dto.RegistReqMasDto;
 
 @Mapper
 public interface UnusedRegistMapper {
 	
 	public int selectCountUnusedRegistList(SearchCondition condition);
 	
-	public List<ReqMasDto> selectUnusedRegistList(SearchCondition condition);
+	public List<RegistReqMasDto> selectUnusedRegistList(SearchCondition condition);
 	
 	public int unusedRegistListInsert(Map<String, Object> data);
 	
-	public int unusedRegistListDelete(ReqMasDto dto);
+	public int unusedRegistListDelete(RegistReqMasDto dto);
 	
-	public List<ReqMasDto> selectUnusedRegistRegist(SearchCondition condition);
+	public List<RegistReqMasDto> selectUnusedRegistRegist(SearchCondition condition);
 	
 	public int selectCountAssetList(SearchCondition condition);
 	
-	public List<AsetReqDto> selectAssetList(SearchCondition condition);
+	public List<RegistAsetReqDto> selectAssetList(SearchCondition condition);
 	
 	public int unusedRegistUpdate1(Map<String, Object> data);
 	
@@ -32,5 +32,7 @@ public interface UnusedRegistMapper {
 
 	public int unusedRegistDelete1(Map<String, Object> data);
 	
-	public int unusedRegistDelete2(AsetReqDto dto);
+	public int unusedRegistDelete2(RegistAsetReqDto dto);
+	
+	public int unusedRegistDelete3(Map<String, Object> data);
 }

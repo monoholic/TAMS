@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto;
-import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
+import kr.co.trito.tams.web.asset.unused.regist.dto.RegistAsetReqDto;
+import kr.co.trito.tams.web.asset.unused.regist.dto.RegistReqMasDto;
 import kr.co.trito.tams.web.asset.unused.regist.mapper.UnusedRegistMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +23,7 @@ public class UnusedRegistService {
 		return mapper.selectCountUnusedRegistList(condition);
 	}
 	
-	public List<ReqMasDto> selectUnusedRegistList(SearchCondition condition){
+	public List<RegistReqMasDto> selectUnusedRegistList(SearchCondition condition){
 		return mapper.selectUnusedRegistList(condition);
 	}
 	
@@ -31,11 +31,11 @@ public class UnusedRegistService {
 		return mapper.unusedRegistListInsert(data);
 	}
 	
-	public int unusedRegistListDelete(ReqMasDto dto) {
+	public int unusedRegistListDelete(RegistReqMasDto dto) {
 		return mapper.unusedRegistListDelete(dto);
 	}
 
-	public List<ReqMasDto> selectUnusedRegistRegist(SearchCondition condition) {
+	public List<RegistReqMasDto> selectUnusedRegistRegist(SearchCondition condition) {
 		return mapper.selectUnusedRegistRegist(condition);
 	}
 	
@@ -43,7 +43,7 @@ public class UnusedRegistService {
 		return mapper.selectCountAssetList(condition);
 	}
 	
-	public List<AsetReqDto> selectAssetList(SearchCondition condition) {
+	public List<RegistAsetReqDto> selectAssetList(SearchCondition condition) {
 		return mapper.selectAssetList(condition);
 	}
 	
@@ -59,7 +59,11 @@ public class UnusedRegistService {
 		return mapper.unusedRegistDelete1(data);
 	}
 	
-	public int unusedRegistDelete2(AsetReqDto dto) {
+	public int unusedRegistDelete2(RegistAsetReqDto dto) {
 		return mapper.unusedRegistDelete2(dto);
+	}
+	
+	public int unusedRegistDelete3(Map<String, Object> data) {
+		return mapper.unusedRegistDelete3(data);
 	}
 }

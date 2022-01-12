@@ -103,7 +103,7 @@
 
 				/*------------- Grid Events -------------*/
 				//row click
-				grid.on("rowClick", function(e, row){	
+				grid.on("rowClick", function(e, row){
 					var rowData = row.getData();
 					openAsetList(row.getData());
 				});	
@@ -319,7 +319,7 @@
 		    function openAsetList(val){
 		       	event.preventDefault();
 		       	
-		       	var subReqNo = parseInt((val.reqNo).substr(5,3));
+		       	var subReqNo = parseInt((val.reqNo).substr(6,3));
 		       	
 		       	let saveParams = {
 		       		"condition": condition,

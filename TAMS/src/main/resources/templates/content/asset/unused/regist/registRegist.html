@@ -26,15 +26,38 @@
 		    let data = ['appvDocId', 'reqTypeNm', 'reqNo', 'reqDt', 'deptNm', 'reqtr', 'reqNm', 'reqRsn'];
 		    
 		    var condition = {};
-		 	var prevCondition = {};
 		 	var asetList = [];
-		 	
 		 	var asetType = [];
-		 	var asetArr1 = [];
-		 	var asetArr2 = [];
-		 	var asetArr3 = [];
 		 	
 		    $(function(){
+		    	
+		    	//유휴처리방향
+		    	let urDir;
+		    	$.commRequestComCode("UR_DIR", "1", "")
+				 .then((data) => {
+					 urDir = data;
+				});
+		    	
+		    	//사업장
+		    	let bsplc;
+		    	$.commRequestComCode("SITE", "1", "")
+				 .then((data) => {
+					 bsplc = data;
+				});
+		    	
+		    	//건물
+		    	let buld;
+        		$.commRequestComCode("BUILDING", "2", "")
+				 .then((data) => {
+					 buld = data;
+				});
+		    	
+		    	//층
+		    	let floor;
+		    	$.commRequestComCode("FLOOR", "3", "")
+				 .then((data) => {
+					 floor = data;
+				});
 		    	
 		    	(async () => {	        	
 	  				await asetTypeList();
@@ -82,26 +105,93 @@
 			 	         		cell.getRow().toggleSelect();
 			 	        }},
 				 		{title:"[[#{screen.text.regist.asetno}]]"            , field:"asetNo"    , hozAlign:"center" , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.regist.asset.type1}]]"       , field:"asetType1" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:{asetArr1}},
-		                {title:"[[#{screen.text.regist.asset.type2}]]"       , field:"asetType2" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:{asetArr2}},
-		                {title:"[[#{screen.text.regist.asset.type3}]]"       , field:"asetType3" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:{asetArr3}},
-		                {title:"[[#{screen.text.regist.asset.manufacture}]]" , field:"mftco"     , hozAlign:"left"   , headerHozAlign:"center", editor:"input"},
-		                {title:"[[#{screen.text.regist.asset.model}]]"       , field:"model"     , hozAlign:"left"   , headerHozAlign:"center", editor:"input"},
-		                {title:"[[#{screen.text.regist.asset.sn}]]"          , field:"sn"        , hozAlign:"left"   , headerHozAlign:"center", editor:"input"},
+		                {title:"[[#{screen.text.regist.asset.type1}]]"       , field:"asetType1" , hozAlign:"left"   , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.regist.asset.type2}]]"       , field:"asetType2" , hozAlign:"left"   , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.regist.asset.type3}]]"       , field:"asetType3" , hozAlign:"left"   , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.regist.asset.manufacture}]]" , field:"mftco"     , hozAlign:"left"   , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.regist.asset.model}]]"       , field:"model"     , hozAlign:"left"   , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.regist.asset.sn}]]"          , field:"sn"        , hozAlign:"left"   , headerHozAlign:"center"},
 		                {title:"[[#{screen.text.regist.asset.biz.dept}]]"    , field:"bizDeptNm" , hozAlign:"left"   , headerHozAlign:"center"},
 		                {title:"[[#{screen.text.regist.asset.dept}]]"	     , field:"deptNm"    , hozAlign:"left"   , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.regist.asset.charger}]]"     , field:"chrgrNm"   , hozAlign:"center" , headerHozAlign:"center", cellClick:function(e, cell){alert("cell click")},},
+		                {title:"[[#{screen.text.regist.asset.charger}]]"     , field:"chrgrNm"   , hozAlign:"center" , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.regist.asset.ur.dir}]]"      , field:"urDirNm"	 , hozAlign:"center" , headerHozAlign:"center", editor:"select", editorParams:function(cell){
+					 		var values = {};					 		
+					 		$.each(urDir, function(i){
+					 			values[urDir[i].codeNm] = urDir[i].codeNm;	
+							});	
+					 		return {values:values};
+		                }},
+		                {title:"유휴처리방향코드", field:"urDir", visible:false},
+		                {title:"[[#{screen.text.regist.asset.site}]]"        , field:"bsplcNm"     , hozAlign:"center" , headerHozAlign:"center", editor:"select", editorParams:function(cell){
+		                	var values = {};					 		
+					 		$.each(bsplc, function(i){
+					 			values[bsplc[i].codeNm] = bsplc[i].codeNm;	
+							});	
+					 		return {values:values};
+		                }},
+		                {title:"보관사업장코드", field:"bsplc", visible:false},
+		                {title:"[[#{screen.text.regist.asset.building}]]"    , field:"buldNm"    	 , hozAlign:"center" , headerHozAlign:"center", editor:"select", editorParams:function(cell){
+		                	var values = {};					 		
+					 		$.each(buld, function(i){
+					 			values[buld[i].codeNm] = buld[i].codeNm;	
+							});	
+					 		return {values:values};
+		                }},
+		                {title:"보관건물코드", field:"buld", visible:false},
+		                {title:"[[#{screen.text.regist.asset.floor}]]"       , field:"floorNm"    , hozAlign:"center" , headerHozAlign:"center", editor:"select", editorParams:function(cell){
+		                	var values = {};					 		
+					 		$.each(floor, function(i){
+					 			values[floor[i].codeNm] = floor[i].codeNm;	
+							});	
+					 		return {values:values};
+		                }},
+		                {title:"보관층코드", field:"floor", visible:false},
+		                {title:"[[#{screen.text.regist.asset.loc}]]"         , field:"loc"    	 , hozAlign:"left" , headerHozAlign:"center", editor:"input", validator:"required"},
 				 	],
-				});						
+				});
+				
+				//cell값 변경 callback event.
+				grid.on("cellEdited", function(cell){
+					var field = cell.getField();					
+					if(field == 'urDirNm'){						
+				 		$.each(urDir, function(i){
+				 			if(cell.getValue() == urDir[i].codeNm){
+				 				cell.getRow().update({"urDir":urDir[i].codeId});
+				 			}	
+						});
+					}
+					if(field == 'bsplcNm'){						
+				 		$.each(bsplc, function(i){
+				 			if(cell.getValue() == bsplc[i].codeNm){
+				 				cell.getRow().update({"bsplc":bsplc[i].codeId});		
+				 			}	
+						});
+					}
+					if(field == 'buldNm'){						
+				 		$.each(buld, function(i){
+				 			if(cell.getValue() == buld[i].codeNm){
+				 				cell.getRow().update({"buld":buld[i].codeId});		
+				 			}	
+						});
+					}
+					if(field == 'floorNm'){						
+				 		$.each(floor, function(i){
+				 			if(cell.getValue() == floor[i].codeNm){
+				 				cell.getRow().update({"floor":floor[i].codeId});		
+				 			}	
+						});
+					}
+				});
+				
 				/*------------- Button Events -------------*/
 				// 저장 버튼 처리
 	            $('.btn_save').on('click', function (e) {
-	            	let selectedData  = grid.getSelectedData();
+	            	let selectedData  = grid.getData();
 	            	
 	            	let url = "/asset/unused/regist/unusedRegistRegUpdate";
 		  			let reqType = 'POST';
 		  			
-			    	var subReqNo = ($("#reqNo").val()).substr(5,3);
+			    	var subReqNo = ($("#reqNo").val()).substr(6,3);
 			    	
 			    	let data={
 	                		reqNo    : subReqNo,
@@ -109,6 +199,7 @@
 	                		reqRsn   : $("#reqRsn").val(),
 	                		asetList : selectedData
 	                };
+			    	console.log(selectedData);
 			    	$.commRequest(url, reqType, JSON.stringify(data))
 		  				.then((res) => {
 		  					grid.setData(requestUrl);
@@ -116,18 +207,25 @@
 		  				.catch((error) => {
 		  					alert("[[#{screen.info.status.error.occur}]]");
 		  					console.log(error);
-	  				})
+	  					});
 	            });
 				
 	    	    // 상단 삭제 버튼
 				$(".btn_del1").click(function() {
-					var subReqNo = ($("#reqNo").val()).substr(5,3);
+					var subReqNo = ($("#reqNo").val()).substr(6,3);
+					var asetYn = 'N';
 					
+					let selectedData  = grid.getData();
+					if(selectedData != null && selectedData != ''){
+						asetYn = 'Y';
+					}
+					console.log(asetYn);
 		  	    	let url = "/asset/unused/regist/unusedRegistRegDelete1";
 		  			let reqType = 'POST';
 		  			dataType: 'json';
 		  			let data={
-		  				reqNo : subReqNo
+		  				"reqNo" : subReqNo,
+		  				"asetYn" : asetYn
 		  			}
 		  			$.commRequest(url, reqType, JSON.stringify(data))
 		  				.then((res) => {
@@ -146,7 +244,7 @@
 					let selectedData  = grid.getSelectedData();
 		  	    	var items = [];
 		  	    	
-		  	    	var subReqNo = ($("#reqNo").val()).substr(5,3);
+		  	    	var subReqNo = ($("#reqNo").val()).substr(6,3);
 		  	    	
 		  	    	$.each(selectedData, function(index,item){
 		  	    		items.push(item.asetNo);
@@ -272,38 +370,14 @@
 	    		});
 	    		grid.setData(asetList);
 			}
-	    	
-	    	// asetType 리스트 출력
-	    	async function asetTypeList() {
-			 	let url = '/common/popup/asetType';                                                      
-			 	let reqType = 'POST';                                                                        
-			 	let data = {                                                                                 
-			 		"email" : ""                                                                             
-			 	};                                                                                           
-			 	await $.commRequest(url, reqType, JSON.stringify(data))                                            
-			 		.then((res) => {
-			 			
-			 			$.each(res.data, function(index, el){                                                        
-			 				asetType.push(el);
-			 				
-			 				if(el.codeLvl == '1') {
-				 				asetArr1.push({lable : el.codeId, value:el.codeNm});
-			 				}
-			 				
-			 				if(el.codeLvl == '2') {
-				 				asetArr2.push({Id : el.codeId, Nm:el.codeNm});
-			 				}
-			 				
-			 				if(el.codeLvl == '3') {
-				 				asetArr3.push({Id : el.codeId, Nm:el.codeNm});
-			 				}
-			 			})
-			 		})
-			 		.catch((error) => {                                                                      
-			 			alert('[[#{screen.info.status.error.search}]]');                                                                  
-		 		});
-			};
 	    
+		 	// 공통코드 호출
+		    function getCommCode(id, code, level, upperCodeId){				
+				let url = "/common/comm/selectBox";
+				let reqType = 'GET';
+				$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);			
+			}
+			
 	    </script>	
 	</th:block>
 

@@ -26,10 +26,9 @@ import io.swagger.annotations.ApiResponses;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto;
-import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
+import kr.co.trito.tams.web.asset.unused.regist.dto.RegistAsetReqDto;
+import kr.co.trito.tams.web.asset.unused.regist.dto.RegistReqMasDto;
 import kr.co.trito.tams.web.asset.unused.regist.service.UnusedRegistService;
-import kr.co.trito.tams.web.common.service.CommonService;
 import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,9 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 public class UnusedRegistController {
 	@Autowired
 	UnusedRegistService registService; 
-	
-	@Autowired
-	CommonService commonService;
 	
 	@Autowired
 	ResponseService responseService;
@@ -87,14 +83,14 @@ public class UnusedRegistController {
 		
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);
 		condition.pageSetup(registService.selectCountUnusedRegistList(condition));
-		List<ReqMasDto> list = registService.selectUnusedRegistList(condition);
+		List<RegistReqMasDto> list = registService.selectUnusedRegistList(condition);
 		return responseService.success(condition, list);
 	}
 	
 	/** 유휴의뢰 화면 : 등록 */  
 	@PostMapping(value="/unusedRegistInsert")
 	@ResponseBody
-	@ApiOperation(value = "유휴목록 화면 / 등록", notes = "유휴목록 화면에서 의뢰를 작성한다. (이동의뢰)")
+	@ApiOperation(value = "유휴목록 화면 / 등록", notes = "유휴목록 화면에서 의뢰를 작성한다. (유휴의뢰)")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> unusedRegistInsert(
@@ -113,13 +109,13 @@ public class UnusedRegistController {
 	/** 유휴의뢰 목록 화면 : 삭제 */
 	@PostMapping(value="/unusedRegistDelete")
 	@ResponseBody
-	@ApiOperation(value = "유휴목록 화면 / 삭제", notes = "유휴목록 화면에서 의뢰를 삭제한다. (이동의뢰 삭제)")
+	@ApiOperation(value = "유휴목록 화면 / 삭제", notes = "유휴목록 화면에서 의뢰를 삭제한다. (유휴의뢰 삭제)")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> assetMoveDelete( 
-			@ApiParam(value = "의뢰 번호", required = true) @RequestBody List<ReqMasDto> items) { 
+	public ResponseEntity<? extends Response> unusedRegistDelete( 
+			@ApiParam(value = "의뢰 번호", required = true) @RequestBody List<RegistReqMasDto> items) { 
 		
-		for(ReqMasDto reqNo : items) {
+		for(RegistReqMasDto reqNo : items) {
 			registService.unusedRegistListDelete(reqNo);
 		}
 		
@@ -132,7 +128,6 @@ public class UnusedRegistController {
 	public ModelAndView requestRegistView(HttpServletRequest request) {
 		ModelAndView view = new ModelAndView();
 		String reqNo = request.getParameter("reqNo");
-		
 		view.addObject("reqNo", reqNo);
 		view.setViewName("/content/asset/unused/regist/registRegist");
 		return view;
@@ -144,14 +139,14 @@ public class UnusedRegistController {
 	@ApiOperation(value = "유휴의뢰작성 화면 / 조회", notes = "유휴의뢰작성 화면을 조회한다.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> AssetMoveRegistView(
+	public ResponseEntity<? extends Response> unusedRegistRegistView(
 			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
-		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(),
-				params.get("numOfRows").toString(), params);
+		
+		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(),params.get("numOfRows").toString(), params);
 		condition.pageSetup(registService.selectCountAssetList(condition));
 
-		List<AsetReqDto> list = registService.selectAssetList(condition);
-		List<ReqMasDto> list2 = registService.selectUnusedRegistRegist(condition);
+		List<RegistAsetReqDto> list = registService.selectAssetList(condition);
+		List<RegistReqMasDto> list2 = registService.selectUnusedRegistRegist(condition);
 
 		return responseService.success(condition, list, list2);
 	}
@@ -173,7 +168,7 @@ public class UnusedRegistController {
 		
 		items.put("regr", userId);
 		registService.unusedRegistUpdate1(items);
-		System.out.println("====================== "+list.size()+" ==============================");
+		
 		for(int i=0; i<list.size(); i++) {
 			if (list.get(i).containsKey("reqNo"))
 				registService.unusedRegistUpdate2(list.get(i));
@@ -193,7 +188,12 @@ public class UnusedRegistController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> unusedRegisteDelete1( 
-			@ApiParam(value = "의뢰 번호", required = true) @RequestBody Map<String, Object> items) { 
+			@ApiParam(value = "의뢰 번호", required = true) @RequestBody Map<String, Object> items) {
+		
+		String asetYn = items.get("asetYn").toString();
+		if(asetYn.equals("Y")) {
+			registService.unusedRegistDelete3(items);
+		}
 		
 		registService.unusedRegistDelete1(items);
 		
@@ -208,7 +208,7 @@ public class UnusedRegistController {
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> unusedRegisteDelete2( 
 			@ApiParam(value = "의뢰 번호", required = true) @RequestBody Map<String, Object> items) { 
-		AsetReqDto dto = new AsetReqDto();
+		RegistAsetReqDto dto = new RegistAsetReqDto();
 		List<String> asetList = (List<String>) items.get("asetNoList");
 		
 		dto.setReqNo(items.get("reqNo").toString());
