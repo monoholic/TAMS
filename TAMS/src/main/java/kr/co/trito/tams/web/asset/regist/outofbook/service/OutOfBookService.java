@@ -63,7 +63,7 @@ public class OutOfBookService {
 		mapper.deleteAsetMas(param);
 	}	
 	
-	//부외자산 업로드 저장
+	//부외자산 업로드
 	public List<OutOfBookBatchDto> saveUploadExcel(String userId, List<OutOfBookBatchDto> list) {
 		
 		//이력삭제
@@ -84,5 +84,14 @@ public class OutOfBookService {
 		}
 		
 		return result;
+	}
+	
+	//부외자산 일괄 업로드 저장
+	public void saveBatchOutOfBookAset(String userId, List<OutOfBookBatchDto> list) {
+		for(OutOfBookBatchDto dto : list) {
+			dto.setRegr(userId);
+			mapper.saveBatchOutOfBookAset(dto);
+			mapper.saveBatchOutOfBookAsetDtl(dto);
+		}		
 	}
 }
