@@ -16,23 +16,21 @@ public interface UnusedReuseMapper {
 	
 	public List<ReqMasDto> selectUnusedReuseList(SearchCondition condition);
 	
+	public int unusedReuseListInsert(Map<String, Object> data);
 	
+	public int unusedReuseListDelete(ReqMasDto dto);
 	
-	public int unusedRegistListInsert(Map<String, Object> data);
-	
-	public int unusedRegistListDelete(ReqMasDto dto);
-	
-	public List<ReqMasDto> selectUnusedRegistRegist(SearchCondition condition);
+	public List<ReqMasDto> selectUnusedReuseRegist(SearchCondition condition);
 	
 	public int selectCountAssetList(SearchCondition condition);
 	
 	public List<AsetReqDto> selectAssetList(SearchCondition condition);
 	
-	public int unusedRegistUpdate1(Map<String, Object> data);
+	public int unusedReuseUpdate1(Map<String, Object> data);
 	
-	public int unusedRegistUpdate2(Map<String, Object> data);
+	public int unusedReuseUpdate2(Map<String, Object> data);
 
-	public int unusedRegistDelete1(Map<String, Object> data);
+	public int unusedReuseDelete1(Map<String, Object> data);
 	
-	public int unusedRegistDelete2(AsetReqDto dto);
+	public int unusedReuseDelete2(AsetReqDto dto);
 }

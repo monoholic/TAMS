@@ -146,21 +146,21 @@
 	  	 ORDER BY req_no DESC
    	</select>
    	   	
-   	<!-- 유휴의뢰목록 작성 -->
-   	<insert id="unusedRegistListInsert" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" useGeneratedKeys="true" keyProperty="req_no">
+   	<!-- 재활용의뢰목록 작성 -->
+   	<insert id="unusedReuseListInsert" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" useGeneratedKeys="true" keyProperty="req_no">
    		INSERT INTO tb_req_mas (req_type, req_nm, req_dt, reqtr, req_rsn, req_stus, regr, reg_dt)
    		VALUES (#{reqType}, #{reqNm}, current_timestamp(), #{reqtr}, #{reqRsn}, #{reqStus}, #{regr} , current_timestamp())
    	</insert>
    	
-   	<!-- 유휴의뢰목록 삭제 -->
-   	<delete id="unusedRegistListDelete" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto">
+   	<!-- 재활용의뢰목록 삭제 -->
+   	<delete id="unusedReuseListDelete" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto">
 		DELETE 
 		  FROM TB_REQ_MAS
          WHERE req_no = SUBSTRING(#{reqNo},6,3)+0
 	</delete>   	
    	
-   	<!-- 유휴의뢰목록작성 화면 조회 -->
-   	<select id="selectUnusedRegistRegist" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   	<!-- 재활용의뢰목록작성 화면 조회 -->
+   	<select id="selectUnusedReuseRegist" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
    		SELECT (SELECT code_nm FROM tb_com_code WHERE code_id = A.req_type) AS req_type_nm
 		     , req_type 
 			 , CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no

@@ -27,18 +27,16 @@ public class UnusedReuseService {
 		return mapper.selectUnusedReuseList(condition);
 	}
 	
-	
-	
-	public int unusedRegistListInsert(Map<String, Object> data) {
-		return mapper.unusedRegistListInsert(data);
+	public int unusedReuseListInsert(Map<String, Object> data) {
+		return mapper.unusedReuseListInsert(data);
 	}
 	
-	public int unusedRegistListDelete(ReqMasDto dto) {
-		return mapper.unusedRegistListDelete(dto);
+	public int unusedReuseListDelete(ReqMasDto dto) {
+		return mapper.unusedReuseListDelete(dto);
 	}
 
-	public List<ReqMasDto> selectUnusedRegistRegist(SearchCondition condition) {
-		return mapper.selectUnusedRegistRegist(condition);
+	public List<ReqMasDto> selectUnusedReuseRegist(SearchCondition condition) {
+		return mapper.selectUnusedReuseRegist(condition);
 	}
 	
 	public int selectCountAssetList(SearchCondition condition) {
@@ -49,19 +47,19 @@ public class UnusedReuseService {
 		return mapper.selectAssetList(condition);
 	}
 	
-	public int unusedRegistUpdate1(Map<String, Object> data) {
-		return mapper.unusedRegistUpdate1(data);
+	public int unusedReuseUpdate1(Map<String, Object> data) {
+		return mapper.unusedReuseUpdate1(data);
 	}
 	
-	public int unusedRegistUpdate2(Map<String, Object> data) {
-		return mapper.unusedRegistUpdate2(data);
+	public int unusedReuseUpdate2(Map<String, Object> data) {
+		return mapper.unusedReuseUpdate2(data);
 	}	
 	
-	public int unusedRegistDelete1(Map<String, Object> data) {
-		return mapper.unusedRegistDelete1(data);
+	public int unusedReuseDelete1(Map<String, Object> data) {
+		return mapper.unusedReuseDelete1(data);
 	}
 	
-	public int unusedRegistDelete2(AsetReqDto dto) {
-		return mapper.unusedRegistDelete2(dto);
+	public int unusedReuseDelete2(AsetReqDto dto) {
+		return mapper.unusedReuseDelete2(dto);
 	}
 }

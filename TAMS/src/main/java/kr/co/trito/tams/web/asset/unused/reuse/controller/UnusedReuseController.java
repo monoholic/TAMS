@@ -91,13 +91,13 @@ public class UnusedReuseController {
 		return responseService.success(condition, list);
 	}
 	
-	/** 유휴의뢰 화면 : 등록 */  
-	@PostMapping(value="/unusedRegistInsert")
+	/** 재활용의뢰 화면 : 등록 */  
+	@PostMapping(value="/unusedReuseInsert")
 	@ResponseBody
-	@ApiOperation(value = "유휴목록 화면 / 등록", notes = "유휴목록 화면에서 의뢰를 작성한다. (이동의뢰)")
+	@ApiOperation(value = "재활용목록 화면 / 등록", notes = "재활용목록 화면에서 의뢰를 작성한다. (재활용의뢰)")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> unusedRegistInsert(
+	public ResponseEntity<? extends Response> unusedReuseInsert(
 			@ApiParam(value = "자산의뢰 등록 데이터", required = true) @RequestBody Map<String, Object> items,
 			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
 		
@@ -105,64 +105,64 @@ public class UnusedReuseController {
 		String userId = userInfo.getDto().getUserId();
 		
 		items.put("regr", userId);
-		reuseService.unusedRegistListInsert(items); 
+		reuseService.unusedReuseListInsert(items); 
 		
 		return responseService.success(null);
 	}	
 	
-	/** 유휴의뢰 목록 화면 : 삭제 */
-	@PostMapping(value="/unusedRegistDelete")
+	/** 재활용의뢰 목록 화면 : 삭제 */
+	@PostMapping(value="/unusedReuseDelete")
 	@ResponseBody
-	@ApiOperation(value = "유휴목록 화면 / 삭제", notes = "유휴목록 화면에서 의뢰를 삭제한다. (이동의뢰 삭제)")
+	@ApiOperation(value = "재활용목록 화면 / 삭제", notes = "재활용목록 화면에서 의뢰를 삭제한다. (재활용의뢰 삭제)")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> assetMoveDelete( 
+	public ResponseEntity<? extends Response> unusedReuseDelete( 
 			@ApiParam(value = "의뢰 번호", required = true) @RequestBody List<ReqMasDto> items) { 
 		
 		for(ReqMasDto reqNo : items) {
-			reuseService.unusedRegistListDelete(reqNo);
+			reuseService.unusedReuseListDelete(reqNo);
 		}
 		
 		return responseService.success(null);
 	}
 	
-	/** 유휴의뢰작성 화면 */
-	@PostMapping("/RegistRegList")
+	/** 재활용의뢰작성 화면 */
+	@PostMapping("/ReuseRegList")
 	@ResponseBody
 	public ModelAndView requestRegistView(HttpServletRequest request) {
 		ModelAndView view = new ModelAndView();
 		String reqNo = request.getParameter("reqNo");
 		
 		view.addObject("reqNo", reqNo);
-		view.setViewName("/content/asset/unused/regist/registRegist");
+		view.setViewName("/content/asset/unused/reuse/reuseRegist");
 		return view;
 	}
 	
-	/** 유휴의뢰작성 화면 : 조회 */
-	@GetMapping(value = "/unusedRegistRegist")
+	/** 재활용의뢰작성 화면 : 조회 */
+	@GetMapping(value = "/unusedReuseRegist")
 	@ResponseBody
-	@ApiOperation(value = "유휴의뢰작성 화면 / 조회", notes = "유휴의뢰작성 화면을 조회한다.")
+	@ApiOperation(value = "재활용의뢰작성 화면 / 조회", notes = "재활용의뢰작성 화면을 조회한다.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> AssetMoveRegistView(
+	public ResponseEntity<? extends Response> unusedReuseRegistView(
 			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(),
 				params.get("numOfRows").toString(), params);
 		condition.pageSetup(reuseService.selectCountAssetList(condition));
 
 		List<AsetReqDto> list = reuseService.selectAssetList(condition);
-		List<ReqMasDto> list2 = reuseService.selectUnusedRegistRegist(condition);
+		List<ReqMasDto> list2 = reuseService.selectUnusedReuseRegist(condition);
 
 		return responseService.success(condition, list, list2);
 	}
 	
-	/** 유휴의뢰작성 화면 : 수정 */  
-	@PostMapping(value="/unusedRegistRegUpdate")
+	/** 재활용의뢰작성 화면 : 수정 */  
+	@PostMapping(value="/unusedReuseRegUpdate")
 	@ResponseBody
-	@ApiOperation(value = "유휴의뢰작성 화면 : 수정", notes = "유휴의뢰작성 화면에서 의뢰 관련 정보를 수정한다.")
+	@ApiOperation(value = "재활용의뢰작성 화면 : 수정", notes = "재활용의뢰작성 화면에서 의뢰 관련 정보를 수정한다.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> unusedRegistRegUpdate(
+	public ResponseEntity<? extends Response> unusedReuseRegUpdate(
 			@ApiParam(value = "자산수정의뢰작성 화면 수정 데이터", required = true) @RequestBody Map<String, Object> items,
 			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
 		
@@ -172,41 +172,41 @@ public class UnusedReuseController {
 		List<Map<String, Object>> list = (List<Map<String, Object>>)items.get("asetList");
 		
 		items.put("regr", userId);
-		reuseService.unusedRegistUpdate1(items);
+		reuseService.unusedReuseUpdate1(items);
 		System.out.println("====================== "+list.size()+" ==============================");
 		for(int i=0; i<list.size(); i++) {
 			if (list.get(i).containsKey("reqNo"))
-				reuseService.unusedRegistUpdate2(list.get(i));
+				reuseService.unusedReuseUpdate2(list.get(i));
 			
 			else
 				(list.get(i)).put("reqNo", items.get("reqNo").toString());
-			reuseService.unusedRegistUpdate2(list.get(i));
+			reuseService.unusedReuseUpdate2(list.get(i));
 		}
 		
 		return responseService.success(null);
 	}	
 	
-	/** 유휴의뢰작성 화면 : 삭제(화면 상단) */
-	@PostMapping(value="/unusedRegistRegDelete1")
+	/** 재활용의뢰작성 화면 : 삭제(화면 상단) */
+	@PostMapping(value="/unusedReuseRegDelete1")
 	@ResponseBody
-	@ApiOperation(value = "유휴의뢰작성 화면 : 삭제", notes = "유휴의뢰작성 화면에서 의뢰 정보를 삭제한다.")
+	@ApiOperation(value = "재활용의뢰작성 화면 : 삭제", notes = "재활용의뢰작성 화면에서 의뢰 정보를 삭제한다.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> unusedRegisteDelete1( 
+	public ResponseEntity<? extends Response> unusedReuseDelete1( 
 			@ApiParam(value = "의뢰 번호", required = true) @RequestBody Map<String, Object> items) { 
 		
-		reuseService.unusedRegistDelete1(items);
+		reuseService.unusedReuseDelete1(items);
 		
 		return responseService.success(null);
 	}
 	
 	/** 자산수정 의뢰작성 화면 : 삭제(화면 하단) */
-	@PostMapping(value="/unusedRegistDelete2")
+	@PostMapping(value="/unusedReuseDelete2")
 	@ResponseBody
 	@ApiOperation(value = "자산수정 의뢰작성 화면 : 삭제", notes = "자산수정 의뢰작성 화면 : 삭제")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> unusedRegisteDelete2( 
+	public ResponseEntity<? extends Response> unusedReuseDelete2( 
 			@ApiParam(value = "의뢰 번호", required = true) @RequestBody Map<String, Object> items) { 
 		AsetReqDto dto = new AsetReqDto();
 		List<String> asetList = (List<String>) items.get("asetNoList");
@@ -215,7 +215,7 @@ public class UnusedReuseController {
 		
 		for(String asetNo : asetList) {
 			dto.setAsetNo(asetNo);
-			reuseService.unusedRegistDelete2(dto);
+			reuseService.unusedReuseDelete2(dto);
 		}
 		
 		return responseService.success(null);
