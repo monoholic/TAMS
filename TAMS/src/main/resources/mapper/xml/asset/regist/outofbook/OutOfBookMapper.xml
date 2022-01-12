@@ -490,5 +490,100 @@
 			 ) a        
 	</select>	
 		
-	
+	<insert id="saveBatchOutOfBookAset" parameterType="kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookBatchDto">
+				insert into tb_aset_mas(
+                	 aset_no
+                    ,aset_nm
+                    ,aset_type1
+                    ,aset_type2
+                    ,aset_type3
+                    ,mftco
+                    ,model
+                    ,sn
+                    ,biz_dept_cd
+                    ,dept_cd
+                    ,chrgr
+                    ,bsplc
+                    ,buld
+                    ,floor
+                    ,loc
+                    ,acq_prc
+                    ,acq_dt
+                    ,aset_out_book_yn
+                    ,aset_stus
+                    ,regr
+                ) values (
+                	#{asetNo}
+                	,#{asetNm}
+                	,#{asetType1}
+                	,#{asetType2}
+                	,#{asetType3}
+                	,#{mftco}
+                	,#{model}
+                	,#{sn}
+                	,#{bizDeptCd}
+                	,#{deptCd}
+                	,#{chrgr}
+                	,#{bsplc}
+                	,#{buld}
+                	,#{floor}
+                	,#{loc}
+                	,#{acqPrc}
+                	,#{acqDt}               	
+                    ,'Y'
+                    ,'10'
+                	,#{regr}                    
+                )	
+	</insert>	
+	<insert id="saveBatchOutOfBookAsetDtl" parameterType="kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookBatchDto">		
+				insert into tb_aset_dtl(
+                	aset_no
+                    ,aset_type
+                    ,dtl_info1
+                    ,dtl_info2
+                    ,dtl_info3
+                    ,dtl_info4
+                    ,dtl_info5
+                    ,dtl_info6
+                    ,dtl_info7
+                    ,dtl_info8
+                    ,dtl_info9
+                    ,dtl_info10
+                    ,dtl_info11
+                    ,dtl_info12
+                    ,dtl_info13
+                    ,dtl_info14
+                    ,dtl_info15
+                    ,dtl_info16
+                    ,dtl_info17
+                    ,dtl_info18
+                    ,dtl_info19
+                    ,dtl_info20
+                    ,regr
+                ) values (
+                	#{asetNo}
+                	, #{asetType3}
+					, #{dtlInfo1}
+					, #{dtlInfo2}
+					, #{dtlInfo3}
+					, #{dtlInfo4}
+					, #{dtlInfo5}
+					, #{dtlInfo6}
+					, #{dtlInfo7}
+					, #{dtlInfo8}
+					, #{dtlInfo9}
+					, #{dtlInfo10}
+					, #{dtlInfo11}
+					, #{dtlInfo12}
+					, #{dtlInfo13}
+					, #{dtlInfo14}
+					, #{dtlInfo15}
+					, #{dtlInfo16}
+					, #{dtlInfo17}
+					, #{dtlInfo18}
+					, #{dtlInfo19}
+					, #{dtlInfo20}              
+					, #{regr}
+                )	
+	</insert>			
 </mapper>

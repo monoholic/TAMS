@@ -36,4 +36,10 @@ public interface OutOfBookMapper {
 	
 	//업로드 결과 조회
 	public List<OutOfBookBatchDto> selectUploadResultList(String userId);
+	
+	//부외자산 일괄업로드 저장
+	public int saveBatchOutOfBookAset(OutOfBookBatchDto dto);
+	
+	//부외자산 일괄업로드 저장
+	public int saveBatchOutOfBookAsetDtl(OutOfBookBatchDto dto);
 }

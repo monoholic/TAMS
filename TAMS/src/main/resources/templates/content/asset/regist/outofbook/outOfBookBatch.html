@@ -74,7 +74,7 @@
 					 	{title:"[[#{screen.text.outofbook.aset.prop19}]]"	, field:"dtlInfo19"		, hozAlign:"left" 		, headerHozAlign:"center"},
 					 	{title:"[[#{screen.text.outofbook.aset.prop20}]]"	, field:"dtlInfo20"		, hozAlign:"left" 		, headerHozAlign:"center"},
 						{title: "[[#{screen.text.outofbook.upload.valid}]]"	, field: "chkResult"	, hozAlign:"left"  		, headerHozAlign:"center"},
-						{ title: "", field: "isNull", visible:false},
+						{ title: "", field: "isError", visible:false},
 				 	],
 				});		
 				
@@ -95,6 +95,11 @@
 				//일괄업로드
 				$("#btnUpload").on("click", function(){					
 
+					if($("#excelNm").val() == "") {
+						alert("[[#{screen.info.status.error.outofbook.no.upload.file}]]");
+						return;
+					}
+					
 					//그리드 초기화
 					grid.replaceData();
 					
@@ -111,6 +116,7 @@
 						});
 				});				
 				
+				//오류건만 보기 
 				$("#btnError").on("click",function(){ 
 					let status = $("#btnError").html();
 					if(status == "[[#{screen.btn.error.list}]]"){
@@ -122,6 +128,29 @@
 					}
 				});								
 				
+				//저장
+				$("#btnSave").on("click",function (){ 				
+					let invalidData = grid.searchData("isError", "=", "Y");
+					let gridData = grid.getData();
+	    	    	let params = {
+		    	    		url : "/asset/regist/outofbook/saveBatchOutOfBookAset",
+		    	    		reqType : 'POST',
+		    	    		data : JSON.stringify(gridData),
+		    	    	}					
+					
+					if(invalidData.length == 0){
+						$.request(params)
+							.then((res) => {
+								window.opener.search();
+								window.close();
+							})
+							.catch((error) => {
+								alert('[[#{screen.info.status.error.occur}]]');	
+							}); 
+					}else{
+						alert("[[#{screen.info.status.error.outofbook.upload.invalid}]]");
+					}
+		        });
 				
 				//팝업창 닫기
 				$("#btn_close_pop").on("click",function(){ 

@@ -155,4 +155,16 @@ public class OutOfBookController {
 		return responseService.success(result);
 	}	
 	
+	@PostMapping(value="/saveBatchOutOfBookAset")
+	@ResponseBody
+	@ApiOperation(value = "부외자산 일괄 업로드 저장", notes = "부외자산 일괄 업로드 등록 처리한다.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> saveBatchOutOfBookAset( 
+			@ApiParam(value = "메뉴권한", required = false) @RequestBody(required = false)  List<OutOfBookBatchDto> list, Authentication authentication) { 
+		UserDto userDto = ((UserInfo) authentication.getPrincipal()).getDto();	
+		outOfBookService.saveBatchOutOfBookAset(userDto.getUserId(), list);
+		return responseService.success(null);
+	} 	
+	
 }
