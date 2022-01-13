@@ -115,8 +115,14 @@ public class UnusedRegistController {
 	public ResponseEntity<? extends Response> unusedRegistDelete( 
 			@ApiParam(value = "의뢰 번호", required = true) @RequestBody List<RegistReqMasDto> items) { 
 		
-		for(RegistReqMasDto reqNo : items) {
-			registService.unusedRegistListDelete(reqNo);
+		for(int i=0 ; i<items.size() ; i++) {
+			String reqno = items.get(i).getReqNo();
+			
+			registService.unusedRegistListDelete(reqno);
+			
+			if(items.get(i).getAsetCnt() > 0) {
+				registService.unusedRegistListAsetDelete(reqno);
+			}	
 		}
 		
 		return responseService.success(null);

@@ -18,7 +18,9 @@ public interface UnusedRegistMapper {
 	
 	public int unusedRegistListInsert(Map<String, Object> data);
 	
-	public int unusedRegistListDelete(RegistReqMasDto dto);
+	public int unusedRegistListDelete(String reqno);
+	
+	public int unusedRegistListAsetDelete(String reqno);
 	
 	public List<RegistReqMasDto> selectUnusedRegistRegist(SearchCondition condition);
 	

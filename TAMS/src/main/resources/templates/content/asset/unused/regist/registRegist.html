@@ -20,9 +20,6 @@
 		
 	    <script>
 		    let grid;
-		    
-		    
-		    
 		    let loadParams; //Local Storage에 저장된 파라미터 정보
 		    let requestUrl = "/asset/unused/regist/unusedRegistRegist";
 		    
@@ -195,14 +192,14 @@
 		  			let reqType = 'POST';
 		  			
 			    	var subReqNo = ($("#reqNo").val()).substr(6,3);
-			    	
+			   
 			    	let data={
 	                		reqNo    : subReqNo,
 	                		reqNm    : $("#reqNm").val(),
 	                		reqRsn   : $("#reqRsn").val(),
 	                		asetList : selectedData
 	                };
-			    	console.log(selectedData);
+			    	
 			    	$.commRequest(url, reqType, JSON.stringify(data))
 		  				.then((res) => {
 		  					grid.setData(requestUrl);
@@ -319,22 +316,6 @@
 		    	}
 		    }
 		    
-		  	//선택 버튼클릭시 
-		    function selectItems(obj) {
-				opener.setResult(obj);
-				window.close();
-		    }
-		  	
-		  	/* //팝업에서 받은 결과 처리
-		    function setResult(obj) {
-		    	$("#jsGrid").jsGrid("updateItem", targetItem, {chrgr: obj.userId});
-		    } */
-		    
-		    // 사용자 선택 팝업에서 받은 결과 처리
-		    function setResult(obj) {
-				$("#reqtr").val(obj.userId);
-			}
-		    
 		 	// 삭제 시 이전 페이지로 이동
 	    	function requestListView() {
 		 		
@@ -373,13 +354,7 @@
 	    		});
 	    		grid.setData(asetList);
 			}
-	    
-		 	// 공통코드 호출
-		    function getCommCode(id, code, level, upperCodeId){				
-				let url = "/common/comm/selectBox";
-				let reqType = 'GET';
-				$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId);			
-			}
+	    	
 			
 	    </script>	
 	</th:block>

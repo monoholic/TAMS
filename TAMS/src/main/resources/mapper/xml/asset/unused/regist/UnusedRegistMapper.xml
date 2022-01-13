@@ -156,8 +156,15 @@
    	<delete id="unusedRegistListDelete" parameterType="kr.co.trito.tams.web.asset.unused.regist.dto.RegistReqMasDto">
 		DELETE 
 		  FROM TB_REQ_MAS
-         WHERE req_no = SUBSTRING(#{reqNo},6,3)+0
-	</delete>   	
+         WHERE req_no = SUBSTRING(#{reqNo},7,3)+0
+	</delete>
+	
+	<!-- 유휴의뢰목록 삭제 : 자산수가 1이상일경우  -->
+	<delete id="unusedRegistListAsetDelete" parameterType="kr.co.trito.tams.web.asset.unused.regist.dto.RegistReqMasDto">
+		DELETE 
+		  FROM TB_ASET_REQ
+         WHERE req_no = SUBSTRING(#{reqNo},7,3)+0
+	</delete>
    	
    	<!-- 유휴의뢰목록작성 화면 조회 -->
    	<select id="selectUnusedRegistRegist" resultType="kr.co.trito.tams.web.asset.unused.regist.dto.RegistReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">

@@ -31,10 +31,14 @@ public class UnusedRegistService {
 		return mapper.unusedRegistListInsert(data);
 	}
 	
-	public int unusedRegistListDelete(RegistReqMasDto dto) {
-		return mapper.unusedRegistListDelete(dto);
+	public int unusedRegistListDelete(String reqno) {
+		return mapper.unusedRegistListDelete(reqno);
 	}
 
+	public int unusedRegistListAsetDelete(String reqno) {
+		return mapper.unusedRegistListAsetDelete(reqno);
+	}
+	
 	public List<RegistReqMasDto> selectUnusedRegistRegist(SearchCondition condition) {
 		return mapper.selectUnusedRegistRegist(condition);
 	}
