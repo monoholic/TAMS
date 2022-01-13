@@ -53,10 +53,16 @@ public class AsetMasDto {
 	private String chrgrNm;
 	@ApiModelProperty(value="공통코드(사업장)")
 	private String bsplc;
+	@ApiModelProperty(value="공통코드(사업장)명")
+	private String bsplcNm;
 	@ApiModelProperty(value="공통코드(건물)")
 	private String buld;
+	@ApiModelProperty(value="공통코드(건물)명")
+	private String buldNm;
 	@ApiModelProperty(value="공통코드(층)")
 	private String floor;
+	@ApiModelProperty(value="공통코드(층)명")
+	private String floorNm;
 	@ApiModelProperty(value="위치")
 	private String loc;
 	@ApiModelProperty(value="비용부서코드")

@@ -66,6 +66,13 @@
 						{title: "[[#{screen.popup.text.asset.charger}]]"    	, field: "chrgr"		   		, hozAlign: "left"  		, headerHozAlign:"center", visible:false},
 						{title: "[[#{screen.popup.text.asset.charger}]]"    	, field: "chrgrNm"	   		, hozAlign: "center"  , headerHozAlign:"center", width:100},
 						{title: "[[#{screen.popup.text.asset.status}]]"     		, field: "asetStusNm" 	, hozAlign: "center"	, headerHozAlign:"center", width:100},
+						{title: "[[#{screen.popup.text.asset.bsplc}]]"     		, field: "bsplc" 	, hozAlign: "center"	, headerHozAlign:"center", width:100, visible:false},
+						{title: "[[#{screen.popup.text.asset.bsplc}]]"     		, field: "bsplcNm" 	, hozAlign: "center"	, headerHozAlign:"center", width:100, visible:false},
+						{title: "[[#{screen.popup.text.asset.buld}]]"     		, field: "buld" 	, hozAlign: "center"	, headerHozAlign:"center", width:100, visible:false},
+						{title: "[[#{screen.popup.text.asset.buld}]]"     		, field: "buldNm" 	, hozAlign: "center"	, headerHozAlign:"center", width:100, visible:false},
+						{title: "[[#{screen.popup.text.asset.floor}]]"     		, field: "floor" 	, hozAlign: "center"	, headerHozAlign:"center", width:100, visible:false},
+						{title: "[[#{screen.popup.text.asset.floor}]]"     		, field: "floorNm" 	, hozAlign: "center"	, headerHozAlign:"center", width:100, visible:false},
+						{title: "[[#{screen.popup.text.asset.loc}]]"     		, field: "loc" 	, hozAlign: "center"	, headerHozAlign:"center", width:100, visible:false},
 				 	],
 				});				
 				
@@ -166,7 +173,7 @@
 	     	    
 	     	    // 선택 버튼
 	     	    $("#btn_sel").on("click",function() {
-	    	    	let selectedData  = grid.getSelectedData();	     	    	
+	    	    	let selectedData  = grid.getSelectedData();
 	     		  	returnResult(selectedData);
 				});
 	    	});

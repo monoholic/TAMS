@@ -319,6 +319,9 @@
        		 , F.dept_nm AS bizDeptNm
        		 , G.dept_nm AS deptNm
        		 , H.code_nm AS asetStusNm
+       		 , I.code_nm AS bsplcNm
+       		 , J.code_nm AS buldNm
+       		 , K.code_nm AS floorNm       		 
 			 FROM (
 			   		SELECT aset_no 		    AS asetNo
 						 , aset_nm 		    AS asetNm
@@ -398,6 +401,15 @@
 		      	LEFT OUTER JOIN tb_com_code H
 		          ON H.code_grp_id = 'AS_STATUS'
 		         AND A.asetStus = H.code_id
+		      	LEFT OUTER JOIN tb_com_code I
+		          ON I.code_grp_id = 'SITE'
+		         AND A.bsplc = I.code_id
+		      	LEFT OUTER JOIN tb_com_code J
+		          ON J.code_grp_id = 'BUILDING'
+		         AND A.buld = J.code_id
+		      	LEFT OUTER JOIN tb_com_code K
+		          ON K.code_grp_id = 'FLOOR'
+		         AND A.floor = K.code_id		         		         		         
 			WHERE rn BETWEEN #{start} AND #{end}
 			ORDER BY asetNo DESC
    	</select>
