@@ -1,4 +1,4 @@
-package kr.co.trito.tams.web.common.dto;
+package kr.co.trito.tams.web.asset.unused.reuse.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,24 +15,20 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-@ApiModel("자산선택(팝업-공통) 정보")
-public class AsetMasDto {
+@ApiModel("자산마스터 이력 정보")
+public class ReuseAsetReqDto {
 	@ApiModelProperty(value="자산번호")
 	private String asetNo;
+	@ApiModelProperty(value="의뢰번호")
+	private String reqNo;
 	@ApiModelProperty(value="자산명")
 	private String asetNm;
 	@ApiModelProperty(value="공통코드(자산유형1)")
 	private String asetType1;
-	@ApiModelProperty(value="공통코드명(자산유형1)")
-	private String asetTypeNm1;
 	@ApiModelProperty(value="공통코드(자산유형2)")
 	private String asetType2;
-	@ApiModelProperty(value="공통코드명(자산유형1)")
-	private String asetTypeNm2;
 	@ApiModelProperty(value="공통코드(자산유형3)")
 	private String asetType3;
-	@ApiModelProperty(value="공통코드명(자산유형1)")
-	private String asetTypeNm3;
 	@ApiModelProperty(value="제조사")
 	private String mftco;
 	@ApiModelProperty(value="모델")
@@ -43,13 +39,13 @@ public class AsetMasDto {
 	private String bizDeptCd;
 	@ApiModelProperty(value="사업부코드명")
 	private String bizDeptNm;
-	@ApiModelProperty(value="부서코드")
-	private String deptCd;
 	@ApiModelProperty(value="부서코드명")
+	private String deptCd;
+	@ApiModelProperty(value="부서코드")
 	private String deptNm;
 	@ApiModelProperty(value="담당자")
 	private String chrgr;
-	@ApiModelProperty(value="담장자명")
+	@ApiModelProperty(value="담당자명")
 	private String chrgrNm;
 	@ApiModelProperty(value="공통코드(사업장)")
 	private String bsplc;
@@ -83,10 +79,26 @@ public class AsetMasDto {
 	private String acqDt;
 	@ApiModelProperty(value="부외여부")
 	private String asetOutBookYn;
+	@ApiModelProperty(value="이동인수자")
+	private String moveAccpr;
+	@ApiModelProperty(value="이동인계자")
+	private String moveHndvr;
+	@ApiModelProperty(value="공통코드(유휴처리방향)")
+	private String urDir;
+	@ApiModelProperty(value="공통코드(유휴처리방향)명")
+	private String urDirNm;
+	@ApiModelProperty(value="매각 처리자")
+	private String dispoProcr;
+	@ApiModelProperty(value="매각가")
+	private String dispoPrc;
+	@ApiModelProperty(value="매각처")
+	private String dispoPl;
+	@ApiModelProperty(value="폐기처리자")
+	private String dscdProcr;
+	@ApiModelProperty(value="폐기처리장소")
+	private String dscdPl;
 	@ApiModelProperty(value="공통코드(자산상태)")
 	private String asetStus;
-	@ApiModelProperty(value="공통코드(자산상태명)")
-	private String asetStusNm;
 	@ApiModelProperty(value="수정자")
 	private String updr;
 	@ApiModelProperty(value="수정일자")

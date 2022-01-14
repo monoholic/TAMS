@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto;
-import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
+import kr.co.trito.tams.web.asset.unused.reuse.dto.ReuesReqMasDto;
+import kr.co.trito.tams.web.asset.unused.reuse.dto.ReuseAsetReqDto;
 import kr.co.trito.tams.web.asset.unused.reuse.mapper.UnusedReuseMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +23,7 @@ public class UnusedReuseService {
 		return mapper.selectCountUnusedReuseList(condition);
 	}
 	
-	public List<ReqMasDto> selectUnusedReuseList(SearchCondition condition){
+	public List<ReuesReqMasDto> selectUnusedReuseList(SearchCondition condition){
 		return mapper.selectUnusedReuseList(condition);
 	}
 	
@@ -31,11 +31,15 @@ public class UnusedReuseService {
 		return mapper.unusedReuseListInsert(data);
 	}
 	
-	public int unusedReuseListDelete(ReqMasDto dto) {
-		return mapper.unusedReuseListDelete(dto);
+	public int unusedReuseListDelete(String reqno) {
+		return mapper.unusedReuseListDelete(reqno);
 	}
 
-	public List<ReqMasDto> selectUnusedReuseRegist(SearchCondition condition) {
+	public int unusedReuseListAsetDelete(String reqno) {
+		return mapper.unusedReuseListAsetDelete(reqno);
+	}
+	
+	public List<ReuesReqMasDto> selectUnusedReuseRegist(SearchCondition condition) {
 		return mapper.selectUnusedReuseRegist(condition);
 	}
 	
@@ -43,7 +47,7 @@ public class UnusedReuseService {
 		return mapper.selectCountAssetList(condition);
 	}
 	
-	public List<AsetReqDto> selectAssetList(SearchCondition condition) {
+	public List<ReuseAsetReqDto> selectAssetList(SearchCondition condition) {
 		return mapper.selectAssetList(condition);
 	}
 	
@@ -59,7 +63,11 @@ public class UnusedReuseService {
 		return mapper.unusedReuseDelete1(data);
 	}
 	
-	public int unusedReuseDelete2(AsetReqDto dto) {
+	public int unusedReuseDelete2(ReuseAsetReqDto dto) {
 		return mapper.unusedReuseDelete2(dto);
+	}
+	
+	public int unusedReuseDelete3(Map<String, Object> data) {
+		return mapper.unusedReuseDelete3(data);
 	}
 }

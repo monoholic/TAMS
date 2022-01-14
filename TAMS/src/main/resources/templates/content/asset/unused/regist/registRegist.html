@@ -121,7 +121,7 @@
 							});	
 					 		return {values:values};
 		                }},
-		                {title:"유휴처리방향코드", field:"urDir", visible:false},
+		                {title:"[[#{screen.text.regist.asset.ur.dir}]]", field:"urDir", visible:false},
 		                {title:"[[#{screen.text.regist.asset.site}]]"        , field:"bsplcNm"     , hozAlign:"center" , headerHozAlign:"center", editor:"select", editorParams:function(cell){
 		                	var values = {};					 		
 					 		$.each(bsplc, function(i){
@@ -129,7 +129,7 @@
 							});	
 					 		return {values:values};
 		                }},
-		                {title:"보관사업장코드", field:"bsplc", visible:false},
+		                {title:"[[#{screen.text.regist.asset.site}]]", field:"bsplc", visible:false},
 		                {title:"[[#{screen.text.regist.asset.building}]]"    , field:"buldNm"    	 , hozAlign:"center" , headerHozAlign:"center", editor:"select", editorParams:function(cell){
 		                	var values = {};					 		
 					 		$.each(buld, function(i){
@@ -137,7 +137,7 @@
 							});	
 					 		return {values:values};
 		                }},
-		                {title:"보관건물코드", field:"buld", visible:false},
+		                {title:"[[#{screen.text.regist.asset.building}]]", field:"buld", visible:false},
 		                {title:"[[#{screen.text.regist.asset.floor}]]"       , field:"floorNm"    , hozAlign:"center" , headerHozAlign:"center", editor:"select", editorParams:function(cell){
 		                	var values = {};					 		
 					 		$.each(floor, function(i){
@@ -145,7 +145,7 @@
 							});	
 					 		return {values:values};
 		                }},
-		                {title:"보관층코드", field:"floor", visible:false},
+		                {title:"[[#{screen.text.regist.asset.floor}]]", field:"floor", visible:false},
 		                {title:"[[#{screen.text.regist.asset.loc}]]"         , field:"loc"    	 , hozAlign:"left" , headerHozAlign:"center", editor:"input", validator:"required"},
 				 	],
 				});

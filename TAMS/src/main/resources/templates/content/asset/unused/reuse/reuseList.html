@@ -19,550 +19,550 @@
 		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
 		
 	    <script>
-	    	const SCREEN_NM = "REUSE_REQ_RIST";    
-		    
-		    let grid;
-		    let loadParams; //Local Storage에 저장된 파라미터 정보
-		    let requestUrl = "/asset/unused/reuse/unusedReuseList";
-		    
-		    var condition = {};
-		 	var prevCondition = {};
-		 	
-		    $(function(){
-		    	if("[[${loadParams}]]" == 'Y'){ //등록자산 목록에서 화면전환시
-		    		loadParams = $.commLoadSearchParams(SCREEN_NM);
-		    	}else{
-		    		$.commRemoveSearchParams(SCREEN_NM); //메뉴클릭시	    		
-		    	}
-		    	
-		    	getCommCode("#reqStus", "APPR_STATUS", "1", "");
-		    	getCommCode("#reqType", "REQ_TYPE", "1", "");
-		    	getCommCode("#req_stus", "APPR_STATUS", "1", "")
-	             .then(()=>{
-		            if(loadParams != null){
-		                prevCondition = loadParams.condition.params;
-		    	        if(Object.keys(prevCondition).length != undefined){
-		    	        	$("#req_no").val(prevCondition.reqNo);
-		    	        	$("#fromDate").val(prevCondition.fromDate);
-		    	        	$("#toDate").val(prevCondition.toDate);
-		    	        	$("#req_nm").val(prevCondition.reqNm);
-		    	        	$("#deptCd1").val(prevCondition.deptCd1);
-		    	        	$("#deptNm1").val(prevCondition.deptNm1);
-		    	        	$("#deptCd2").val(prevCondition.deptCd2);
-		    	        	$("#deptNm2").val(prevCondition.deptNm2);
-		    	        	$("#Reqtr").val(prevCondition.reqtr);
-		    	        	$("#aset_no").val(prevCondition.asetNo);
-		    	        	$("#req_stus").val(prevCondition.reqStus);
-		    	        	
-		    	        	grid.setData(requestUrl, getParams());
-		    	        } 
-		            }else {
-		            	grid.setData(requestUrl, getParams());
-		            }				  
-		    	 }).catch((error) => {
-		    		 console.log(error);
-		    	 })
-		    	
-				grid = new Tabulator("#data-table", {
-				 	locale:true,
-				    langs: $.commGridLocalization(),								
-				 	height:"95%",
-				 	layout:"fitColumns",
-				 	movableColumns:true,
-				 	pagination:true,
-				 	paginationMode:"remote",
-				 	ajaxURL: requestUrl,			
-				 	ajaxParams: getParams(),
-				 	paginationSize:20,				    
-				 	paginationSizeSelector:[20, 50, 100, 500],			
-				 	dataSendParams:{
-				        "page":"currentPage",
-				        "size":"numOfRows"
-				    } ,							    
-				 	placeholder:"No Data Set",				 	
-				 	ajaxResponse:function(url, params, res){
-				 		$(".result").text("Totals : " + res.condition.totalCount);
-						condition = res.condition;				 						 		
-				 		return res;
-				 	},					 	
-				 	columns:[
-				 		{formatter:"rowSelection", titleFormatter:"rowSelection", hozAlign:"center", headerHozAlign:"center", 
-			 	        	headerSort:false, width:30, cellClick:function(e, cell){
-			 	         		cell.getRow().toggleSelect();
-			 	        }},
-				 		{title:"[[#{screen.text.regist.no}]]"      , field:"reqNo"     , hozAlign:"center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.regist.type}]]"    , field:"reqTypeNm" , hozAlign:"center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.regist.nm}]]"      , field:"reqNm"     , hozAlign:"left"    , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.regist.dept}]]"    , field:"reqtrDept" , hozAlign:"center" 	, headerHozAlign:"center"},
-		                {title:"[[#{screen.text.regist.reqtr}]]"   , field:"reqtr"     , hozAlign:"center" 	, headerHozAlign:"center"},
-		                {title:"[[#{screen.text.regist.dt}]]"      , field:"reqDt"     , hozAlign:"center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.regist.stus}]]"    , field:"reqStusNm" , hozAlign:"center"  , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.regist.asetcnt}]]" , field:"asetCnt"   , hozAlign:"right"  	, headerHozAlign:"center"},
-				 	],
-				});						
-
-				/*------------- Grid Events -------------*/
-				//row click
-				grid.on("rowClick", function(e, row){	
-					var rowData = row.getData();
-					openAsetList(row.getData());
-				});	
-				
-				/*------------- Button Events -------------*/
-	         	//조회
-	    	    $(".btn_srch").on("click",function (){
-                	grid.setData(requestUrl, getParams());
-              	});
-	    	    
-	    	    // 의뢰 작성
-				$(".btn_add").click(function() {
-	    	    	showDetailForm();
-	    	    });
-	    	    
-	    	    // 의뢰 삭제
-				$(".btn_del").click(function() {
-	    	    	
-	    	    	let selectedData = grid.getSelectedData();
-	    	    	
-	    	    	if(selectedData.length == 0){
-	    	    		alert('[[#{screen.info.status.error.inv.no.selected.item}]]');
-	    	    		return;
-	    	    	}	
-	    	    	
-	    	    	for(row of selectedData){
-	    	    		if(row.poAsetYn == 'Y') {
-	    	    			alert('[[#{screen.info.status.error.inv.has.registered.item}]]');
-	    	    			return false;
-	    	    		}    		    	    		
-	    	    	}
-	    	    	
-	    	    	let params = {
-	    	    		url : "/asset/unused/reuse/unusedReuseDelete",
-	    	    		reqType : 'POST',
-	    	    		data : JSON.stringify(selectedData),
-	    	    	}
-
-	    			$.request(params)
-    				 .then((res) => {
-    					alert("[[#{screen.info.status.delete.success}]]");
-    					$('.btn_srch').click();
-    				 })
-    				 .catch((error) => {
-    					alert("[[#{screen.info.status.error.occur}]]");
-    					console.log(error);
-    				 }) 
-	    	    });
-		        
-	          	// 초기화 버튼
-	    	    $(".btn_reset").click(function() {
-	    	    	$("#req_no").val("");
-	    	    	$("#fromDate").val("");
-	    	    	$("#toDate").val("");
-	    	    	$("#req_nm").val("");
-	    	    	$("#deptCd1").val("");
-	    	    	$("#deptNm1").val("");
-	    	    	$("#deptCd2").val("");
-	    	    	$("#deptNm2").val("");
-	    	    	$("#Reqtr").val("");
-	    	    	$("#aset_no").val("");
-	    	    	$("#req_stus option:eq(0)").prop("selected",true);
-	    	    });
-	          	
-	    	 	// 팝업창 닫기 버튼 처리
-	            $('#dt_close').on('click', function (e) {
-	                clearDetailForm();
-	                $(this).parents("#detailForm").hide();
-	            });
-	          	
-	     		// 팝업창 저장 버튼 처리
-	            $('#dt_add').on('click', function (e) {
-	            	
-	                if(validationCheck() != '200'){
-		            	
-		                var sub_item = {};			            
-		                sub_item.reqType = $(".detail_table").find("#reqType").val(); 
-				    	sub_item.reqNm 	 = $(".detail_table").find("#reqNm").val();   
-				    	sub_item.reqtr 	 = $(".detail_table").find("#reqtr").val();   
-				    	sub_item.reqStus = $(".detail_table").find("#reqStus").val(); 
-				    	sub_item.reqRsn  = $(".detail_table").find("#reqRsn").val();  
-				    					    	
-		    		    let url = "/asset/unused/reuse/unusedReuseInsert";
-		    		    let reqType = 'POST';
-		    		    $.commRequest(url, reqType, JSON.stringify(sub_item))
-		    		      .then((res) => {
-		    		    	  $(this).parents("#detailForm").hide();
-		    		    	  grid.setData(requestUrl, getParams());
-		    		      })
-		    		      .catch((error) => {
-		    		    	console.log(error);
-		    		      });				    		
-		        	}
-	            });
-	    	 	
-				// 담당자 
-	    	    $("#openUserFilterPopup").on("click", function() { 	    	    	
-	    	        var url = "/common/popup/userFilterPopup";
-	    	        var popId = "userPopup";
-	    	        var args = {
-	    	        	width  : 800,	
-	    	        	height : 416,
-	    	        };	    	        
-	    	        var param = {userId:"#userId", userNm:"#userNm"};	    	        
-	    	        openPopup2("userPopup", url, args, param);	    	    	
-	    	    });
-				
-	    	  	// 부서 
-	     	    $("#openDeptPopup").on("click", function() { 
-	     	    	let url = "/common/popup/deptTreePopup";
-	     	    	let args = {
-		     	    		width  : 500, 
-		     	    		height : 450,
-		     	    	};	    	        
-	     	    	let param = {
-	    	        	searchType:"DEPT", 
-	    	        	deptCd:"#deptCd", 
-	    	        	deptNm:"#deptNm"
-	    	        };	    	        
-	    	        openPopup2("DeptPopup", url, args, param);
-	     	    });
-	     	    
-	    	  	//엑셀 다운로드
-	     	    $("#excelDown").on("click",function() {	       					       
-	     	    	grid.download("xlsx", "UnusedReuse.xlsx", {sheetName:"유휴의뢰"});
-				});
-	    	  	
-	     		// 사용자 팝업 호출
-	            $("#openUserPopup").on("click", function() { 
-	    	        // 팝업 호출 url
-	    	        var url = "/common/popup/userPopup";
-	    	        var popId = "userPopup";
-	    	        var args = {};
-	    	        args.width = 650;
-	    	        args.height = 416;
-	    	        args.fullscreen = "no";
-	    	        args.resizable = "no";
-	    	        
-	    	        openPopup2(popId, url, args);
-	    	    });
-	    	  	
-	     		// 공통코드팝업(사업부) 호출 
-	     	    $("#openDeptPopup1").on("click", function() { 
-	    	        var url = "/common/popup/deptTreePopup";
-	    	        var popId = "DeptPopup";
-	    	        var args = {
-	    	        };
-	    	        args.width = 500;
-	    	        args.height = 450;
-	    	        args.fullscreen = "no";
-	    	        args.resizable = "no";
-	    	        
-	    	        var param = {};
-	    	        param.searchType = "BIZ_DEPT";
-	 	        	param.deptCd = "#deptCd1";
-	 	        	param.deptNm = "#deptNm1";
-	    	         	  
-	 	           openPopup2(popId, url, args, param);
-	     	    });
-	    	  	
-	     		// 공통코드팝업(부서) 호출
-	     	    $("#openDeptPopup2").on("click", function() { 
-	        	    // 팝업 호출 url
-	       	        var url = "/common/popup/deptTreePopup";
-	       	        var popId = "DeptPopup";
-	       	        var args = {
-	       	        };
-	       	        args.width = 500;
-	       	        args.height = 450;
-	       	        args.fullscreen = "no";
-	       	        args.resizable = "no";
-	       	        
-	       	     	var param = {}; 	        	
-	    	        param.searchType = "DEPT";
-	 	        	param.deptCd = "#deptCd2";
-	 	        	param.deptNm = "#deptNm2"; 	        	
-	       	        
-	 	        	openPopup2(popId, url, args, param);
-	        	});
-	     		
-	     	 	//drag 활성화
-		     	$("#detailForm").draggable();
-	    	});
-			
-		    // 검색 시 엔터키로 조회
-			function enterkey() {
-		    	if (window.event.keyCode == 13) {
-		    		if (validationCheck() == '202') {
-		    			grid.setData(requestUrl, getParams());
-		    		}
-		        }
-		    }
-			 
-			// 유효성 검사
-		    function validationCheck() {
-		    	let code = '202';				
-		    	let fromDate = $("#fromDate").val().replaceAll("-", "");
-		    	let toDate = $("#toDate").val().replaceAll("-", "");
-		    	
-				if(fromDate > toDate) {
-					alert("[[#{screen.info.status.date.fail}]]");
-					$("#toDate").focus();
-					code = '200';
-				}
-				return code;
-		    }
-			
-		    function returnResult(item) {
-				opener.selectAsetList(item);
-				window.close();
-		    }
-		    
-		    function openAsetList(val){
-		       	event.preventDefault();
-		       	
-		       	var subReqNo = parseInt((val.reqNo).substr(5,3));
-		       	
-		       	let saveParams = {
-		       		"condition": condition,
-		       		"menuId"   : "[[${menuId}]]" ,
-		       		"menuNm"   : "[[${menuNm}]]",
-		       		"menuDesc" : "[[${menuDesc}]]",
-		       	}
-		       	
-		       	$.commSaveSearchParams(SCREEN_NM, saveParams);
-		       	
-	            let url = "/asset/unused/reuse/ReuseRegList";
-				let menuId = "[[${menuId}]]";
-	            
-				var $form = $('<form></form>'); 
-					$form.attr('action', url); 
-					$form.attr('method', 'Post'); 
-					$form.attr('target', '_self'); 
-					
-				var reqNoStr = $('<input type="hidden" value="'+ subReqNo +'" name="reqNo">');
-					$form.append(reqNoStr);
-					menuIdStr = $('<input type="hidden" value="'+ menuId +'" name="menuId">');
-					$form.append(menuIdStr); 					
-					$form.appendTo('body'); 					
-					$form.submit();
-		    }
-
-		    let items = ['reqNm', 'reqtr', 'reqStus', 'reqRsn'];
-		    
-		    function clearDetailForm() {
-		    	items.forEach(function(id){
-		    		$("#"+id).val("");
-		    	});
-		    }
-		    
-		    function showDetailForm(item) {
-		    	clearDetailForm();		    	
-		    	
-		    	let title = "[[#{screen.text.regist.insert.title}]]";
-		    	
-	    		save_mode = "insert";
-	    		
-	    		$("#reqNo").attr("readOnly", true);
-	    		$(".detail_table").find("#reqType").val("UR");
-	    		$("#reqType option").not(":selected").attr("disabled", true);
-	    		$(".detail_table").find("#reqStus").val("TMP");
-	    		$("#reqStus option").not(":selected").attr("disabled", true);
-		    		 
-		    	$(".list_head").find("#head_title").html(title);
-		    	
-		    	 //상세 팝업 호출
-		    	$('#detailForm').css({
-	            	position : 'absolute',
-	            	top	     : "10px",
-	                left	 : "10px",
-	                width	 : "450px",
-	                height	 : "auto",
-	                border:"2px solid navy"
-	            }).center().show();
-		    }
-		    
-		    // 조회 조건
-		    function getParams(){
-		    	return {
-		    		"reqNo"    : $("#req_no").val(),
-    				"reqNm"    : $("#req_nm").val(),
-    				"deptCd1"  : $("#deptCd1").val(),
-    				"deptCd2"  : $("#deptCd2").val(),
-    				"reqtr"    : $("#Reqtr").val(),
-    				"asetNo"   : $("#aset_no").val(),
-    			    "fromDate" : $("#fromDate").val().replaceAll("-", ""),
-				    "toDate"   : $("#toDate").val().replaceAll("-", ""),
-				    "reqStus"  : $("#req_stus").val()	
-		    	}
-		    }
-		    
-		 	// 공통코드 호출
-		    function getCommCode(id, code, level, upperCodeId){	 		
-		 		return new Promise(function(resolve, reject){
-					let url = "/common/comm/selectBox";
-					let reqType = 'GET';
-					$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId)
-					  .then(() => {
-						  resolve();
-					  });				 			
-		 		});
-			}
-		 	
-		    // 사용자 선택 팝업에서 받은 결과 처리
-		    function setResult(obj) {
-				$("#reqtr").val(obj.userId);
-			}
-		    
-		    // 유효성 검사
-		    function validationCheck(){
-				let code = "202";
-		    	
-		    	return code;
-			}
+    	const SCREEN_NM = "REUSE_REQ_RIST";    
 	    
-	    </script>	
-	</th:block>
+	    let grid;
+	    let loadParams; //Local Storage에 저장된 파라미터 정보
+	    let requestUrl = "/asset/unused/reuse/unusedReuseList";
+	    
+	    var condition = {};
+	 	var prevCondition = {};
+	 	
+	    $(function(){
+	    	if("[[${loadParams}]]" == 'Y'){ //등록자산 목록에서 화면전환시
+	    		loadParams = $.commLoadSearchParams(SCREEN_NM);
+	    	}else{
+	    		$.commRemoveSearchParams(SCREEN_NM); //메뉴클릭시	    		
+	    	}
+	    	
+	    	getCommCode("#reqStus", "APPR_STATUS", "1", "");
+	    	getCommCode("#reqType", "REQ_TYPE", "1", "");
+	    	getCommCode("#req_stus", "APPR_STATUS", "1", "")
+             .then(()=>{
+	            if(loadParams != null){
+	                prevCondition = loadParams.condition.params;
+	    	        if(Object.keys(prevCondition).length != undefined){
+	    	        	$("#req_no").val(prevCondition.reqNo);
+	    	        	$("#fromDate").val(prevCondition.fromDate);
+	    	        	$("#toDate").val(prevCondition.toDate);
+	    	        	$("#req_nm").val(prevCondition.reqNm);
+	    	        	$("#deptCd1").val(prevCondition.deptCd1);
+	    	        	$("#deptNm1").val(prevCondition.deptNm1);
+	    	        	$("#deptCd2").val(prevCondition.deptCd2);
+	    	        	$("#deptNm2").val(prevCondition.deptNm2);
+	    	        	$("#Reqtr").val(prevCondition.reqtr);
+	    	        	$("#aset_no").val(prevCondition.asetNo);
+	    	        	$("#req_stus").val(prevCondition.reqStus);
+	    	        	
+	    	        	grid.setData(requestUrl, getParams());
+	    	        } 
+	            }else {
+	            	grid.setData(requestUrl, getParams());
+	            }				  
+	    	 }).catch((error) => {
+	    		 console.log(error);
+	    	 })
+	    	
+			grid = new Tabulator("#data-table", {
+			 	locale:true,
+			    langs: $.commGridLocalization(),								
+			 	height:"95%",
+			 	layout:"fitColumns",
+			 	movableColumns:true,
+			 	pagination:true,
+			 	paginationMode:"remote",
+			 	ajaxURL: requestUrl,			
+			 	ajaxParams: getParams(),
+			 	paginationSize:20,				    
+			 	paginationSizeSelector:[20, 50, 100, 500],			
+			 	dataSendParams:{
+			        "page":"currentPage",
+			        "size":"numOfRows"
+			    } ,							    
+			 	placeholder:"No Data Set",				 	
+			 	ajaxResponse:function(url, params, res){
+			 		$(".result").text("Totals : " + res.condition.totalCount);
+					condition = res.condition;				 						 		
+			 		return res;
+			 	},					 	
+			 	columns:[
+			 		{formatter:"rowSelection", titleFormatter:"rowSelection", hozAlign:"center", headerHozAlign:"center", 
+		 	        	headerSort:false, width:30, cellClick:function(e, cell){
+		 	         		cell.getRow().toggleSelect();
+		 	        }},
+			 		{title:"[[#{screen.text.reuse.no}]]"      , field:"reqNo"     , hozAlign:"center"  , headerHozAlign:"center"},
+	                {title:"[[#{screen.text.reuse.type}]]"    , field:"reqTypeNm" , hozAlign:"center"  , headerHozAlign:"center"},
+	                {title:"[[#{screen.text.reuse.nm}]]"      , field:"reqNm"     , hozAlign:"left"    , headerHozAlign:"center"},
+	                {title:"[[#{screen.text.reuse.dept}]]"    , field:"reqtrDept" , hozAlign:"center" 	, headerHozAlign:"center"},
+	                {title:"[[#{screen.text.reuse.reqtr}]]"   , field:"reqtr"     , hozAlign:"center" 	, headerHozAlign:"center"},
+	                {title:"[[#{screen.text.reuse.dt}]]"      , field:"reqDt"     , hozAlign:"center"  , headerHozAlign:"center"},
+	                {title:"[[#{screen.text.reuse.stus}]]"    , field:"reqStusNm" , hozAlign:"center"  , headerHozAlign:"center"},
+	                {title:"[[#{screen.text.reuse.asetcnt}]]" , field:"asetCnt"   , hozAlign:"right"  	, headerHozAlign:"center"},
+			 	],
+			});						
 
-	<div layout:fragment="content">
-		<!-- contents_head -->
-		<div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div>
-		<h3><span th:text="${menuNm}"></span></h3>
-		<!-- //contents_head -->
+			/*------------- Grid Events -------------*/
+			//row click
+			grid.on("rowClick", function(e, row){
+				var rowData = row.getData();
+				openAsetList(row.getData());
+			});	
+			
+			/*------------- Button Events -------------*/
+         	//조회
+    	    $(".btn_srch").on("click",function (){
+            	grid.setData(requestUrl, getParams());
+          	});
+    	    
+    	    // 의뢰 작성
+			$(".btn_add").click(function() {
+    	    	showDetailForm();
+    	    });
+    	    
+    	    // 의뢰 삭제
+			$(".btn_del").click(function() {
+    	    	
+    	    	let selectedData = grid.getSelectedData();
+    	    	
+    	    	if(selectedData.length == 0){
+    	    		alert('[[#{screen.info.status.error.inv.no.selected.item}]]');
+    	    		return;
+    	    	}	
+    	    	
+    	    	for(row of selectedData){
+    	    		if(row.poAsetYn == 'Y') {
+    	    			alert('[[#{screen.info.status.error.inv.has.registered.item}]]');
+    	    			return false;
+    	    		}    		    	    		
+    	    	}
+    	    	
+    	    	let params = {
+    	    		url : "/asset/unused/reuse/unusedReuseDelete",
+    	    		reqType : 'POST',
+    	    		data : JSON.stringify(selectedData),
+    	    	}
+
+    			$.request(params)
+				 .then((res) => {
+					alert("[[#{screen.info.status.delete.success}]]");
+					$('.btn_srch').click();
+				 })
+				 .catch((error) => {
+					alert("[[#{screen.info.status.error.occur}]]");
+					console.log(error);
+				 }) 
+    	    });
+	        
+          	// 초기화 버튼
+    	    $(".btn_reset").click(function() {
+    	    	$("#req_no").val("");
+    	    	$("#fromDate").val("");
+    	    	$("#toDate").val("");
+    	    	$("#req_nm").val("");
+    	    	$("#deptCd1").val("");
+    	    	$("#deptNm1").val("");
+    	    	$("#deptCd2").val("");
+    	    	$("#deptNm2").val("");
+    	    	$("#Reqtr").val("");
+    	    	$("#aset_no").val("");
+    	    	$("#req_stus option:eq(0)").prop("selected",true);
+    	    });
+          	
+    	 	// 팝업창 닫기 버튼 처리
+            $('#dt_close').on('click', function (e) {
+                clearDetailForm();
+                $(this).parents("#detailForm").hide();
+            });
+          	
+     		// 팝업창 저장 버튼 처리
+            $('#dt_add').on('click', function (e) {
+            	
+                if(validationCheck() != '200'){
+	            	
+	                var sub_item = {};			            
+	                sub_item.reqType = $(".detail_table").find("#reqType").val(); 
+			    	sub_item.reqNm 	 = $(".detail_table").find("#reqNm").val();   
+			    	sub_item.reqtr 	 = $(".detail_table").find("#reqtr").val();   
+			    	sub_item.reqStus = $(".detail_table").find("#reqStus").val(); 
+			    	sub_item.reqRsn  = $(".detail_table").find("#reqRsn").val();  
+			    					    	
+	    		    let url = "/asset/unused/reuse/unusedReuseInsert";
+	    		    let reqType = 'POST';
+	    		    $.commRequest(url, reqType, JSON.stringify(sub_item))
+	    		      .then((res) => {
+	    		    	  $(this).parents("#detailForm").hide();
+	    		    	  grid.setData(requestUrl, getParams());
+	    		      })
+	    		      .catch((error) => {
+	    		    	console.log(error);
+	    		      });				    		
+	        	}
+            });
+    	 	
+			// 담당자 
+    	    $("#openUserFilterPopup").on("click", function() { 	    	    	
+    	        var url = "/common/popup/userFilterPopup";
+    	        var popId = "userPopup";
+    	        var args = {
+    	        	width  : 800,	
+    	        	height : 416,
+    	        };	    	        
+    	        var param = {userId:"#userId", userNm:"#userNm"};	    	        
+    	        openPopup2("userPopup", url, args, param);	    	    	
+    	    });
+			
+    	  	// 부서 
+     	    $("#openDeptPopup").on("click", function() { 
+     	    	let url = "/common/popup/deptTreePopup";
+     	    	let args = {
+	     	    		width  : 500, 
+	     	    		height : 450,
+	     	    	};	    	        
+     	    	let param = {
+    	        	searchType:"DEPT", 
+    	        	deptCd:"#deptCd", 
+    	        	deptNm:"#deptNm"
+    	        };	    	        
+    	        openPopup2("DeptPopup", url, args, param);
+     	    });
+     	    
+    	  	//엑셀 다운로드
+     	    $("#excelDown").on("click",function() {	       					       
+     	    	grid.download("xlsx", "UnusedReuse.xlsx", {sheetName:"유휴의뢰"});
+			});
+    	  	
+     		// 사용자 팝업 호출
+            $("#openUserPopup").on("click", function() { 
+    	        // 팝업 호출 url
+    	        var url = "/common/popup/userPopup";
+    	        var popId = "userPopup";
+    	        var args = {};
+    	        args.width = 650;
+    	        args.height = 416;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        openPopup2(popId, url, args);
+    	    });
+    	  	
+     		// 공통코드팝업(사업부) 호출 
+     	    $("#openDeptPopup1").on("click", function() { 
+    	        var url = "/common/popup/deptTreePopup";
+    	        var popId = "DeptPopup";
+    	        var args = {
+    	        };
+    	        args.width = 500;
+    	        args.height = 450;
+    	        args.fullscreen = "no";
+    	        args.resizable = "no";
+    	        
+    	        var param = {};
+    	        param.searchType = "BIZ_DEPT";
+ 	        	param.deptCd = "#deptCd1";
+ 	        	param.deptNm = "#deptNm1";
+    	         	  
+ 	           openPopup2(popId, url, args, param);
+     	    });
+    	  	
+     		// 공통코드팝업(부서) 호출
+     	    $("#openDeptPopup2").on("click", function() { 
+        	    // 팝업 호출 url
+       	        var url = "/common/popup/deptTreePopup";
+       	        var popId = "DeptPopup";
+       	        var args = {
+       	        };
+       	        args.width = 500;
+       	        args.height = 450;
+       	        args.fullscreen = "no";
+       	        args.resizable = "no";
+       	        
+       	     	var param = {}; 	        	
+    	        param.searchType = "DEPT";
+ 	        	param.deptCd = "#deptCd2";
+ 	        	param.deptNm = "#deptNm2"; 	        	
+       	        
+ 	        	openPopup2(popId, url, args, param);
+        	});
+     		
+     	 	//drag 활성화
+	     	$("#detailForm").draggable();
+    	});
 		
-		<!-- search -->
-		<div class="srch_wrap single">
-			<table class="srch_table">
+	    // 검색 시 엔터키로 조회
+		function enterkey() {
+	    	if (window.event.keyCode == 13) {
+	    		if (validationCheck() == '202') {
+	    			grid.setData(requestUrl, getParams());
+	    		}
+	        }
+	    }
+		 
+		// 유효성 검사
+	    function validationCheck() {
+	    	let code = '202';				
+	    	let fromDate = $("#fromDate").val().replaceAll("-", "");
+	    	let toDate = $("#toDate").val().replaceAll("-", "");
+	    	
+			if(fromDate > toDate) {
+				alert("[[#{screen.info.status.date.fail}]]");
+				$("#toDate").focus();
+				code = '200';
+			}
+			return code;
+	    }
+		
+	    function returnResult(item) {
+			opener.selectAsetList(item);
+			window.close();
+	    }
+	    
+	    function openAsetList(val){
+	       	event.preventDefault();
+	       	
+	       	var subReqNo = parseInt((val.reqNo).substr(6,3));
+	       	
+	       	let saveParams = {
+	       		"condition": condition,
+	       		"menuId"   : "[[${menuId}]]" ,
+	       		"menuNm"   : "[[${menuNm}]]",
+	       		"menuDesc" : "[[${menuDesc}]]",
+	       	}
+	       	
+	       	$.commSaveSearchParams(SCREEN_NM, saveParams);
+	       	
+            let url = "/asset/unused/reuse/ReuseRegList";
+			let menuId = "[[${menuId}]]";
+            
+			var $form = $('<form></form>'); 
+				$form.attr('action', url); 
+				$form.attr('method', 'Post'); 
+				$form.attr('target', '_self'); 
+				
+			var reqNoStr = $('<input type="hidden" value="'+ subReqNo +'" name="reqNo">');
+				$form.append(reqNoStr);
+				menuIdStr = $('<input type="hidden" value="'+ menuId +'" name="menuId">');
+				$form.append(menuIdStr); 					
+				$form.appendTo('body'); 					
+				$form.submit();
+	    }
+
+	    let items = ['reqNm', 'reqtr', 'reqStus', 'reqRsn'];
+	    
+	    function clearDetailForm() {
+	    	items.forEach(function(id){
+	    		$("#"+id).val("");
+	    	});
+	    }
+	    
+	    function showDetailForm(item) {
+	    	clearDetailForm();		    	
+	    	
+	    	let title = "[[#{screen.text.reuse.insert.title}]]";
+	    	
+    		save_mode = "insert";
+    		
+    		$("#reqNo").attr("readOnly", true);
+    		$(".detail_table").find("#reqType").val("RU");
+    		$("#reqType option").not(":selected").attr("disabled", true);
+    		$(".detail_table").find("#reqStus").val("TMP");
+    		$("#reqStus option").not(":selected").attr("disabled", true);
+	    		 
+	    	$(".list_head").find("#head_title").html(title);
+	    	
+	    	 //상세 팝업 호출
+	    	$('#detailForm').css({
+            	position : 'absolute',
+            	top	     : "10px",
+                left	 : "10px",
+                width	 : "450px",
+                height	 : "auto",
+                border:"2px solid navy"
+            }).center().show();
+	    }
+	    
+	    // 조회 조건
+	    function getParams(){
+	    	return {
+	    		"reqNo"    : $("#req_no").val(),
+				"reqNm"    : $("#req_nm").val(),
+				"deptCd1"  : $("#deptCd1").val(),
+				"deptCd2"  : $("#deptCd2").val(),
+				"reqtr"    : $("#Reqtr").val(),
+				"asetNo"   : $("#aset_no").val(),
+			    "fromDate" : $("#fromDate").val().replaceAll("-", ""),
+			    "toDate"   : $("#toDate").val().replaceAll("-", ""),
+			    "reqStus"  : $("#req_stus").val()	
+	    	}
+	    }
+	    
+	 	// 공통코드 호출
+	    function getCommCode(id, code, level, upperCodeId){	 		
+	 		return new Promise(function(resolve, reject){
+				let url = "/common/comm/selectBox";
+				let reqType = 'GET';
+				$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId)
+				  .then(() => {
+					  resolve();
+				  });				 			
+	 		});
+		}
+	 	
+	    // 사용자 선택 팝업에서 받은 결과 처리
+	    function setResult(obj) {
+			$("#reqtr").val(obj.userId);
+		}
+	    
+	    // 유효성 검사
+	    function validationCheck(){
+			let code = "202";
+	    	
+	    	return code;
+		}
+    
+    </script>	
+</th:block>
+
+<div layout:fragment="content">
+	<!-- contents_head -->
+	<div class="bc">Home &gt; <span th:text="${menuDesc}"></span></div>
+	<h3><span th:text="${menuNm}"></span></h3>
+	<!-- //contents_head -->
+	
+	<!-- search -->
+	<div class="srch_wrap single">
+		<table class="srch_table">
+			<colgroup>
+				<col width="10%"/>
+				<col width="20%"/>
+				<col width="15%"/>
+				<col width="20%"/>
+				<col width="15%"/>
+				<col width=""/>
+			</colgroup>
+			<tr>
+				<th>[[#{screen.text.reuse.no}]]</th>
+				<td><input type="text" id="req_no" onkeyup="enterkey()" style="width:100%;"></td>
+				<th>[[#{screen.text.reuse.dt}]]</th>
+				<td>
+					<div style='display:flex'>
+						<input type="date" id="fromDate" style="width:100%">
+						<input type="date" id="toDate" style="width:100%">
+					</div>
+				</td>
+				<th>[[#{screen.text.reuse.nm}]]</th>
+				<td><input type="text" id="req_nm" onkeyup="enterkey()" style="width:100%;"></td>
+			</tr>
+			<tr>
+				<th>[[#{screen.text.reuse.bizDeptCd}]]</th>
+				<td>
+					<div style='display:flex'>
+						<input type="text" style="width:100%" id="deptNm1" readonly/>
+						<input type="hidden" style="width:100%" id="deptCd1" />
+						<a href="#" id="openDeptPopup1" style="margin-left: 10px;"><img title="사업부 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+					</div>
+				</td>
+				<th>[[#{screen.text.reuse.dept}]]</th>
+				<td>
+					<div style='display:flex'>
+						<input type="text" style="width:100%" id="deptNm2" readonly/>
+						<input type="hidden" style="width:100%" id="deptCd2" />
+						<a href="#" id="openDeptPopup2" style="margin-left: 10px;"><img title="부서 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+					</div>
+				</td>
+				<th>[[#{screen.text.reuse.reqtr}]]</th>
+				<td><input type="text" id="Reqtr" onkeyup="enterkey()" style="width:100%;"></td>
+			</tr>
+			<tr>
+				<th>[[#{screen.text.reuse.asetno}]]</th>
+				<td><input type="text" id="aset_no" onkeyup="enterkey()" style="width:100%;"/></td>
+				<th>[[#{screen.text.reuse.stus}]]</th>
+				<td>
+					<select id="req_stus" style="width:100%;">
+						<option value="">[[#{screen.text.comm.choice}]]</option>
+					</select>
+				</td>
+				<td colspan="2"></td>
+			</tr>
+		</table>
+		<!-- search_button -->
+		<div class="button">
+			<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
+			<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>										
+						
+		</div>
+		<!-- //search_button -->
+	</div>
+	<!-- //search -->			
+	
+	<div class="list_head">
+			<div class="result">Results : 0,000</div>
+			<!-- list_button -->
+			<div class="button">
+				<a class="btn_add">[[#{screen.text.reuse.insert.title}]]</a>
+				<a class="btn_del">[[#{screen.btn.delete}]]</a>
+				<a class="btn_list_rd" id="excelDown">[[#{screen.btn.excel}]]</a>
+			</div>
+			<!-- list_button -->
+	</div>
+	
+	<div id="data-table"></div>
+	
+	<div id="detailForm" class="list_head" style="display:none;">
+		<div id="container">
+		  
+			<div class="list_head">
+				<h6><span id="head_title" ></span></h6>
+				<div class="button">
+					<a id="dt_add" class="btn_list">[[#{screen.text.comm.save}]]</a>
+					<a id="dt_close" class="btn_list">[[#{screen.text.comm.close}]]</a>
+				</div>
+			</div>
+			
+			<!-- detail_table -->
+			<table class="detail_table ">
 				<colgroup>
-					<col width="10%"/>
-					<col width="20%"/>
-					<col width="15%"/>
-					<col width="20%"/>
-					<col width="15%"/>
-					<col width=""/>
-				</colgroup>
+					<col style="width:20%" />
+					<col style="width:80%" />
+				<col />
 				<tr>
-					<th>[[#{screen.text.regist.no}]]</th>
-					<td><input type="text" id="req_no" onkeyup="enterkey()" style="width:100%;"></td>
-					<th>[[#{screen.text.regist.dt}]]</th>
-					<td>
-						<div style='display:flex'>
-							<input type="date" id="fromDate" style="width:100%">
-							<input type="date" id="toDate" style="width:100%">
-						</div>
-					</td>
-					<th>[[#{screen.text.regist.nm}]]</th>
-					<td><input type="text" id="req_nm" onkeyup="enterkey()" style="width:100%;"></td>
+					<th>[[#{screen.text.reuse.no}]]</th>
+					<td><input type="text" style="width:100%;" id="reqNo" placeholder="-------------------------자동생성-------------------------" /></td>
 				</tr>
 				<tr>
-					<th>[[#{screen.text.regist.bizDeptCd}]]</th>
+					<th>[[#{screen.text.reuse.type}]]</th>
 					<td>
-						<div style='display:flex'>
-							<input type="text" style="width:100%" id="deptNm1" readonly/>
-							<input type="hidden" style="width:100%" id="deptCd1" />
-							<a href="#" id="openDeptPopup1" style="margin-left: 10px;"><img title="사업부 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
-						</div>
-					</td>
-					<th>[[#{screen.text.regist.dept}]]</th>
-					<td>
-						<div style='display:flex'>
-							<input type="text" style="width:100%" id="deptNm2" readonly/>
-							<input type="hidden" style="width:100%" id="deptCd2" />
-							<a href="#" id="openDeptPopup2" style="margin-left: 10px;"><img title="부서 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
-						</div>
-					</td>
-					<th>[[#{screen.text.regist.reqtr}]]</th>
-					<td><input type="text" id="Reqtr" onkeyup="enterkey()" style="width:100%;"></td>
-				</tr>
-				<tr>
-					<th>[[#{screen.text.regist.asetno}]]</th>
-					<td><input type="text" id="aset_no" onkeyup="enterkey()" style="width:100%;"/></td>
-					<th>[[#{screen.text.regist.stus}]]</th>
-					<td>
-						<select id="req_stus" style="width:100%;">
-							<option value="">[[#{screen.text.comm.choice}]]</option>
+						<select id="reqType" style="width:100%;">
 						</select>
 					</td>
-					<td colspan="2"></td>
+				</tr>
+				<tr>
+					<th>[[#{screen.text.reuse.nm}]]</th>
+					<td><input type="text" style="width:100%" id="reqNm" /></td>
+				</tr>
+				<tr>
+					<th>[[#{screen.text.reuse.reqtr}]]</th>
+					<td>
+						<div style='display:flex'>
+							<input type="text" style="width:100%" id="reqtr" readonly/>
+							<a href="#" id="openUserPopup" ><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<th>[[#{screen.text.reuse.stus}]]</th>
+					<td>
+						<select id="reqStus" style="width:100%;">
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th>[[#{screen.text.reuse.rsn}]]</th>
+					<td><input type="text" style="width:100%" id="reqRsn" /></td>
 				</tr>
 			</table>
-			<!-- search_button -->
-			<div class="button">
-				<a href="#;" class="btn_reset">[[#{screen.btn.reset}]]</a>
-				<a href="#;" class="btn_srch">[[#{screen.btn.search}]]</a>										
-							
-			</div>
-			<!-- //search_button -->
-		</div>
-		<!-- //search -->			
-		
-		<div class="list_head">
-				<div class="result">Results : 0,000</div>
-				<!-- list_button -->
-				<div class="button">
-					<a class="btn_add">[[#{screen.text.regist.insert.title}]]</a>
-					<a class="btn_del">[[#{screen.btn.delete}]]</a>
-					<a class="btn_list_rd" id="excelDown">[[#{screen.btn.excel}]]</a>
-				</div>
-				<!-- list_button -->
-		</div>
-		
-		<div id="data-table"></div>
-		
-		<div id="detailForm" class="list_head" style="display:none;">
-			<div id="container">
-			  
-				<div class="list_head">
-					<h6><span id="head_title" ></span></h6>
-					<div class="button">
-						<a id="dt_add" class="btn_list">[[#{screen.text.comm.save}]]</a>
-						<a id="dt_close" class="btn_list">[[#{screen.text.comm.close}]]</a>
-					</div>
-				</div>
-				
-				<!-- detail_table -->
-				<table class="detail_table ">
-					<colgroup>
-						<col style="width:20%" />
-						<col style="width:80%" />
-					<col />
-					<tr>
-						<th>[[#{screen.text.regist.no}]]</th>
-						<td><input type="text" style="width:100%;" id="reqNo" placeholder="-------------------------자동생성-------------------------" /></td>
-					</tr>
-					<tr>
-						<th>[[#{screen.text.regist.type}]]</th>
-						<td>
-							<select id="reqType" style="width:100%;">
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<th>[[#{screen.text.regist.nm}]]</th>
-						<td><input type="text" style="width:100%" id="reqNm" /></td>
-					</tr>
-					<tr>
-						<th>[[#{screen.text.regist.reqtr}]]</th>
-						<td>
-							<div style='display:flex'>
-								<input type="text" style="width:100%" id="reqtr" readonly/>
-								<a href="#" id="openUserPopup" ><img title="의뢰자 검색" class="ico_search" alt="Search" src="/images/common/ico_search.png"></a>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<th>[[#{screen.text.regist.stus}]]</th>
-						<td>
-							<select id="reqStus" style="width:100%;">
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<th>[[#{screen.text.regist.rsn}]]</th>
-						<td><input type="text" style="width:100%" id="reqRsn" /></td>
-					</tr>
-				</table>
-				<!-- //detail_table -->
-				 
-	     	</div>
+			<!-- //detail_table -->
+			 
      	</div>
-	</div>
+ 	</div>
+</div>
 </html>

@@ -26,8 +26,8 @@ import io.swagger.annotations.ApiResponses;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
-import kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto;
-import kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto;
+import kr.co.trito.tams.web.asset.unused.reuse.dto.ReuesReqMasDto;
+import kr.co.trito.tams.web.asset.unused.reuse.dto.ReuseAsetReqDto;
 import kr.co.trito.tams.web.asset.unused.reuse.service.UnusedReuseService;
 import kr.co.trito.tams.web.common.service.CommonService;
 import kr.co.trito.tams.web.user.dto.UserInfo;
@@ -87,7 +87,7 @@ public class UnusedReuseController {
 		
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);
 		condition.pageSetup(reuseService.selectCountUnusedReuseList(condition));
-		List<ReqMasDto> list = reuseService.selectUnusedReuseList(condition);
+		List<ReuesReqMasDto> list = reuseService.selectUnusedReuseList(condition);
 		return responseService.success(condition, list);
 	}
 	
@@ -117,10 +117,16 @@ public class UnusedReuseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> unusedReuseDelete( 
-			@ApiParam(value = "의뢰 번호", required = true) @RequestBody List<ReqMasDto> items) { 
+			@ApiParam(value = "의뢰 번호", required = true) @RequestBody List<ReuesReqMasDto> items) { 
 		
-		for(ReqMasDto reqNo : items) {
-			reuseService.unusedReuseListDelete(reqNo);
+		for(int i=0 ; i<items.size() ; i++) {
+			String reqno = items.get(i).getReqNo();
+			
+			reuseService.unusedReuseListDelete(reqno);
+			
+			if(items.get(i).getAsetCnt() > 0) {
+				reuseService.unusedReuseListAsetDelete(reqno);
+			}	
 		}
 		
 		return responseService.success(null);
@@ -129,10 +135,9 @@ public class UnusedReuseController {
 	/** 재활용의뢰작성 화면 */
 	@PostMapping("/ReuseRegList")
 	@ResponseBody
-	public ModelAndView requestRegistView(HttpServletRequest request) {
+	public ModelAndView requestReuseView(HttpServletRequest request) {
 		ModelAndView view = new ModelAndView();
 		String reqNo = request.getParameter("reqNo");
-		
 		view.addObject("reqNo", reqNo);
 		view.setViewName("/content/asset/unused/reuse/reuseRegist");
 		return view;
@@ -146,12 +151,12 @@ public class UnusedReuseController {
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> unusedReuseRegistView(
 			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
-		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(),
-				params.get("numOfRows").toString(), params);
+		
+		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(),params.get("numOfRows").toString(), params);
 		condition.pageSetup(reuseService.selectCountAssetList(condition));
 
-		List<AsetReqDto> list = reuseService.selectAssetList(condition);
-		List<ReqMasDto> list2 = reuseService.selectUnusedReuseRegist(condition);
+		List<ReuseAsetReqDto> list = reuseService.selectAssetList(condition);
+		List<ReuesReqMasDto> list2 = reuseService.selectUnusedReuseRegist(condition);
 
 		return responseService.success(condition, list, list2);
 	}
@@ -173,7 +178,7 @@ public class UnusedReuseController {
 		
 		items.put("regr", userId);
 		reuseService.unusedReuseUpdate1(items);
-		System.out.println("====================== "+list.size()+" ==============================");
+		
 		for(int i=0; i<list.size(); i++) {
 			if (list.get(i).containsKey("reqNo"))
 				reuseService.unusedReuseUpdate2(list.get(i));
@@ -193,7 +198,12 @@ public class UnusedReuseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> unusedReuseDelete1( 
-			@ApiParam(value = "의뢰 번호", required = true) @RequestBody Map<String, Object> items) { 
+			@ApiParam(value = "의뢰 번호", required = true) @RequestBody Map<String, Object> items) {
+		
+		String asetYn = items.get("asetYn").toString();
+		if(asetYn.equals("Y")) {
+			reuseService.unusedReuseDelete3(items);
+		}
 		
 		reuseService.unusedReuseDelete1(items);
 		
@@ -208,7 +218,7 @@ public class UnusedReuseController {
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> unusedReuseDelete2( 
 			@ApiParam(value = "의뢰 번호", required = true) @RequestBody Map<String, Object> items) { 
-		AsetReqDto dto = new AsetReqDto();
+		ReuseAsetReqDto dto = new ReuseAsetReqDto();
 		List<String> asetList = (List<String>) items.get("asetNoList");
 		
 		dto.setReqNo(items.get("reqNo").toString());

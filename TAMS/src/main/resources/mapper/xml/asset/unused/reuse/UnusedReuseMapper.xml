@@ -14,7 +14,7 @@
 		   AND req_type = "RU"
 		  WHERE dept_cd = (SELECT dept_cd FROM tb_user WHERE user_id = #{params.userId})
 	     	<if test="params.reqNo != ''">
-				AND (CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) LIKE CONCAT('%', #{params.reqNo}, '%'))
+				AND (CONCAT('RU',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) LIKE CONCAT('%', #{params.reqNo}, '%'))
 		 	</if>
 		 	<if test="params.fromDate != '' and (params.toDate !='')">
 				AND (req_dt between #{params.fromDate} and #{params.toDate})
@@ -42,8 +42,8 @@
    	</select>	
 	
 	<!-- 재활용의뢰목록 리스트 출력 -->
-   	<select id="selectUnusedReuseList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-   		SELECT CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no
+   	<select id="selectUnusedReuseList" resultType="kr.co.trito.tams.web.asset.unused.reuse.dto.ReuesReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   		SELECT CONCAT('RU',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no
 		     , req_type
 		     , (SELECT code_nm FROM tb_com_code WHERE code_id = A.req_type) AS req_type_nm
 		     , req_nm
@@ -118,7 +118,7 @@
 	       ON A.dept_cd = B.dept_cd
 	     WHERE 1=1
 	     	<if test="params.reqNo != ''">
-				AND (CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) LIKE CONCAT('%', #{params.reqNo}, '%'))
+				AND (CONCAT('RU',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) LIKE CONCAT('%', #{params.reqNo}, '%'))
 		 	</if>
 		 	<if test="params.fromDate != '' and (params.toDate !='')">
 				AND (req_dt between #{params.fromDate} and #{params.toDate})
@@ -147,23 +147,30 @@
    	</select>
    	   	
    	<!-- 재활용의뢰목록 작성 -->
-   	<insert id="unusedReuseListInsert" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" useGeneratedKeys="true" keyProperty="req_no">
+   	<insert id="unusedReuseListInsert" parameterType="kr.co.trito.tams.web.asset.unused.reuse.dto.ReuesReqMasDto" useGeneratedKeys="true" keyProperty="req_no">
    		INSERT INTO tb_req_mas (req_type, req_nm, req_dt, reqtr, req_rsn, req_stus, regr, reg_dt)
    		VALUES (#{reqType}, #{reqNm}, current_timestamp(), #{reqtr}, #{reqRsn}, #{reqStus}, #{regr} , current_timestamp())
    	</insert>
    	
    	<!-- 재활용의뢰목록 삭제 -->
-   	<delete id="unusedReuseListDelete" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto">
+   	<delete id="unusedReuseListDelete" parameterType="kr.co.trito.tams.web.asset.unused.reuse.dto.ReuesReqMasDto">
 		DELETE 
 		  FROM TB_REQ_MAS
-         WHERE req_no = SUBSTRING(#{reqNo},6,3)+0
-	</delete>   	
+         WHERE req_no = SUBSTRING(#{reqNo},7,3)+0
+	</delete>
+	
+	<!-- 재활용의뢰목록 삭제 : 자산수가 1이상일경우  -->
+	<delete id="unusedReuseListAsetDelete" parameterType="kr.co.trito.tams.web.asset.unused.reuse.dto.ReuesReqMasDto">
+		DELETE 
+		  FROM TB_ASET_REQ
+         WHERE req_no = SUBSTRING(#{reqNo},7,3)+0
+	</delete>
    	
    	<!-- 재활용의뢰목록작성 화면 조회 -->
-   	<select id="selectUnusedReuseRegist" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   	<select id="selectUnusedReuseRegist" resultType="kr.co.trito.tams.web.asset.unused.reuse.dto.ReuesReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
    		SELECT (SELECT code_nm FROM tb_com_code WHERE code_id = A.req_type) AS req_type_nm
 		     , req_type 
-			 , CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no
+			 , CONCAT('RU',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no
 			 , DATE_FORMAT(req_dt, '%Y-%m-%d') AS req_dt
 			 , appv_doc_id
 			 , dept_cd
@@ -192,15 +199,15 @@
 		 	</if>
    	</select>
    	
-   	<!-- 유휴의뢰 대상자산목록 조회 카운트 -->
+   	<!-- 재활용의뢰 대상자산목록 조회 카운트 -->
    	<select id="selectCountAssetList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 	 	
 		SELECT count(*) AS cnt
 		  FROM tb_aset_req
 		 WHERE req_no = #{params.reqNo};
    	</select>
    	
-	<!-- 유휴의뢰 대상자산목록 조회 -->
-   	<select id="selectAssetList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+	<!-- 재활용의뢰 대상자산목록 조회 -->
+   	<select id="selectAssetList" resultType="kr.co.trito.tams.web.asset.unused.reuse.dto.ReuseAsetReqDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
 	    SELECT aset_no
 			 , req_no
 			 , aset_nm
@@ -220,6 +227,28 @@
 		            WHERE dept_cd = b.dept_cd) dept_nm
 		     , chrgr
 		     , c.user_nm as chrgr_nm
+		     , b.exp_dept_cd
+		     , (SELECT code_nm
+		     	  FROM tb_com_code
+		     	 WHERE code_grp_id = 'COST_CENTER'
+		     	   AND code_id = b.exp_dept_cd) as exp_dept_nm
+		     , b.bsplc
+		     , (SELECT code_nm
+		     	  FROM tb_com_code
+		     	 WHERE code_grp_id = 'SITE'
+		     	   AND code_id = b.bsplc) as bsplc_nm
+		     , b.buld
+		     , (SELECT code_nm
+		     	  FROM tb_com_code
+		     	 WHERE code_grp_id = 'BUILDING'
+		     	   AND code_id = b.buld) as buld_nm
+		     , b.floor
+		     , (SELECT code_nm
+		     	  FROM tb_com_code
+		     	 WHERE code_grp_id = 'FLOOR'
+		     	   AND code_id = b.floor) as floor_nm
+		     , b.loc
+		     , '' as tag_yn
 		 FROM tb_aset_req b
 		INNER JOIN tb_user c
            ON c.user_id = b.chrgr
@@ -227,16 +256,16 @@
 		ORDER BY b.aset_no DESC;
 	</select>
    	
-   	<!-- 유휴의뢰 작성 화면 : 의뢰정보 수정 -->
-   	<update id="unusedRegistUpdate1" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto">
+   	<!-- 재활용의뢰 작성 화면 : 의뢰정보 수정 -->
+   	<update id="unusedReuseUpdate1" parameterType="kr.co.trito.tams.web.asset.unused.reuse.dto.ReuesReqMasDto">
    		UPDATE tb_req_mas     
 		   SET req_nm  = #{reqNm}
 		     , req_rsn = #{reqRsn}
 		 WHERE req_no = #{reqNo}
    	</update>
    	
-   	<!-- 유휴의뢰 작성 화면 : 대상자산정보 수정 -->
-   	<update id="unusedRegistUpdate2" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto">
+   	<!-- 재활용의뢰 작성 화면 : 대상자산정보 수정 -->
+   	<update id="unusedReuseUpdate2" parameterType="kr.co.trito.tams.web.asset.unused.reuse.dto.ReuseAsetReqDto">
    		INSERT INTO tb_aset_req
    			   SET aset_no     = #{asetNo}
    			     , req_no	   = #{reqNo}
@@ -250,6 +279,11 @@
 			     , chrgr	   = #{chrgr}
 			     , biz_dept_cd = #{bizDeptCd}
 			     , dept_cd	   = #{deptCd}
+			     , exp_dept_cd = #{expDeptCd}
+			     , bsplc	   = #{bsplc}
+			     , buld		   = #{buld}
+			     , floor	   = #{floor}
+			     , loc		   = #{loc}	
 			   ON  DUPLICATE KEY UPDATE
 			       aset_type1  = #{asetType1}
 		         , aset_type2  = #{asetType2}
@@ -258,10 +292,15 @@
 		         , model	   = #{model}
 		         , sn		   = #{sn}
 		         , chrgr	   = #{chrgr}
+		         , exp_dept_cd = #{expDeptCd}
+			     , bsplc	   = #{bsplc}
+			     , buld		   = #{buld}
+			     , floor	   = #{floor}
+			     , loc		   = #{loc}
    	</update>   	
 
-   	<!-- 유휴의뢰 작성 화면 : 삭제 (화면 상단) -->
-   	<delete id="unusedRegistDelete1" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto">
+   	<!-- 재활용의뢰 작성 화면 : 삭제 (화면 상단) -->
+   	<delete id="unusedReuseDelete1" parameterType="kr.co.trito.tams.web.asset.unused.reuse.dto.ReuseAsetReqDto">
        	DELETE FROM a, b 
        	 USING tb_req_mas AS a 
        	  LEFT JOIN tb_aset_req AS b 
@@ -270,10 +309,16 @@
    	</delete>
    	
    	<!-- 자산수정 의뢰작성 화면 : 삭제 (화면 하단) -->
-   	<delete id="unusedRegistDelete2" parameterType="kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto">
+   	<delete id="unusedReuseDelete2" parameterType="kr.co.trito.tams.web.asset.unused.reuse.dto.ReuseAsetReqDto">
        	DELETE FROM tb_aset_req
 		 WHERE aset_no = #{asetNo}
-		   AND req_no = #{reqNo};
+		   AND req_no = #{reqNo}
+   	</delete>
+   	
+   	<!-- 재활용의뢰 작성 화면 : 삭제(화면 상단)시 의뢰자산정보 삭제 -->
+   	<delete id="unusedReuseDelete3" parameterType="kr.co.trito.tams.web.asset.unused.reuse.dto.ReuseAsetReqDto">
+   		DELETE FROM tb_aset_req
+		 WHERE req_no = #{reqNo}
    	</delete>
    	
 </mapper>
