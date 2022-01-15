@@ -25,6 +25,8 @@
 		    let requestUrl = "/asset/regist/outofbook/outOfBookList";
 		    
 		    $(function(){
+		    		
+				$("#uploadTarget").draggable();		    	
 		    	
 		    	//자산유형1
 		    	getCommCode("#asetType1", "AS_CLASS", "1", "");
@@ -185,16 +187,27 @@
 		    
 		    //일괄업로드
 		    function openOutOfBookBatch(){
-		    	let url = "/asset/regist/outofbook/outOfBookBatch";
+		    	
+		    	let url = "/asset/regist/outofbook/outOfBookBatch";		    	
+				/*
+		    	$('#uploadTarget').load(url, function(){
+		    	}).css({
+	                 position: 'absolute',
+	                 top	 : "10px",
+	                 left	 : "10px",
+	                 width	 : "1200",
+	                 height	 : "600",
+	                 border  : "2px solid navy"
+	             }).center().show();				    	
+				*/		    	
+
 		    	let args = {
 	    	        	width  : 1200,	
 	    	        	height : 600,
 		    	    	pheight: window.innerHeight,
 		    	    	pwidth : window.innerWidth,	  
 	    	        };	  
-    	        let params = {}
-    	        
-    	        openPopup2("outOfBookBatch", url, args, params);	        			    	
+    	        openPopup2("outOfBookBatch", url, args, {});				
 		    }
 		    
 		    //공통코드-selectbox
@@ -231,6 +244,10 @@
 	        	elements.forEach(item => {params[item] = $("#"+item).val();});	        	
 				return params;		    	
 	         }   
+		    
+		    function closeBatchPopup(){
+		    	$("#uploadTarget").hide();
+		    }
 	    
 	    </script>	
 	</th:block>
@@ -339,6 +356,6 @@
 			<!-- list_button -->
 		</div>
 		<div id="data-table"></div>
-		</div>
-
+		<div id="uploadTarget" style="display:none;"></div>		
+	</div>
 </html>
