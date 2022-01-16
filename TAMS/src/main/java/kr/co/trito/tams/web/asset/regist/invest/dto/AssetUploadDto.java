@@ -57,10 +57,16 @@ public class AssetUploadDto extends ExcelDto {
 	private String chrgrNm;
 	@ApiModelProperty(value="사업장")
 	private String bsplc;
+	@ApiModelProperty(value="사업장")
+	private String bsplcNm;	
 	@ApiModelProperty(value="건물")
 	private String buld;
+	@ApiModelProperty(value="건물")
+	private String buldNm;	
 	@ApiModelProperty(value="층")
-	private String floor;	
+	private String floor;
+	@ApiModelProperty(value="층")
+	private String floorNm;		
 	@ApiModelProperty(value="세부위치")
 	private String loc;
 	@ApiModelProperty(value="비용부서")

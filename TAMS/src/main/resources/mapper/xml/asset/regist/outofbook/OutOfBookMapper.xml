@@ -336,12 +336,12 @@
    	</delete>   
    	
    	<delete id="deleteUploadHistory" parameterType="String">
-   		delete from tb_upload_outofbook
+   		delete from tb_upload_aset
    		where regr = #{userId}
    	</delete>      	
    	
 	<insert id="saveUploadExcel" parameterType="kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookBatchDto">
-		insert into tb_upload_outofbook(
+		insert into tb_upload_aset(
 					 aset_no
 					,aset_nm
 					,aset_type1
@@ -439,13 +439,16 @@
 					,a.sn
 					,a.biz_dept_cd as bizDeptCd
 				    ,e.dept_nm as bizDeptNm
-					,a.dept_cd
+					,a.dept_cd as deptCd
 				    ,f.dept_nm as deptNm   
 					,a.chrgr
 					,g.user_nm as chrgrNm
 					,a.bsplc
+					,h.code_nm as bsplcNm
 					,a.buld
+					,i.code_nm as buldNm
 					,a.floor
+					,j.code_nm as floorNm					
 					,a.loc
 					,a.acq_prc as acqPrc
 					,a.acq_dt as acqDt
@@ -470,7 +473,7 @@
 					,a.dtl_info19 as dtlInfo19
 					,a.dtl_info20 as dtlInfo20
 					,a.regr
-				from  tb_upload_outofbook a
+				from  tb_upload_aset a
 				left outer join tb_com_code b
 				  on a.aset_type1 = b.code_id
 				 and b.code_grp_id = 'AS_CLASS'
@@ -485,7 +488,16 @@
 				left outer join tb_dept f
 				  on a.dept_cd = f.dept_cd    
 				left outer join tb_user g
-				  on a.chrgr = g.user_id				  
+				  on a.chrgr = g.user_id		
+				left outer join tb_com_code h
+				  on a.bsplc = h.code_id  		
+				and h.code_grp_id = 'SITE'
+				left outer join tb_com_code i
+				  on a.buld = i.code_id  		
+				and i.code_grp_id = 'BUILDING'
+				left outer join tb_com_code j
+				  on a.floor = j.code_id  		
+				and j.code_grp_id = 'FLOOR' 
 				where a.regr = #{userId}   
 			 ) a        
 	</select>	
