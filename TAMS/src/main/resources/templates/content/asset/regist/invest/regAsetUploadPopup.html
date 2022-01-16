@@ -2,155 +2,89 @@
 <html 	xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorator="layout/popup2">
-<head>
-<meta charset="utf-8" />
-<title>[[#{screen.text.inv.mng.upload.screen.title}]]</title>
 
+	<head>
+	    <title>[[#{screen.text.inv.mng.upload.screen.title}]]</title>
+	</head>
+        
 	<!-- css -->
-	<th:block layout:fragment="css">
-		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="/css/jsgrid.css" />
+	<th:block layout:fragment="css">	
+	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="/css/theme.css" />
-	</th:block>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.0.8/css/tabulator.min.css" rel="stylesheet"> 
+	</th:block>  
 
 	 <th:block layout:fragment="script">
-	 	<script src="/js/jsgrid/db.js"></script>
-	    <script src="/js/jsgrid/jsgrid.core.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
-	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
-	    <script src="/js/jsgrid/jsgrid.field.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
-	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>
-	 
+		<script type="text/javascript" src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
+	
 		<script>
-		
-		    var excelUpData = new FormData();
+
+    		let batchGrid;		
+		    let excelUpData = new FormData();
 		    
-			var InvestDtoField = [
-					{ name: "rownum"	, type: "number" , width:  30 ,align: "right" , title: "No."
-					 ,itemTemplate: function(value, item) {
-						 //console.log("###");
-		              return $("<span>").attr("id","row_"+item.poNo).text( getIndex(item)   );
-					 }
-					},
-	            	{ name: "asetNo"    	, type: "text"	, width: 80 	, align: "left"  , title: "[[#{screen.text.aset.no}]]"        },
-	                { name: "asetType1"   	, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.aset.type1}]]"     },
-	                { name: "asetType2"   	, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.aset.type2}]]"     },
-	                { name: "asetType3"	   	, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.aset.type3}]]"     },
-	                { name: "mftco"   		, type: "text"	, width: 50		, align: "left"  , title: "[[#{screen.text.aset.mftco}]]" 	  },
-	                { name: "model"	   		, type: "text"	, width: 70 	, align: "left"  , title: "[[#{screen.text.aset.md}]]"        },
-	                { name: "sn"    		, type: "text"	, width: 80		, align: "left"  , title: "[[#{screen.text.aset.sn}]]"        },
-	                { name: "uppDeptNm"   	, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.asset.bizDeptCd}]]"},
-	                { name: "deptNm"   		, type: "text"	, width: 70		, align: "left"  , title: "[[#{screen.text.asset.deptCd}]]"   },
-	                { name: "chrgr"   		, type: "text"	, width: 50		, align: "left"  , title: "[[#{screen.text.asset.chrgr}]]"    },
-	                { name: "tagYn"			, type: "text"	, width: 55		, align: "left"  , title: "[[#{screen.text.aset.tagYn}]]"     },
-	                { name: "asetStus"		, type: "text"	, width: 55		, align: "left"  , title: "[[#{screen.text.aset.asetStus}]]"  },
-					{ name: "chkResult"	, type: "text"   , width: 150 , align: "left"  , title: "[[#{screen.text.inv.mng.upload.valid}]]" 
-					 ,itemTemplate : function(value,item) {
-						 return "<span class='red'>"+value+"</span>";
-					 }
-					},
-				];
-			
-			function getGridBody() {
-				return {
-			        	height: "580",
-			            width: "100%",
-			            data: excelItems, 
-			            autoload: false,
-			            loadonce: false,
-			            updateOnResize: true, 
-			           /*  rowClass:function(item,itemIndex){
-			            	console.log("@@@@ "+item.poNo);
-			            	$(".jsgrid-table").find("#row_"+item.poNo).text(itemIndex+1);
-			            	//return itemIndex;
-			            }, */
-			            fields: InvestDtoField
-			            ,onDataLoaded: rowCount()
-			    	};
-			}
-			
-			function getIndex(item) {
-				var idx= -1;
-				$.each(excelItems, function(index, el){
-					if( item.poNo == el.poNo) idx = index; 
-				});
-				//console.log(item.poNo+" >> idx : "+idx);
-				return idx+1;
-			}
-			
-			//파일 다운로드
-			function excelFormDownload() {
+			$(function(){
 				
-				event.preventDefault();
+				batchGrid = new Tabulator("#batch-table", {
+				 	locale:true,
+				    langs: $.commGridLocalization(),								
+				 	height:"550",
+				 	layout:"fitDataStretch",
+				 	movableColumns:true,
+				 	placeholder:"No Data Set",	
+				 	index:"asetNo",				 	
+				 	columns:[
+				 		{formatter:"rownum", hozAlign:"center", width:40, headerSort:false},			 		
+					 	{title:"[[#{screen.text.aset.nm}]]"   			, field:"asetNm"	 		, hozAlign:"left"		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.type1}]]"			, field:"asetTypeNm1"	, hozAlign:"left"  		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.type2}]]"			, field:"asetTypeNm2"	, hozAlign:"left"  		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.type3}]]"			, field:"asetTypeNm3"	, hozAlign:"left"  		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.mftco}]]"	   		, field:"mftco" 				, hozAlign:"left"		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.md}]]"	   			, field:"model"				, hozAlign:"left"		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.sn}]]"	   			, field:"sn"					, hozAlign:"left"  		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.bizDept}]]"  	, field:"bizDeptNm"		, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.dept}]]"	   		, field:"deptNm"			, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.chrgr}]]"	   		, field:"chrgrNm"			, hozAlign:"center" 	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.bsplc}]]"	   		, field:"bsplc"				, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.buld}]]"	   		, field:"buld"					, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.floor}]]"	   		, field:"floor"					, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.loc}]]"	   			, field:"loc"					, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.expDeptCd}]]", field:"expDeptNm"		, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.expAcct}]]"		, field:"expAcct"			, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.durYear}]]"		, field:"durYear"			, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.acqPrc}]]"	   	, field:"acqPrc"				, hozAlign:"right" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.svalPrc}]]"	   	, field:"svalPrc"			, hozAlign:"right" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.acqDt}]]"	   		, field:"acqDt"				, hozAlign:"center" 	, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop1}]]"	, field:"dtlInfo1"				, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop2}]]"	, field:"dtlInfo2"				, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop3}]]"	, field:"dtlInfo3"				, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop4}]]"	, field:"dtlInfo4"				, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop5}]]"	, field:"dtlInfo5"				, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop6}]]"	, field:"dtlInfo6"				, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop7}]]"	, field:"dtlInfo7"				, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop8}]]"	, field:"dtlInfo8"				, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop9}]]"	, field:"dtlInfo9"				, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop10}]]"	, field:"dtlInfo10"		, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop11}]]"	, field:"dtlInfo11"		, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop12}]]"	, field:"dtlInfo12"		, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop13}]]"	, field:"dtlInfo13"		, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop14}]]"	, field:"dtlInfo14"		, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop15}]]"	, field:"dtlInfo15"		, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop16}]]"	, field:"dtlInfo16"		, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop17}]]"	, field:"dtlInfo17"		, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop18}]]"	, field:"dtlInfo18"		, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop19}]]"	, field:"dtlInfo19"		, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.aset.prop20}]]"	, field:"dtlInfo20"		, hozAlign:"left" 		, headerHozAlign:"center"},
+						{title: "[[#{screen.text.aset.upload.valid}]]"	, field: "chkResult"	, hozAlign:"left"  		, headerHozAlign:"center"},
+						{ title: "", field: "isError", visible:false},
+				 	],
+				});		
 				
-				var fileName = "upload_regAset.xlsx";
-				var orgFileName = "자산일괄업로드양식.xlsx";
+				/*---------------------- UI Events ----------------------*/
 				
-				var downUrl = "/file/download";
-	        	var $form = $('<form></form>'); 
-				$form.attr('action', downUrl); 
-				$form.attr('target','#downTarget'); 
-				$form.attr('method','post'); 
-				$form.appendTo('body'); 
-				var str = $("<input name='fileName' value='"+fileName+"'/>");
-				var str2 = $("<input name='orgFileName' value='"+orgFileName+"'/>");
-				$form.append(str).append(str2);
-				$form.submit(); 		
-			}
-			
-			function excelUploadProcess() {
-				
-				console.log(excelUpData);
-				
-				let url = "/common/invest/readExcel";
-				let reqType = "POST";	
-				$.commRequestFile(url, reqType, excelUpData)
-					.then((res) => {
-						console.log('엑셀 업로드 성공!!');
-						console.log(res);
-						
-						bak.length = 0;
-						$.each(res, function(index,element){ bak.push(element); });
-						
-						showUploadExcelData(res, "#jsGrid");
-					})
-					.catch((error) => {
-						console.log('엑셀 업로드 실패!!');
-					});
-				
-				excelUpData.delete("file");
-				$("[name='excelNm']").val("");
-			
-			
-			}
-			
-			
-			function rowCount() {    
-			    var count = excelItems.length; 
-			    $("#uploadCnt").html(count);
-			}
-			
-			
-			var bak = []; 
-		
-			$(function() {
-				
-				//////////////////////////////////////////////////////////////////
-				$("#jsGrid").jsGrid(getGridBody());				
-				//////////////////////////////////////////////////////////////////
-			
-				$("#addFile").on("click", function(){
-					
-					excelItems.length = 0;
-					
-					console.log("addFile");
+				$("#addFile").on("click", function(){					
+					$("#upFile").val("");
 					$("#upFile").click();
-					
 				});
 				
 				$("#upFile").on("change", function(e){
@@ -158,135 +92,158 @@
 					var addFiles = obj.files;
 					excelUpData.append("file",addFiles[0]);
 					$("[name='excelNm']").val(addFiles[0].name);
-					console.log(excelItems);
-					//파일선택후 엑셀업로드 처리한다.
-					excelUploadProcess()
-				});
+				});				
+				
+				//일괄업로드
+				$("#btnUpload").on("click", function(){					
+
+					if($("#excelNm").val() == "") {
+						alert("[[#{screen.info.status.error.outofbook.no.upload.file}]]");
+						return;
+					}
+					
+					//그리드 초기화
+					batchGrid.replaceData();
+					
+					let url = "/asset/regist/invest/popup/asetUploadExcel";
+					let reqType = "POST";	
+					$.commRequestFile(url, reqType, excelUpData)
+						.then((res) => {
+							console.log(res.data);
+							//batchGrid.setData(res.data);		
+							$("#uploadCnt").html("Total : " + res.size);												
+						})
+						.catch((error) => {
+							alert('[[#{screen.info.status.error.occur}]]');						
+						});
+				});				
+				
+				//오류건만 보기 
+				$("#btnError").on("click",function(){ 
+					let status = $("#btnError").html();
+					if(status == "[[#{screen.btn.error.list}]]"){
+						batchGrid.setFilter("isNull", "=", "Y");
+						$("#btnError").html("[[#{screen.btn.all.list}]]");
+					}else{
+						batchGrid.removeFilter("isNull", "=", "Y");
+						$("#btnError").html("[[#{screen.btn.error.list}]]");
+					}
+				});								
+				
+				//저장
+				$("#btnSave").on("click",function (){ 				
+					let invalidData = batchGrid.searchData("isError", "=", "Y");
+					let gridData = batchGrid.getData();
+	    	    	let params = {
+		    	    		url : "/asset/regist/outofbook/saveBatchOutOfBookAset",
+		    	    		reqType : 'POST',
+		    	    		data : JSON.stringify(gridData),
+		    	    	}					
+					
+					if(invalidData.length == 0){
+						$.request(params)
+							.then((res) => {
+								window.opener.search();
+								window.close();
+							})
+							.catch((error) => {
+								alert('[[#{screen.info.status.error.occur}]]');	
+							}); 
+					}else{
+						alert("[[#{screen.info.status.error.outofbook.upload.invalid}]]");
+					}
+		        });
 				
 				//팝업창 닫기
 				$("#btn_close_pop").on("click",function(){ 
 					window.close();
-				});
+				});				
 				
-				//업로드된 엑셀 데이터 db에 저장한다...
-				$("#btnSave").on("click",function (){ 
-					
-					let url = "/standard/invest/investMng/investMngSave";
-					let reqType = "POST";
-					
-					if(excelItems.filter(arr => arr.chkFlag == 'Y').length == 0){
-						$.commRequest(url, reqType, JSON.stringify(excelItems))
-							.then((res) => {
-								console.log('저장 성공!!');
-								window.opener.location.reload();
-								window.close();
-							})
-							.catch((error) => {
-								console.log('저장 실패!!');
-							}); 
-					}else{
-						alert("[[#{screen.info.status.error.inv.upload.invalid}]]");
-					}
-		        });
-				
+				//양식다운로드
 				$(".btn_download").on("click", function(){
 					excelFormDownload();
-				});
+				});				
 				
-				
-				$("#errChk").on("change", function(){
-					var tmp = [];
-					if( $(this).is(":checked") ) { 
-						tmp = excelItems.filter(chkFlag);
-						excelItems.length = 0;
-						$.each(tmp, function(index,element){ excelItems.push(element); });
-					} else {
-						excelItems.length = 0;
-						$.each(bak, function(index,element){ excelItems.push(element); });
-					}
-					
-					$("#jsGrid").jsGrid(getGridBody());		
-				});
-				
-
 			});
 			
-			function chkFlag(item) {
-				return item.chkFlag == "Y";
+			//파일 다운로드
+			function excelFormDownload() {				
+				var fileName = "upload_regAset.xlsx";
+				var orgFileName = "자산일괄업로드양식.xlsx";				
+				var downUrl = "/file/download";
+	        	var $form = $('<form></form>'); 	        	
+				$form.attr('action', downUrl); 
+				$form.attr('target','#downTarget'); 
+				$form.attr('method','post'); 
+				$form.appendTo('body'); 
+				var str = $("<input type='hidden' name='fileName' value='"+fileName+"'/>");
+				var str2 = $("<input type='hidden' name='orgFileName' value='"+orgFileName+"'/>");
+				$form.append(str).append(str2);
+				$form.submit(); 		
 			}
-			
-		</script>
-	</th:block> 
+		</script>			
 
-</head>
-<body >
+	</th:block>
 
-<div layout:fragment="content">
-
-	<!-- pop_alert -->
-	<div id="pop_wrap" >
-	<!-- [D] 현재 팝업창 크기는 600*600 입니다. 콘텐츠에 따라서 크기를 변경하여 주십시오.-->
-					<!-- head -->
-					<h3>[[#{screen.text.inv.mng.upload.screen.title}]]
-						 <a href="#;" id="btn_close_pop" class="pop_close" title="[[#{screen.text.comm.close}]]">[[#{screen.text.comm.close}]]</a>
-					</h3>
-					<!-- //head -->
-					<!-- contents -->
-					<div id="contents">
+	<div layout:fragment="content">
+		<div id="pop_wrap" style="width:1200px;height:594px;">
+				<!-- head -->
+				<h3>[[#{screen.text.inv.mng.upload.screen.title}]]
+				<a href="#;" id="btn_close_pop"  class="pop_close" title="[[#{screen.text.comm.close}]]">[[#{screen.btn.close}]]</a>
+				</h3>
+				<!-- //head -->
+				
+				<!-- contents -->
+				<div id="contents">
 	
-						<!-- search -->
-						<div class="srch_wrap">
-							<!-- search_form -->
-							<div class="srch_form">
-								<table class="srch_table" >
-									<colgroup>
-											<col width="15%"/>
-											<col width="50%"/>
-											<col width="15%"/>
-									</colgroup>
-									<tr>
-										<th>[[#{screen.text.comm.upload.cnt}]] : <span id="uploadCnt" class="tr">0</span></th>
-										<td valign="top">
-											<table>
-												<tr>
-													<th>[[#{screen.text.comm.upload}]]&nbsp;&nbsp;</th> 
-													<td><input type="text" name="excelNm" id="excelNm" style="width:200px" readOnly > <input type="file" id="upFile" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;"></td>
-													<td>&nbsp;&nbsp;<a href="#;" id="addFile" class="btn_srch">[[#{screen.text.comm.file.search}]]</a></td>
-													<td>&nbsp;&nbsp;<input type="checkbox" id="errChk" >&nbsp;[[#{screen.text.inv.mng.view.invalid}]]</td>
-												</tr>
-											</table>
-										</td>
-										<td align="right">
-											<!-- search_button -->
-												<a href="#;" class="btn_download">[[#{screen.text.comm.download.sample}]]</a>
-												<a href="#;" class="btn_srch" id="btnSave">[[#{screen.text.comm.save}]]</a>
-											<!-- //search_button -->
-										</td>
-									</tr>
-								</table>
-							 </div> 
-							<!-- //search_form -->
-							
+					<!-- 일괄업로드 -->
+					<table class="form_table_NLine">
+						<colgroup>
+							<col style="width:15%;">
+							<col style="width:25%;">
+							<col style="width:15%;">
+							<col>
+						</colgroup>
+						<tbody>
+							<tr class="line">
+								<th>[[#{screen.text.aset.file.template}]]</th>
+								<td><a href="#;" class="btn_download">[[#{screen.text.comm.download.sample}]]</a></td>
+								<th>[[#{screen.text.aset.file.upload}]]</th>
+								<td>
+									<input type="text" name="excelNm" id="excelNm" style="width:200px" readOnly >
+									<input type="file" id="upFile" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;">
+									<a href="#;" id="addFile" class="btn_srch">[[#{screen.text.comm.file.search}]]</a>																	
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<!-- //일괄업로드 -->
+					
+					<p class="space10"></p>
+					
+					<!-- list 1 -->
+					<div class="list_wrap">
+						
+						<!-- list_head -->
+						<div class="list_head">
+							<div id="uploadCnt" class="result">Totals : 0,000</div>
+							<div class="button">
+								<a id="btnUpload" class="btn_list_rd">[[#{screen.btn.upload}]]</a>							
+								<a id="btnError" class="btn_icon_list" href="#;">[[#{screen.btn.error.list}]]</a>
+								<a href="#;" id="btnSave" class="btn_add">[[#{screen.text.comm.save}]]</a>
+							</div>
 						</div>
-						<!-- //search -->
-
-						<!-- list 1 -->
-						<div id="jsGrid"></div>
-						<!-- //list 1 -->
-	
+						<!-- //list_head -->
+					
+						<div id="batch-table"></div>
+						
 					</div>
-					<!-- contents -->
-					<!-- button -->
-					<!-- <div class="pop_button">
-						<p>
-						<a href="#;" id="btn_close_pop" class="btn_list_rd">닫기</a>
-						</p>
-					</div> -->
-					<!-- //button -->
-	</div>
-	<div id="downTarget"></div>
-	<!-- //pop_alert -->
-</div>
-
-</body>
+					<!-- //list 1 -->
+	
+				</div>
+				<!-- contents -->
+		</div>
+		<!-- //pop_alert -->
+		<div id="downTarget" style="display:none;"></div>
+	</div>			
 </html>

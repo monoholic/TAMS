@@ -1,16 +1,20 @@
 package kr.co.trito.tams.web.asset.regist.invest.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,12 +41,14 @@ import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.asset.regist.invest.dto.AsetListDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.AssetDtlDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.AssetMasDto;
+import kr.co.trito.tams.web.asset.regist.invest.dto.AssetUploadDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto;
 import kr.co.trito.tams.web.asset.regist.invest.service.InvestRegistService;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.common.dto.ComCodeParamDto;
 import kr.co.trito.tams.web.common.service.CommonService;
+import kr.co.trito.tams.web.user.dto.UserDto;
 import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 
@@ -334,6 +341,31 @@ public class InvestRegistController {
 		return view;
 	}
 
+	
+	@PostMapping("/popup/asetUploadExcel")
+	@ResponseBody
+	public ResponseEntity<? extends Response> uploadExcel(@RequestParam("file") MultipartFile multipartFile, Authentication authentication) throws IOException, InvalidFormatException {
+		
+		List<AssetUploadDto> result = null;
+		AssetUploadDto dto = new AssetUploadDto();
+		
+		UserDto userDto = ((UserInfo) authentication.getPrincipal()).getDto();	
+		
+		result = excelReader.readFileToList(multipartFile, dto::row);
+		result = result.stream()
+				 	.filter(d -> d.getIsNull().equals("N"))
+				 	.collect(Collectors.toList());
+		/*
+		if(result.size() > 1) {
+			result.remove(0);
+			result = outOfBookService.saveUploadExcel(userDto.getUserId(), result);
+		} else {
+			result = null;
+		}
+		*/
+		return responseService.success(result);
+	}		
+	
 
 	/** 투자자산등록 화면 : 조회 - 엑셀다운 */
 	@PostMapping(value = "/regAsetListExcel")
