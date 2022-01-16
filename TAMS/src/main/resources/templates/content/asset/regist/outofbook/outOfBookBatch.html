@@ -20,13 +20,12 @@
 	
 		<script>
 
-    		let grid;		
+    		let batchGrid;		
 		    let excelUpData = new FormData();
 		    
 			$(function(){
 				
-				
-				grid = new Tabulator("#data-table", {
+				batchGrid = new Tabulator("#batch-table", {
 				 	locale:true,
 				    langs: $.commGridLocalization(),								
 				 	height:"410",
@@ -101,14 +100,14 @@
 					}
 					
 					//그리드 초기화
-					grid.replaceData();
+					batchGrid.replaceData();
 					
 					let url = "/asset/regist/outofbook/uploadExcel";
 					let reqType = "POST";	
 					$.commRequestFile(url, reqType, excelUpData)
 						.then((res) => {
 							console.log(res);
-							grid.setData(res.data);		
+							batchGrid.setData(res.data);		
 							$("#uploadCnt").html("Total : " + res.size);												
 						})
 						.catch((error) => {
@@ -120,18 +119,18 @@
 				$("#btnError").on("click",function(){ 
 					let status = $("#btnError").html();
 					if(status == "[[#{screen.btn.error.list}]]"){
-						grid.setFilter("isNull", "=", "Y");
+						batchGrid.setFilter("isNull", "=", "Y");
 						$("#btnError").html("[[#{screen.btn.all.list}]]");
 					}else{
-						grid.removeFilter("isNull", "=", "Y");
+						batchGrid.removeFilter("isNull", "=", "Y");
 						$("#btnError").html("[[#{screen.btn.error.list}]]");
 					}
 				});								
 				
 				//저장
 				$("#btnSave").on("click",function (){ 				
-					let invalidData = grid.searchData("isError", "=", "Y");
-					let gridData = grid.getData();
+					let invalidData = batchGrid.searchData("isError", "=", "Y");
+					let gridData = batchGrid.getData();
 	    	    	let params = {
 		    	    		url : "/asset/regist/outofbook/saveBatchOutOfBookAset",
 		    	    		reqType : 'POST',
@@ -155,6 +154,7 @@
 				//팝업창 닫기
 				$("#btn_close_pop").on("click",function(){ 
 					window.close();
+					//closeBatchPopup();
 				});				
 				
 				//양식다운로드
@@ -174,8 +174,8 @@
 				$form.attr('target','#downTarget'); 
 				$form.attr('method','post'); 
 				$form.appendTo('body'); 
-				var str = $("<input name='fileName' value='"+fileName+"'/>");
-				var str2 = $("<input name='orgFileName' value='"+orgFileName+"'/>");
+				var str = $("<input type='hidden' name='fileName' value='"+fileName+"'/>");
+				var str2 = $("<input type='hidden' name='orgFileName' value='"+orgFileName+"'/>");
 				$form.append(str).append(str2);
 				$form.submit(); 		
 			}
@@ -204,9 +204,9 @@
 						</colgroup>
 						<tbody>
 							<tr class="line">
-								<th>양식다운로드</th>
+								<th>[[#{screen.text.outofbook.file.template}]]</th>
 								<td><a href="#;" class="btn_download">[[#{screen.text.comm.download.sample}]]</a></td>
-								<th>파일업로드</th>
+								<th>[[#{screen.text.outofbook.file.upload}]]</th>
 								<td>
 									<input type="text" name="excelNm" id="excelNm" style="width:200px" readOnly >
 									<input type="file" id="upFile" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;">
@@ -214,7 +214,7 @@
 								</td>
 							</tr>
 							<tr class="line">
-								<th>사유</th>
+								<th>[[#{screen.text.outofbook.reason}]]</th>
 								<td colspan="3">
 									<input type="text" style="width:100%;">
 								</td>
@@ -239,7 +239,7 @@
 						</div>
 						<!-- //list_head -->
 					
-						<div id="data-table"></div>
+						<div id="batch-table"></div>
 						
 					</div>
 					<!-- //list 1 -->
@@ -248,6 +248,6 @@
 				<!-- contents -->
 		</div>
 		<!-- //pop_alert -->
-		<div id="downTarget"></div>
+		<div id="downTarget" style="display:none;"></div>
 	</div>			
 </html>
