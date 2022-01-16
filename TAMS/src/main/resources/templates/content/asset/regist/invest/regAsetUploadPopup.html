@@ -50,7 +50,7 @@
 					 	{title:"[[#{screen.text.aset.floor}]]"	   		, field:"floorNm"			, hozAlign:"left" 		, headerHozAlign:"center"},
 					 	{title:"[[#{screen.text.aset.loc}]]"	   			, field:"loc"					, hozAlign:"left" 		, headerHozAlign:"center"},
 					 	{title:"[[#{screen.text.aset.expDeptCd}]]", field:"expDeptNm"		, hozAlign:"left" 		, headerHozAlign:"center"},
-					 	{title:"[[#{screen.text.aset.expAcct}]]"		, field:"expAcct"			, hozAlign:"left" 		, headerHozAlign:"center"},
+					 	{title:"[[#{screen.text.aset.expAcct}]]"		, field:"expAcctNm"		, hozAlign:"left" 		, headerHozAlign:"center"},
 					 	{title:"[[#{screen.text.aset.durYear}]]"		, field:"durYear"			, hozAlign:"left" 		, headerHozAlign:"center"},
 					 	{title:"[[#{screen.text.aset.acqPrc}]]"	   	, field:"acqPrc"				, hozAlign:"right" 		, headerHozAlign:"center"},
 					 	{title:"[[#{screen.text.aset.svalPrc}]]"	   	, field:"svalPrc"			, hozAlign:"right" 		, headerHozAlign:"center"},
@@ -105,12 +105,12 @@
 					//그리드 초기화
 					batchGrid.replaceData();
 					
-					let url = "/asset/regist/invest/popup/asetUploadExcel";
+					let url = "/asset/regist/invest/popup/uploadAset";
 					let reqType = "POST";	
 					$.commRequestFile(url, reqType, excelUpData)
 						.then((res) => {
 							console.log(res.data);
-							//batchGrid.setData(res.data);		
+							batchGrid.setData(res.data);		
 							$("#uploadCnt").html("Total : " + res.size);												
 						})
 						.catch((error) => {

@@ -45,6 +45,7 @@ import kr.co.trito.tams.web.asset.regist.invest.dto.AssetUploadDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto;
 import kr.co.trito.tams.web.asset.regist.invest.service.InvestRegistService;
+import kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookBatchDto;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.common.dto.ComCodeParamDto;
 import kr.co.trito.tams.web.common.service.CommonService;
@@ -342,7 +343,7 @@ public class InvestRegistController {
 	}
 
 	
-	@PostMapping("/popup/asetUploadExcel")
+	@PostMapping("/popup/uploadAset")
 	@ResponseBody
 	public ResponseEntity<? extends Response> uploadExcel(@RequestParam("file") MultipartFile multipartFile, Authentication authentication) throws IOException, InvalidFormatException {
 		
@@ -355,49 +356,27 @@ public class InvestRegistController {
 		result = result.stream()
 				 	.filter(d -> d.getIsNull().equals("N"))
 				 	.collect(Collectors.toList());
-		/*
+
 		if(result.size() > 1) {
 			result.remove(0);
-			result = outOfBookService.saveUploadExcel(userDto.getUserId(), result);
+			result = investRegistService.saveUploadExcel(userDto.getUserId(), result);
 		} else {
 			result = null;
 		}
-		*/
+
 		return responseService.success(result);
 	}		
 	
-
-	/** 투자자산등록 화면 : 조회 - 엑셀다운 */
-	@PostMapping(value = "/regAsetListExcel")
-	@ApiOperation(value = "투자정보조회 화면 엑셀다운로드", notes = "엑셀다운로드")
+	@PostMapping(value="/popup/saveUploadAset")
+	@ResponseBody
+	@ApiOperation(value = "부외자산 일괄 업로드 저장", notes = "부외자산 일괄 업로드 등록 처리한다.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ModelAndView regAsetListExcel(
-			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
-
-		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(),
-				params.get("numOfRows").toString(), params);
-		condition.pageSetup(investRegistService.selectCountAsetList(condition));
-		List<AsetListDto> list = investRegistService.selectAsetList(condition);
-
-		List<List<String>> rows = new ArrayList<List<String>>();
-
-		ObjectMapper objectMapper = new ObjectMapper();
-		Map<String, String> map = null;
-		List<String> row = null;
-
-		for (AsetListDto aset : list) {
-			map = objectMapper.convertValue(aset, Map.class);
-			row = new ArrayList<>(map.values());
-			rows.add(row);
-		}
-
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		paramMap.put(ExcelConstant.FILE_NAME, "등록자산리스트");
-		paramMap.put(ExcelConstant.HEAD, Arrays.asList("자산번호", "자산유형1", "자산유형2", "자산유형3", "제조사", "모델", "S/N", "사업부",
-				"부서", "담당자", "태깅여부", "등록상태"));
-		paramMap.put(ExcelConstant.BODY, rows);
-
-		return new ModelAndView("excelXlsxView", paramMap);
-	}
+	public ResponseEntity<? extends Response> saveBatchOutOfBookAset( 
+			@ApiParam(value = "메뉴권한", required = false) @RequestBody(required = false)  List<AssetUploadDto> list, Authentication authentication) { 
+		UserDto userDto = ((UserInfo) authentication.getPrincipal()).getDto();	
+		//outOfBookService.saveBatchOutOfBookAset(userDto.getUserId(), list);
+		return responseService.success(null);
+	} 		
+	
 }

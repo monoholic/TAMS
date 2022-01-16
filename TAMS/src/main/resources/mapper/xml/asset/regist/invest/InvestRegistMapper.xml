@@ -1006,5 +1006,191 @@
    	<delete id="deleteAsetMas" parameterType="Map">
    		delete from tb_aset_mas
    		where aset_no = #{assetNo}
-   	</delete>   	   		
+   	</delete>   
+   	
+   	<delete id="deleteUploadHistory" parameterType="String">
+   		delete from tb_upload_aset
+   		where regr = #{userId}
+   	</delete>      	   	
+   	
+	<insert id="saveUploadExcel" parameterType="kr.co.trito.tams.web.asset.regist.invest.dto.AssetUploadDto">
+		insert into tb_upload_aset(
+					 aset_nm
+					,aset_type1
+					,aset_type2
+					,aset_type3
+					,mftco
+					,model
+					,sn
+					,biz_dept_cd
+					,dept_cd
+					,chrgr
+					,bsplc
+					,buld
+					,floor
+					,loc
+					,exp_dept_cd
+					,exp_acct
+					,dur_year					
+					,acq_prc
+					,sval_prc
+					,acq_dt
+					,dtl_info1
+					,dtl_info2
+					,dtl_info3
+					,dtl_info4
+					,dtl_info5
+					,dtl_info6
+					,dtl_info7
+					,dtl_info8
+					,dtl_info9
+					,dtl_info10
+					,dtl_info11
+					,dtl_info12
+					,dtl_info13
+					,dtl_info14
+					,dtl_info15
+					,dtl_info16
+					,dtl_info17
+					,dtl_info18
+					,dtl_info19
+					,dtl_info20
+					,regr				
+				) values ( 			                 				                 
+                   #{asetNm}
+				 , #{asetType1}
+				 , #{asetType2}
+				 , #{asetType3}
+				 , #{mftco}
+				 , #{model}
+				 , #{sn}
+				 , #{bizDeptCd}
+				 , #{deptCd}
+				 , #{chrgr}
+				 , #{bsplc}
+				 , #{buld}
+				 , #{floor}
+				 , #{loc}
+				 , #{expDeptCd}
+				 , #{expAcct}
+				 , #{durYear}
+				 , #{acqPrc}
+				 , #{svalPrc}
+				 , #{acqDt}
+				 , #{dtlInfo1}
+				 , #{dtlInfo2}
+				 , #{dtlInfo3}
+				 , #{dtlInfo4}
+				 , #{dtlInfo5}
+				 , #{dtlInfo6}
+				 , #{dtlInfo7}
+				 , #{dtlInfo8}
+				 , #{dtlInfo9}
+				 , #{dtlInfo10}
+				 , #{dtlInfo11}
+				 , #{dtlInfo12}
+				 , #{dtlInfo13}
+				 , #{dtlInfo14}
+				 , #{dtlInfo15}
+				 , #{dtlInfo16}
+				 , #{dtlInfo17}
+				 , #{dtlInfo18}
+				 , #{dtlInfo19}
+				 , #{dtlInfo20}
+                 , #{regr}
+                 )				               
+	</insert>	   	   	
+   		   		
+	<select id="selectUploadResultList" resultType="kr.co.trito.tams.web.asset.regist.invest.dto.AssetUploadDto" parameterType="String">
+		select * 
+		from (
+				select a.aset_no as asetNo
+				    , (select count(*) from tb_aset_mas x where x.aset_no = a.aset_no) as asetNoCnt
+					,a.aset_nm as asetNm
+					,a.aset_type1 as asetType1
+				    ,b.code_nm as asetTypeNm1 
+					,a.aset_type2 as asetType2
+				    ,c.code_nm as asetTypeNm2    
+					,a.aset_type3 as asetType3
+				    ,c.code_nm as asetTypeNm3
+					,a.mftco
+					,a.model
+					,a.sn
+					,a.biz_dept_cd as bizDeptCd
+				    ,e.dept_nm as bizDeptNm
+					,a.dept_cd as deptCd
+				    ,f.dept_nm as deptNm   
+					,a.chrgr
+					,g.user_nm as chrgrNm
+					,a.bsplc
+					,h.code_nm as bsplcNm
+					,a.buld
+					,i.code_nm as buldNm
+					,a.floor
+					,j.code_nm as floorNm					
+					,a.loc
+					,a.exp_dept_cd as expDeptCd
+					,f.dept_nm as expDeptNm
+					,a.exp_acct as expAcct
+					,l.code_nm as expAcctNm					
+					,a.dur_year					
+					,a.acq_prc as acqPrc
+					,a.sval_prc as svalPrc
+					,a.acq_dt as acqDt
+					,a.dtl_info1 as dtlInfo1
+					,a.dtl_info2 as dtlInfo2
+					,a.dtl_info3 as dtlInfo3
+					,a.dtl_info4 as dtlInfo4
+					,a.dtl_info5 as dtlInfo5
+					,a.dtl_info6 as dtlInfo6
+					,a.dtl_info7 as dtlInfo7
+					,a.dtl_info8 as dtlInfo8
+					,a.dtl_info9 as dtlInfo9
+					,a.dtl_info10 as dtlInfo10
+					,a.dtl_info11 as dtlInfo11
+					,a.dtl_info12 as dtlInfo12
+					,a.dtl_info13 as dtlInfo13
+					,a.dtl_info14 as dtlInfo14
+					,a.dtl_info15 as dtlInfo15
+					,a.dtl_info16 as dtlInfo16
+					,a.dtl_info17 as dtlInfo17
+					,a.dtl_info18 as dtlInfo18
+					,a.dtl_info19 as dtlInfo19
+					,a.dtl_info20 as dtlInfo20
+					,a.regr
+				from  tb_upload_aset a
+				left outer join tb_com_code b
+				  on a.aset_type1 = b.code_id
+				 and b.code_grp_id = 'AS_CLASS'
+				left outer join tb_com_code c
+				  on a.aset_type2 = c.code_id
+				 and c.code_grp_id = 'AS_CLASS'
+				left outer join tb_com_code d
+				  on a.aset_type3 = d.code_id
+				 and d.code_grp_id = 'AS_CLASS' 
+				left outer join tb_dept e
+				  on a.biz_dept_cd = e.dept_cd  
+				left outer join tb_dept f
+				  on a.dept_cd = f.dept_cd    
+				left outer join tb_user g
+				  on a.chrgr = g.user_id		
+				left outer join tb_com_code h
+				  on a.bsplc = h.code_id  		
+				and h.code_grp_id = 'SITE'
+				left outer join tb_com_code i
+				  on a.buld = i.code_id  		
+				and i.code_grp_id = 'BUILDING'
+				left outer join tb_com_code j
+				  on a.floor = j.code_id  		
+				and j.code_grp_id = 'FLOOR'
+				left outer join tb_dept k
+				  on a.exp_dept_cd = k.dept_cd   				
+				left outer join tb_com_code l
+				  on a.exp_acct = l.code_id  		
+				and l.code_grp_id = 'ACCOUNT'
+				where a.regr = #{userId}   
+			 ) a        
+	</select>	
+		   		   		
+   		   		
 </mapper>

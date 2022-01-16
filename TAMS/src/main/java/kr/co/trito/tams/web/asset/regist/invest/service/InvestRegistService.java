@@ -11,9 +11,11 @@ import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.asset.regist.invest.dto.AsetListDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.AssetDtlDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.AssetMasDto;
+import kr.co.trito.tams.web.asset.regist.invest.dto.AssetUploadDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestExcelDto;
 import kr.co.trito.tams.web.asset.regist.invest.dto.InvestRegistDto;
 import kr.co.trito.tams.web.asset.regist.invest.mapper.InvestRegistMapper;
+import kr.co.trito.tams.web.asset.regist.outofbook.dto.OutOfBookBatchDto;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
 import kr.co.trito.tams.web.standard.invest.dto.InvestDto;
 import lombok.RequiredArgsConstructor;
@@ -185,5 +187,26 @@ public class InvestRegistService {
 		}
 	}		
 	
+	public List<AssetUploadDto> saveUploadExcel(String userId, List<AssetUploadDto> list) {
+		
+		//이력삭제
+		mapper.deleteUploadHistory(userId);
+		
+		//업로드 데이터 저장
+		for(AssetUploadDto dto : list) {
+			dto.setRegr(userId);
+			mapper.saveUploadExcel(dto);
+		}
+		
+		//코드정보 조인 후 조회
+		List<AssetUploadDto> result = mapper.selectUploadResultList(userId);
+		
+		//데이터 검증
+		for(AssetUploadDto dto : result) {
+			dto.setDataVerification();
+		}
+		
+		return result;
+	}	
 	
 }
