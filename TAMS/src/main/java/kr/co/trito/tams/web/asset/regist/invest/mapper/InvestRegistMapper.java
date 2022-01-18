@@ -64,4 +64,10 @@ public interface InvestRegistMapper {
 	
 	public List<AssetUploadDto> selectUploadResultList(String userId);	
 	
+	public int saveUploadAsetMas(AssetUploadDto dto);
+	
+	public int saveUploadAsetDtl(AssetUploadDto dto);
+	
+	public int saveUploadPoAset(AssetUploadDto dto);
+	
 }

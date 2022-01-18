@@ -131,10 +131,20 @@
 				
 				// 일괄 업로드 팝업 
 	    	    $("#openRegAsetPopup").on("click", function() { 
-	    	        // 팝업 호출 url
 	    	        var url = "/asset/regist/invest/popup/regAsetUploadPopup";
-	    	        var args = {width:1200, height:710};	    	        
-	    	        openPopup("regAsetPopup", url, args);
+	    	        var popId = "userPopup";
+	    	        var args = {
+	    	        	width  : 1200,	
+	    	        	height : 710,
+		    	    	pheight: window.innerHeight,
+		    	    	pwidth : window.innerWidth,	  
+	    	        };	    	       
+	    	        var param = {
+	    	        		remainQty:$("#icpt").val(),
+	    	        		poNo : "[[${poNo}]]"	    	        		
+	    	        };	    	        
+	    	        openPopup2(popId, url, args, param);	    	        
+	    	        
 	    	    });
 	     	    
 				// 엑셀다운

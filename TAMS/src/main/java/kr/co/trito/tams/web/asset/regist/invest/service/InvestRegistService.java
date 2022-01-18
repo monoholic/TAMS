@@ -209,4 +209,20 @@ public class InvestRegistService {
 		return result;
 	}	
 	
+	public void saveUploadAset(String userId, List<AssetUploadDto> list) {
+		int maxAssetNo = mapper.selectMaxAsetNo();		
+		
+		for(AssetUploadDto dto : list) {
+			
+			dto.setAsetNo(Integer.toString(maxAssetNo));
+			dto.setRegr(userId);
+			dto.setUpdr(userId);
+			dto.setQty("1");
+			dto.setNewYn("N");
+
+			mapper.saveUploadAsetMas(dto);
+			
+			maxAssetNo++;
+		}
+	}
 }

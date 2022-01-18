@@ -222,7 +222,7 @@ public class InvestRegistController {
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })	
 	public ResponseEntity<? extends Response> deleteNewAset(
 			@ApiParam(value = "PO/자산번호", required = true) @RequestParam Map<String, Object> param){
-		log.info(param.toString());
+		//log.info(param.toString());
 		investRegistService.deleteNewAset(param);		
 		return responseService.success(null);
 	}
@@ -334,11 +334,12 @@ public class InvestRegistController {
 	
 	/** 투자자산등록(팝업) 등록자산목록 일괄업로드 팝업 화면 : 일괄업로드 */
 	@GetMapping("/popup/regAsetUploadPopup")
-	public ModelAndView invUploadPopupView(HttpServletRequest request) {
-
+	public ModelAndView invUploadPopupView(HttpServletRequest request,
+			@ApiParam(value = "등록 가능 자산수량", required = false) @RequestParam Map<String, Object> param) {
 		ModelAndView view = new ModelAndView();
+		view.addObject("poNo", param.get("poNo"));
+		view.addObject("remainQty", param.get("remainQty"));
 		view.setViewName("/content/asset/regist/invest/regAsetUploadPopup");
-
 		return view;
 	}
 
@@ -372,10 +373,13 @@ public class InvestRegistController {
 	@ApiOperation(value = "부외자산 일괄 업로드 저장", notes = "부외자산 일괄 업로드 등록 처리한다.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
-	public ResponseEntity<? extends Response> saveBatchOutOfBookAset( 
+	public ResponseEntity<? extends Response> saveUploadAset( 
 			@ApiParam(value = "메뉴권한", required = false) @RequestBody(required = false)  List<AssetUploadDto> list, Authentication authentication) { 
 		UserDto userDto = ((UserInfo) authentication.getPrincipal()).getDto();	
 		//outOfBookService.saveBatchOutOfBookAset(userDto.getUserId(), list);
+		
+		log.info(list.toString());
+		
 		return responseService.success(null);
 	} 		
 	

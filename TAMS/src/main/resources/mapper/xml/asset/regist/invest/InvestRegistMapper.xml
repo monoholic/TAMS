@@ -1158,6 +1158,7 @@
 					,a.dtl_info19 as dtlInfo19
 					,a.dtl_info20 as dtlInfo20
 					,a.regr
+					,'' as poNo
 				from  tb_upload_aset a
 				left outer join tb_com_code b
 				  on a.aset_type1 = b.code_id
@@ -1191,6 +1192,123 @@
 				where a.regr = #{userId}   
 			 ) a        
 	</select>	
-		   		   		
+
+	<insert id="saveUploadAsetMas" parameterType="kr.co.trito.tams.web.asset.regist.invest.dto.AssetUploadDto">
+			insert into tb_aset_mas (
+				aset_no
+				,aset_nm
+				,aset_type1
+				,aset_type2
+				,aset_type3
+				,mftco
+				,model
+				,sn
+				,biz_dept_cd
+				,dept_cd
+				,chrgr
+				,bsplc
+				,buld
+				,floor
+				,loc
+				,exp_dept_cd
+				,exp_acct
+				,dur_year
+				,acq_prc
+				,sval_prc
+				,dprc_prc
+				,acq_dt
+				,regr
+				,reg_dt
+			) values(
+				concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
+				,#{asetNm}
+				,#{asetType1}
+				,#{asetType2}
+				,#{asetType3}
+				,#{mftco}
+				,#{model}
+				,#{sn}
+				,#{bizDeptCd}
+				,#{deptCd}
+				,#{chrgr}
+				,#{bsplc}
+				,#{buld}
+				,#{floor}
+				,#{loc}
+				,#{expDeptCd}
+				,#{expAcct}
+				,#{durYear}
+				,#{acqPrc}
+				,#{svalPrc}
+				,#{acqDt}
+				,#{regr}
+			)	
+	</insert>
    		   		
+	<insert id="saveUploadAsetDtl" parameterType="kr.co.trito.tams.web.asset.regist.invest.dto.AssetUploadDto">
+			insert into tb_aset_dtl (
+				aset_no
+				,aset_type
+				,dtl_info1
+				,dtl_info2
+				,dtl_info3
+				,dtl_info4
+				,dtl_info5
+				,dtl_info6
+				,dtl_info7
+				,dtl_info8
+				,dtl_info9
+				,dtl_info10
+				,dtl_info11
+				,dtl_info12
+				,dtl_info13
+				,dtl_info14
+				,dtl_info15
+				,dtl_info16
+				,dtl_info17
+				,dtl_info18
+				,dtl_info19
+				,dtl_info20
+				,regr
+			) values (
+				concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
+				,#{asetType3}
+                , #{dtlInfo1}
+			    , #{dtlInfo2}
+			 	, #{dtlInfo3}
+			 	, #{dtlInfo4}
+			 	, #{dtlInfo5}
+			 	, #{dtlInfo6}
+			 	, #{dtlInfo7}
+			 	, #{dtlInfo8}
+			 	, #{dtlInfo9}
+			 	, #{dtlInfo10}
+			 	, #{dtlInfo11}
+			 	, #{dtlInfo12}
+			 	, #{dtlInfo13}
+			 	, #{dtlInfo14}
+			 	, #{dtlInfo15}
+			 	, #{dtlInfo16}
+			 	, #{dtlInfo17}
+			 	, #{dtlInfo18}
+			 	, #{dtlInfo19}
+			 	, #{dtlInfo20}
+			 	, #{regr}
+			) 	
+	</insert>   		   		
+	<insert id="saveUploadPoAset" parameterType="Map">
+		insert into tb_po_aset (
+			po_no
+			,aset_no
+			,new_yn
+			,qty
+			,regr
+		) values (
+			#{poNo}
+			,concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
+			,#{newYn}
+			,#{qty}
+			,#{regr}
+		)	
+	</insert>
 </mapper>

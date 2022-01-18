@@ -134,6 +134,13 @@ public class AssetUploadDto extends ExcelDto {
 	@ApiModelProperty(value="Null Check")
 	private String isNull;		
 	
+	@ApiModelProperty(value="PO번호")
+	private String poNo;			
+	@ApiModelProperty(value="신규개조여부")
+	private String newYn;			
+	@ApiModelProperty(value="수량")
+	private String qty;				
+	
     @Override
     public  AssetUploadDto row(Row row) {	
     	

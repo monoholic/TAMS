@@ -22,6 +22,7 @@
 
     		let batchGrid;		
 		    let excelUpData = new FormData();
+		    let remainQty = "[[${remainQty}]]";
 		    
 			$(function(){
 				
@@ -109,9 +110,16 @@
 					let reqType = "POST";	
 					$.commRequestFile(url, reqType, excelUpData)
 						.then((res) => {
+							
+							$("#uploadCnt").html("Total : " + res.size);
+							
+							//PO번호 셋팅							
+							res.data.forEach(row =>{
+								row.poNo = "[[${poNo}]]";
+							});
+
 							console.log(res.data);
-							batchGrid.setData(res.data);		
-							$("#uploadCnt").html("Total : " + res.size);												
+							batchGrid.setData(res.data);
 						})
 						.catch((error) => {
 							alert('[[#{screen.info.status.error.occur}]]');						
@@ -134,17 +142,24 @@
 				$("#btnSave").on("click",function (){ 				
 					let invalidData = batchGrid.searchData("isError", "=", "Y");
 					let gridData = batchGrid.getData();
-	    	    	let params = {
-		    	    		url : "/asset/regist/outofbook/saveBatchOutOfBookAset",
-		    	    		reqType : 'POST',
-		    	    		data : JSON.stringify(gridData),
-		    	    	}					
+	    	    	
+					//등록 가능한 자산 수량 체크
+					if(gridData.length > remainQty) {
+						alert('[[#{screen.info.status.error.aset.exceed.asset.qty}]]');
+						return;
+					}
 					
 					if(invalidData.length == 0){
+		    	    	let params = {
+			    	    		url : "/asset/regist/invest/popup/saveUploadAset",
+			    	    		reqType : 'POST',
+			    	    		data : JSON.stringify(gridData),
+			    	    	}											
+						
 						$.request(params)
 							.then((res) => {
-								window.opener.search();
-								window.close();
+								//window.opener.search();
+								//window.close();
 							})
 							.catch((error) => {
 								alert('[[#{screen.info.status.error.occur}]]');	
