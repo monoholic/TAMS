@@ -70,4 +70,8 @@ public class UnusedReuseService {
 	public int unusedReuseDelete3(Map<String, Object> data) {
 		return mapper.unusedReuseDelete3(data);
 	}
+	
+	public List<ReuseAsetReqDto> selectReuseUserPopupList(SearchCondition condition){
+		return mapper.selectReuseUserPopupList(condition);
+	}
 }

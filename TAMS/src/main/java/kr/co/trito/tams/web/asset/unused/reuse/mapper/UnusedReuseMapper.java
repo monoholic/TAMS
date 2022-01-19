@@ -37,4 +37,6 @@ public interface UnusedReuseMapper {
 	public int unusedReuseDelete2(ReuseAsetReqDto dto);
 	
 	public int unusedReuseDelete3(Map<String, Object> data);
+	
+	public List<ReuseAsetReqDto> selectReuseUserPopupList(SearchCondition condtion);
 }

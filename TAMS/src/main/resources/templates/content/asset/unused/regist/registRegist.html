@@ -307,6 +307,12 @@
 	   	        	
 	    	        openPopup2(popId, url, args, param);
 	    	    });
+	    	  	
+	    	  	//반출증출력
+	    	    $("#openCarryingOutList").on("click", function() { 
+	    	        
+	    	        alert('반출증호출');
+	    	    });   	  	
 	    	});
 		    
 		    // 조회 조건
@@ -369,6 +375,7 @@
 				<a class="btn_save">[[#{screen.text.comm.save}]]</a>
 				<a class="btn_del1">[[#{screen.btn.delete}]]</a>
 				<a class="btn_" id="openApprovalPopup">[[#{screen.text.comm.approve}]]</a>
+				<a class="btn_" id="openCarryingOutList">[[#{screen.btn.carrying.out}]]</a>
 				<a class="btn_" id="requestBack" onclick="requestListView()">뒤로가기</a>
 			</div>
 		</div>

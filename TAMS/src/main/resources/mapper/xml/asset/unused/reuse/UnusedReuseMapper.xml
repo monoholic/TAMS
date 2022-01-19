@@ -321,4 +321,22 @@
 		 WHERE req_no = #{reqNo}
    	</delete>
    	
+   	<!-- 사용자팝업 조회 -->
+	<select id="selectReuseUserPopupList" resultType="kr.co.trito.tams.web.asset.unused.reuse.dto.ReuseAsetReqDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+		select a.user_id as chrgr
+			 , a.user_nm as chrgr_nm
+			 , b.dept_cd
+			 , b.dept_nm
+			 , b.upp_dept_cd as biz_dept_cd
+			 , (select dept_nm from tb_dept where b.upp_dept_cd = dept_cd) as biz_dept_nm
+		  FROM tb_user a
+			 , tb_dept b 
+		 WHERE 1=1
+		   AND a.dept_cd = b.dept_cd
+	   	<if test="params.searchText!=null">
+	   	  AND (USER_ID LIKE CONCAT('%', #{params.searchText}, '%') OR USER_NM LIKE CONCAT('%', #{params.searchText}, '%') )
+	   	</if>
+		ORDER BY DEPT_CD
+	</select>
+   	
 </mapper>

@@ -114,12 +114,10 @@
 		                {title:"[[#{screen.text.reuse.asset.biz.dept}]]"    , field:"bizDeptNm" , hozAlign:"left"   , headerHozAlign:"center"},
 		                {title:"[[#{screen.text.reuse.asset.dept}]]"	    , field:"deptNm"    , hozAlign:"left"   , headerHozAlign:"center"},
 		                
-		                
-		                
 		                {title:"[[#{screen.text.reuse.asset.chrgr}]]"		, field:"chrgr"   , visible:false},
 		                {title:"[[#{screen.text.reuse.asset.chrgr}]]"		, field:"chrgrNm"   , hozAlign:"center" , headerHozAlign:"center", cellClick:function(e, cell){
-		                	var url = "/common/popup/userPopup";
-		        	        var popId = "userPopup";
+		                	var url = "reuseUserPopup";
+		        	        var popId = "reuseUserPopup";
 		        	        var args = {};
 		        	        args.width = 650;
 		        	        args.height = 416;
@@ -128,8 +126,6 @@
 		        	        
 		        	        openPopup2(popId, url, args);
 		                }},
-		                
-		                
 		                
 		                {title:"[[#{screen.text.reuse.asset.expDept}]]"	, field:"expDeptCd"   , visible:false},
 		                {title:"[[#{screen.text.reuse.asset.expDept}]]"	, field:"expDeptNm"   , hozAlign:"center" , headerHozAlign:"center", editor:"select", editorParams:function(cell){
@@ -325,6 +321,12 @@
 	   	        	
 	    	        openPopup2(popId, url, args, param);
 	    	    });
+	    	  	
+	    	  	//반출증출력
+	    	    $("#openCarryingOutList").on("click", function() { 
+
+	    	        alert('반출증호출');
+	    	    });
 	    	});
 		    
 		    // 조회 조건
@@ -387,6 +389,7 @@
 				<a class="btn_save">[[#{screen.text.comm.save}]]</a>
 				<a class="btn_del1">[[#{screen.btn.delete}]]</a>
 				<a class="btn_" id="openApprovalPopup">[[#{screen.text.comm.approve}]]</a>
+				<a class="btn_" id="openCarryingOutList">[[#{screen.btn.carrying.out}]]</a>
 				<a class="btn_" id="requestBack" onclick="requestListView()">뒤로가기</a>
 			</div>
 		</div>

@@ -1,5 +1,6 @@
 package kr.co.trito.tams.web.asset.unused.reuse.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -229,5 +230,37 @@ public class UnusedReuseController {
 		}
 		
 		return responseService.success(null);
+	}
+	
+	/** 담당자 팝업 화면 */
+	@GetMapping(value="reuseUserPopup")
+	public ModelAndView reuseUserPopupView(HttpServletRequest request) {
+		
+		ModelAndView view = new ModelAndView();
+		view.setViewName("/content/asset/unused/reuse/reuseUserPopup");
+		
+		return view;
+	}
+	
+	/** 담당자 팝업 조회 */
+	@GetMapping(value="reuseUserPopupList")
+	@ResponseBody
+	@ApiOperation(value = "Web API Common test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response>  reuseUserPopupList(
+			@ApiParam(value = "검색 조건(사용자명, 사용자ID)", required = false) @RequestParam(value="searchText",required = false) String searchText) {
+		
+		Map<String, Object> params = new HashMap<>();
+		if (!StringUtils.isEmpty(searchText))
+			params.put("searchText", searchText);
+		
+		SearchCondition condition = new SearchCondition("0","0",params);
+		
+		List<ReuseAsetReqDto> list = reuseService.selectReuseUserPopupList(condition);
+		condition.pageSetup(list.size());
+		
+		return responseService.success(condition, list);
+		
 	}
 }
