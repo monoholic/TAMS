@@ -376,10 +376,7 @@ public class InvestRegistController {
 	public ResponseEntity<? extends Response> saveUploadAset( 
 			@ApiParam(value = "메뉴권한", required = false) @RequestBody(required = false)  List<AssetUploadDto> list, Authentication authentication) { 
 		UserDto userDto = ((UserInfo) authentication.getPrincipal()).getDto();	
-		//outOfBookService.saveBatchOutOfBookAset(userDto.getUserId(), list);
-		
-		log.info(list.toString());
-		
+		investRegistService.saveUploadAset(userDto.getUserId(), list);
 		return responseService.success(null);
 	} 		
 	

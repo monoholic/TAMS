@@ -1215,7 +1215,6 @@
 				,dur_year
 				,acq_prc
 				,sval_prc
-				,dprc_prc
 				,acq_dt
 				,regr
 				,reg_dt
@@ -1242,6 +1241,7 @@
 				,#{svalPrc}
 				,#{acqDt}
 				,#{regr}
+				,now()
 			)	
 	</insert>
    		   		
@@ -1270,6 +1270,7 @@
 				,dtl_info19
 				,dtl_info20
 				,regr
+				,reg_dt
 			) values (
 				concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
 				,#{asetType3}
@@ -1294,6 +1295,7 @@
 			 	, #{dtlInfo19}
 			 	, #{dtlInfo20}
 			 	, #{regr}
+			 	, now()
 			) 	
 	</insert>   		   		
 	<insert id="saveUploadPoAset" parameterType="Map">
@@ -1303,12 +1305,14 @@
 			,new_yn
 			,qty
 			,regr
+			,reg_dt
 		) values (
 			#{poNo}
 			,concat('A', substring(date_format(now(), '%Y%m'), 3), lpad(#{asetNo}, 5, 0)) 
 			,#{newYn}
 			,#{qty}
 			,#{regr}
+			,now()
 		)	
 	</insert>
 </mapper>

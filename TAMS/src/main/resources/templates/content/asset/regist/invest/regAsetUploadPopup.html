@@ -158,8 +158,8 @@
 						
 						$.request(params)
 							.then((res) => {
-								//window.opener.search();
-								//window.close();
+								window.opener.search();
+								window.close();
 							})
 							.catch((error) => {
 								alert('[[#{screen.info.status.error.occur}]]');	

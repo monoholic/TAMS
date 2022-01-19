@@ -221,6 +221,8 @@ public class InvestRegistService {
 			dto.setNewYn("N");
 
 			mapper.saveUploadAsetMas(dto);
+			mapper.saveUploadAsetDtl(dto);
+			mapper.saveUploadPoAset(dto);
 			
 			maxAssetNo++;
 		}
