@@ -325,7 +325,7 @@
 	    	  	//반출증출력
 	    	    $("#openCarryingOutList").on("click", function() { 
 
-	    	        alert('반출증호출');
+	    	    	openCarryingOutList();
 	    	    });
 	    	});
 		    
@@ -334,6 +334,20 @@
 		    	return {
 		    		"reqNo" : $("#req_no").val(),
 		    	}
+		    }
+		    
+		    //반출증출력 페이지로 이동
+		    function openCarryingOutList(){
+		       	event.preventDefault();
+		       	
+	            let url = "/asset/unused/reuse/reuseCarryingOutList";
+	            
+				var $form = $('<form></form>'); 
+					$form.attr('action', url); 
+					$form.attr('method', 'Post'); 
+					$form.attr('target', '_self');					
+					$form.appendTo('body'); 					
+					$form.submit();
 		    }
 		    
 		 	// 삭제 시 이전 페이지로 이동

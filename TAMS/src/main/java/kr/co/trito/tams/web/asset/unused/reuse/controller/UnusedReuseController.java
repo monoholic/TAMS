@@ -261,6 +261,17 @@ public class UnusedReuseController {
 		condition.pageSetup(list.size());
 		
 		return responseService.success(condition, list);
-		
+	}
+	
+	/** 재활용 반출증출력 목록 화면 */
+	@PostMapping("/reuseCarryingOutList")
+	@ResponseBody
+	public ModelAndView unusedReuseCarryingOutListView(HttpServletRequest request) {
+		ModelAndView view = new ModelAndView();
+		/*
+		 * String reqNo = request.getParameter("reqNo"); view.addObject("reqNo", reqNo);
+		 */
+		view.setViewName("/content/asset/unused/reuse/reuseCarryingOutList");
+		return view;
 	}
 }
