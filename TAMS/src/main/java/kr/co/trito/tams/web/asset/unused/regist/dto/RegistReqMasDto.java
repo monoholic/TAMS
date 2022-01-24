@@ -77,4 +77,6 @@ public class RegistReqMasDto {
 	private int asetCnt;
 	@ApiModelProperty(value="rn")
 	private String rn;
+	@ApiModelProperty(value="자산번호")
+	private String asetNo;
 }

@@ -97,7 +97,6 @@
 		    function getParams(){
 		    	return {
 		    		"reqNo" : $("#req_no").val(),
-		    		"asetNo": $("#aset_no").val()
 		    	}
 		    }
 		    
@@ -116,7 +115,7 @@
 		       	
 		       	$.commSaveSearchParams(SCREEN_NM, saveParams);	
 				
-	            let url = "/asset/unused/reuse/ReuseRegList";
+	            let url = "/asset/unused/regist/RegistRegList";
 				let menuId = "[[${menuId}]]";
 	            
 				var $form = $('<form></form>'); 
@@ -150,7 +149,6 @@
 	<!-- search -->
 	<div class="srch_wrap single">
 		<input id="req_no" type="hidden" th:value="${reqNo}">
-		<input id="aset_no" type="hidden" th:value="${asetNo}">
 		<table class="srch_table">
 			<colgroup>
 				<col width="10%"/>

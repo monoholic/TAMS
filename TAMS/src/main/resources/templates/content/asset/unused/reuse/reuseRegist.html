@@ -204,7 +204,7 @@
 	            	
 	            	let url = "/asset/unused/reuse/unusedReuseRegUpdate";
 		  			let reqType = 'POST';
-		  			console.log(selectedData);
+		  			
 			    	var subReqNo = ($("#reqNo").val()).substr(6,3);
 			   
 			    	let data={
@@ -264,8 +264,11 @@
 		  	    		items.push(item.asetNo);
 		  	    	});
 		  	    	
-		  	    	console.log(items);
-		  	    	
+	    	    	if(selectedData.length == 0){
+	    	    		alert('[[#{screen.info.status.error.inv.no.selected.item}]]');
+	    	    		return;
+	    	    	}	
+	    	    	
 		  	    	//별도 호출
 		  	    	let url = "/asset/unused/reuse/unusedReuseDelete2";
 		  			let reqType = 'POST';
@@ -325,7 +328,22 @@
 	    	  	//반출증출력
 	    	    $("#openCarryingOutList").on("click", function() { 
 
-	    	    	openCarryingOutList();
+					let selectedData  = grid.getSelectedData();
+		  	    	
+	    	    	if(selectedData.length == 0){
+	    	    		alert('[[#{screen.info.status.error.inv.no.selected.item}]]');
+	    	    		return;
+	    	    	}	
+	    	    	
+	    	    	var asetNo = '';
+	    	    	$.each(selectedData, function(index,item){
+		  	    		asetNo += "'"+item.asetNo+"'";
+		  	    		if(selectedData.length != (index+1)){
+		  	    			asetNo += ",";
+		  	    		}
+		  	    	});
+	    	    	
+	    	    	openCarryingOutList(asetNo);
 	    	    });
 	    	});
 		    
@@ -337,17 +355,24 @@
 		    }
 		    
 		    //반출증출력 페이지로 이동
-		    function openCarryingOutList(){
+		    function openCarryingOutList(asetNo){
 		       	event.preventDefault();
 		       	
+		       	var subReqNo = $('#req_no').val();
+		       	
 	            let url = "/asset/unused/reuse/reuseCarryingOutList";
-	            
+	            	
 				var $form = $('<form></form>'); 
 					$form.attr('action', url); 
 					$form.attr('method', 'Post'); 
-					$form.attr('target', '_self');					
+					$form.attr('target', '_self'); 
+					
+				var reqNoStr = $('<input type="hidden" value="'+ subReqNo +'" name="reqNo">');
+					$form.append(reqNoStr);
+					asetNoStr = $('<input type="hidden" value="'+ asetNo +'" name="asetNo">');
+					$form.append(asetNoStr); 
 					$form.appendTo('body'); 					
-					$form.submit();
+					$form.submit();	
 		    }
 		    
 		 	// 삭제 시 이전 페이지로 이동

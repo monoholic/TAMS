@@ -268,10 +268,35 @@ public class UnusedReuseController {
 	@ResponseBody
 	public ModelAndView unusedReuseCarryingOutListView(HttpServletRequest request) {
 		ModelAndView view = new ModelAndView();
-		/*
-		 * String reqNo = request.getParameter("reqNo"); view.addObject("reqNo", reqNo);
-		 */
+		
+		String reqNo = request.getParameter("reqNo");
+		view.addObject("reqNo", reqNo);
+		
+		String asetNo = request.getParameter("asetNo");
+		view.addObject("asetNo", asetNo);
+
 		view.setViewName("/content/asset/unused/reuse/reuseCarryingOutList");
 		return view;
+	}
+	
+	/** 재활용 반출증출력 화면 : 조회 */
+	@GetMapping(value = "/unusedReuseCarringOutList")
+	@ResponseBody
+	@ApiOperation(value = "재활용반출증출력 화면 / 조회", notes = "재활용반출증출력 화면을 조회한다.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> unusedReuseCarringOutListView(
+			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
+
+		String asetNo = params.get("reqNo").toString();
+		System.out.println("==================================="+asetNo+"=========================================");
+		
+		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(),params.get("numOfRows").toString(), params);
+		condition.pageSetup(reuseService.selectCountAssetList(condition));
+
+		List<ReuseAsetReqDto> list = reuseService.selectAssetList(condition);
+		List<ReuesReqMasDto> list2 = reuseService.selectUnusedReuseRegist(condition);
+
+		return responseService.success(condition, list, list2);
 	}
 }

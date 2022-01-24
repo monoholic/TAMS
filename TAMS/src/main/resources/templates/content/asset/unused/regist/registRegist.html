@@ -310,8 +310,7 @@
 	    	  	
 	    	  	//반출증출력
 	    	    $("#openCarryingOutList").on("click", function() { 
-	    	        
-	    	        alert('반출증호출');
+	    	    	openCarryingOutList();
 	    	    });   	  	
 	    	});
 		    
@@ -320,6 +319,25 @@
 		    	return {
 		    		"reqNo" : $("#req_no").val(),
 		    	}
+		    }
+		    
+		    //반출증출력 페이지로 이동
+		    function openCarryingOutList(){
+		       	event.preventDefault();
+		       	
+		       	var subReqNo = $('#req_no').val();
+		       	
+	            let url = "/asset/unused/regist/registCarryingOutList";
+	            	
+				var $form = $('<form></form>'); 
+					$form.attr('action', url); 
+					$form.attr('method', 'Post'); 
+					$form.attr('target', '_self'); 
+					
+				var reqNoStr = $('<input type="hidden" value="'+ subReqNo +'" name="reqNo">');
+					$form.append(reqNoStr); 					
+					$form.appendTo('body'); 					
+					$form.submit();	
 		    }
 		    
 		 	// 삭제 시 이전 페이지로 이동
