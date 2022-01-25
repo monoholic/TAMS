@@ -127,31 +127,18 @@
 		    
 		 	// 이전 페이지로 이동
 	    	function requestListView() {
-		       	event.preventDefault();
 		       	
 		       	var subReqNo = $('#req_no').val();
 		       	
-		       	let saveParams = {
-		       		"condition": condition,
-		       		"menuId"   : "[[${menuId}]]" ,
-		       		"menuNm"   : "[[${menuNm}]]",
-		       		"menuDesc" : "[[${menuDesc}]]",
-		       	}
-		       	
-		       	$.commSaveSearchParams(SCREEN_NM, saveParams);	
-				
 	            let url = "/asset/unused/reuse/ReuseRegList";
-				let menuId = "[[${menuId}]]";
-	            
+				
 				var $form = $('<form></form>'); 
 					$form.attr('action', url); 
 					$form.attr('method', 'Post'); 
 					$form.attr('target', '_self'); 
 					
 				var reqNoStr = $('<input type="hidden" value="'+ subReqNo +'" name="reqNo">');
-					$form.append(reqNoStr);
-					menuIdStr = $('<input type="hidden" value="'+ menuId +'" name="menuId">');
-					$form.append(menuIdStr); 					
+					$form.append(reqNoStr); 					
 					$form.appendTo('body'); 					
 					$form.submit();	
 		    }

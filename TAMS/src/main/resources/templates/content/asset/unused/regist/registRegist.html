@@ -319,7 +319,7 @@
 	    	    	
 	    	    	var asetNo = '';
 	    	    	$.each(selectedData, function(index,item){
-		  	    		asetNo += "'"+item.asetNo+"'";
+	    	    		asetNo += "'"+item.asetNo+"'";
 		  	    		if(selectedData.length != (index+1)){
 		  	    			asetNo += ",";
 		  	    		}
@@ -359,7 +359,7 @@
 		    
 		 	// 삭제 시 이전 페이지로 이동
 	    	function requestListView() {
-		 		
+	    		
 	    		let url = "/asset/unused/regist/list";
 	    		
 	    		var $form = $('<form></form>'); 
