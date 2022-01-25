@@ -229,21 +229,23 @@ public class UnusedRegistController {
 		return responseService.success(null);
 	}
 	
-	/** 재활용 반출증출력 목록 화면 */
+	/** 유휴 반출증출력 목록 화면 */
 	@PostMapping("/registCarryingOutList")
 	@ResponseBody
 	public ModelAndView unusedRegistCarryingOutListView(HttpServletRequest request) {
 		ModelAndView view = new ModelAndView();
 		String reqNo = request.getParameter("reqNo");
 		view.addObject("reqNo", reqNo);
+		String asetNo = request.getParameter("asetNo");
+		view.addObject("asetNo", asetNo);
 		view.setViewName("/content/asset/unused/regist/registCarryingOutList");
 		return view;
 	}
 	
-	/** 재활용 반출증출력 화면 : 조회 */
+	/** 유휴 반출증출력 화면 : 조회 */
 	@GetMapping(value = "/unusedRegistCarringOutList")
 	@ResponseBody
-	@ApiOperation(value = "재활용반출증출력 화면 / 조회", notes = "재활용반출증출력 화면을 조회한다.")
+	@ApiOperation(value = "유휴반출증출력 화면 / 조회", notes = "유휴반출증출력 화면을 조회한다.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> unusedRegistCarringOutListView(

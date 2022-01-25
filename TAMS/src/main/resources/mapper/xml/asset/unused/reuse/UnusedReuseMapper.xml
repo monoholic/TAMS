@@ -168,32 +168,46 @@
    	
    	<!-- 재활용의뢰목록작성 화면 조회 -->
    	<select id="selectUnusedReuseRegist" resultType="kr.co.trito.tams.web.asset.unused.reuse.dto.ReuesReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-   		SELECT (SELECT code_nm FROM tb_com_code WHERE code_id = A.req_type) AS req_type_nm
-		     , req_type 
-			 , CONCAT('RU',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no
-			 , DATE_FORMAT(req_dt, '%Y-%m-%d') AS req_dt
-			 , appv_doc_id
-			 , dept_cd
-			 , (SELECT dept_nm
-	  			  FROM tb_dept
-	         	 WHERE dept_cd = A.dept_cd) AS dept_nm
-			 , reqtr
-		     , req_nm
-			 , req_rsn
-		FROM (
-			SELECT req_type
-			     , req_no
-			     , req_dt
-			     , appv_doc_id
-			     , b.dept_cd
-			     , reqtr
-			     , req_nm
-			     , req_rsn
-			  FROM TB_REQ_MAS a
-			 INNER JOIN tb_user b
-			    ON a.reqtr = b.user_id
-	     ) AS A
-	   WHERE 1=1
+		SELECT (SELECT code_nm FROM tb_com_code WHERE code_id = A.req_type) AS req_type_nm
+				  , req_type 
+				  , CONCAT('RU',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no
+				  , DATE_FORMAT(req_dt, '%Y-%m-%d') AS req_dt
+				  , appv_doc_id
+				  , dept_cd
+				  , (SELECT dept_nm FROM tb_dept WHERE dept_cd = A.dept_cd) AS dept_nm
+				  , upp_dept_cd
+				  , (SELECT dept_nm FROM tb_dept WHERE dept_cd = A.upp_dept_cd) AS upp_dept_nm
+				  , reqtr
+				  , (SELECT user_nm FROM tb_user WHERE user_id = A.reqtr) AS reqtr_nm
+				  , req_nm
+				  , req_rsn
+				  , nvl(a.move_pupos,'') as move_pupos
+				  , nvl(DATE_FORMAT(move_dt, '%Y-%m-%d'), '') AS move_dt
+				  , tkout_yn
+				  , nvl(DATE_FORMAT(tkout_dt, '%Y-%m-%d'), '') AS tkout_dt
+				  , rtkin_yn
+				  , nvl(DATE_FORMAT(rtkin_dt, '%Y-%m-%d'), '') AS rtkin_dt
+		  FROM (
+					SELECT req_type
+							  , req_no
+							  , req_dt
+							  , appv_doc_id
+							  , b.dept_cd
+							  , (select upp_dept_cd from tb_dept where b.dept_cd = dept_cd) as upp_dept_cd
+							  , reqtr
+							  , req_nm
+							  , req_rsn
+							  , move_pupos
+							  , move_dt
+							  , tkout_yn
+							  , tkout_dt
+							  , rtkin_yn
+							  , rtkin_dt
+					   FROM TB_REQ_MAS a
+					  INNER JOIN tb_user b
+					  	   ON a.reqtr = b.user_id
+					) AS A
+		  WHERE 1=1
 	   		<if test="params.reqNo != null">
 				AND A.req_no = #{params.reqNo}
 		 	</if>
@@ -205,7 +219,7 @@
   		  FROM tb_aset_req
  		 WHERE req_no = #{params.reqNo}
 		<if test="params.asetNo != null">
-  		   AND aset_no in (#{params.asetNo})
+  		   AND aset_no in (${params.asetNo})
   		</if>
    	</select>
    	
@@ -257,7 +271,7 @@
            ON c.user_id = b.chrgr
 		WHERE b.req_no = #{params.reqNo}
 		<if test="params.asetNo != null">
-		  AND b.aset_no in (#{params.asetNo})
+		  AND b.aset_no in (${params.asetNo})
 	   	</if>		  
 		ORDER BY b.aset_no DESC
 	</select>

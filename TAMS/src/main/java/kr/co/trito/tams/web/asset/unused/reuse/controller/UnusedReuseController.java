@@ -288,9 +288,6 @@ public class UnusedReuseController {
 	public ResponseEntity<? extends Response> unusedReuseCarringOutListView(
 			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
 
-		String asetNo = params.get("reqNo").toString();
-		System.out.println("==================================="+asetNo+"=========================================");
-		
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(),params.get("numOfRows").toString(), params);
 		condition.pageSetup(reuseService.selectCountAssetList(condition));
 

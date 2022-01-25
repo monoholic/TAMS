@@ -310,7 +310,22 @@
 	    	  	
 	    	  	//반출증출력
 	    	    $("#openCarryingOutList").on("click", function() { 
-	    	    	openCarryingOutList();
+					let selectedData  = grid.getSelectedData();
+		  	    	
+	    	    	if(selectedData.length == 0){
+	    	    		alert('[[#{screen.info.status.error.inv.no.selected.item}]]');
+	    	    		return;
+	    	    	}	
+	    	    	
+	    	    	var asetNo = '';
+	    	    	$.each(selectedData, function(index,item){
+		  	    		asetNo += "'"+item.asetNo+"'";
+		  	    		if(selectedData.length != (index+1)){
+		  	    			asetNo += ",";
+		  	    		}
+		  	    	});
+	    	    	
+	    	    	openCarryingOutList(asetNo);
 	    	    });   	  	
 	    	});
 		    
@@ -322,7 +337,7 @@
 		    }
 		    
 		    //반출증출력 페이지로 이동
-		    function openCarryingOutList(){
+		    function openCarryingOutList(asetNo){
 		       	event.preventDefault();
 		       	
 		       	var subReqNo = $('#req_no').val();
@@ -335,7 +350,9 @@
 					$form.attr('target', '_self'); 
 					
 				var reqNoStr = $('<input type="hidden" value="'+ subReqNo +'" name="reqNo">');
-					$form.append(reqNoStr); 					
+					$form.append(reqNoStr);
+					asetNoStr = $('<input type="hidden" value="'+ asetNo +'" name="asetNo">');
+					$form.append(asetNoStr);
 					$form.appendTo('body'); 					
 					$form.submit();	
 		    }

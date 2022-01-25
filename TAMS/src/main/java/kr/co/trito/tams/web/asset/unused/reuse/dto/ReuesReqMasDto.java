@@ -29,6 +29,8 @@ public class ReuesReqMasDto {
 	private String reqDt;
 	@ApiModelProperty(value="의뢰자")
 	private String reqtr;
+	@ApiModelProperty(value="의뢰자명")
+	private String reqtrNm;
 	@ApiModelProperty(value="의뢰자 부서")
 	private String reqtrDept;
 	@ApiModelProperty(value="결재문서 ID")
