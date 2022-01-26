@@ -4,7 +4,7 @@
         layout:decorator="layout/default">
 
 	<head>
-	    <title>[[#{screen.text.reuse.screen.title6}]]</title>
+	    <title>[[#{screen.text.regist.screen.title6}]]</title>
 	</head>
         
 	<!-- css -->
@@ -79,13 +79,13 @@
 		                {title:"[[#{screen.text.regist.asset.charger}]]"     , field:"chrgrNm"   , hozAlign:"center" , headerHozAlign:"center"},
 		                {title:"[[#{screen.text.regist.asset.ur.dir}]]"		 , field:"urDir"	 , visible:false},
 		                {title:"[[#{screen.text.regist.asset.ur.dir}]]"      , field:"urDirNm"	 , hozAlign:"center" , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.reuse.asset.site}]]"		 , field:"bsplc"	 , visible:false},
-		                {title:"[[#{screen.text.reuse.asset.site}]]"         , field:"bsplcNm"   , hozAlign:"center" , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.reuse.asset.building}]]"	 , field:"buld"		 , visible:false},
-		                {title:"[[#{screen.text.reuse.asset.building}]]"     , field:"buldNm"    , hozAlign:"center" , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.reuse.asset.floor}]]"		 , field:"floor"	 , visible:false},
-		                {title:"[[#{screen.text.reuse.asset.floor}]]"        , field:"floorNm"   , hozAlign:"center" , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.reuse.asset.loc}]]"          , field:"loc"    	 , hozAlign:"left" 	 , headerHozAlign:"center"}, 
+		                {title:"[[#{screen.text.regist.asset.site}]]"		 , field:"bsplc"	 , visible:false},
+		                {title:"[[#{screen.text.regist.asset.site}]]"        , field:"bsplcNm"   , hozAlign:"center" , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.regist.asset.building}]]"	 , field:"buld"		 , visible:false},
+		                {title:"[[#{screen.text.regist.asset.building}]]"    , field:"buldNm"    , hozAlign:"center" , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.regist.asset.floor}]]"		 , field:"floor"	 , visible:false},
+		                {title:"[[#{screen.text.regist.asset.floor}]]"       , field:"floorNm"   , hozAlign:"center" , headerHozAlign:"center"},
+		                {title:"[[#{screen.text.regist.asset.loc}]]"         , field:"loc"    	 , hozAlign:"left" 	 , headerHozAlign:"center"}, 
 				 	],
 				});
 				
@@ -121,10 +121,10 @@
 </th:block>
 
 <div layout:fragment="content">
-	<h3><span>[[#{screen.text.reuse.screen.title6}]]</span></h3>
+	<h3><span>[[#{screen.text.regist.screen.title6}]]</span></h3>
 	<div class="list_head">
 		<div class="list_head">
-			<div><h6>[[#{screen.text.reuse.screen.title4}]]</h6></div>
+			<div><h6>[[#{screen.text.regist.screen.title4}]]</h6></div>
 		</div>
 		<div class="button">
 			<a class="btn_">[[#{screen.btn.print}]]</a>
@@ -146,60 +146,60 @@
 				<col width=""/>
 			</colgroup>
 			<tr>
-				<th>[[#{screen.text.reuse.type}]]</th>
+				<th>[[#{screen.text.regist.type}]]</th>
 				<td><input type="text" id="reqTypeNm" style="width:100%;" readonly></td>
-				<th>[[#{screen.text.reuse.no}]]</th>
+				<th>[[#{screen.text.regist.no}]]</th>
 				<td><input type="text" id="reqNo" style="width:100%;" readonly/></td>
-				<th>[[#{screen.text.reuse.dt}]]</th>
+				<th>[[#{screen.text.regist.dt}]]</th>
 				<td><input type="text" id="reqDt" style="width:100%;" readonly/></td>
 			</tr>
 			<tr>
-				<th>[[#{screen.text.reuse.carr.out.bizDeptCd}]]</th>
+				<th>[[#{screen.text.regist.carr.out.bizDeptCd}]]</th>
 				<td>
 					<div style='display:flex'>
 						<input type="text" id="uppDeptNm" style="width:100%" readonly/>
 						<input type="hidden" id="uppDeptCd" style="width:100%"/>
 					</div>
 				</td>
-				<th>[[#{screen.text.reuse.carr.out.dept}]]</th>
+				<th>[[#{screen.text.regist.carr.out.dept}]]</th>
 				<td>
 					<div style='display:flex'>
 						<input type="text" id="deptNm" style="width:100%" readonly/>
 						<input type="hidden" id="deptCd" style="width:100%"/>
 					</div>
 				</td>
-				<th>[[#{screen.text.reuse.reqtr}]]</th>
+				<th>[[#{screen.text.regist.reqtr}]]</th>
 				<td><input type="text" id="reqtrNm" style="width:100%;" readonly/></td>
 			</tr>
 			<tr>
-				<th>[[#{screen.text.reuse.nm}]]</th>
+				<th>[[#{screen.text.regist.nm}]]</th>
 				<td><input type="text" id="reqNm" style="width:100%;" readonly/></td>
-				<th>[[#{screen.text.reuse.rsn}]]</th>
+				<th>[[#{screen.text.regist.rsn}]]</th>
 				<td><input type="text" id="reqRsn" style="width:100%"readonly/></td>
 				<td colspan="2"></td>
 			</tr>
 			<tr>
-				<th>[[#{screen.text.reuse.carr.out.movePupos}]]</th>
+				<th>[[#{screen.text.regist.carr.out.movePupos}]]</th>
 				<td><input type="text" id="movePupos" style="width:100%" readonly/></td>
-				<th>[[#{screen.text.reuse.carr.out.movedt}]]</th>
+				<th>[[#{screen.text.regist.carr.out.movedt}]]</th>
 				<td><input type="text" id="moveDt" style="width:100%" readonly/></td>
 				<td colspan="2"></td>
 			</tr>
 			<tr>
-				<th>[[#{screen.text.reuse.carr.out.tkoutyn}]]</th>
+				<th>[[#{screen.text.regist.carr.out.tkoutyn}]]</th>
 				<td>
 					<select id="tkoutYn" style="width:100%;">
 						<option value="Y">Y</option>
 						<option value="N">N</option>
 					</select>				
 				</td>
-				<th>[[#{screen.text.reuse.carr.out.tkoutdt}]]</th>
+				<th>[[#{screen.text.regist.carr.out.tkoutdt}]]</th>
 				<td>
 					<div style='display:flex'>
 						<input type="date" id="tkoutDt" style="width:100%">
 					</div>
 				</td>
-				<th>[[#{screen.text.reuse.carr.out.rtkinyn}]]/[[#{screen.text.reuse.carr.out.rtkindt}]]</th>
+				<th>[[#{screen.text.regist.carr.out.rtkinyn}]]/[[#{screen.text.regist.carr.out.rtkindt}]]</th>
 				<td>
 					<select id="rtkinYn" style="width:50%;">
 						<option value="N">N</option>
@@ -212,7 +212,7 @@
 	<!-- //search -->			
 	
 	<div class="list_head" style="display: flex;">
-		<div><h6>[[#{screen.text.reuse.screen.title5}]]</h6></div>
+		<div><h6>[[#{screen.text.regist.screen.title5}]]</h6></div>
 		<div class="result" style="margin-left: 20px;">Results : 0,000</div>
 	</div>
 	

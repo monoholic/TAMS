@@ -105,25 +105,18 @@
 		    var initBody;
 		    
 		    //프린트
-		    function pagePrint() {
+		    function printlt(printThis) {
 		    	
-		    	div = document.getElementById('content');
-		    	
-		    	window.onbeforeprint = beforePrint;
-		    	window.onafterprint = afterPrint;
+		    	/* var win = null;
+		    	win = window.open();
+		    	self.focus();
+		    	win.document.open();
+		    	win.document.write(printThis);
+		    	win.document.close();
+		    	win.print();
+		    	win.close(); */
 		    	window.print();
-		    }
-		    
-		    function beforePrint()
-		    {
-		       initBody = document.body.innerHTML;
-		       document.body.innerHTML = div.innerHTML;
-		    }
-
-		    function afterPrint()
-		    {
-		       document.body.innerHTML = initBody;
-		    }		    
+		    }   
 		    
 		 	// 이전 페이지로 이동
 	    	function requestListView() {
@@ -153,7 +146,7 @@
 			<div><h6>[[#{screen.text.reuse.screen.title4}]]</h6></div>
 		</div>
 		<div class="button">
-			<a class="btn_" id="pagePrint" onclick="pagePrint()">[[#{screen.btn.print}]]</a>
+			<a class="btn_" id="pagePrint" onclick="javascript:printlt()">[[#{screen.btn.print}]]</a>
 			<a class="btn_" id="requestBack" onclick="requestListView()">뒤로가기</a>
 		</div>
 	</div>
