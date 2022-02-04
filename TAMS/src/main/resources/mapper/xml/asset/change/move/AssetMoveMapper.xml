@@ -201,8 +201,17 @@
 			 , req_no
 			 , aset_nm
 		 	 , aset_type1
+		 	 , (SELECT code_nm
+		 	      FROM tb_com_code a
+		 	     WHERE a.code_id = b.aset_type1) asetType1Nm
 		     , aset_type2
+		     , (SELECT code_nm
+		 	      FROM tb_com_code a
+		 	     WHERE a.code_id = b.aset_type2) asetType2Nm
 		     , aset_type3
+		     , (SELECT code_nm
+		 	      FROM tb_com_code a
+		 	     WHERE a.code_id = b.aset_type3) asetType3Nm
 		     , mftco
 		     , model
 		     , sn

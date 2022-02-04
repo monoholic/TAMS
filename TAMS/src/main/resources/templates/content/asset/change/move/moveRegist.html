@@ -74,6 +74,8 @@
 							res.data = asetList;
 				 		
 						condition = res.condition;
+						
+						console.log(res);
 				 		return res;
 				 	},					 	
 				 	columns:[
@@ -82,9 +84,33 @@
 			 	         		cell.getRow().toggleSelect();
 			 	        }},
 				 		{title:"[[#{screen.text.move.asetno}]]"            , field:"asetNo"    , hozAlign:"center" , headerHozAlign:"center"},
-		                {title:"[[#{screen.text.move.asset.type1}]]"       , field:"asetType1" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:{asetArr1}},
-		                {title:"[[#{screen.text.move.asset.type2}]]"       , field:"asetType2" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:{asetArr2}},
-		                {title:"[[#{screen.text.move.asset.type3}]]"       , field:"asetType3" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:{asetArr3}},
+		                {title:"[[#{screen.text.move.asset.type1}]]"       , field:"asetType1", visible:false},
+		                {title:"[[#{screen.text.move.asset.type1}]]"       , field:"asetType1Nm" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:function(cell){
+					 		var values = {};
+					 		$.each(asetArr1, function(i){
+					 			values[asetArr1[i].Nm] = asetArr1[i].Nm;	
+							});
+					 		return {values:values};
+					 	}},
+		                {title:"[[#{screen.text.move.asset.type2}]]"       , field:"asetType2", visible:false},
+		                {title:"[[#{screen.text.move.asset.type2}]]"       , field:"asetType2Nm" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:function(cell){
+					 		var values = {};
+					 		
+					 		console.log(asetArr2);
+					 		$.each(asetArr2, function(i){
+					 			values[asetArr2[i].Nm] = asetArr2[i].Nm;	
+							});
+					 		return {values:values};
+					 	}},
+		                {title:"[[#{screen.text.move.asset.type3}]]"       , field:"asetType3", visible:false},
+		                {title:"[[#{screen.text.move.asset.type3}]]"       , field:"asetType3Nm" , hozAlign:"left"   , headerHozAlign:"center", editor:"select", editorParams:function(cell){
+					 		var values = {};
+					 		$.each(asetArr3, function(i){
+					 			values[asetArr3[i].Nm] = asetArr3[i].Nm;	
+							});
+					 		return {values:values};
+					 	}},
+		                
 		                {title:"[[#{screen.text.move.asset.manufacture}]]" , field:"mftco"     , hozAlign:"left"   , headerHozAlign:"center", editor:"input"},
 		                {title:"[[#{screen.text.move.asset.model}]]"       , field:"model"     , hozAlign:"left"   , headerHozAlign:"center", editor:"input"},
 		                {title:"[[#{screen.text.move.asset.sn}]]"          , field:"sn"        , hozAlign:"left"   , headerHozAlign:"center", editor:"input"},
@@ -92,7 +118,8 @@
 		                {title:"[[#{screen.text.move.asset.dept}]]"	       , field:"deptNm"    , hozAlign:"left"   , headerHozAlign:"center"},
 		                {title:"[[#{screen.text.move.asset.charger}]]"     , field:"chrgrNm"   , hozAlign:"center" , headerHozAlign:"center", cellClick:function(e, cell){alert("cell click")},},
 				 	],
-				});						
+				});
+				
 				/*------------- Button Events -------------*/
 				// 저장 버튼 처리
 	            $('.btn_save').on('click', function (e) {
@@ -209,6 +236,34 @@
 	   	        	
 	    	        openPopup2(popId, url, args, param);
 	    	    });
+	    	  	
+	    	    grid.on("cellEdited", function(cell){
+					var field = cell.getField();
+					if(field == 'asetType1Nm'){
+				 		$.each(asetArr1, function(i){
+				 			if(cell.getValue() == asetArr1[i].Nm){
+				 				cell.getRow().update({"asetType1":asetArr1[i].Id});		
+				 			}	
+						});
+					}
+					
+					if(field == 'asetType2Nm'){
+				 		$.each(asetArr2, function(i){
+				 			if(cell.getValue() == asetArr2[i].Nm){
+				 				cell.getRow().update({"asetType2":asetArr2[i].Id});		
+				 			}	
+						});
+					}
+					
+					if(field == 'asetType3Nm'){
+				 		$.each(asetArr3, function(i){
+				 			if(cell.getValue() == asetArr3[i].Nm){
+				 				cell.getRow().update({"asetType3":asetArr3[i].Id});		
+				 			}	
+						});
+					}
+				});
+	    	    
 	    	});
 		    
 		    // 조회 조건
@@ -287,7 +342,7 @@
 			 				asetType.push(el);
 			 				
 			 				if(el.codeLvl == '1') {
-				 				asetArr1.push({lable : el.codeId, value:el.codeNm});
+				 				asetArr1.push({Id : el.codeId, Nm:el.codeNm});
 			 				}
 			 				
 			 				if(el.codeLvl == '2') {
