@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.trito.tams.web.asset.insp.manage.mapper.InspManageMapper">
+	
+   	<!-- 자산실사 이름 리스트 조회 -->
+    <select id="selectInspNmList" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+    /* InspManageMapper.xml selectInspNmList */          
+    SELECT DISTINCT INSP_NM
+      FROM TB_INSP_MAS TIM
+     WHERE 1=1
+     ORDER BY INSP_NM
+    </select>  
+    
+      
+   	<!-- 자산실사 카운트 -->
+    <select id="selectCountInspManageList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+    /* InspManageMapper.xml selectCountInspManageList */          
+    SELECT COUNT(*) AS CNT
+       FROM TB_INSP_MAS TIM
+      WHERE 1=1
+      <if test="params.inspYear != ''">
+       AND (INSP_ST_DT LIKE CONCAT(#{params.inspYear}, '%')) 
+      </if>
+      <if test="params.inspNm != ''">
+       AND INSP_NM = #{params.inspNm}
+      </if>
+    </select>    
+    
+   	<!-- 자산실사목록  조회 -->
+    <select id="selectInspManageList" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+    /* InspManageMapper.xml selectInspManageList */
+    SELECT INSP_NO                       /* 실사번호 */
+         , INSP_NM                       /* 실사명 */
+         , LEFT(INSP_ST_DT, 4) INSP_YEAR /* 실사연도*/
+         , INSP_ST_DT                    /* 실사시작일 */
+         , INSP_END_DT                   /* 실사종료일 */
+         , ONLINE_INSP_BASE_DT           /* 온라인실사기준일 */
+         , INSP_STUS                     /* 실사상태 */
+         , (SELECT CODE_NM FROM TB_COM_CODE WHERE CODE_GRP_ID = 'INSP_STATUS' AND CODE_ID = TIM.INSP_STUS) INSP_STUS_NM /* 실사상태명 */
+         , UPDR   
+         , UP_DT  
+         , REGR   
+         , REG_DT 
+      FROM TB_INSP_MAS TIM
+     WHERE 1=1
+      <if test="params.inspYear != ''">
+       AND (INSP_ST_DT LIKE CONCAT(#{params.inspYear}, '%')) 
+      </if>
+      <if test="params.inspNm != ''">
+       AND INSP_NM = #{params.inspNm}
+      </if>
+     ORDER BY INSP_NO DESC
+     <!-- 페이징 -->
+     LIMIT #{numOfRows}
+     OFFSET #{start} 
+    </select>    
+    
+    
+   	<!-- 자산실사목록 생성 -->
+   	<insert id="insertInspMaster" parameterType="Map">
+   	/* InspManageMapper.xml insertInspMaster */
+    INSERT INTO TB_INSP_MAS
+    (INSP_NO, INSP_NM, INSP_ST_DT, INSP_END_DT, ONLINE_INSP_BASE_DT, INSP_STUS, UPDR, UP_DT, REGR, REG_DT)
+    VALUES
+    (
+     CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD( NEXTVAL(TAMS.SQ_INSP_NO) ,'3','0'))
+    ,#{inspNm} 
+    ,#{inspStDt}
+    ,#{inspEndDt}
+    ,#{onlineInspBaseDt}
+    ,#{inspStus} /* NL정상 */
+    ,#{regr}
+    ,now()
+    ,#{regr}
+    ,now()
+    )
+   	</insert>
+   	
+   	<!-- 자산실사목록 수정 -->
+   	<insert id="updateInspMaster" parameterType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto">
+   	/* InspManageMapper.xml updateInspMaster */
+    UPDATE TB_INSP_MAS
+   	</insert>
+    
+    <!-- 자산실사목록 삭제 -->
+    <delete id="deleteInspList" parameterType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto">
+   	/* InspManageMapper.xml requestListInsert */
+    DELETE FROM TB_INSP_MAS
+     WHERE INSP_NO = #{inspNo}   
+    </delete>
+       
+</mapper>

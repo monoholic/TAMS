@@ -6,6 +6,7 @@
 
 	<!-- 수정의뢰목록 리스트 출력 -->
    	<select id="selectRequestList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   	/* AssetModifyMapper.xml selectRequestList */
    		SELECT CONCAT('R',DATE_FORMAT(NOW(),'%y%m'),LPAD(req_no,'3','0')) AS req_no
 		     , req_type
 		     , (SELECT code_nm FROM tb_com_code WHERE code_id = A.req_type) AS req_type_nm
@@ -112,6 +113,7 @@
    	
    	<!-- 수정의뢰목록 카운트 -->
    	<select id="selectCountRequestList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition"> 	 	
+   	/* AssetModifyMapper.xml selectCountRequestList */
 		SELECT COUNT(*) AS cnt
 		  FROM tb_req_mas a
 		 INNER JOIN tb_user b
@@ -162,6 +164,7 @@
    	
    	<!-- 자산수정의뢰작성 화면 조회 -->
    	<select id="selectRequestRegist" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   	/* AssetModifyMapper.xml selectRequestRegist */
    		SELECT    
    	           (SELECT code_nm
 		          FROM tb_com_code
@@ -199,6 +202,7 @@
    	
    	<!-- 자산수정의뢰 대상자산목록 조회 -->
    	<select id="selectAsetReqList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.AsetReqDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   	/* AssetModifyMapper.xml selectAsetReqList */
 	    SELECT aset_no
 			 , req_no
 			 , aset_nm
@@ -234,6 +238,7 @@
 	
 	<!-- 수정의뢰목록 엑셀 다운로드 -->
    	<select id="selectReqExcelList" resultType="kr.co.trito.tams.web.asset.change.modify.dto.ReqMasExcelDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+   	/* AssetModifyMapper.xml selectReqExcelList */
    		SELECT req_no
 		     , req_type
 		     , (SELECT code_nm
