@@ -31,16 +31,22 @@
 	    <script>
 	    
 	    $(function(){
-	    	const SCREEN_NM = "INSP_MANAGE_LIST";   
+	    	const SCREEN_NM = "INSP_MANAGE_LIST";
+	    	
+	    	let numOfRows = 30; //basic = 30
 	    	loadParams = $.commLoadSearchParams(SCREEN_NM);
 	    	
-	    	$("#jsGrid").jsGrid("loadData");
+	    	var selectedItems = [];
+	    	
+	    	// 자산실사 기본정보 조회
+	    	selectInspManageList();
 	    	
 	        $("#pager").on("change", function() {
 	            var page = parseInt($(this).val(), 10);
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
 	        });
 	        
+
 	        var selectItem = function(item) {
 		    	if(!selectedItems.includes(item)) selectedItems.push(item);
 		    	
@@ -65,7 +71,7 @@
 	          	}
 		    };
 	        
-	        $("#jsGrid").jsGrid({
+	        $("#jsGrid").jsGrid({ 
 	        	height: "550",
                 width: "100%",
                 filtering: false,
@@ -99,7 +105,7 @@
 						  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
 						});
 					} else { // 디테일 화면으로 이동  
-						openInspDetail(inspNo);
+						//openInspDetail(inspNo);
 					}
 	            },
 	            pagerContainerClass: "paginate",
@@ -108,15 +114,17 @@
 	            },
 	            controller:  {
 	                loadData: function(filter) {
-	                    var d = $.Deferred();
+	                    
+	                	
+	                	var d = $.Deferred();
 	                    
 	                    currentPage = filter.pageIndex; 
-	                    let url = "/asset/insp/manage/selectInspAsetList";
+	                    let url = "/asset/insp/manage/selectInspAsetList";  
 						let reqType = 'GET';	
 						let data = {
             				"currentPage"  : filter.pageIndex,
-            				"numOfRows"    : numOfRows,
-            				"inspYear" 	   : $("#inspNo").val(),
+            				"numOfRows"    : numOfRows, 
+            				"inspNo" 	   : $("#inspNo").val(),
             				"searchOption" : $("#searchOption option:selected").val(),
             				"sortField"    : filter.sortField,
             				"sortOrder"    : filter.sortOrder
@@ -124,8 +132,9 @@
 						
 						$.commRequest(url, reqType, data)
 							.then((res) => {
+								console.log(res);
 								condition = res.condition;
-								codeGrpMngList = res.data;
+								inspAsetList = res.data;
 								$(".result").text("Results : " + res.condition.totalCount);
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
 							})
@@ -173,11 +182,27 @@
 		    				   });
 					 	 } ,
 	                },
-	                { name:"inspNo"			, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspNo}]]"},			//실사번호
+	                { name:"inspNo"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspNo}]]"},	//실사번호
+	                { name:"asetNo"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.asetNo}]]"},	//실사번호
+	                
+	                
+	                { name:"asetType1"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.asetType1}]]"},  //자산유형1
+	                { name:"asetType2"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.asetType2}]]"},  //자산유형2
+	                { name:"asetType3"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.asetType3}]]"},  //자산유형3
+	                { name:"mftco"	    , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.mftco}]]"},      //메이커 
+	                { name:"model"	    , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.model}]]"},      //모델
+	                { name:"sn"	        , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.sn}]]"},         //S/N
+	                { name:"bizDeptNm"  , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.bizDeptCd}]]"},  //사업부
+	                { name:"deptNm"	    , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.deptCd}]]"},     //부서
+	                { name:"chrgr"	    , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.chrgr}]]"},      //담당자
+	                { name:"inspStus"   , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspStus}]]"},   //실사상태
+	                { name:"inspMtd"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspMethod}]]"}, //실사방법
+	                { name:"inspCmplYn"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspCmplYn}]]"}, //실사완료여부
+	                { name:"ptcl"	    , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.ptcl}]]"},       //특이사항
+	                { name:"rmk"	    , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.rmk}]]"},        //비고
 
 	            ]
 	        });          	
-	        
 	        
 	        
 	        
@@ -202,6 +227,48 @@
 				$form.appendTo('body'); 
 				$form.submit();
 	    }
+    	
+    	// 자산실사 기본정보 조회
+    	function selectInspManageList(){
+
+        	var d = $.Deferred();
+            
+            let url = "/asset/insp/manage/selectInspManageList"; 
+			let reqType = 'GET';	
+			let data = {
+				"currentPage"  : 0,
+				"numOfRows"    : 1, 
+				"inspNo" 	   : $("#inspNo").val(),
+				"sortField"    : "",
+				"sortOrder"    : ""
+			}
+			
+			$.commRequest(url, reqType, data)
+				.then((res) => {
+					condition = res.condition;
+					inspMastList = res.data[0];
+					console.log(inspMastList);
+					
+					// 자산실사정보란 세팅 
+					$("#inspNm"   ).val(inspMastList.inspNm);
+					$("#inspStDt" ).val(inspMastList.inspStDt);
+					$("#inspEndDt").val(inspMastList.inspEndDt);
+					$("#onlineInspBaseDt").val(inspMastList.onlineInspBaseDt);
+					$("#regr"     ).val(inspMastList.regr);
+					$("#regDt"    ).val(inspMastList.regDt);
+					$("#inspStus" ).val(inspMastList.inspStusNm);
+
+					d.resolve({data : res.data, itemsCount: res.condition.totalCount});
+					
+					// 대상자산정보 그리드 로드
+					$("#jsGrid").jsGrid("loadData");
+				})
+				.catch((error) => {
+					console.log('[[#{screen.info.status.error.search}]]');
+				});						
+            
+            return d.promise();
+    	}
 	    
 	    </script>
 	</th:block>

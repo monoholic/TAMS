@@ -19,13 +19,17 @@
     SELECT COUNT(*) AS CNT
        FROM TB_INSP_MAS TIM
       WHERE 1=1
-      <if test="params.inspYear != ''">
+      <if test="params.inspYear != '' and params.inspYear != null">
        AND (INSP_ST_DT LIKE CONCAT(#{params.inspYear}, '%')) 
       </if>
-      <if test="params.inspNm != ''">
+      <if test="params.inspNm != '' and params.inspNm != null">
        AND INSP_NM = #{params.inspNm}
       </if>
+      <if test="params.inspNo != '' and params.inspNo != null">
+       AND INSP_NO = #{params.inspNo}
+      </if>
     </select>    
+    
     
    	<!-- 자산실사목록  조회 -->
     <select id="selectInspManageList" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
@@ -33,9 +37,11 @@
     SELECT INSP_NO                       /* 실사번호 */
          , INSP_NM                       /* 실사명 */
          , LEFT(INSP_ST_DT, 4) INSP_YEAR /* 실사연도*/
-         , INSP_ST_DT                    /* 실사시작일 */
-         , INSP_END_DT                   /* 실사종료일 */
-         , ONLINE_INSP_BASE_DT           /* 온라인실사기준일 */
+         , DATE_FORMAT(INSP_ST_DT , "%Y-%m-%d") INSP_ST_DT /* 실사시작일 */  
+         , DATE_FORMAT(INSP_END_DT, "%Y-%m-%d") INSP_END_DT /* 실사종료일 */  
+         , CASE WHEN ONLINE_INSP_BASE_DT IS NULL THEN ''
+                ELSE DATE_FORMAT(ONLINE_INSP_BASE_DT, "%Y-%m-%d")
+            END INSP_END_DT              /* 온라인실사기준일 */
          , INSP_STUS                     /* 실사상태 */
          , (SELECT CODE_NM FROM TB_COM_CODE WHERE CODE_GRP_ID = 'INSP_STATUS' AND CODE_ID = TIM.INSP_STUS) INSP_STUS_NM /* 실사상태명 */
          , UPDR   
@@ -44,11 +50,14 @@
          , REG_DT 
       FROM TB_INSP_MAS TIM
      WHERE 1=1
-      <if test="params.inspYear != ''">
+      <if test="params.inspYear != '' and params.inspYear != null">
        AND (INSP_ST_DT LIKE CONCAT(#{params.inspYear}, '%')) 
       </if>
-      <if test="params.inspNm != ''">
+      <if test="params.inspNm != '' and params.inspNm != null">
        AND INSP_NM = #{params.inspNm}
+      </if>
+      <if test="params.inspNo != '' and params.inspNo != null">
+       AND INSP_NO = #{params.inspNo}
       </if>
      ORDER BY INSP_NO DESC
      <!-- 페이징 -->
@@ -89,5 +98,53 @@
     DELETE FROM TB_INSP_MAS
      WHERE INSP_NO = #{inspNo}   
     </delete>
+    
+    <!-- 자산실사 대상 자산 카운트 조회 -->
+    <select id="selectCountInspAsetList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+    /* InspManageMapper.xml selectCountInspAsetList */
+    SELECT COUNT(*)
+      FROM TB_INSP_ASET TIM
+     WHERE 1=1
+      <if test="params.inspNo != ''">
+       AND INSP_NO = #{params.inspNo} 
+      </if>
+    </select>
+    
+    
+    <!-- 자산실사 대상 자산 조회  -->
+    <select id="selectInspAsetList" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+    /* InspManageMapper.xml selectInspAsetList */
+    SELECT TIA.INSP_NO /* 실사번호 */ 
+         , TIA.ASET_NO /* 자산번호*/
+         , TIA.ASET_NM /* 자산명*/
+         , TIA.ASET_TYPE1 /* 자산유형1 */ 
+         , TIA.ASET_TYPE2 /* 자산유형2 */
+         , TIA.ASET_TYPE3 /* 자산유형3 */
+         , TIA.MFTCO  /* 메이커 */
+         , TIA.MODEL  /* 모델 */
+         , TIA.SN /* S/N */
+         , (SELECT TD.UPP_DEPT_CD FROM TB_DEPT TD WHERE TD.DEPT_CD = TIA.DEPT_CD) BIZ_DEPT_CD /* 사업부코드 */
+         , (SELECT DEPT_NM FROM TB_DEPT TBUP WHERE DEPT_CD = (SELECT UPP_DEPT_CD FROM TB_DEPT TD WHERE DEPT_CD = TIA.DEPT_CD)) BIZ_DEPT_NM /* 사업부명 */
+         , DEPT_CD  /* 부서 */
+         , (SELECT DEPT_NM  FROM TB_DEPT TD WHERE TD.DEPT_CD = TIA.DEPT_CD) DEPT_NM  
+         , TIA.CHRGR  /* 담당자 */
+         , TIA.INSP_STUS  /* 실사상태 */
+         , (SELECT CODE_NM FROM tb_com_code tcc WHERE TCC.code_grp_id = 'INSP_STUS' AND TCC.code_id = tia.insp_stus) INSP_STUS_NM 
+         , TIA.INSP_MTD  /* 실사방법 */
+         , (SELECT CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'INSP_METHOD' AND TCC.CODE_ID = TIA.INSP_MTD) INSP_MTD_NM 
+         , TIA.INSP_CMPL_YN  /* 실사완료여부 */
+         , TIA.PTCL  /* 특이사항 */
+         , TIA.RMK /* 비고 */
+      FROM TB_INSP_ASET TIA 
+     WHERE 1=1 
+      <if test="params.inspNo != ''">
+       AND INSP_NO = #{params.inspNo} 
+      </if>
+     ORDER BY INSP_NO DESC
+     <!-- 페이징 -->
+     LIMIT #{numOfRows}
+     OFFSET #{start} 
+    </select>  
+    
        
 </mapper>

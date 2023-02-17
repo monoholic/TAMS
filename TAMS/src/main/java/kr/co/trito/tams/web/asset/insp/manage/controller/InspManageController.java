@@ -77,10 +77,10 @@ public class InspManageController {
 			@ApiParam(value = "검색 조건 파리미터 Dto", required = true) @RequestParam Map<String, Object> params,
 			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) {
 
-		log.info("[selectInspManageList]");
+		log.info("[controller][selectInspManageList]");
 		
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);
-		condition.pageSetup(inspManageService.selectCountInspManageList(condition));
+		condition.pageSetup1(inspManageService.selectCountInspManageList(condition));
 		List<InspMasterDto> list = inspManageService.selectInspManageList(condition);
 		
 		return responseService.success(condition, list);
@@ -168,12 +168,42 @@ public class InspManageController {
 	@PostMapping("/inspManageDetail")
 	@ResponseBody
 	public ModelAndView inspManageDetailView(HttpServletRequest request) {
-		ModelAndView view = new ModelAndView();
-		String reqNo = request.getParameter("reqNo");
 		
-		view.addObject("reqNo", reqNo);
+		log.info("[controller][inspManageDetailView]");
+		ModelAndView view = new ModelAndView();
+		String inspNo = request.getParameter("inspNo");
+		
+		view.addObject("inspNo", inspNo);
 		view.setViewName("/content/asset/insp/manage/inspManageDetail");
 		return view;
 	}
+	
+	
+	
+	/** 실사관리 디테일 조회 */
+	@GetMapping("/selectInspAsetList")
+	@ResponseBody
+	@ApiOperation(value = "실사관리 자산리스트 조회", notes = "실사관리 자산리스트 조회")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> selectInspAsetList(
+			@ApiParam(value = "검색 조건 파리미터 Dto", required = true) @RequestParam Map<String, Object> params,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		log.info("[controller][selectInspAsetList]");
+		
+		String inspNo = (String) params.get("inspNo");
+		
+		
+		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);
+		condition.pageSetup1(inspManageService.selectCountInspAsetList(condition));
+		
+		// 실사 <> 자산 정보 리스트 조회 
+		List<InspMasterDto> list = inspManageService.selectInspAsetList(condition);
+		
+		
+		return responseService.success(condition, list);
+		
+	}
+	
 	
 }

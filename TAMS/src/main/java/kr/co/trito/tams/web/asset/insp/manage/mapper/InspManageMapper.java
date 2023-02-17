@@ -22,4 +22,8 @@ public interface InspManageMapper {
 	public int deleteInspList(InspMasterDto dto);
 
 	public int insertInspMaster(Map<String, Object> params);
+
+	public List<InspMasterDto> selectInspAsetList(SearchCondition condition);
+
+	public int selectCountInspAsetList(SearchCondition condition);
 }

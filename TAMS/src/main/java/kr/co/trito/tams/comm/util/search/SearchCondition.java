@@ -36,6 +36,14 @@ public class SearchCondition {
 		calcStartEnd();		
 	}
 	
+	// start 값보정(-1)
+	public void pageSetup1(int totalCount) {
+		setTotalCount(totalCount);
+		calcLastPage();
+		calcStartEndPage();
+		calcStartEnd1();		
+	}
+	
 	// 제일 마지막 페이지 계산
 	public void calcLastPage() {
 		this.lastPage = (int) Math.ceil((double)this.totalCount / (double)this.numOfRows);
@@ -60,5 +68,12 @@ public class SearchCondition {
 	public void calcStartEnd() {
 		this.end = this.currentPage * this.numOfRows;
 		this.start = this.end - this.numOfRows + 1;
+	}
+	
+	// DB 쿼리에서 사용할 start, end값 계산
+	public void calcStartEnd1() {
+		this.end = this.currentPage * this.numOfRows;
+		this.start = this.end - this.numOfRows;
+		if(this.start < 0) this.start = 0; 
 	}
 }

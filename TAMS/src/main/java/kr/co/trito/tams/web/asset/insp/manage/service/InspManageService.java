@@ -53,5 +53,17 @@ public class InspManageService {
 		return mapper.insertInspMaster(params);
 		
 	}
+
+	public List<InspMasterDto> selectInspAsetList(SearchCondition condition) {
+		// TODO Auto-generated method stub
+		log.info("[service][selectInspAsetList]");
+		return mapper.selectInspAsetList(condition);
+	}
+
+	public int selectCountInspAsetList(SearchCondition condition) {
+		// TODO Auto-generated method stub
+		log.info("[service][selectCountInspAsetList]");
+		return mapper.selectCountInspAsetList(condition);
+	}
 	
 }
