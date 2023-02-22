@@ -265,3 +265,7 @@
 .jsgrid-load-panel:before {
     display: none\9;
 }
+
+.text-underline {
+	text-decoration:underline;
+}

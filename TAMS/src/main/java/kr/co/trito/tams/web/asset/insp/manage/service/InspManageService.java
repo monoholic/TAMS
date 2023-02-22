@@ -1,5 +1,6 @@
 package kr.co.trito.tams.web.asset.insp.manage.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,10 +42,10 @@ public class InspManageService {
 		return mapper.selectInspNmList(condition);
 	}
 
-	public int deleteInspList(InspMasterDto dto) {
+	public int deleteInspMaster(Map<String, Object> param) {
 		// TODO Auto-generated method stub
-		log.info("[service][deleteInspList]");
-		return mapper.deleteInspList(dto);
+		log.info("[service][deleteInspMaster]");
+		return mapper.deleteInspMaster(param);
 	}
 
 	public int insertInspMaster(Map<String, Object> params) {
@@ -64,6 +65,42 @@ public class InspManageService {
 		// TODO Auto-generated method stub
 		log.info("[service][selectCountInspAsetList]");
 		return mapper.selectCountInspAsetList(condition);
+	}
+
+	public List<InspMasterDto> selectInspAsetAddList(SearchCondition condition) {
+		// TODO Auto-generated method stub
+		log.info("[service][selectInspAsetAddList]");
+		return mapper.selectInspAsetAddList(condition);
+	}
+
+	public int selectInspAsetAddCoutList(SearchCondition condition) {
+		// TODO Auto-generated method stub
+		log.info("[service][selectInspAsetAddCoutList]");
+		return mapper.selectInspAsetAddCoutList(condition);
+	}
+
+	public int insertInspAssetList(InspMasterDto dto) {
+		// TODO Auto-generated method stub
+		log.info("[service][insertInspAssetList]");
+		return mapper.insertInspAssetList(dto);
+	}
+
+	public int updateInspAsetList(Map<String, Object> param) {
+		// TODO Auto-generated method stub
+		log.info("[service][updateInspAsetList]");
+		return mapper.updateInspAsetList(param);
+	}
+
+	public int deleteInspAsetList(Map<String, Object> param) {
+		// TODO Auto-generated method stub
+		log.info("[service][deleteInspAsetList]");
+		return mapper.deleteInspAsetList(param);
+	}
+
+	public int updateInspMaster(Map<String, Object> param) {
+		// TODO Auto-generated method stub
+		log.info("[service][updateInspMaster]");
+		return mapper.updateInspMaster(param);
 	}
 	
 }

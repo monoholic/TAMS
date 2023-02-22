@@ -67,7 +67,7 @@
           	//조회 버튼 
     	    $(".btn_srch").on("click",function (){
     	    	$("#jsGrid").jsGrid("loadData");
-	        });			
+	        });
           	
 			//엔터키
     	    $(document).keypress(function(event){	    	    	
@@ -97,14 +97,13 @@
 	  	    	});
 	  	    	
 	  	    	//별도 호출
-	  	    	let url = "/asset/insp/manage/deleteInspList";
-	  			let reqType = 'GET';
-	  			dataType: 'json';
-	  			let data={
-	  				"items": items.join(",")
-	  			}
+                let url = "/asset/insp/manage/deleteInspList";  
+				let reqType = 'POST';	
+				let data = {
+					"items": items
+    			}
 	  			
-	  			$.commRequest(url, reqType, data)
+	  			$.commRequest(url, reqType, JSON.stringify(data))
 	  				.then((res) => {
 	  					console.log(res);
 	  					alert("[[#{screen.info.status.delete.success}]]");
@@ -173,15 +172,26 @@
 	            	var columnIdx = $target.index(); // 클릭한 셀이 몇번째 컬럼인지 저장 
 	            	var inspNo =  args.item.inspNo// 해당 로우의 실사번호 
 	            	
-					if(columnIdx == 0) { // 체크박스 클릭 
+	            	
+	            	switch(columnIdx) {
+	            	case 0 : // 체크박스 
 					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
-					                .on("change", function () {
-						  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
+		                			.prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
+		                			.on("change", function () {
+						  	 			$(this).is(":checked") ? selectItem(item) : unselectItem(item);
 						});
-					} else { // 디테일 화면으로 이동  
-						openInspDetail(inspNo);
-					}
+	            		break;
+	            	case 1 : // 실사번호
+	            		openInspDetail(inspNo);
+	            		break;
+	            	case 8 : // 실사대상자
+	            		openInspTarget(inspNo);
+	            		break;
+	            	case 9 : // 부서별 진행상황'
+	            		break;
+	            	default :
+	            		console.log("[click idx]:"+columnIdx);
+	            	}
 	            },
 	            pagerContainerClass: "paginate",
 	            deleteConfirm: function(item) {
@@ -255,15 +265,15 @@
 		    				   });
 					 	 } ,
 	                },
-	                { name:"inspNo"			, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspNo}]]"},			//실사번호
+	                { name:"inspNo"			, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspNo}]]", cellRenderer:underlineCellRenderer},			//실사번호
 	                { name:"inspYear"		, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspYear}]]"},     	//실사연도
 	                { name:"inspNm"			, type:"text", align:"center", width:30, title:"[[#{screen.text.asset.inspNm}]]"},   		//실사명
 	                { name:"inspStDt"		, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspStDt}]]"},     	//실사시작일
 	                { name:"inspEndDt"		, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspEndDt}]]"},   	//실사종료일
 	                { name:"onlineInspBaseDt",type:"text", align:"center", width:15, title:"[[#{screen.text.asset.onlineInspBaseDt}]]"},//온라인실사기준일
 	                { name:"regr"			, type:"text", align:"center", width:15, title:"[[#{screen.text.asset.inspRegr}]]"},     	//실사생성자
-	                { name:"inspTarget"		, type:"text", align:"center", width:15, title:"[[#{screen.text.asset.inspTarget}]]"},   	//실사대상자 산수
-	                { name:"inspDeptPogress", type:"text", align:"center", width:15, title:"[[#{screen.text.asset.inspDeptPogress}]]"},	//부서별 진행상황
+	                { name:"inspTarget"		, type:"text", align:"center", width:15, title:"[[#{screen.text.asset.inspTarget}]]", cellRenderer:underlineCellRenderer},   	//실사대상자 산수
+	                { name:"inspDeptPogress", type:"text", align:"center", width:15, title:"[[#{screen.text.asset.inspDeptPogress}]]", cellRenderer:underlineCellRenderer},	//부서별 진행상황
 	                { name:"inspStusNm"		, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspStus}]]"} 		//실사상태
 	            ]
 	        });          	
@@ -334,6 +344,40 @@
 				$form.appendTo('body'); 					
 				$form.submit();
 	    }
+
+	 	// 실사 대상자 화면 이동 
+	    function openInspTarget(inspNo){
+	       	event.preventDefault();
+	       	
+	       	let saveParams = {
+	       		"condition": condition,
+	       		"menuId"   : "[[${menuId}]]" ,
+	       		"menuNm"   : "[[${menuNm}]]",
+	       		"menuDesc" : "[[${menuDesc}]]",
+	       	}
+	       	
+	       	$.commSaveSearchParams(SCREEN_NM, saveParams);
+	       	
+            let url = "/asset/insp/manage/inspManageTarget";
+			let menuId = "[[${menuId}]]";
+            
+			var $form = $('<form></form>'); 
+				$form.attr('action', url); 
+				$form.attr('method', 'Post'); 
+				$form.attr('target', '_self'); 
+				
+			var inspNoStr = $('<input type="hidden" value="'+ inspNo +'" name="inspNo">');
+				$form.append(inspNoStr);
+ 				menuIdStr = $('<input type="hidden" value="' + menuId + '" name="menuId">');
+				$form.append(menuIdStr); 					
+				$form.appendTo('body'); 					
+				$form.submit();
+	    }
+	 	
+	 	// 텍스트 언더라인 함수
+	 	function underlineCellRenderer(value, item) {
+		  return $("<td>").addClass("text-underline").text(value);
+		}
 		
 		</script>
 	</th:block>
@@ -383,8 +427,8 @@
 				<div class="result">Results : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
-					<a class="btn_add">[[#{screen.text.asset.inspAdd}]]</a> 
-					<a class="btn_del">[[#{screen.btn.delete}]]</a>
+					<a class="btn_add">[[#{screen.text.asset.inspAdd}]]</a> <!-- 실사생성 -->
+					<a class="btn_del">[[#{screen.btn.delete}]]</a> <!-- 삭제 -->
 				</div>
 				<!-- list_button -->
 		</div>

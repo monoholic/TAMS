@@ -51,6 +51,12 @@ public class InspMasterDto {
 	private String asetType2;
 	@ApiModelProperty(value="자산유형3")
 	private String asetType3;
+	@ApiModelProperty(value="자산유형1")
+	private String asetType1Nm;
+	@ApiModelProperty(value="자산유형2")
+	private String asetType2Nm;
+	@ApiModelProperty(value="자산유형3")
+	private String asetType3Nm;
 	@ApiModelProperty(value="메이커")
 	private String mftco;
 	@ApiModelProperty(value="모델")
@@ -75,6 +81,28 @@ public class InspMasterDto {
 	private String inspCmplYn;
 	@ApiModelProperty(value="특이사항")
 	private String ptcl;
+	@ApiModelProperty(value="코드")
+	private String codeId;
+	@ApiModelProperty(value="코드명")
+	private String codeNm;
 	@ApiModelProperty(value="비고")
 	private String rmk;
+	@ApiModelProperty(value="상위부서코드")
+	private String uppDeptCd;
+	@ApiModelProperty(value="상위부서명")
+	private String uppDeptNm;
+	@ApiModelProperty(value="부서장")
+	private String depart_head;
+	@ApiModelProperty(value="부서장")
+	private String dpldr;
+	@ApiModelProperty(value="실사자1")
+	private String insptr1;
+	@ApiModelProperty(value="실사자2")
+	private String insptr2;
+	@ApiModelProperty(value="실사자3")
+	private String insptr3;
+	@ApiModelProperty(value="실사자4")
+	private String insptr4;
+	@ApiModelProperty(value="실사자5")
+	private String insptr5;
 }

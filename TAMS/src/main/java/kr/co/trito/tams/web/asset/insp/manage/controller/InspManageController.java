@@ -2,6 +2,7 @@ package kr.co.trito.tams.web.asset.insp.manage.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,8 @@ import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
 import kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto;
 import kr.co.trito.tams.web.asset.insp.manage.service.InspManageService;
+import kr.co.trito.tams.web.common.dto.ComCodeParamDto;
+import kr.co.trito.tams.web.common.service.CommonService;
 import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,16 +41,20 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/asset/insp/manage")
 @Slf4j
-public class InspManageController {
+public class InspManageController {	
 	@Autowired
 	InspManageService inspManageService; 
 	
 	@Autowired
 	ResponseService responseService;
 	
+	@Autowired
+	CommonService commonService;
+	
 	/** 실사관리화면 */
 	@PostMapping("list")
-	public ModelAndView inspManageView(HttpServletRequest request, @ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
+	public ModelAndView inspManageView(HttpServletRequest request, 
+			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
 		
 		ModelAndView view = new ModelAndView();
 		if (params != null) {
@@ -107,21 +114,41 @@ public class InspManageController {
 	}
 	
 	/** 실사관리화면 삭제*/
-	@GetMapping(value="/deleteInspList")
+	@PostMapping(value="/deleteInspList")
 	@ResponseBody
 	@ApiOperation(value = "자산정보수정 화면 : 삭제", notes = "자산정보수정 화면 : 삭제")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> deleteInspList( 
-			@ApiParam(value = "실사 번호", required = true) @RequestParam(value = "items", required = true) List<String> items) { 
+			@ApiParam(value = "실사 번호", required = true) @RequestBody Map<String, Object> items) { 
 		
 		log.info("[controller][deleteInspList]");
-		InspMasterDto dto = new InspMasterDto();
+		List<String> asetList = (List<String>) items.get("items");
 
-		for(String inspNo : items) {
-			dto.setInspNo(inspNo);
-			inspManageService.deleteInspList(dto);
+		for(String inspNo : asetList) {
+			Map<String, Object> param = new HashMap<String, Object>();
+			param.put("inspNo", inspNo);
+			inspManageService.deleteInspMaster(param);
+			inspManageService.deleteInspAsetList(param);
 		}
+		
+		return responseService.success(null);
+	}
+	
+	/** 실사관리화면 수정*/
+	@PostMapping(value="/updateInspMaster")
+	@ResponseBody
+	@ApiOperation(value = "자산정보수정 화면 : 수정", notes = "자산정보수정 화면 : 수정")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> updateInspMaster( 
+			@ApiParam(value = "실사 번호", required = true) @RequestBody Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		
+		log.info("[controller][updateInspMaster]");
+		
+		items.put("userId", userDetail.getUsername());
+		inspManageService.updateInspMaster(items);
 		
 		return responseService.success(null);
 	}
@@ -203,6 +230,181 @@ public class InspManageController {
 		
 		return responseService.success(condition, list);
 		
+	}
+	
+	
+	/** 자산추가 팝업 */
+	@GetMapping(value="inspManageAsetAddPopup")
+	public ModelAndView inspManageAsetAddPopupView(HttpServletRequest request,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) {
+		
+		log.info("[controller][inspManageAsetAddPopupView]");
+		
+		ModelAndView view = new ModelAndView();
+		
+		//view.addObject("regr", userDetail.getUsername());
+		//Date now = new Date(System.currentTimeMillis());
+		//SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+		//view.addObject("regDt", fmt.format(now));
+		
+		view.setViewName("/content/asset/insp/manage/inspManageAsetAddPopup");
+		
+		
+		return view;
+	}
+	
+	/** 실사관리 자산추가팝업 자산조회 */
+	@GetMapping("/selectInspAsetAddList")
+	@ResponseBody
+	@ApiOperation(value = "실사관리 자산추가팝업 자산조회", notes = "실사관리 자산추가팝업 자산조회")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> selectInspAsetAddList(
+			@ApiParam(value = "검색 조건 파리미터 Dto", required = true) @RequestParam Map<String, Object> params,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		
+		log.info("[controller][selectInspAsetAddList]");
+		
+		
+		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);
+		condition.pageSetup1(inspManageService.selectInspAsetAddCoutList(condition));
+		
+		// 실사 <> 자산 정보 리스트 조회 
+		List<InspMasterDto> list = inspManageService.selectInspAsetAddList(condition);
+		
+		
+		return responseService.success(condition, list);
+		
+	}
+	
+
+	/** 실사관리화면 자산정보 추가 */
+	@PostMapping(value="/insertInspAssetList")
+	@ResponseBody
+	@SuppressWarnings("unchecked")
+	@ApiOperation(value = "실사관리화면 자산추가팝업 저장", notes = "실사관리화면 자산추가팝업 저장")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> insertInspAssetList(
+			@ApiParam(value = "자산번호", required = true) @RequestBody Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		
+		log.info("[controller][insertInspAssetList]");
+		InspMasterDto dto = new InspMasterDto();
+
+		String inspNo = (String) items.get("inspNo");
+		String arr = (String) items.get("items");
+		String[] asetNoList = arr.split(",");
+		
+		for (String asetNo : asetNoList) {
+			dto.setRegr(userDetail.getUsername());
+			dto.setAsetNo(asetNo);
+			dto.setInspNo(inspNo);
+			inspManageService.insertInspAssetList(dto);
+		}
+		
+		
+		return responseService.success(null);
+	}
+	
+	/** 실사관리화면 자산목록 코드 조회 */
+	@GetMapping("/selectInspAsetCodeList")
+	@ResponseBody
+	@ApiOperation(value = "실사관리 자산추가팝업 자산조회", notes = "실사관리 자산추가팝업 자산조회")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> selectInspAsetCodeList(
+			@ApiParam(value = "검색 조건 파리미터 Dto", required = true) @RequestParam Map<String, Object> params,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		
+		log.info("[controller][selectInspAsetCodeList]");
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		ComCodeParamDto param = new ComCodeParamDto();
+		
+		// 실사 <> 자산 정보 리스트 조회 
+		param.setCodeLvl("1");
+		param.setUpperCodeId("");
+		
+		param.setCodeGrpId("INSP_STATUS");
+		result.put("inspStusArr", commonService.commSelectBox(param));
+		
+		param.setCodeGrpId("INSP_METHOD");
+		result.put("inspMtdArr", commonService.commSelectBox(param));
+		
+		param.setCodeGrpId("INSP_NOTE");
+		result.put("inspPtclArr", commonService.commSelectBox(param));
+		
+		
+		return responseService.success(result);
+		
+	}
+	
+	
+	/** 실사관리화면 자산정보 수정 */
+	@PostMapping(value="/updateInspAsetList")
+	@ResponseBody
+	@ApiOperation(value = "실사관리화면 자산정보 수정", notes = "실사관리화면 자산정보 수정")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> updateInspAsetList(
+			@ApiParam(value = "자산정보 수정 데이터", required = true) @RequestBody Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
+		
+		items.put("regr", userId);
+		
+		int cnt = inspManageService.updateInspAsetList(items);
+		
+		return responseService.success(null);
+	}
+	
+	/** 실사관리화면 자산정보 삭제 */
+	@PostMapping(value="/deleteInspAsetList")
+	@ResponseBody
+	@SuppressWarnings("unchecked")
+	@ApiOperation(value = "실사관리화면 자산정보 삭제", notes = "실사관리화면 자산정보 삭제")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> deleteInspAsetList(
+			@ApiParam(value = "자산정보 수정 데이터", required = true) @RequestBody Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		
+		//UserInfo userInfo = (UserInfo)userDetail;
+		//String userId = userInfo.getDto().getUserId();
+		
+		List<String> asetList = (List<String>) items.get("asetNo");
+		
+		for (String asetNo : asetList) {
+			Map<String, Object> param = new HashMap<String, Object>();
+			param.put("asetNo", asetNo);
+			param.put("inspNo", items.get("inspNo"));
+			inspManageService.deleteInspAsetList(param);
+		}
+		
+		
+		//int cnt = inspManageService.deleteInspAsetList(items);
+		
+		return responseService.success(null);
+	}
+	
+	
+	
+	/** 실사관리 대상자 화면 */
+	@PostMapping("/inspManageTarget")
+	@ResponseBody
+	public ModelAndView inspManageTargetView(HttpServletRequest request) {
+		
+		log.info("[controller][inspManageTargetView]");
+		ModelAndView view = new ModelAndView();
+		String inspNo = request.getParameter("inspNo");
+		
+		view.addObject("inspNo", inspNo);
+		view.setViewName("/content/asset/insp/manage/inspManageTarget");
+		return view;
 	}
 	
 	

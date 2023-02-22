@@ -41,9 +41,9 @@
          , DATE_FORMAT(INSP_END_DT, "%Y-%m-%d") INSP_END_DT /* 실사종료일 */  
          , CASE WHEN ONLINE_INSP_BASE_DT IS NULL THEN ''
                 ELSE DATE_FORMAT(ONLINE_INSP_BASE_DT, "%Y-%m-%d")
-            END INSP_END_DT              /* 온라인실사기준일 */
+            END ONLINE_INSP_BASE_DT      /* 온라인실사기준일 */
          , INSP_STUS                     /* 실사상태 */
-         , (SELECT CODE_NM FROM TB_COM_CODE WHERE CODE_GRP_ID = 'INSP_STATUS' AND CODE_ID = TIM.INSP_STUS) INSP_STUS_NM /* 실사상태명 */
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'INSP_STATUS' AND TCC.CODE_ID = TIM.INSP_STUS AND TCC.USE_YN = 'Y' ) INSP_STUS_NM /* 실사상태명 */
          , UPDR   
          , UP_DT  
          , REGR   
@@ -87,14 +87,19 @@
    	</insert>
    	
    	<!-- 자산실사목록 수정 -->
-   	<insert id="updateInspMaster" parameterType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto">
+   	<insert id="updateInspMaster" parameterType="Map">
    	/* InspManageMapper.xml updateInspMaster */
     UPDATE TB_INSP_MAS
+       SET INSP_NM             = #{inspNm}
+         , INSP_ST_DT          = #{inspStDt}
+         , INSP_END_DT         = #{inspEndDt}
+         , ONLINE_INSP_BASE_DT = #{onlineInspBaseDt}
+     WHERE INSP_NO = #{inspNo}
    	</insert>
     
     <!-- 자산실사목록 삭제 -->
-    <delete id="deleteInspList" parameterType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto">
-   	/* InspManageMapper.xml requestListInsert */
+    <delete id="deleteInspMaster" parameterType="Map">
+   	/* InspManageMapper.xml deleteInspMaster */
     DELETE FROM TB_INSP_MAS
      WHERE INSP_NO = #{inspNo}   
     </delete>
@@ -118,8 +123,11 @@
          , TIA.ASET_NO /* 자산번호*/
          , TIA.ASET_NM /* 자산명*/
          , TIA.ASET_TYPE1 /* 자산유형1 */ 
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'AS_CLASS' AND TCC.CODE_ID = TIA.ASET_TYPE1) ASET_TYPE1_NM
          , TIA.ASET_TYPE2 /* 자산유형2 */
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'AS_CLASS' AND TCC.CODE_ID = TIA.ASET_TYPE2) ASET_TYPE2_NM
          , TIA.ASET_TYPE3 /* 자산유형3 */
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'AS_CLASS' AND TCC.CODE_ID = TIA.ASET_TYPE3) ASET_TYPE3_NM
          , TIA.MFTCO  /* 메이커 */
          , TIA.MODEL  /* 모델 */
          , TIA.SN /* S/N */
@@ -129,9 +137,9 @@
          , (SELECT DEPT_NM  FROM TB_DEPT TD WHERE TD.DEPT_CD = TIA.DEPT_CD) DEPT_NM  
          , TIA.CHRGR  /* 담당자 */
          , TIA.INSP_STUS  /* 실사상태 */
-         , (SELECT CODE_NM FROM tb_com_code tcc WHERE TCC.code_grp_id = 'INSP_STUS' AND TCC.code_id = tia.insp_stus) INSP_STUS_NM 
+         , (SELECT CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'INSP_STATUS' AND TCC.CODE_ID = TIA.INSP_STUS AND TCC.USE_YN = 'Y') INSP_STUS_NM 
          , TIA.INSP_MTD  /* 실사방법 */
-         , (SELECT CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'INSP_METHOD' AND TCC.CODE_ID = TIA.INSP_MTD) INSP_MTD_NM 
+         , (SELECT CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'INSP_METHOD' AND TCC.CODE_ID = TIA.INSP_MTD AND TCC.USE_YN = 'Y') INSP_MTD_NM 
          , TIA.INSP_CMPL_YN  /* 실사완료여부 */
          , TIA.PTCL  /* 특이사항 */
          , TIA.RMK /* 비고 */
@@ -146,5 +154,155 @@
      OFFSET #{start} 
     </select>  
     
+    
+    <!-- 자산실사 자산추가용 리스트 카운트 조회 -->
+    <select id="selectInspAsetAddCoutList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+    /* InspManageMapper.xml selectInspAsetAddCoutList */
+    SELECT COUNT(*)
+      FROM TB_ASET_MAS TAM
+     WHERE 1=1
+      <if test="params.asetNo != ''">
+       AND ASET_NO = #{params.asetNo} 
+      </if>
+      <if test="params.asetNm != ''">
+       AND ASET_NM = #{params.asetNm} 
+      </if>
+    </select>
+    
+    
+    <!-- 자산실사 자산추가용 리스트 조회 -->
+    <select id="selectInspAsetAddList" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+    /* InspManageMapper.xml selectInspAsetAddList */
+    SELECT TAM.ASET_NO    /* 자산번호 */
+         , TAM.ASET_NM    /* 자산명 */
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'AS_CLASS' AND TCC.USE_YN = 'Y' AND TCC.CODE_ID = TAM.ASET_TYPE1) ASET_TYPE1 /* 자산유형1 */
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'AS_CLASS' AND TCC.USE_YN = 'Y' AND TCC.CODE_ID = TAM.ASET_TYPE2) ASET_TYPE2 /* 자산유형2 */
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'AS_CLASS' AND TCC.USE_YN = 'Y' AND TCC.CODE_ID = TAM.ASET_TYPE3) ASET_TYPE3 /* 자산유형3 */
+         , TAM.MFTCO      /* 제조사 */
+         , TAM.MODEL      /* 모델 */
+         , TAM.SN         /* S/N */
+      FROM TB_ASET_MAS TAM
+     WHERE 1=1
+       AND NOT EXISTS (SELECT 1 FROM TB_INSP_ASET TIA WHERE TIA.INSP_NO = #{params.inspNo} AND TIA.ASET_NO = TAM.ASET_NO)
+      <if test="params.asetNo != ''">
+       AND ASET_NO = #{params.asetNo} 
+      </if>
+      <if test="params.asetNm != ''">
+       AND ASET_NM = #{params.asetNm} 
+      </if>
+     ORDER BY ASET_NO DESC
+     <!-- 페이징 -->
+     LIMIT #{numOfRows}
+     OFFSET #{start} 
+    </select>  
+    
+    <!-- 실사관리화면 자산정보 추가 -->
+    <insert id="insertInspAssetList" parameterType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" >
+    /* InspManageMapper.xml insertInspAssetList */
+    INSERT INTO TB_INSP_ASET (
+      INSP_NO
+    , ASET_NO
+    , ASET_NM
+    , ASET_TYPE1
+    , ASET_TYPE2
+    , ASET_TYPE3
+    , MFTCO
+    , MODEL
+    , SN
+    , DEPT_CD
+    , CHRGR
+    , BSPLC
+    , BULD
+    , FLOOR
+    , LOC
+    , INSP_DT
+    , INSP_STUS
+    , INSP_MTD
+    , INSP_CMPL_YN
+    , REGR
+    , REG_DT
+    ) 
+    SELECT #{inspNo} INSP_NO
+         , ASET_NO 
+         , ASET_NM 
+         , ASET_TYPE1 
+         , ASET_TYPE2
+         , ASET_TYPE3
+         , MFTCO 
+         , MODEL 
+         , SN 
+         , DEPT_CD 
+         , CHRGR 
+         , BSPLC 
+         , BULD 
+         , FLOOR 
+         , LOC 
+         , (SELECT INSP_ST_DT FROM TB_INSP_MAS TIM WHERE TIM.INSP_NO = #{inspNo}) INSP_DT
+         , (SELECT INSP_STUS FROM TB_INSP_MAS TIM WHERE TIM.INSP_NO = #{inspNo}) INSP_STUS
+         , 'WEB'     INSP_MTD
+         , 'N'       INSP_CMPL_YN
+         , #{regr} REGR 
+         , NOW()     REG_DT
+      FROM TB_ASET_MAS TAM
+     WHERE ASET_NO = #{asetNo}
+        ON DUPLICATE KEY 
+    UPDATE UPDR  = #{regr}
+         , UP_DT = NOW()
+    </insert>
+    
+    
+	<!-- 실사관리화면 자산정보 수정 -->
+	<update id="updateInspAsetList" parameterType="Map">
+	/* InspManageMapper.xml insertInspAssetList */
+    UPDATE TB_INSP_ASET SET
+           INSP_STUS    = #{inspStus} 
+         , INSP_MTD     = #{inspMtd}
+         , INSP_CMPL_YN = #{inspCmplYn}
+         , PTCL         = #{ptcl}
+         , RMK          = #{rmk}
+    WHERE INSP_NO  = #{inspNo}
+      AND ASET_NO  = #{asetNo}
+	</update>
+
+	<!-- 실사관리화면 자산정보 삭제 --> 
+	<delete id="deleteInspAsetList" parameterType="Map">
+	/* InspManageMapper.xml deleteInspAsetList */
+    DELETE FROM TB_INSP_ASET
+     WHERE INSP_NO  = #{inspNo}
+      <if test="asetNo != ''">
+       AND ASET_NO  = #{asetNo}
+      </if>
+	</delete>
+
+	<select id="selectInspMngList" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto">
+    /* InspManageMapper.xml selectInspMngList */
+    SELECT TD.UPP_DEPT_CD
+         , (SELECT UTD.DEPT_NM FROM TB_DEPT UTD WHERE UTD.DEPT_CD = TD.UPP_DEPT_CD) UPPER_DEPT_NM
+         , TD.DEPT_CD
+         , TD.DEPT_NM 
+         , (SELECT MAX(USER_ID)
+              FROM TB_USER UTU
+             WHERE UTU.DEPT_CD = TD.DEPT_CD 
+               AND CLPST = (SELECT MIN(TU.CLPST)
+                              FROM TB_USER TU 
+                             WHERE TU.DEPT_CD = TD.DEPT_CD)) HEAD
+         , TIM.INSP_NO
+         , TIM.DPLDR
+         , TIM.INSPTR1
+         , TIM.INSPTR2
+         , TIM.INSPTR3
+         , TIM.INSPTR4
+         , TIM.INSPTR5
+         , TIM.REGR 
+         , TIM.REG_DT
+      FROM TB_DEPT TD 
+      LEFT JOIN TB_INSP_MNG TIM 
+        ON TD.DEPT_CD = TIM.DEPT_CD
+     WHERE TD.UPP_DEPT_CD IS NOT NULL
+       AND CHAR_LENGTH(TD.DEPT_CD)=9
+       AND TIM.INSP_NO = #{inspNo}
+     ORDER BY TD.LOC
+	</select>
+
        
 </mapper>

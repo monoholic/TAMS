@@ -29,53 +29,181 @@
 	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
 		
 	    <script>
+    	let numOfRows = 30; //basic = 30
+    	const SCREEN_NM = "INSP_MANAGE_LIST";
+    	
+    	var selectedItems = [];
+    	var inspStusArr   = [];
+    	var inspMtdArr    = [];
+    	var inspCmplYnArr = [];
+    	var inspPtclArr   = [];
 	    
+
+        var selectItem = function(item) {
+	    	if(!selectedItems.includes(item)) selectedItems.push(item);
+	    	
+		    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+                $("#selectAllCheckbox").prop("checked", true);
+	        } else {
+	            $("#selectAllCheckbox").prop("checked", false);
+	        }
+		};
+	     
+	    var unselectItem = function(item) {
+		    selectedItems = $.grep(selectedItems, function(i) {
+		    	return i !== item;
+		    });
+		    if(selectedItems.length == 0) {
+		    	$('#selectAllCheckbox').attr('checked', false);
+		    }
+		    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+             	$("#selectAllCheckbox").prop("checked", true);
+         	} else {
+            	$("#selectAllCheckbox").prop("checked", false);
+          	}
+	    };
+    	
 	    $(function(){
-	    	const SCREEN_NM = "INSP_MANAGE_LIST";
 	    	
-	    	let numOfRows = 30; //basic = 30
 	    	loadParams = $.commLoadSearchParams(SCREEN_NM);
+
 	    	
-	    	var selectedItems = [];
+	    	// 셀렉트박스조회 > 그리드 로드 > 실사기본정보 조회 > 그리드 데이터 조회  
+	    	selectInspAsetCodeList().done(function(msg){ // 셀렉트박스 코드 조회 
+	    		jsGridLoad();
+		    	// 자산실사 기본정보 조회
+		    	selectInspManageList().done(function(msg){ // 실사기본정보 조회 
+		    		$("#jsGrid").jsGrid("loadData");
+		    	});
+	    	});
 	    	
-	    	// 자산실사 기본정보 조회
-	    	selectInspManageList();
 	    	
 	        $("#pager").on("change", function() {
 	            var page = parseInt($(this).val(), 10);
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
 	        });
 	        
-
-	        var selectItem = function(item) {
-		    	if(!selectedItems.includes(item)) selectedItems.push(item);
-		    	
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	                $("#selectAllCheckbox").prop("checked", true);
-		        } else {
-		            $("#selectAllCheckbox").prop("checked", false);
-		        }
-			};
-		     
-		    var unselectItem = function(item) {
-			    selectedItems = $.grep(selectedItems, function(i) {
-			    	return i !== item;
-			    });
-			    if(selectedItems.length == 0) {
-			    	$('#selectAllCheckbox').attr('checked', false);
-			    }
-			    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
-	             	$("#selectAllCheckbox").prop("checked", true);
-	         	} else {
-	            	$("#selectAllCheckbox").prop("checked", false);
-	          	}
-		    };
+	        // 상단 저장 버튼 
+            $('.btn_save1').on('click', function (e) {
+            	var d = $.Deferred();
+	  	    	
+	  	    	//별도 호출
+                let url = "/asset/insp/manage/updateInspMaster";  
+				let reqType = 'POST';	
+				let data = {
+					"inspNo"          : $("#inspNo").val(),
+					"inspNm"          : $("#inspNm").val(),
+					"inspStDt"        : $("#inspStDt").val().replace(/-/gi, ""),
+					"inspEndDt"       : $("#inspEndDt").val().replace(/-/gi, ""),
+					"onlineInspBaseDt": $("#onlineInspBaseDt").val().replace(/-/gi, "")
+    			}
+	  			
+	  			$.commRequest(url, reqType, JSON.stringify(data))
+	  				.then((res) => {
+	  					console.log(res);
+	  					d.resolve(res);
+	  					alert("[[#{screen.info.status.save.success}]]");
+	  					window.location.reload();
+	  				})
+	  				.catch((error) => {
+	  					alert("[[#{screen.info.status.error.occur}]]");
+	  					console.log(error);
+	  				})
+				return d.promise();
+            });
 	        
+	        // 상단 삭제버튼 
+            $('.btn_del1').on('click', function (e) {
+            	var d = $.Deferred();
+	  	    	var items = [];
+	  	    		items.push($("#inspNo").val());
+	  	    	
+	  	    	//별도 호출
+                let url = "/asset/insp/manage/deleteInspList";  
+				let reqType = 'POST';	
+				let data = {
+					"items": items
+    			}
+	  			
+	  			$.commRequest(url, reqType, JSON.stringify(data))
+	  				.then((res) => {
+	  					console.log(res);
+	  					d.resolve(res);
+	  					alert("[[#{screen.info.status.delete.success}]]");
+	  					requestListView();
+	  				})
+	  				.catch((error) => {
+	  					alert("[[#{screen.info.status.error.occur}]]");
+	  					console.log(error);
+	  				})
+				return d.promise();
+            });
+    	    
+	        
+    	    // 자산추가 버튼 클릭 
+    	    $(".btn_add").click(function() {
+    	        var url = "/asset/insp/manage/inspManageAsetAddPopup";
+    	        var args = {width:1200, height:1050};
+    	        var param = {};
+    	        param.inspNo = $("#inspNo").val();
+    	        console.log("[detail inspNo]"+$("#inspNo").val());
+    	        openPopup2("inspManageAsetAddPopup", url, args, param);
+    	    });
+    	    
+	     	// 그리드 저장 버튼 처리
+            $('.btn_save2').on('click', function (e) {
+            	e.preventDefault();
+    			$("#jsGrid").jsGrid("updateItem");
+            });
+    	    
+	     	// 그리드 삭제 버튼 처리
+            $('.btn_del2').on('click', function (e) {
+            	
+           	    if (selectedItems.length === 0) {
+           	        alert("[[#{screen.info.status.no.selected.item}]]");
+           	        return;
+           	    }
+           	    
+        		var items = [];
+        		
+            	var d = $.Deferred();
+	  	    	$.each(selectedItems, function(index,item){
+	  	    		items.push(item);
+	  	    	});
+	  	    	
+                let url = "/asset/insp/manage/deleteInspAsetList";  
+				let reqType = 'POST';	
+				let data = {
+    				"inspNo" 	: $("#inspNo").val(),
+    				"asetNo" 	: items,
+    			}
+				
+				$.commRequest(url, reqType, JSON.stringify(data))
+					.then((res) => {
+						d.resolve(res);
+						alert("[[#{screen.info.status.delete.success}]]");
+						$("#jsGrid").jsGrid("loadData");
+					})
+					.catch((error) => {
+						console.log('[[#{screen.info.status.error.occur}]]');
+					});						
+                return d.promise();
+           	    
+            });
+	     	
+            
+    	     
+	        
+    	});   // $(function()
+    			
+    	var currentRow;
+    	function jsGridLoad(){
+
 	        $("#jsGrid").jsGrid({ 
 	        	height: "550",
                 width: "100%",
                 filtering: false,
-                editing: true,
+                editing: {mode:"batch"},
                 inserting: false,
                 sorting: true,
                 paging: true,
@@ -94,28 +222,44 @@
                 loadonce: true,
                 updateOnResize: true, 
 	            rowClick: function(args) {
-	            	var $target = $(args.event.target); // 클릭한 셀 jquery object 
-	            	var columnIdx = $target.index(); // 클릭한 셀이 몇번째 컬럼인지 저장 
-	            	var inspNo =  args.item.inspNo// 해당 로우의 실사번호 
+	            	targetItem = args.item;
 	            	
-					if(columnIdx == 0) { // 체크박스 클릭 
-					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-					                .prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
-					                .on("change", function () {
-						  	 $(this).is(":checked") ? selectItem(item) : unselectItem(item);
-						});
-					} else { // 디테일 화면으로 이동  
-						//openInspDetail(inspNo);
-					}
+	            	// 체크박스 선택 시 editing 활성화 막기
+	            	var chkBoxNm = jQuery(".singleCheckbox").attr("class");
+	            	var chkBoxNm2 = jQuery(args.event.target).attr("class");
+	            	
+	            	if(args.event.target.cellIndex != 0 && chkBoxNm != chkBoxNm2) {
+	            		jsGrid.Grid.prototype.rowClick.call(this, args);
+            	    }
 	            },
 	            pagerContainerClass: "paginate",
-	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ '[[#{screen.info.status.delete.yn}]]';
-	            },
+	            deleteConfirm: "[[#{screen.info.status.default.delete.yn}]]",
 	            controller:  {
+	            	updateItem: function(args) {
+	                	var d = $.Deferred();
+	                    let url = "/asset/insp/manage/updateInspAsetList";  
+						let reqType = 'POST';
+						let data = {
+	        				"inspNo" 	: $("#inspNo").val(),
+	        				"asetNo" 	: args.asetNo,
+	        				"inspStus" 	: args.inspStus,
+	        				"inspMtd" 	: args.inspMtd,
+	        				"inspCmplYn": args.inspCmplYn,
+	        				"ptcl" 	   	: args.ptcl,
+	        				"rmk" 	   	: args.rmk
+	        			}
+						
+						$.commRequest(url, reqType, JSON.stringify(data))
+							.then((res) => {
+								d.resolve(res);
+								$("#jsGrid").jsGrid("loadData");
+							})
+							.catch((error) => {
+								console.log('[[#{screen.info.status.error.occur}]]');
+							});						
+	                    return d.promise();
+		            },
 	                loadData: function(filter) {
-	                    
-	                	
 	                	var d = $.Deferred();
 	                    
 	                    currentPage = filter.pageIndex; 
@@ -159,7 +303,7 @@
 	                       .prop("checked", $.inArray(item.firstName, selectedItems) > -1)
 	                       .on("change", function () {
 	  					  	 //$(this).is(":checked") ? selectItem($(this).parent().next().text()) : unselectItem($(this).parent().next().text());
-	  					  	 $(this).is(":checked") ? selectItem(item.inspNo) : unselectItem(item.inspNo);
+	  					  	 $(this).is(":checked") ? selectItem(item.asetNo) : unselectItem(item.asetNo);
 	  					  	 });
 	            		   }
 	                	 , headerTemplate : function ()  { 
@@ -182,31 +326,27 @@
 		    				   });
 					 	 } ,
 	                },
-	                { name:"inspNo"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspNo}]]"},	//실사번호
-	                { name:"asetNo"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.asetNo}]]"},	//실사번호
-	                
-	                
-	                { name:"asetType1"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.asetType1}]]"},  //자산유형1
-	                { name:"asetType2"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.asetType2}]]"},  //자산유형2
-	                { name:"asetType3"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.asetType3}]]"},  //자산유형3
-	                { name:"mftco"	    , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.mftco}]]"},      //메이커 
-	                { name:"model"	    , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.model}]]"},      //모델
-	                { name:"sn"	        , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.sn}]]"},         //S/N
-	                { name:"bizDeptNm"  , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.bizDeptCd}]]"},  //사업부
-	                { name:"deptNm"	    , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.deptCd}]]"},     //부서
-	                { name:"chrgr"	    , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.chrgr}]]"},      //담당자
-	                { name:"inspStus"   , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspStus}]]"},   //실사상태
-	                { name:"inspMtd"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspMethod}]]"}, //실사방법
-	                { name:"inspCmplYn"	, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspCmplYn}]]"}, //실사완료여부
-	                { name:"ptcl"	    , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.ptcl}]]"},       //특이사항
-	                { name:"rmk"	    , type:"text", align:"center", width:10, title:"[[#{screen.text.asset.rmk}]]"},        //비고
+	                { name:"inspNo"	    , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.inspNo}]]"},	//실사번호
+	                { name:"asetNo"	    , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.asetNo}]]"},	//자산번호
+	                { name:"asetType1Nm", type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.asetType1}]]"},  //자산유형1
+	                { name:"asetType2Nm", type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.asetType2}]]"},  //자산유형2
+	                { name:"asetType3Nm", type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.asetType3}]]"},  //자산유형3
+	                { name:"mftco"	    , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.mftco}]]"},      //메이커 
+	                { name:"model"	    , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.model}]]"},      //모델
+	                { name:"sn"	        , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.sn}]]"},         //S/N
+	                { name:"bizDeptNm"  , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.bizDeptCd}]]"},  //사업부
+	                { name:"deptNm"	    , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.deptCd}]]"},     //부서
+	                { name:"chrgr"	    , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.chrgr}]]"},      //담당자
+	                { name:"inspStus"   , type:"select",align:"center",width:10,editing: true,  title:"[[#{screen.text.asset.inspStus}]]"  , items:inspStusArr  , valueField :"codeId", textField : "codeNm", editing: true},
+	                { name:"inspMtd"    , type:"select",align:"center",width:10,editing: true,  title:"[[#{screen.text.asset.inspMethod}]]", items:inspMtdArr   , valueField :"codeId", textField : "codeNm", editing: true},
+	                { name:"inspCmplYn" , type:"select",align:"center",width:10,editing: true,  title:"[[#{screen.text.asset.inspCmplYn}]]", items:inspCmplYnArr, valueField :"codeId", textField : "codeNm", editing: true},
+	                { name:"ptcl"	    , type:"text", align:"center", width:10,editing: true,  title:"[[#{screen.text.asset.ptcl}]]"},       //특이사항
+	                { name:"rmk"	    , type:"text", align:"center", width:10,editing: true,  title:"[[#{screen.text.asset.rmk}]]"}        //비고
 
 	            ]
-	        });          	
-	        
-	        
-	        
-    	});   // $(function()
+	        }); 
+    	}
+    			
     		
     	// 삭제 시 이전 페이지로 이동
     	function requestListView() {
@@ -228,6 +368,37 @@
 				$form.submit();
 	    }
     	
+    	// 셀렉트박스 코드 조회
+    	function selectInspAsetCodeList(){
+    		
+    		var d = $.Deferred();
+    		
+            let url = "/asset/insp/manage/selectInspAsetCodeList"; 
+			let reqType = 'GET';	
+			let data = {
+				"currentPage"  : 0,
+				"numOfRows"    : 1, 
+				"sortField"    : "",
+				"sortOrder"    : ""
+			}
+			
+			$.commRequest(url, reqType, data)
+				.then((res) => {
+					data = res.data;
+					inspStusArr = data.inspStusArr;
+					inspMtdArr = data.inspMtdArr;
+					inspPtclArr = data.inspPtclArr;
+					inspCmplYnArr = [{codeId:"Y", codeNm:"Y"},{codeId:"N", codeNm:"N"}];
+					d.resolve({data : res});
+					
+				})
+				.catch((error) => {
+					console.log('[[#{screen.info.status.error.search}]]');
+				});
+    		
+			return d.promise();
+    	}
+    	
     	// 자산실사 기본정보 조회
     	function selectInspManageList(){
 
@@ -247,7 +418,6 @@
 				.then((res) => {
 					condition = res.condition;
 					inspMastList = res.data[0];
-					console.log(inspMastList);
 					
 					// 자산실사정보란 세팅 
 					$("#inspNm"   ).val(inspMastList.inspNm);
@@ -258,10 +428,11 @@
 					$("#regDt"    ).val(inspMastList.regDt);
 					$("#inspStus" ).val(inspMastList.inspStusNm);
 
-					d.resolve({data : res.data, itemsCount: res.condition.totalCount});
+					d.resolve(res);
 					
 					// 대상자산정보 그리드 로드
-					$("#jsGrid").jsGrid("loadData");
+					//$("#jsGrid").jsGrid("loadData");
+					//jsGridLoad();
 				})
 				.catch((error) => {
 					console.log('[[#{screen.info.status.error.search}]]');
@@ -269,6 +440,8 @@
             
             return d.promise();
     	}
+    	
+    	
 	    
 	    </script>
 	</th:block>
