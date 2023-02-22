@@ -102,5 +102,23 @@ public class InspManageService {
 		log.info("[service][updateInspMaster]");
 		return mapper.updateInspMaster(param);
 	}
+
+	public int selectCountInspMngList(SearchCondition condition) {
+		// TODO Auto-generated method stub
+		log.info("[service][selectCountInspMngList]");
+		return mapper.selectCountInspMngList(condition);
+	}
+
+	public List<InspMasterDto> selectInspMngList(SearchCondition condition) {
+		// TODO Auto-generated method stub
+		log.info("[service][selectInspMngList]");
+		return mapper.selectInspMngList(condition);
+	}
+
+	public int updateInspMngList(Map<String, Object> param) {
+		// TODO Auto-generated method stub
+		log.info("[service][updateInspMngList]");
+		return mapper.updateInspMngList(param);
+	}
 	
 }

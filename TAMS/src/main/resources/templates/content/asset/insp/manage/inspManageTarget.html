@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/default">
+
+	<head>
+	    <title>[[#{screen.text.modify.screen.title2}]]</title>
+	</head>
+        
+	<!-- css -->
+	<th:block layout:fragment="css">
+	    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/jsgrid.css" />
+		<link rel="stylesheet" href="/css/theme.css" />
+	</th:block>
+	
+	<th:block layout:fragment="script">
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="/js/jsgrid/db.js"></script>
+	    <script src="/js/jsgrid/jsgrid.core.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-indicator.js"></script>
+	    <script src="/js/jsgrid/jsgrid.load-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.sort-strategies.js"></script>
+	    <script src="/js/jsgrid/jsgrid.field.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.text.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.number.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.select.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.checkbox.js"></script>
+	    <script src="/js/jsgrid/fields/jsgrid.field.control.js"></script>	
+		
+	    <script>
+    	let numOfRows = 30; //basic = 30
+    	let targetItem;
+    	let inputId;
+    	let currentRow;
+    	const SCREEN_NM = "INSP_MANAGE_LIST";
+    	var imgSrhIcon = "<a href='#' id='openUserPopup'><img title='의뢰자 검색' class='ico_search' alt='Search' src='/images/common/ico_search.png'></a></div>";
+    	
+    	var selectedItems = [];
+
+        var selectItem = function(item) {
+	    	if(!selectedItems.includes(item)) selectedItems.push(item);
+	    	
+		    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+                $("#selectAllCheckbox").prop("checked", true);
+	        } else {
+	            $("#selectAllCheckbox").prop("checked", false);
+	        }
+		};
+	     
+	    var unselectItem = function(item) {
+		    selectedItems = $.grep(selectedItems, function(i) {
+		    	return i !== item;
+		    });
+		    if(selectedItems.length == 0) {
+		    	$('#selectAllCheckbox').attr('checked', false);
+		    }
+		    if($(".singleCheckbox").length == $(".singleCheckbox:checked").length) {
+             	$("#selectAllCheckbox").prop("checked", true);
+         	} else {
+            	$("#selectAllCheckbox").prop("checked", false);
+          	}
+	    };
+    	
+	    $(function(){
+	    	
+	    	loadParams = $.commLoadSearchParams(SCREEN_NM);
+	    	
+    		jsGridLoad();
+	    	// 자산실사 기본정보 조회
+	    	selectInspManageList().done(function(msg){ // 실사기본정보 조회 
+	    		$("#jsGrid").jsGrid("loadData");
+	    	});
+	    	
+	        $("#pager").on("change", function() {
+	            var page = parseInt($(this).val(), 10);
+	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
+	        });
+	        
+    	    
+	     	// 그리드 저장 버튼 처리
+            $('.btn_save').on('click', function (e) {
+            	e.preventDefault();
+    			$("#jsGrid").jsGrid("updateItem");
+            });
+    	     
+	        
+    	});   // $(function()
+    			
+    	
+    	function jsGridLoad(){
+
+	        $("#jsGrid").jsGrid({ 
+	        	height: "550",
+                width: "100%",
+                filtering: false,
+                editing: true,
+                inserting: false,
+                sorting: true,
+                paging: true,
+                sorter: "number",
+                pageIndex:1,
+                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
+                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
+                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
+                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
+                pagerFormat: "{first} {prev} {pages} {next} {last}",
+                pagerContainer:null,
+                pageLoading: true,
+                pager: "#pager",
+                pageSize: numOfRows,
+                pageButtonCount: 5,
+                loadonce: true,
+                updateOnResize: true, 
+	            rowClick: function(args) {
+	            	targetItem = args.item;
+	            	jsGrid.Grid.prototype.rowClick.call(this, args);
+	            },
+	            pagerContainerClass: "paginate",
+	            deleteConfirm: "[[#{screen.info.status.default.delete.yn}]]",
+	            controller:  {
+	            	updateItem: function(args) {
+	                	var d = $.Deferred();
+	                    let url = "/asset/insp/manage/updateInspMngList";  
+						let reqType = 'POST';
+						let data = {
+	        				"inspNo" 	: $("#inspNo").val(),
+	        				"deptCd" 	: args.deptCd,
+	        				"dpldr" 	: nvl(args.dpldr),
+	        				"insptr1" 	: nvl(args.insptr1),
+	        				"insptr2" 	: nvl(args.insptr2),
+	        				"insptr3" 	: nvl(args.insptr3),
+	        				"insptr4" 	: nvl(args.insptr4),
+	        				"insptr5" 	: nvl(args.insptr5),
+	        			}
+						
+						$.commRequest(url, reqType, JSON.stringify(data))
+							.then((res) => {
+								d.resolve(res);
+								$("#jsGrid").jsGrid("loadData");
+							})
+							.catch((error) => {
+								console.log('[[#{screen.info.status.error.occur}]]');
+							});						
+	                    return d.promise();
+		            },
+	                loadData: function(filter) {
+	                	var d = $.Deferred();
+	                    
+	                    currentPage = filter.pageIndex; 
+	                    let url = "/asset/insp/manage/selectInspTargetList";   
+						let reqType = 'GET';	 
+						let data = {
+            				"currentPage"  : filter.pageIndex,
+            				"numOfRows"    : numOfRows, 
+            				"inspNo" 	   : $("#inspNo").val(),
+            				"searchOption" : $("#searchOption option:selected").val(),
+            				"sortField"    : filter.sortField,
+            				"sortOrder"    : filter.sortOrder
+            			}
+						
+						$.commRequest(url, reqType, data)
+							.then((res) => {
+								console.log(res);
+								condition = res.condition;
+								inspAsetList = res.data;
+								$(".result").text("Results : " + res.condition.totalCount);
+								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
+							})
+							.catch((error) => {
+								console.log('[[#{screen.info.status.error.search}]]');
+							});						
+	                    
+	                    return d.promise();
+	                },
+
+           		},
+	            fields: [
+	                { name:"uppDeptNm", type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.popup.text.asset.biz.dept}]]"},//사업부
+	                { name:"deptNm"	  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.popup.text.asset.dept}]]"},	    //부서
+	                { name:"dpldr"	  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.dpldr}]]"},	        //부서장
+	                { name:"insptr1"  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.insptr1}]]", //실사담당자1
+						itemTemplate : function(value, item) { 
+							var chrgrStr = '<input id=insptr1_'+findGridIndex(item.deptCd)+' type="text" style="width:100%" readonly value='+nvl(item.insptr1)+'>'
+		                    var str = $(imgSrhIcon).click(function(e) {// 돋보기 아이콘 클릭
+		                    	inputId = $(e.currentTarget).prev().attr("id"); // 담당자 값을 세팅할 대상 요소를 전역변수에 세팅  
+		                    	openUserPopup();
+		                    });
+		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
+						}
+	                },	    
+	                { name:"insptr2"  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.insptr2}]]", //실사담당자2
+						itemTemplate : function(value, item) { 
+							var chrgrStr = '<input id=insptr2_'+findGridIndex(item.deptCd)+' type="text" style="width:100%" readonly value='+nvl(item.insptr2)+'>'
+		                    var str = $(imgSrhIcon).click(function(e) {// 돋보기 아이콘 클릭
+		                    	inputId = $(e.currentTarget).prev().attr("id"); // 담당자 값을 세팅할 대상 요소를 전역변수에 세팅
+		                    	openUserPopup();
+		                    });
+		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
+						}
+	                },	    
+	                { name:"insptr3"  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.insptr3}]]",  //실사담당자3
+						itemTemplate : function(value, item) { 
+							var chrgrStr = '<input id=insptr3_'+findGridIndex(item.deptCd)+' type="text" style="width:100%" readonly value='+nvl(item.insptr3)+'>'
+		                    var str = $(imgSrhIcon).click(function(e) {// 돋보기 아이콘 클릭
+		                    	inputId = $(e.currentTarget).prev().attr("id"); // 담당자 값을 세팅할 대상 요소를 전역변수에 세팅
+		                    	openUserPopup();
+		                    });
+		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
+						}
+	                },	    
+	                { name:"insptr4"  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.insptr4}]]", //실사담당자4
+						itemTemplate : function(value, item) { 
+							var chrgrStr = '<input id=insptr4_'+findGridIndex(item.deptCd)+' type="text" style="width:100%" readonly value='+nvl(item.insptr4)+'>'
+		                    var str = $(imgSrhIcon).click(function(e) {// 돋보기 아이콘 클릭
+		                    	inputId = $(e.currentTarget).prev().attr("id"); // 담당자 값을 세팅할 대상 요소를 전역변수에 세팅
+		                    	openUserPopup();
+		                    });
+		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
+						}
+	                },
+	                { name:"insptr5"  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.insptr5}]]",
+						itemTemplate : function(value, item) { 
+							var chrgrStr = '<input id=insptr5_'+findGridIndex(item.deptCd)+' type="text" style="width:100%" readonly value='+nvl(item.insptr5)+'>'
+		                    var str = $(imgSrhIcon).click(function(e) {// 돋보기 아이콘 클릭
+		                    	inputId = $(e.currentTarget).prev().attr("id"); // 담당자 값을 세팅할 대상 요소를 전역변수에 세팅
+		                    	openUserPopup();
+		                    });
+		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
+						}
+	                },	    //실사담당자5
+	                { name: "control" , type: "control", width: "5%", align: "center", modeSwitchButton: false, deleteButton: false, editing: false },
+	            ]
+	        }); 
+    	}
+    	
+    	// 부서코드로 클릭한 로우의 인덱스 추출
+    	function findGridIndex(deptCd){
+    		return $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.deptCd == deptCd) + 1;
+    	}
+    	
+    	// 유저 검색 팝업
+    	function openUserPopup(){
+        	var url = "/common/popup/userPopup";
+	        var popId = "userPopup";
+	        var args = {
+        		width      : 650,
+    	        height     : 400,
+    	        fullscreen : "no",
+    	        resizable  : "no"
+	        };
+	        openPopup(popId, url, args);
+    	}
+    	
+	    //팝업에서 받은 결과 처리
+	    function setResult(obj) {
+	    	var userId = obj.userId;
+	    	$("#"+inputId).val(userId);
+	    	switch(inputId.substring(0, 7)){
+	    	case "insptr1":
+	    		targetItem.insptr1 = userId;	
+	    		break;
+	    	case "insptr2":
+	    		targetItem.insptr2 = userId;	
+	    		break;
+	    	case "insptr3":
+	    		targetItem.insptr3 = userId;	
+	    		break;
+	    	case "insptr4":
+	    		targetItem.insptr4 = userId;	
+	    		break;
+	    	case "insptr5":
+	    		targetItem.insptr5 = userId;	
+	    		break;
+	    	}
+	    	
+	    	$("#grid").jsGrid("updateItem", targetItem);
+	    }
+	    
+	    function nvl(param){
+	    	if(param == null || param == "null" || param == "undefined") {
+	    		return "";
+	    	}else{
+	    		return param;
+	    	}
+	    }
+    		
+    	// 삭제 시 이전 페이지로 이동
+    	function requestListView() {
+    		let url = "/asset/insp/manage/list";
+    		
+    		var $form = $('<form></form>'); 
+				$form.attr('action', url); 
+				$form.attr('method', 'post'); 
+				$form.attr('target', '_self'); 
+				inputStr = $('<input type="hidden" value="'+ loadParams.menuId + '" name="menuId">');
+				$form.append(inputStr);
+				inputStr = $('<input type="hidden" value="'+ loadParams.menuNm + '" name="menuNm">');	
+				$form.append(inputStr);
+				inputStr = $('<input type="hidden" value="'+ loadParams.menuDesc + '" name="menuDesc">');	
+				$form.append(inputStr);
+				inputStr = $('<input type="hidden" value="Y" name="loadParams">');
+				$form.append(inputStr);
+				$form.appendTo('body'); 
+				$form.submit();
+	    }
+    	
+    	
+    	// 자산실사 기본정보 조회
+    	function selectInspManageList(){
+
+        	var d = $.Deferred();
+            
+            let url = "/asset/insp/manage/selectInspManageList"; 
+			let reqType = 'GET';	
+			let data = {
+				"currentPage"  : 0,
+				"numOfRows"    : 1, 
+				"inspNo" 	   : $("#inspNo").val(),
+				"sortField"    : "",
+				"sortOrder"    : ""
+			}
+			
+			$.commRequest(url, reqType, data)
+				.then((res) => {
+					condition = res.condition;
+					inspMastList = res.data[0];
+					
+					// 자산실사정보란 세팅 
+					$("#inspNm"   ).val(inspMastList.inspNm);
+					$("#inspStDt" ).val(inspMastList.inspStDt);
+					$("#inspEndDt").val(inspMastList.inspEndDt);
+					$("#onlineInspBaseDt").val(inspMastList.onlineInspBaseDt);
+					$("#regr"     ).val(inspMastList.regr);
+					$("#regDt"    ).val(inspMastList.regDt);
+					$("#inspStus" ).val(inspMastList.inspStusNm);
+
+					d.resolve(res);
+					
+				})
+				.catch((error) => {
+					console.log('[[#{screen.info.status.error.search}]]');
+				});						
+            
+            return d.promise();
+    	}
+	    
+	    </script>
+	</th:block>
+
+	<div layout:fragment="content">
+		<h3><span>[[#{screen.text.modify.screen.title3}]]</span></h3>
+		<div class="list_head">
+			<div class="list_head">
+				<div><h6>[[#{screen.text.asset.deptCharge}]]</h6></div>
+			</div>
+			<div class="button">
+				<a class="btn_" id="requestBack" onclick="requestListView()">뒤로가기</a>
+			</div>
+		</div>
+		
+		<div class="srch_wrap single">
+			<table class="srch_table">
+				<colgroup>
+					<col width="10%"/>
+					<col width="20%"/>
+					<col width="15%"/>
+					<col width="20%"/>
+					<col width="15%"/>
+					<col width=""/>
+				</colgroup>
+				<tr>
+					<th>[[#{screen.text.asset.inspNo}]]</th><!-- 실사번호 -->
+					<td><input type="text" id="inspNo" style="width:100%;" th:value="${inspNo}" readonly="readonly"></td>
+					<th>[[#{screen.text.asset.inspNm}]]</th><!-- 실사명 -->
+					<td colspan="3"><input type="text" id="inspNm" style="width:100%;" th:value="${inspNm}" readonly="readonly"></td>
+				</tr>
+				<tr>
+					<th>[[#{screen.text.asset.inspStDt}]]</th><!-- 실사시작일 -->
+					<td>
+						<div style='display:flex'><input type="date" id="inspStDt" style="width:100%" readonly="readonly"></div>
+					</td>
+					<th>[[#{screen.text.asset.inspEndDt}]]</th><!-- 실사종료일 -->
+					<td>
+						<div style='display:flex'><input type="date" id="inspEndDt" style="width:100%" readonly="readonly"></div>
+					</td>
+					<th>[[#{screen.text.asset.onlineInspBaseDt}]]</th><!-- 온라인실사기준일 -->
+					<td>
+						<div style='display:flex'><input type="date" id="onlineInspBaseDt" style="width:100%" readonly="readonly"></div>
+					</td>
+				</tr>
+				<tr>
+					<th>[[#{screen.text.asset.inspRegr}]]</th><!-- 생성자 -->
+					<td><input type="text" id="regr" style="width:100%;" th:value="${regr}" readonly="readonly"> </td>
+					<th>[[#{screen.text.asset.inspRegDt}]]</th><!-- 생성일자 -->
+					<td><input type="text" id="regDt" style="width:100%;" th:value="${regDt}" readonly="readonly"></td>
+					<th>[[#{screen.text.asset.inspStus}]]</th><!-- 실사상태 -->
+					<td><input type="text" id="inspStus" style="width:100%;" th:value="${inspStus}" readonly="readonly"></td>
+				</tr>
+			</table>
+		</div><br>
+		
+		<div class="list_head" style="display: flex;">
+			<div><h6>[[#{screen.text.modify.screen.title5}]]</h6></div>
+			<div class="result" style="margin-left: 20px;">Results : 0,000</div>
+			<div class="button">
+				<a class="btn_save" id="save">[[#{screen.text.comm.save}]]</a>
+			</div>
+		</div>
+		<div id="jsGrid"></div>
+		<input type="hidden" id="curr_Idx"/>
+		<div id="excelDownTarget"></div>
+	</div>
+</html>

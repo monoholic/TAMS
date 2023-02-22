@@ -44,6 +44,14 @@
             END ONLINE_INSP_BASE_DT      /* 온라인실사기준일 */
          , INSP_STUS                     /* 실사상태 */
          , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'INSP_STATUS' AND TCC.CODE_ID = TIM.INSP_STUS AND TCC.USE_YN = 'Y' ) INSP_STUS_NM /* 실사상태명 */
+         , COALESCE((SELECT SUM(CASE WHEN CHAR_LENGTH(DTIM.INSPTR1) > 0 THEN 1 ELSE 0 END)
+                          + SUM(CASE WHEN CHAR_LENGTH(DTIM.INSPTR2) > 0 THEN 1 ELSE 0 END)
+                          + SUM(CASE WHEN CHAR_LENGTH(DTIM.INSPTR3) > 0 THEN 1 ELSE 0 END)
+                          + SUM(CASE WHEN CHAR_LENGTH(DTIM.INSPTR4) > 0 THEN 1 ELSE 0 END)
+                          + SUM(CASE WHEN CHAR_LENGTH(DTIM.INSPTR5) > 0 THEN 1 ELSE 0 END) 
+                       FROM TB_INSP_MNG DTIM 
+                      WHERE DTIM.INSP_NO = TIM.INSP_NO
+                      GROUP BY DTIM.INSP_NO) , 0) INSP_TARGET /* 실사대상자 */
          , UPDR   
          , UP_DT  
          , REGR   
@@ -274,10 +282,22 @@
       </if>
 	</delete>
 
+	<select id="selectCountInspMngList" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition" resultType="int">
+    /* InspManageMapper.xml selectCountInspMngList */
+    SELECT COUNT(*)
+      FROM TB_DEPT TD 
+      LEFT JOIN TB_INSP_MNG TIM 
+        ON TD.DEPT_CD = TIM.DEPT_CD
+       AND TIM.INSP_NO = #{params.inspNo}
+     WHERE TD.UPP_DEPT_CD IS NOT NULL
+       AND CHAR_LENGTH(TD.DEPT_CD)=9
+     ORDER BY TD.LOC
+	</select>
+	
 	<select id="selectInspMngList" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto">
     /* InspManageMapper.xml selectInspMngList */
     SELECT TD.UPP_DEPT_CD
-         , (SELECT UTD.DEPT_NM FROM TB_DEPT UTD WHERE UTD.DEPT_CD = TD.UPP_DEPT_CD) UPPER_DEPT_NM
+         , (SELECT UTD.DEPT_NM FROM TB_DEPT UTD WHERE UTD.DEPT_CD = TD.UPP_DEPT_CD) UPP_DEPT_NM
          , TD.DEPT_CD
          , TD.DEPT_NM 
          , (SELECT MAX(USER_ID)
@@ -285,9 +305,8 @@
              WHERE UTU.DEPT_CD = TD.DEPT_CD 
                AND CLPST = (SELECT MIN(TU.CLPST)
                               FROM TB_USER TU 
-                             WHERE TU.DEPT_CD = TD.DEPT_CD)) HEAD
+                             WHERE TU.DEPT_CD = TD.DEPT_CD)) DPLDR
          , TIM.INSP_NO
-         , TIM.DPLDR
          , TIM.INSPTR1
          , TIM.INSPTR2
          , TIM.INSPTR3
@@ -298,11 +317,37 @@
       FROM TB_DEPT TD 
       LEFT JOIN TB_INSP_MNG TIM 
         ON TD.DEPT_CD = TIM.DEPT_CD
+       AND TIM.INSP_NO = #{params.inspNo}
      WHERE TD.UPP_DEPT_CD IS NOT NULL
        AND CHAR_LENGTH(TD.DEPT_CD)=9
-       AND TIM.INSP_NO = #{inspNo}
      ORDER BY TD.LOC
 	</select>
 
+       
+	<update id="updateInspMngList" parameterType="Map">
+	/* InspManageMapper.xml updateInspMngList */
+    INSERT INTO TB_INSP_MNG (INSP_NO, DEPT_CD, DPLDR, INSPTR1, INSPTR2, INSPTR3, INSPTR4, INSPTR5, REGR, REG_DT)
+    VALUES (#{inspNo}
+          , #{deptCd}
+          , #{dpldr}
+          , #{insptr1}
+          , #{insptr2}
+          , #{insptr3}
+          , #{insptr4}
+          , #{insptr5}
+          , #{userId}
+          , NOW()
+    )
+        ON DUPLICATE KEY 
+    UPDATE DPLDR   = #{dpldr}
+         , INSPTR1 = #{insptr1}
+         , INSPTR2 = #{insptr2}
+         , INSPTR3 = #{insptr3}
+         , INSPTR4 = #{insptr4}
+         , INSPTR5 = #{insptr5}
+         , UPDR    = #{userId}
+         , UP_DT   = NOW()
+	</update>
+       
        
 </mapper>

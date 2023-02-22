@@ -91,7 +91,7 @@ public class InspMasterDto {
 	private String uppDeptCd;
 	@ApiModelProperty(value="상위부서명")
 	private String uppDeptNm;
-	@ApiModelProperty(value="부서장")
+	@ApiModelProperty(value="실사담당자")
 	private String depart_head;
 	@ApiModelProperty(value="부서장")
 	private String dpldr;
@@ -105,4 +105,6 @@ public class InspMasterDto {
 	private String insptr4;
 	@ApiModelProperty(value="실사자5")
 	private String insptr5;
+	@ApiModelProperty(value="실사자대상자")
+	private String inspTarget;
 }

@@ -151,10 +151,10 @@
     	    });
     	    
 	     	// 그리드 저장 버튼 처리
-            $('.btn_save2').on('click', function (e) {
-            	e.preventDefault();
-    			$("#jsGrid").jsGrid("updateItem");
-            });
+            //$('.btn_save2').on('click', function (e) {
+            //	e.preventDefault();
+    		//	$("#jsGrid").jsGrid("updateItem");
+            //});
     	    
 	     	// 그리드 삭제 버튼 처리
             $('.btn_del2').on('click', function (e) {
@@ -293,7 +293,7 @@
 	            fields: [
 	            	{  	   name : "chk"
 	                	 , align: "center"
-	                	 , width: 5
+	                	 , width: "2%"
 	                	 , title: ""
 	                	 , editing: false
 	                	 , sorting: false
@@ -326,23 +326,23 @@
 		    				   });
 					 	 } ,
 	                },
-	                { name:"inspNo"	    , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.inspNo}]]"},	//실사번호
-	                { name:"asetNo"	    , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.asetNo}]]"},	//자산번호
-	                { name:"asetType1Nm", type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.asetType1}]]"},  //자산유형1
-	                { name:"asetType2Nm", type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.asetType2}]]"},  //자산유형2
-	                { name:"asetType3Nm", type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.asetType3}]]"},  //자산유형3
-	                { name:"mftco"	    , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.mftco}]]"},      //메이커 
-	                { name:"model"	    , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.model}]]"},      //모델
-	                { name:"sn"	        , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.sn}]]"},         //S/N
-	                { name:"bizDeptNm"  , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.bizDeptCd}]]"},  //사업부
-	                { name:"deptNm"	    , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.deptCd}]]"},     //부서
-	                { name:"chrgr"	    , type:"text", align:"center", width:10,editing: false, title:"[[#{screen.text.asset.chrgr}]]"},      //담당자
-	                { name:"inspStus"   , type:"select",align:"center",width:10,editing: true,  title:"[[#{screen.text.asset.inspStus}]]"  , items:inspStusArr  , valueField :"codeId", textField : "codeNm", editing: true},
-	                { name:"inspMtd"    , type:"select",align:"center",width:10,editing: true,  title:"[[#{screen.text.asset.inspMethod}]]", items:inspMtdArr   , valueField :"codeId", textField : "codeNm", editing: true},
-	                { name:"inspCmplYn" , type:"select",align:"center",width:10,editing: true,  title:"[[#{screen.text.asset.inspCmplYn}]]", items:inspCmplYnArr, valueField :"codeId", textField : "codeNm", editing: true},
-	                { name:"ptcl"	    , type:"text", align:"center", width:10,editing: true,  title:"[[#{screen.text.asset.ptcl}]]"},       //특이사항
-	                { name:"rmk"	    , type:"text", align:"center", width:10,editing: true,  title:"[[#{screen.text.asset.rmk}]]"}        //비고
-
+	                { name:"inspNo"	    , type:"text", align:"center", width:"5%",editing: false, title:"[[#{screen.text.asset.inspNo}]]"},	//실사번호
+	                { name:"asetNo"	    , type:"text", align:"center", width:"5%",editing: false, title:"[[#{screen.text.asset.asetNo}]]"},	//자산번호
+	                { name:"asetType1Nm", type:"text", align:"center", width:"4%",editing: false, title:"[[#{screen.text.asset.asetType1}]]"},  //자산유형1
+	                { name:"asetType2Nm", type:"text", align:"center", width:"4%",editing: false, title:"[[#{screen.text.asset.asetType2}]]"},  //자산유형2
+	                { name:"asetType3Nm", type:"text", align:"center", width:"4%",editing: false, title:"[[#{screen.text.asset.asetType3}]]"},  //자산유형3
+	                { name:"mftco"	    , type:"text", align:"center", width:"5%",editing: false, title:"[[#{screen.text.asset.mftco}]]"},      //메이커 
+	                { name:"model"	    , type:"text", align:"center", width:"7%",editing: false, title:"[[#{screen.text.asset.model}]]"},      //모델
+	                { name:"sn"	        , type:"text", align:"center", width:"5%",editing: false, title:"[[#{screen.text.asset.sn}]]"},         //S/N
+	                { name:"bizDeptNm"  , type:"text", align:"center", width:"5%",editing: false, title:"[[#{screen.text.asset.bizDeptCd}]]"},  //사업부
+	                { name:"deptNm"	    , type:"text", align:"center", width:"5%",editing: false, title:"[[#{screen.text.asset.deptCd}]]"},     //부서
+	                { name:"chrgr"	    , type:"text", align:"center", width:"5%",editing: false, title:"[[#{screen.text.asset.chrgr}]]"},      //담당자
+	                { name:"inspStus"   , type:"select",align:"center",width:"5%",editing: true,  title:"[[#{screen.text.asset.inspStus}]]"  , items:inspStusArr  , valueField :"codeId", textField : "codeNm", editing: true},
+	                { name:"inspMtd"    , type:"select",align:"center",width:"5%",editing: true,  title:"[[#{screen.text.asset.inspMethod}]]", items:inspMtdArr   , valueField :"codeId", textField : "codeNm", editing: true},
+	                { name:"inspCmplYn" , type:"select",align:"center",width:"5%",editing: true,  title:"[[#{screen.text.asset.inspCmplYn}]]", items:inspCmplYnArr, valueField :"codeId", textField : "codeNm", editing: true},
+	                { name:"ptcl"	    , type:"text", align:"center", width:"5%",editing: true,  title:"[[#{screen.text.asset.ptcl}]]"},       //특이사항
+	                { name:"rmk"	    , type:"text", align:"center", width:"7%",editing: true,  title:"[[#{screen.text.asset.rmk}]]"},        //비고
+	                { name: "control" , type: "control", width: "3%", align: "center", modeSwitchButton: false, deleteButton: false, editing: false }
 	            ]
 	        }); 
     	}
@@ -505,7 +505,6 @@
 			<div class="result" style="margin-left: 20px;">Results : 0,000</div>
 			<div class="button">
 				<a class="btn_add">[[#{screen.text.comm.add.asset}]]</a>
-				<a class="btn_save2" id="save">[[#{screen.text.comm.save}]]</a>
 				<a class="btn_del2">[[#{screen.btn.delete}]]</a>
 			</div>
 		</div>

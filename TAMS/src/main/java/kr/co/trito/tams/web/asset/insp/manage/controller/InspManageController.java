@@ -242,11 +242,6 @@ public class InspManageController {
 		
 		ModelAndView view = new ModelAndView();
 		
-		//view.addObject("regr", userDetail.getUsername());
-		//Date now = new Date(System.currentTimeMillis());
-		//SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-		//view.addObject("regDt", fmt.format(now));
-		
 		view.setViewName("/content/asset/insp/manage/inspManageAsetAddPopup");
 		
 		
@@ -407,5 +402,46 @@ public class InspManageController {
 		return view;
 	}
 	
+	/** 실사관리 디테일 조회 */
+	@GetMapping("/selectInspTargetList")
+	@ResponseBody
+	@ApiOperation(value = "실사관리 자산리스트 조회", notes = "실사관리 자산리스트 조회")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> selectInspTargetList(
+			@ApiParam(value = "검색 조건 파리미터 Dto", required = true) @RequestParam Map<String, Object> params,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		log.info("[controller][selectInspTargetList]");
+		
+		
+		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);
+		condition.pageSetup1(inspManageService.selectCountInspMngList(condition));
+		
+		// 실사 <> 자산 정보 리스트 조회 
+		List<InspMasterDto> list = inspManageService.selectInspMngList(condition);
+		
+		
+		return responseService.success(condition, list);
+		
+	}
 	
+	
+	/** 실사관리화면 실사담당자 수정 */
+	@PostMapping(value="/updateInspMngList")
+	@ResponseBody
+	@ApiOperation(value = "실사관리화면 실사담당자 수정", notes = "실사관리화면 실사담당자 수정")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> updateInspMngList(
+			@ApiParam(value = "자산정보 수정 데이터", required = true) @RequestBody Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
+		items.put("userId", userId);
+		
+		inspManageService.updateInspMngList(items);
+		
+		return responseService.success(null);
+	}
 }

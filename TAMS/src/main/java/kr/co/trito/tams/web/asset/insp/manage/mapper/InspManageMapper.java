@@ -40,4 +40,10 @@ public interface InspManageMapper {
 
 	public int deleteInspAsetList(Map<String, Object> param);
 
+	public int selectCountInspMngList(SearchCondition condition);
+
+	public List<InspMasterDto> selectInspMngList(SearchCondition condition);
+
+	public int updateInspMngList(Map<String, Object> param);
+
 }
