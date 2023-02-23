@@ -1,5 +1,6 @@
 package kr.co.trito.tams.web.asset.insp.search.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,8 +26,10 @@ import io.swagger.annotations.ApiResponses;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.asset.insp.search.dto.InspSearchMasterDto;
 import kr.co.trito.tams.web.asset.insp.search.service.InspSearchService;
 import kr.co.trito.tams.web.common.service.CommonService;
+import kr.co.trito.tams.web.user.dto.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -80,12 +84,53 @@ public class InspSearchController {
 		log.info("[controller][selectInspSearchList]");
 		
 		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);
-		//condition.pageSetup1(inspSearchService.selectCountInspSearchList(condition));
-		//List<InspMasterDto> list = inspSearchService.selectInspSearchList(condition);
+		condition.pageSetup1(inspSearchService.selectCountInspSearchList(condition));
+		List<InspSearchMasterDto> list = inspSearchService.selectInspSearchList(condition);
 		
 		//return responseService.success(condition, list);
 		return responseService.success(condition, null);
 	}	
 	
+	//selectInspDeptNmList
+	/** 실사대상조회화면 실사명 조회 */
+	@PostMapping(value="/selectInspNmList")
+	@ResponseBody
+	@ApiOperation(value = "실사관리화면 자산정보 수정", notes = "실사관리화면 자산정보 수정")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> selectInspNmList(
+			@ApiParam(value = "자산정보 데이터", required = true) @RequestBody Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		
+		log.info("[controller][selectInspSearchList]");
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
+		
+		items.put("regr", userId);
+		
+		List<InspSearchMasterDto> list = inspSearchService.selectInspNmList(items);
+		
+		return responseService.success(list);
+	}
 	
+	/** 실사대상조회화면 실사부서명 조회 */
+	@PostMapping(value="/selectInspDeptNmList")
+	@ResponseBody
+	@ApiOperation(value = "실사관리화면 자산정보 수정", notes = "실사관리화면 자산정보 수정")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> selectInspDeptNmList(
+			@ApiParam(value = "자산정보 수정 데이터", required = true) @RequestBody Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		
+		log.info("[controller][selectInspDeptNmList]");
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
+		
+		items.put("regr", userId);
+		
+		List<InspSearchMasterDto> list = inspSearchService.selectInspDeptNmList(items);
+		
+		return responseService.success(list);
+	}
 }

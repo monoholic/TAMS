@@ -54,4 +54,6 @@ public interface InspManageMapper {
 
 	public int deleteInspMngList(Map<String, Object> param);
 
+	public int selectInspMasterDupl(Map<String, Object> params);
+
 }

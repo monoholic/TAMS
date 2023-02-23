@@ -38,6 +38,11 @@
 	    
 		$(function(){
 			
+	        // 실사명 코드 조회
+	      	getInspNmList();
+	        
+	        // 실사부서 코드조쇠
+	      	getInspDeptNm();
 	        
 	      	$("#jsGrid").jsGrid("loadData");
 	        
@@ -46,8 +51,6 @@
     	    	let elements = ['inspYear', 'inspNm']
     	    	elements.forEach((item) => {$("#"+item).val('')});
     	    	$("#inspNm option:eq(0)").prop("selected",true);
-    	    	//$('#asetType1').val("ALL").attr("selected", "selected");
-    	    	//$('#asetType2').children('option:not(:first)').remove();
     	    });    	        
 	        
           	//조회 버튼 
@@ -98,53 +101,29 @@
 	            	var columnIdx = $target.index(); // 클릭한 셀이 몇번째 컬럼인지 저장 
 	            	var inspNo =  args.item.inspNo// 해당 로우의 실사번호 
 	            	
-	            	
-	            	switch(columnIdx) {
-	            	case 0 : // 체크박스 
-					   	$("<input>").attr("type", "checkbox").attr("class","singleCheckbox")
-		                			.prop("checked", $.inArray(args.item.firstName, selectedItems) > -1)
-		                			.on("change", function () {
-						  	 			$(this).is(":checked") ? selectItem(item) : unselectItem(item);
-						});
-	            		break;
-	            	case 1 : // 실사번호
-	            		openInspDetail(inspNo);
-	            		break;
-	            	case 9 : // 실사대상자
-	            		openInspTarget(inspNo);
-	            		break;
-	            	case 10 : // 부서별 진행상황'
-	            		openInspProgress(inspNo);
-	            		break;
-	            	default :
-	            		console.log("[click idx]:"+columnIdx);
-	            	}
 	            },
 	            pagerContainerClass: "paginate",
-	            deleteConfirm: function(item) {
-	                return "\""+item.menuNm+"("+menuId+")"+"\""+ '[[#{screen.info.status.delete.yn}]]';
-	            },
 	            controller:  {
 	                loadData: function(filter) {
 	                    var d = $.Deferred();
 	                    
 	                    currentPage = filter.pageIndex; 
-	                    let url = "/asset/insp/manage/selectInspManageList";
-						let reqType = 'GET';	
+	                    let url = "/asset/insp/manage/selectInspSearchList";
+						let reqType = 'POST';	
 						let data = {
             				"currentPage"  : filter.pageIndex,
             				"numOfRows"    : numOfRows,
             				"inspYear" 	   : $("#inspYear").val(),
-            				"inspNm"  	   : $("#inspNm option:selected").val(),
+            				"inspNo"  	   : $("#inspNm option:selected").val(),
+            				"deptNo"  	   : $("#inspDept option:selected").val(),
             				"searchOption" : $("#searchOption option:selected").val(),
             				"sortField"    : filter.sortField,
             				"sortOrder"    : filter.sortOrder
             			}
 						
-						$.commRequest(url, reqType, data)
+						$.commRequest(url, reqType, JSON.stringify(data))
 							.then((res) => {
 								condition = res.condition;
-								codeGrpMngList = res.data;
 								$(".result").text("Results : " + res.condition.totalCount);
 								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
 							})
@@ -157,21 +136,21 @@
 
            		},
 	            fields: [
-	                { name:"asetNo"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspNo}]]"},//자산번호
-	                { name:"asetType1"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.aset.type1}]]"},//자산유형1
-	                { name:"asetType2"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.aset.type2}]]"},//자산유형2
-	                { name:"asetType3"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.aset.type3}]]"},//자산유형3
-	                { name:"mftco"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.mftco}]]"},//메이커
-	                { name:"model"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.model}]]"},//모델
-	                { name:"sn"			, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.sn}]]"},//SN
+	                { name:"asetNo"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspNo}]]"},   //자산번호
+	                { name:"asetType1"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.aset.type1}]]"},     //자산유형1
+	                { name:"asetType2"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.aset.type2}]]"},     //자산유형2
+	                { name:"asetType3"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.aset.type3}]]"},     //자산유형3
+	                { name:"mftco"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.mftco}]]"},    //메이커
+	                { name:"model"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.model}]]"},    //모델
+	                { name:"sn"			, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.sn}]]"},       //SN
 	                { name:"bizDeptCd"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.bizDeptCd}]]"},//사업부
-	                { name:"deptCd"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.deptCd}]]"},//부서
-	                { name:"chrgr"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.chrgr}]]"},//담당자
-	                { name:"inspStus"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspStus}]]"},//실사상태
+	                { name:"deptCd"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.deptCd}]]"},   //부서
+	                { name:"chrgr"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.chrgr}]]"},    //담당자
+	                { name:"inspStus"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspStus}]]"}, //실사상태
 	                { name:"inspMethod"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspMethod}]]"},//실사방법
 	                { name:"inspCmplYn"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspCmplYn}]]"},//실사완료여부
-	                { name:"ptcl"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.ptcl}]]"},//특이사항
-	                { name:"rmk"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.rmk}]]"},//비고
+	                { name:"ptcl"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.ptcl}]]"},      //특이사항
+	                { name:"rmk"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.rmk}]]"},       //비고
 	            ]
 	        });          	
 		});
@@ -190,11 +169,54 @@
 	        }
 	    }
 	    
-
+		// 실사명 코드리스트
+		function getInspNmList(){
+			let url = "/asset/insp/search/selectInspNmList";
+			
+  			let reqType = 'POST';
+  			let data={"currentPage"  : 0,
+    				  "numOfRows"    : 999}
+  			$.commRequest(url, reqType, JSON.stringify(data))
+  				.then((res) => {
+  					// option에 실사명 리스트 추가 
+  					var str ="";
+  		            $.each(res.data, function(i){
+  		               str += '<option value="' + res.data[i].inspNo + '">' + res.data[i].inspNm + '</option>';
+  		            })
+  		            $("#inspNm").append(str);
+  		            
+  				})
+  				.catch((error) => {
+  					console.log(error);
+  				})
+		}
+		
+		// 실사부서 코드리스트
+		function getInspDeptNm(){
+			let url = "/asset/insp/search/selectInspDeptNmList";
+			
+  			let reqType = 'POST';
+  			let data={
+  				
+  			}
+  			$.commRequest(url, reqType, JSON.stringify(data))
+  				.then((res) => {
+  					// option에 실사명 리스트 추가 
+  					var str ="";
+  		            $.each(res.data, function(i){
+  		               str += '<option value="' + res.data[i].deptCd + '">' + res.data[i].deptNm + '</option>';
+  		            })
+  		            $("#inspDept").append(str);
+  		            
+  				})
+  				.catch((error) => {
+  					console.log(error);
+  				})
+		}
 	 	
 	 	// 텍스트 언더라인 함수
 	 	function underlineCellRenderer(value, item) {
-		  return $("<td>").addClass("text-underline").text(value);
+			return $("<td>").addClass("text-underline").text(value);
 		}
 		
 		</script>
@@ -225,6 +247,7 @@
 					<td><input type="text" placeholder="YYYY" id="inspYear" onkeyup="enterkey()" style="width:100%;"></td>
 					<th>[[#{screen.text.asset.inspNm}]]</th>
 					<td>
+						<input type="hidden" id="inspNo" >
 						<select id="inspNm" style="width:100%;">
 							<option value="">[[#{screen.text.comm.choice}]]</option>
 						</select>

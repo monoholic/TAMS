@@ -185,10 +185,15 @@ public class InspManageController {
 			@ApiParam(value = "파라미터 Dto", required = true) @RequestBody Map<String, Object> params){ 
 		
 		log.info("[controller][insertInspMaster]");
+		int duplCnt = inspManageService.selectInspMasterDupl(params);
+		if(duplCnt > 0) {
+			return responseService.success("300", "중복된 이름이 있습니다.");
+		}else {
+			inspManageService.insertInspMaster(params);
+			return responseService.success("200", "저장되었습니다.");
+		}
 		
-		inspManageService.insertInspMaster(params);
 		
-		return responseService.success(null);
 	}
 	
 	

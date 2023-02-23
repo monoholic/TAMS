@@ -4,15 +4,33 @@
 <mapper namespace="kr.co.trito.tams.web.asset.insp.search.mapper.InspSearchMapper">
 	
    	<!-- 자산실사 이름 리스트 조회 -->
-    <select id="selectInspNmList" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+    <select id="selectInspNmList" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" parameterType="Map">
     /* InspManageMapper.xml selectInspNmList */          
-    SELECT DISTINCT INSP_NM
+    SELECT DISTINCT INSP_NO
+         , INSP_NM
       FROM TB_INSP_MAS TIM
      WHERE 1=1
      ORDER BY INSP_NM
     </select>  
     
+    <select id="selectInspDeptNmList" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" parameterType="Map">
+    /* InspManageMapper.xml selectInspDeptNmList */
+    SELECT DISTINCT DEPT_CD
+         , (SELECT DEPT_NM FROM TB_DEPT TD WHERE TD.DEPT_CD = TIM.DEPT_CD) DEPT_NM 
+      FROM TB_INSP_MNG TIM
+     ORDER BY DEPT_CD 
+    </select>
     
+
+    <select id="selectCountInspSearchList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+    /* InspManageMapper.xml selectCountInspManageList */
+    SELECT 0
+    </select>
+    
+    <select id="selectInspSearchList" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+    /* InspManageMapper.xml selectInspSearchList */
+    SELECT 0
+    </select>
     
     
 </mapper>

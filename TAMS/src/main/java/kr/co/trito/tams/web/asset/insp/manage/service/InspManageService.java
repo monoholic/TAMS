@@ -144,5 +144,11 @@ public class InspManageService {
 		log.info("[service][deleteInspMngList]");
 		return mapper.deleteInspMngList(param);
 	}
+
+	public int selectInspMasterDupl(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		log.info("[service][selectInspMasterDupl]");
+		return mapper.selectInspMasterDupl(params);
+	}
 	
 }

@@ -78,6 +78,14 @@
     </select>    
     
     
+   	<!-- 자산실사이름 중복 조회 -->
+    <select id="selectInspMasterDupl" resultType="int" parameterType="Map">
+    /* InspManageMapper.xml selectInspMasterDupl */
+    SELECT COUNT(*)
+      FROM TB_INSP_MAS TIM
+     WHERE INSP_NM = #{inspNm}
+    </select>
+    
    	<!-- 자산실사목록 생성 -->
    	<insert id="insertInspMaster" parameterType="Map">
    	/* InspManageMapper.xml insertInspMaster */

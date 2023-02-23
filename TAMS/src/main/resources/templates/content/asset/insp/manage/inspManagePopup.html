@@ -93,12 +93,15 @@
 		  			}
 		  			$.commRequest(url, reqType, JSON.stringify(data))
 						.then((res) => {
-							console.log(res);
-							alert("[[#{screen.info.status.save.success}]]");							
-							//opener.parent.search();
-							opener.$('.btn_srch').click();
-							window.close();
+							if(res.code == "300"){
+								alert("중복된 이름이 있습니다.");
+							}else{
+								alert("[[#{screen.info.status.save.success}]]");							
+								opener.$('.btn_srch').click();
+								window.close();
+							}
 						}).catch((error) => {
+							alert.log("[insertInspMaster]::"+error);
 							console.log("[[#{screen.info.status.error.occur}]]");
 							console.log(error);
 						});    					
