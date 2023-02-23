@@ -92,9 +92,27 @@
    	    	
 	  	    	var arr_item =  [];
 	  	    	var items = [];
-	  	    	$.each(selectedItems, function(index,item){
-	  	    		items.push(item);
+	  	    	var grd = $("#jsGrid").jsGrid("option", "data");
+	  	    	var closingYn = false;
+	  	    	$.each(selectedItems, function(index,inspNo){
+	  	    		var grdIdx = $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.inspNo == inspNo);
+	  	    		var inspStus = grd[grdIdx].inspStus;
+	  	    		if(inspStus == "CLS"){ // 마감여부 확인
+	  	    			closingYn = true;
+	  	    		}else{
+		  	    		items.push(inspNo);
+	  	    		}
 	  	    	});
+	  	    	
+	  	    	if(closingYn){
+	  	    		alert("[[#{screen.text.asset.cnt.del.closingInsp}]]");
+	  	    		return;
+	  	    	}
+	  	    	
+	  	    	if(items.length == 0){
+	  	    		alert("[[#{screen.info.status.no.selected.item}]]");
+	  	    		return;
+	  	    	}
 	  	    	
 	  	    	//별도 호출
                 let url = "/asset/insp/manage/deleteInspList";  
@@ -233,7 +251,7 @@
 	            fields: [
 	            	{  	   name : "chk"
 	                	 , align: "center"
-	                	 , width: 5
+	                	 , width: "3%"
 	                	 , title: ""
 	                	 , editing: false
 	                	 , sorting: false
@@ -266,16 +284,16 @@
 		    				   });
 					 	 } ,
 	                },
-	                { name:"inspNo"			, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspNo}]]", cellRenderer:underlineCellRenderer},			//실사번호
-	                { name:"inspYear"		, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspYear}]]"},     	//실사연도
-	                { name:"inspNm"			, type:"text", align:"center", width:30, title:"[[#{screen.text.asset.inspNm}]]"},   		//실사명
-	                { name:"inspStDt"		, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspStDt}]]"},     	//실사시작일
-	                { name:"inspEndDt"		, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspEndDt}]]"},   	//실사종료일
-	                { name:"onlineInspBaseDt",type:"text", align:"center", width:15, title:"[[#{screen.text.asset.onlineInspBaseDt}]]"},//온라인실사기준일
-	                { name:"regr"			, type:"text", align:"center", width:15, title:"[[#{screen.text.asset.inspRegr}]]"},     	//실사생성자
-	                { name:"inspTarget"		, type:"text", align:"center", width:15, title:"[[#{screen.text.asset.inspTarget}]]", cellRenderer:underlineCellRenderer},   	//실사대상자 산수
-	                { name:"inspProgressRate",type:"text", align:"center", width:15, title:"[[#{screen.text.asset.inspDeptPogress}]]", cellRenderer:underlineCellRenderer},	//부서별 진행상황
-	                { name:"inspStusNm"		, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspStus}]]"} 		//실사상태
+	                { name:"inspNo"			, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspNo}]]", cellRenderer:underlineCellRenderer},			//실사번호
+	                { name:"inspYear"		, type:"text", align:"center", width:"5%", title:"[[#{screen.text.asset.inspYear}]]"},     	//실사연도
+	                { name:"inspNm"			, type:"text", align:"center", width:"30%", title:"[[#{screen.text.asset.inspNm}]]"},   		//실사명
+	                { name:"inspStDt"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspStDt}]]"},     	//실사시작일
+	                { name:"inspEndDt"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspEndDt}]]"},   	//실사종료일
+	                { name:"onlineInspBaseDt",type:"text", align:"center", width:"9%", title:"[[#{screen.text.asset.onlineInspBaseDt}]]"},//온라인실사기준일
+	                { name:"regr"			, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspRegr}]]"},     	//실사생성자
+	                { name:"inspTarget"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspTarget}]]", cellRenderer:underlineCellRenderer},   	//실사대상자 산수
+	                { name:"inspProgressRate",type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspDeptPogress}]]", cellRenderer:underlineCellRenderer},	//부서별 진행상황
+	                { name:"inspStusNm"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspStus}]]"} 		//실사상태
 	            ]
 	        });          	
 		});

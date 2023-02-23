@@ -130,6 +130,7 @@ public class InspManageController {
 			param.put("inspNo", inspNo);
 			inspManageService.deleteInspMaster(param);
 			inspManageService.deleteInspAsetList(param);
+			inspManageService.deleteInspMngList(param);
 		}
 		
 		return responseService.success(null);
@@ -480,6 +481,25 @@ public class InspManageController {
 		
 		return responseService.success(condition, list);
 		
+	}
+	
+	/** 실사관리화면 실사상태 수정 */
+	@PostMapping(value="/updateInspStus")
+	@ResponseBody
+	@ApiOperation(value = "실사관리화면 실사상태 수정", notes = "실사관리화면 실사상태 수정")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> updateInspStus(
+			@ApiParam(value = "자산정보 수정 데이터", required = true) @RequestBody Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		log.info("[controller][updateInspStus]");
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
+		items.put("userId", userId);
+		
+		inspManageService.updateInspStus(items);
+		
+		return responseService.success(null);
 	}
 	
 }

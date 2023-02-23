@@ -37,7 +37,7 @@
     	var inspMtdArr    = [];
     	var inspCmplYnArr = [];
     	var inspPtclArr   = [];
-	    
+    	var currentRow;
 
         var selectItem = function(item) {
 	    	if(!selectedItems.includes(item)) selectedItems.push(item);
@@ -196,14 +196,14 @@
 	        
     	});   // $(function()
     			
-    	var currentRow;
+    	
     	function jsGridLoad(){
 
 	        $("#jsGrid").jsGrid({ 
 	        	height: "550",
                 width: "100%",
                 filtering: false,
-                editing: {mode:"batch"},
+                editing: true,
                 inserting: false,
                 sorting: true,
                 paging: true,
@@ -313,7 +313,7 @@
 		            	    	if(this.checked) { 
 		            	            $('.singleCheckbox').each(function() { 
 		            	                this.checked = true;   
-		            	                selectItem($(this).parent().next().text());           
+		            	                selectItem($(this).parent().next().next().text());           
 		            	            });			         
 		            	        }else {
 		            	        	
@@ -337,9 +337,9 @@
 	                { name:"bizDeptNm"  , type:"text", align:"center", width:"5%",editing: false, title:"[[#{screen.text.asset.bizDeptCd}]]"},  //사업부
 	                { name:"deptNm"	    , type:"text", align:"center", width:"5%",editing: false, title:"[[#{screen.text.asset.deptCd}]]"},     //부서
 	                { name:"chrgr"	    , type:"text", align:"center", width:"5%",editing: false, title:"[[#{screen.text.asset.chrgr}]]"},      //담당자
-	                { name:"inspStus"   , type:"select",align:"center",width:"5%",editing: true,  title:"[[#{screen.text.asset.inspStus}]]"  , items:inspStusArr  , valueField :"codeId", textField : "codeNm", editing: true},
-	                { name:"inspMtd"    , type:"select",align:"center",width:"5%",editing: true,  title:"[[#{screen.text.asset.inspMethod}]]", items:inspMtdArr   , valueField :"codeId", textField : "codeNm", editing: true},
-	                { name:"inspCmplYn" , type:"select",align:"center",width:"5%",editing: true,  title:"[[#{screen.text.asset.inspCmplYn}]]", items:inspCmplYnArr, valueField :"codeId", textField : "codeNm", editing: true},
+	                { name:"inspStus"   , type:"select",align:"center",width:"5%",editing: true,  title:"[[#{screen.text.asset.inspStus}]]"  , items:inspStusArr  , valueField :"codeId", textField : "codeNm"},
+	                { name:"inspMtd"    , type:"select",align:"center",width:"5%",editing: true,  title:"[[#{screen.text.asset.inspMethod}]]", items:inspMtdArr   , valueField :"codeId", textField : "codeNm"},
+	                { name:"inspCmplYn" , type:"select",align:"center",width:"5%",editing: true,  title:"[[#{screen.text.asset.inspCmplYn}]]", items:inspCmplYnArr, valueField :"codeId", textField : "codeNm"},
 	                { name:"ptcl"	    , type:"text", align:"center", width:"5%",editing: true,  title:"[[#{screen.text.asset.ptcl}]]"},       //특이사항
 	                { name:"rmk"	    , type:"text", align:"center", width:"7%",editing: true,  title:"[[#{screen.text.asset.rmk}]]"},        //비고
 	                { name: "control" , type: "control", width: "3%", align: "center", modeSwitchButton: false, deleteButton: false, editing: false }
@@ -430,6 +430,10 @@
 
 					d.resolve(res);
 					
+					// 마감처리 로직 
+					// 마감 시 수정 불가 
+					closingStus(inspMastList.inspStus);
+
 					// 대상자산정보 그리드 로드
 					//$("#jsGrid").jsGrid("loadData");
 					//jsGridLoad();
@@ -441,6 +445,26 @@
             return d.promise();
     	}
     	
+    	// 실사상태 "마감"일때 수정불가 로직 
+    	function closingStus(inspStus){
+			if(inspStus == "CLS"){
+				// 버튼
+				$(".btn_save1").hide();
+				$(".btn_del1").hide();
+				$(".btn_add").hide();
+				$(".btn_del2").hide();
+				
+				// input
+				$("#inspNm").attr("disabled", true);
+				$("#inspStDt").attr("disabled", true);
+				$("#inspEndDt").attr("disabled", true);
+				$("#onlineInspBaseDt").attr("disabled", true);
+				
+				//grid
+			    $('#jsGrid').jsGrid('option', "editing", false);
+			    
+			}
+    	}
     	
 	    
 	    </script>

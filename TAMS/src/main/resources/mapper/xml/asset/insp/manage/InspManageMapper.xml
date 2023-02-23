@@ -43,7 +43,7 @@
                 ELSE DATE_FORMAT(ONLINE_INSP_BASE_DT, "%Y-%m-%d")
             END ONLINE_INSP_BASE_DT      /* 온라인실사기준일 */
          , INSP_STUS                     /* 실사상태 */
-         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'INSP_STATUS' AND TCC.CODE_ID = TIM.INSP_STUS AND TCC.USE_YN = 'Y' ) INSP_STUS_NM /* 실사상태명 */
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'INSP_MAS_STUS' AND TCC.CODE_ID = TIM.INSP_STUS AND TCC.USE_YN = 'Y' ) INSP_STUS_NM /* 실사상태명 */
          , COALESCE((SELECT SUM(CASE WHEN CHAR_LENGTH(DTIM.INSPTR1) > 0 THEN 1 ELSE 0 END)
                           + SUM(CASE WHEN CHAR_LENGTH(DTIM.INSPTR2) > 0 THEN 1 ELSE 0 END)
                           + SUM(CASE WHEN CHAR_LENGTH(DTIM.INSPTR3) > 0 THEN 1 ELSE 0 END)
@@ -121,7 +121,7 @@
     SELECT COUNT(*)
       FROM TB_INSP_ASET TIM
      WHERE 1=1
-      <if test="params.inspNo != ''">
+      <if test="params.inspNo != '' and params.inspNo != null">
        AND INSP_NO = #{params.inspNo} 
       </if>
     </select>
@@ -156,7 +156,7 @@
          , TIA.RMK /* 비고 */
       FROM TB_INSP_ASET TIA 
      WHERE 1=1 
-      <if test="params.inspNo != ''">
+      <if test="params.inspNo != '' and params.inspNo != null">
        AND INSP_NO = #{params.inspNo} 
       </if>
      ORDER BY INSP_NO DESC
@@ -172,10 +172,10 @@
     SELECT COUNT(*)
       FROM TB_ASET_MAS TAM
      WHERE 1=1
-      <if test="params.asetNo != ''">
+      <if test="params.asetNo != '' and params.asetNo != null">
        AND ASET_NO = #{params.asetNo} 
       </if>
-      <if test="params.asetNm != ''">
+      <if test="params.asetNm != '' and params.asetNm != null">
        AND ASET_NM = #{params.asetNm} 
       </if>
     </select>
@@ -195,10 +195,10 @@
       FROM TB_ASET_MAS TAM
      WHERE 1=1
        AND NOT EXISTS (SELECT 1 FROM TB_INSP_ASET TIA WHERE TIA.INSP_NO = #{params.inspNo} AND TIA.ASET_NO = TAM.ASET_NO)
-      <if test="params.asetNo != ''">
+      <if test="params.asetNo != '' and params.asetNo != null">
        AND ASET_NO = #{params.asetNo} 
       </if>
-      <if test="params.asetNm != ''">
+      <if test="params.asetNm != '' and params.asetNm != null">
        AND ASET_NM = #{params.asetNm} 
       </if>
      ORDER BY ASET_NO DESC
@@ -248,12 +248,12 @@
          , BULD 
          , FLOOR 
          , LOC 
-         , (SELECT INSP_ST_DT FROM TB_INSP_MAS TIM WHERE TIM.INSP_NO = #{inspNo}) INSP_DT
-         , (SELECT INSP_STUS FROM TB_INSP_MAS TIM WHERE TIM.INSP_NO = #{inspNo}) INSP_STUS
-         , 'WEB'     INSP_MTD
-         , 'N'       INSP_CMPL_YN
-         , #{regr} REGR 
-         , NOW()     REG_DT
+         , (SELECT INSP_ST_DT FROM TB_INSP_MAS TIM WHERE TIM.INSP_NO = #{inspNo}) 
+         , 'NL' 
+         , 'WEB' 
+         , 'N' 
+         , #{regr} 
+         , NOW()
       FROM TB_ASET_MAS TAM
      WHERE ASET_NO = #{asetNo}
         ON DUPLICATE KEY 
@@ -280,8 +280,18 @@
 	/* InspManageMapper.xml deleteInspAsetList */
     DELETE FROM TB_INSP_ASET
      WHERE INSP_NO  = #{inspNo}
-      <if test="asetNo != ''">
+      <if test="asetNo != '' and asetNo != null">
        AND ASET_NO  = #{asetNo}
+      </if>
+	</delete>
+	
+	<!-- 실사관리화면 담당자 정보 삭제 --> 
+	<delete id="deleteInspMngList" parameterType="Map">
+	/* InspManageMapper.xml deleteInspMngList */
+    DELETE FROM TB_INSP_MNG
+     WHERE INSP_NO  = #{inspNo}
+      <if test="deptCd != '' and deptCd != null">
+       AND DEPT_CD  = #{deptCd}
       </if>
 	</delete>
 
@@ -393,5 +403,17 @@
       ORDER BY UTIA.DEPT_CD
 	</select>
        
-       
+    <!-- 실사관리화면 실사상태 수정 -->
+	<update id="updateInspStus" parameterType="Map">
+	/* InspManageMapper.xml updateInspStus */
+	UPDATE TB_INSP_MAS
+	   SET INSP_STUS = #{inspStus}
+	 WHERE INSP_NO = #{inspNo}
+    </update>
+    
+    
+    
+    
+    
+    
 </mapper>

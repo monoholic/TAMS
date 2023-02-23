@@ -132,5 +132,17 @@ public class InspManageService {
 		log.info("[service][selectInspProgressList]");
 		return mapper.selectInspProgressList(condition);
 	}
+
+	public int updateInspStus(Map<String, Object> items) {
+		// TODO Auto-generated method stub
+		log.info("[service][updateInspStus]");
+		return mapper.updateInspStus(items);
+	}
+
+	public int deleteInspMngList(Map<String, Object> param) {
+		// TODO Auto-generated method stub
+		log.info("[service][deleteInspMngList]");
+		return mapper.deleteInspMngList(param);
+	}
 	
 }

@@ -50,4 +50,8 @@ public interface InspManageMapper {
 
 	public List<InspMasterDto> selectInspProgressList(SearchCondition condition);
 
+	public int updateInspStus(Map<String, Object> items);
+
+	public int deleteInspMngList(Map<String, Object> param);
+
 }

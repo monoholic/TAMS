@@ -49,11 +49,6 @@
 				$(".pop_close").on("click",function(){ 
 					window.close();
 				});			    	  	
-	    	  			
-		        // 마감
-				$(".btn_deadline").on("click",function(){ 
-					window.close();
-				});			    	  	
 		        
 		        //저장
 	     	    $(".btn_save").on("click",function() {
@@ -94,7 +89,7 @@
 		  				inspEndDt        : inspEndDt,
 		  				onlineInspBaseDt : onlineInspBaseDt,
 		  				regr             : $("#regr").val(),
-		  				inspStus         : "NL"  //정상
+		  				inspStus         : "TMP"  //임시저장
 		  			}
 		  			$.commRequest(url, reqType, JSON.stringify(data))
 						.then((res) => {
@@ -130,7 +125,6 @@
 				<!-- //contents_head -->
 					<div align="right" class="button">
 						<a href="#;" class="btn_save"    >[[#{screen.text.comm.save}]]      </a> <!-- 저장 -->
-						<a href="#;" class="btn_deadline">[[#{screen.text.comm.deadline}]]  </a> <!-- 마감 -->
 					</div>
 					<p class="space10"></p>
 				
