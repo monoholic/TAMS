@@ -120,5 +120,17 @@ public class InspManageService {
 		log.info("[service][updateInspMngList]");
 		return mapper.updateInspMngList(param);
 	}
+
+	public int selectCountInspProgressList(SearchCondition condition) {
+		// TODO Auto-generated method stub
+		log.info("[service][selectCountInspProgressList]");
+		return mapper.selectCountInspProgressList(condition);
+	}
+
+	public List<InspMasterDto> selectInspProgressList(SearchCondition condition) {
+		// TODO Auto-generated method stub
+		log.info("[service][selectInspProgressList]");
+		return mapper.selectInspProgressList(condition);
+	}
 	
 }

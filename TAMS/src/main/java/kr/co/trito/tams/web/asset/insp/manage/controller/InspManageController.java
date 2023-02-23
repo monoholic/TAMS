@@ -444,4 +444,42 @@ public class InspManageController {
 		
 		return responseService.success(null);
 	}
+	
+	
+	/** 실사관리 진행상황조회 및 마감 화면 */
+	@PostMapping("/inspManageProgress")
+	@ResponseBody
+	public ModelAndView inspManageProgressView(HttpServletRequest request) {
+		
+		log.info("[controller][inspManageProgressView]");
+		ModelAndView view = new ModelAndView();
+		String inspNo = request.getParameter("inspNo");
+		
+		view.addObject("inspNo", inspNo);
+		view.setViewName("/content/asset/insp/manage/inspManageProgress");
+		return view;
+	}
+	
+	/** 실사관리 진행상황조회 */
+	@GetMapping("/selectInspProgressList")
+	@ResponseBody
+	@ApiOperation(value = "실사관리 자산리스트 조회", notes = "실사관리 자산리스트 조회")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> selectInspProgressList(
+			@ApiParam(value = "검색 조건 파리미터 Dto", required = true) @RequestParam Map<String, Object> params,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		log.info("[controller][selectInspTargetList]");
+		
+		
+		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);
+		condition.pageSetup1(inspManageService.selectCountInspProgressList(condition));
+		
+		// 실사 <> 자산 정보 리스트 조회 
+		List<InspMasterDto> list = inspManageService.selectInspProgressList(condition);
+		
+		return responseService.success(condition, list);
+		
+	}
+	
 }

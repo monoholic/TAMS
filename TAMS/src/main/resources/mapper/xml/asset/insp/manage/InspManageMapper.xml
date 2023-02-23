@@ -52,6 +52,9 @@
                        FROM TB_INSP_MNG DTIM 
                       WHERE DTIM.INSP_NO = TIM.INSP_NO
                       GROUP BY DTIM.INSP_NO) , 0) INSP_TARGET /* 실사대상자 */
+         , CONCAT((SELECT CONVERT(COUNT(*),CHAR) FROM TB_INSP_ASET TIA WHERE TIA.INSP_NO = TIM.INSP_NO AND TIA.INSP_CMPL_YN = 'Y'), 
+                  '/',
+                  (SELECT CONVERT(COUNT(*),CHAR) FROM TB_INSP_ASET TIA WHERE TIA.INSP_NO = TIM.INSP_NO)) INSP_PROGRESS_RATE /* 부서별 진행상황 */ 
          , UPDR   
          , UP_DT  
          , REGR   
@@ -282,6 +285,7 @@
       </if>
 	</delete>
 
+	<!-- 실사담당자 리스트 조회 -->
 	<select id="selectCountInspMngList" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition" resultType="int">
     /* InspManageMapper.xml selectCountInspMngList */
     SELECT COUNT(*)
@@ -294,6 +298,7 @@
      ORDER BY TD.LOC
 	</select>
 	
+	<!-- 실사담당자 리스트 조회 -->
 	<select id="selectInspMngList" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto">
     /* InspManageMapper.xml selectInspMngList */
     SELECT TD.UPP_DEPT_CD
@@ -323,7 +328,7 @@
      ORDER BY TD.LOC
 	</select>
 
-       
+    <!-- 실사대상자 머지 -->
 	<update id="updateInspMngList" parameterType="Map">
 	/* InspManageMapper.xml updateInspMngList */
     INSERT INTO TB_INSP_MNG (INSP_NO, DEPT_CD, DPLDR, INSPTR1, INSPTR2, INSPTR3, INSPTR4, INSPTR5, REGR, REG_DT)
@@ -348,6 +353,45 @@
          , UPDR    = #{userId}
          , UP_DT   = NOW()
 	</update>
+	
+	<!-- 실사진행율 리스트 조회 -->
+	<select id="selectCountInspProgressList" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition" resultType="int">
+    /* InspManageMapper.xml selectCountInspProgressList */
+    SELECT COUNT(*)
+      FROM TB_INSP_MNG TIA
+     WHERE INSP_NO = #{params.inspNo}
+	</select>
+
+	<!-- 실사진행율 리스트 조회 -->
+	<select id="selectInspProgressList" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto">
+    /* InspManageMapper.xml selectInspProgressList */
+    SELECT UTIA.INSP_NO            /* 실사번호 */
+         , UTIA.UPP_DEPT_CD        /* 사업부 */
+         , UTIA.UPP_DEPT_NM        /* 사업부명 */
+         , UTIA.DEPT_CD            /* 부서 */
+         , UTIA.DEPT_NM            /* 부서명 */
+         , UTIA.DPLDR              /* 부서장 */
+         , UTIA.INSP_TARGET_CNT    /* 실사대상 자산수 */
+         , UTIA.INSP_CMPL_CNT      /* 실사완료 자산수 */
+         , CASE WHEN UTIA.INSP_TARGET_CNT = 0 THEN 0
+                ELSE FORMAT(UTIA.INSP_CMPL_CNT / UTIA.INSP_TARGET_CNT * 100 , 1)  
+           END INSP_PROGRESS_RATE /* 실사진행율 */
+         , UTIA.PAYMENT_YN         /* 결제여부 */
+      FROM (
+            SELECT TIA.INSP_NO
+                 , (SELECT UPP_DEPT_CD FROM TB_DEPT TD WHERE TD.DEPT_CD = TIA.DEPT_CD) UPP_DEPT_CD
+                 , (SELECT DEPT_NM FROM TB_DEPT UTD WHERE UTD.DEPT_CD = (SELECT UPP_DEPT_CD FROM TB_DEPT TD WHERE TD.DEPT_CD = TIA.DEPT_CD)) UPP_DEPT_NM 
+                 , TIA.DEPT_CD
+                 , (SELECT DEPT_NM FROM TB_DEPT TD WHERE TD.DEPT_CD = TIA.DEPT_CD) DEPT_NM
+                 , TIA.DPLDR
+                 , (SELECT COUNT(*) FROM TB_INSP_ASET TIS WHERE TIS.INSP_NO = TIA.INSP_NO AND TIS.DEPT_CD = TIA.DEPT_CD) INSP_TARGET_CNT
+                 , (SELECT COUNT(*) FROM TB_INSP_ASET TIS WHERE TIS.INSP_NO = TIA.INSP_NO AND TIS.DEPT_CD = TIA.DEPT_CD AND TIS.INSP_CMPL_YN = 'Y') INSP_CMPL_CNT
+                 , '' PAYMENT_YN 
+              FROM TB_INSP_MNG TIA
+             WHERE INSP_NO = #{params.inspNo} 
+           ) UTIA
+      ORDER BY UTIA.DEPT_CD
+	</select>
        
        
 </mapper>

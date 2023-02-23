@@ -188,6 +188,7 @@
 	            		openInspTarget(inspNo);
 	            		break;
 	            	case 9 : // 부서별 진행상황'
+	            		openInspProgress(inspNo);
 	            		break;
 	            	default :
 	            		console.log("[click idx]:"+columnIdx);
@@ -273,7 +274,7 @@
 	                { name:"onlineInspBaseDt",type:"text", align:"center", width:15, title:"[[#{screen.text.asset.onlineInspBaseDt}]]"},//온라인실사기준일
 	                { name:"regr"			, type:"text", align:"center", width:15, title:"[[#{screen.text.asset.inspRegr}]]"},     	//실사생성자
 	                { name:"inspTarget"		, type:"text", align:"center", width:15, title:"[[#{screen.text.asset.inspTarget}]]", cellRenderer:underlineCellRenderer},   	//실사대상자 산수
-	                { name:"inspDeptPogress", type:"text", align:"center", width:15, title:"[[#{screen.text.asset.inspDeptPogress}]]", cellRenderer:underlineCellRenderer},	//부서별 진행상황
+	                { name:"inspProgressRate",type:"text", align:"center", width:15, title:"[[#{screen.text.asset.inspDeptPogress}]]", cellRenderer:underlineCellRenderer},	//부서별 진행상황
 	                { name:"inspStusNm"		, type:"text", align:"center", width:10, title:"[[#{screen.text.asset.inspStus}]]"} 		//실사상태
 	            ]
 	        });          	
@@ -359,6 +360,35 @@
 	       	$.commSaveSearchParams(SCREEN_NM, saveParams);
 	       	
             let url = "/asset/insp/manage/inspManageTarget";
+			let menuId = "[[${menuId}]]";
+            
+			var $form = $('<form></form>'); 
+				$form.attr('action', url); 
+				$form.attr('method', 'Post'); 
+				$form.attr('target', '_self'); 
+				
+			var inspNoStr = $('<input type="hidden" value="'+ inspNo +'" name="inspNo">');
+				$form.append(inspNoStr);
+ 				menuIdStr = $('<input type="hidden" value="' + menuId + '" name="menuId">');
+				$form.append(menuIdStr); 					
+				$form.appendTo('body'); 					
+				$form.submit();
+	    }
+
+	 	// 진행상황조회 및 마감 화면 이동 
+	    function openInspProgress(inspNo){
+	       	event.preventDefault();
+	       	
+	       	let saveParams = {
+	       		"condition": condition,
+	       		"menuId"   : "[[${menuId}]]" ,
+	       		"menuNm"   : "[[${menuNm}]]",
+	       		"menuDesc" : "[[${menuDesc}]]",
+	       	}
+	       	
+	       	$.commSaveSearchParams(SCREEN_NM, saveParams);
+	       	
+            let url = "/asset/insp/manage/inspManageProgress";
 			let menuId = "[[${menuId}]]";
             
 			var $form = $('<form></form>'); 

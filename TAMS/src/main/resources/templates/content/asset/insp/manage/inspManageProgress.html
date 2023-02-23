@@ -30,16 +30,13 @@
 		
 	    <script>
     	let numOfRows = 30; //basic = 30
-    	let targetItem;
-    	let inputId;
-    	let currentRow;
     	const SCREEN_NM = "INSP_MANAGE_LIST";
-    	var imgSrhIcon = "<a href='#' id='openUserPopup'><img title='의뢰자 검색' class='ico_search' alt='Search' src='/images/common/ico_search.png'></a></div>";
+    	
     	
 	    $(function(){
 	    	
 	    	loadParams = $.commLoadSearchParams(SCREEN_NM);
-	    	
+
     		jsGridLoad();
 	    	// 자산실사 기본정보 조회
 	    	selectInspManageList().done(function(msg){ // 실사기본정보 조회 
@@ -50,17 +47,18 @@
 	            var page = parseInt($(this).val(), 10);
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
 	        });
+    	     
 	        
     	});   // $(function()
     			
-    	
+    	var currentRow;
     	function jsGridLoad(){
 
 	        $("#jsGrid").jsGrid({ 
 	        	height: "550",
                 width: "100%",
                 filtering: false,
-                editing: true,
+                editing: {mode:"batch"},
                 inserting: false,
                 sorting: true,
                 paging: true,
@@ -80,41 +78,23 @@
                 updateOnResize: true, 
 	            rowClick: function(args) {
 	            	targetItem = args.item;
-	            	jsGrid.Grid.prototype.rowClick.call(this, args);
+	            	
+	            	// 체크박스 선택 시 editing 활성화 막기
+	            	var chkBoxNm = jQuery(".singleCheckbox").attr("class");
+	            	var chkBoxNm2 = jQuery(args.event.target).attr("class");
+	            	
+	            	if(args.event.target.cellIndex != 0 && chkBoxNm != chkBoxNm2) {
+	            		jsGrid.Grid.prototype.rowClick.call(this, args);
+            	    }
 	            },
 	            pagerContainerClass: "paginate",
 	            controller:  {
-	            	updateItem: function(args) {
-	                	var d = $.Deferred();
-	                    let url = "/asset/insp/manage/updateInspMngList";  
-						let reqType = 'POST';
-						let data = {
-	        				"inspNo" 	: $("#inspNo").val(),
-	        				"deptCd" 	: args.deptCd,
-	        				"dpldr" 	: nvl(args.dpldr),
-	        				"insptr1" 	: nvl(args.insptr1),
-	        				"insptr2" 	: nvl(args.insptr2),
-	        				"insptr3" 	: nvl(args.insptr3),
-	        				"insptr4" 	: nvl(args.insptr4),
-	        				"insptr5" 	: nvl(args.insptr5),
-	        			}
-						
-						$.commRequest(url, reqType, JSON.stringify(data))
-							.then((res) => {
-								d.resolve(res);
-								$("#jsGrid").jsGrid("loadData");
-							})
-							.catch((error) => {
-								console.log('[[#{screen.info.status.error.occur}]]');
-							});						
-	                    return d.promise();
-		            },
 	                loadData: function(filter) {
 	                	var d = $.Deferred();
 	                    
 	                    currentPage = filter.pageIndex; 
-	                    let url = "/asset/insp/manage/selectInspTargetList";   
-						let reqType = 'GET';	 
+	                    let url = "/asset/insp/manage/selectInspProgressList";  
+						let reqType = 'GET';	
 						let data = {
             				"currentPage"  : filter.pageIndex,
             				"numOfRows"    : numOfRows, 
@@ -141,116 +121,19 @@
 
            		},
 	            fields: [
-	                { name:"uppDeptNm", type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.popup.text.asset.biz.dept}]]"},//사업부
-	                { name:"deptNm"	  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.popup.text.asset.dept}]]"},	    //부서
-	                { name:"dpldr"	  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.dpldr}]]"},	        //부서장
-	                { name:"insptr1"  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.insptr1}]]", //실사담당자1
-						itemTemplate : function(value, item) { 
-							var chrgrStr = '<input id=insptr1_'+findGridIndex(item.deptCd)+' type="text" style="width:100%" readonly value='+nvl(item.insptr1)+'>'
-		                    var str = $(imgSrhIcon).click(function(e) {// 돋보기 아이콘 클릭
-		                    	inputId = $(e.currentTarget).prev().attr("id"); // 담당자 값을 세팅할 대상 요소를 전역변수에 세팅  
-		                    	openUserPopup();
-		                    });
-		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
-						}
-	                },	    
-	                { name:"insptr2"  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.insptr2}]]", //실사담당자2
-						itemTemplate : function(value, item) { 
-							var chrgrStr = '<input id=insptr2_'+findGridIndex(item.deptCd)+' type="text" style="width:100%" readonly value='+nvl(item.insptr2)+'>'
-		                    var str = $(imgSrhIcon).click(function(e) {// 돋보기 아이콘 클릭
-		                    	inputId = $(e.currentTarget).prev().attr("id"); // 담당자 값을 세팅할 대상 요소를 전역변수에 세팅
-		                    	openUserPopup();
-		                    });
-		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
-						}
-	                },	    
-	                { name:"insptr3"  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.insptr3}]]",  //실사담당자3
-						itemTemplate : function(value, item) { 
-							var chrgrStr = '<input id=insptr3_'+findGridIndex(item.deptCd)+' type="text" style="width:100%" readonly value='+nvl(item.insptr3)+'>'
-		                    var str = $(imgSrhIcon).click(function(e) {// 돋보기 아이콘 클릭
-		                    	inputId = $(e.currentTarget).prev().attr("id"); // 담당자 값을 세팅할 대상 요소를 전역변수에 세팅
-		                    	openUserPopup();
-		                    });
-		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
-						}
-	                },	    
-	                { name:"insptr4"  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.insptr4}]]", //실사담당자4
-						itemTemplate : function(value, item) { 
-							var chrgrStr = '<input id=insptr4_'+findGridIndex(item.deptCd)+' type="text" style="width:100%" readonly value='+nvl(item.insptr4)+'>'
-		                    var str = $(imgSrhIcon).click(function(e) {// 돋보기 아이콘 클릭
-		                    	inputId = $(e.currentTarget).prev().attr("id"); // 담당자 값을 세팅할 대상 요소를 전역변수에 세팅
-		                    	openUserPopup();
-		                    });
-		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
-						}
-	                },
-	                { name:"insptr5"  , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.insptr5}]]",
-						itemTemplate : function(value, item) { 
-							var chrgrStr = '<input id=insptr5_'+findGridIndex(item.deptCd)+' type="text" style="width:100%" readonly value='+nvl(item.insptr5)+'>'
-		                    var str = $(imgSrhIcon).click(function(e) {// 돋보기 아이콘 클릭
-		                    	inputId = $(e.currentTarget).prev().attr("id"); // 담당자 값을 세팅할 대상 요소를 전역변수에 세팅
-		                    	openUserPopup();
-		                    });
-		                    return $("<div style='display:flex'>").append(chrgrStr).append(str);
-						}
-	                },	    //실사담당자5
-	                { name: "control" , type: "control", width: "5%", align: "center", modeSwitchButton: false, deleteButton: false, editing: false },
+	                { name:"uppDeptNm"	     , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.popup.text.asset.biz.dept}]]"},	//사업부
+	                { name:"deptNm"	    	 , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.popup.text.asset.dept}]]"},	//부서
+	                { name:"dpldr"	    	 , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.dpldr}]]"},	//부서장
+	                { name:"inspTargetCnt"	 , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.inspTargetCnt}]]"},	//실사대상자산수
+	                { name:"inspCmplCnt"	 , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.inspCmplCnt}]]"},	//실사완료자산수
+	                { name:"inspProgressRate", type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.inspProgressRate}]]"},	//진행율
+	                { name:"paymentYn"  	 , type:"text", align:"center", width:"10%",editing: false, title:"[[#{screen.text.asset.paymentYn}]]",cellRenderer:underlineCellRenderer}, //결제여부
 	            ]
 	        }); 
     	}
-    	
-    	// 부서코드로 클릭한 로우의 인덱스 추출
-    	function findGridIndex(deptCd){
-    		return $("#jsGrid").jsGrid("option", "data").findIndex(arr => arr.deptCd == deptCd) + 1;
-    	}
-    	
-    	// 유저 검색 팝업
-    	function openUserPopup(){
-        	var url = "/common/popup/userPopup";
-	        var popId = "userPopup";
-	        var args = {
-        		width      : 650,
-    	        height     : 400,
-    	        fullscreen : "no",
-    	        resizable  : "no"
-	        };
-	        openPopup(popId, url, args);
-    	}
-    	
-	    //팝업에서 받은 결과 처리
-	    function setResult(obj) {
-	    	var userId = obj.userId;
-	    	$("#"+inputId).val(userId);
-	    	switch(inputId.substring(0, 7)){
-	    	case "insptr1":
-	    		targetItem.insptr1 = userId;	
-	    		break;
-	    	case "insptr2":
-	    		targetItem.insptr2 = userId;	
-	    		break;
-	    	case "insptr3":
-	    		targetItem.insptr3 = userId;	
-	    		break;
-	    	case "insptr4":
-	    		targetItem.insptr4 = userId;	
-	    		break;
-	    	case "insptr5":
-	    		targetItem.insptr5 = userId;	
-	    		break;
-	    	}
-	    	
-	    	$("#grid").jsGrid("updateItem", targetItem);
-	    }
-	    
-	    function nvl(param){
-	    	if(param == null || param == "null" || param == "undefined") {
-	    		return "";
-	    	}else{
-	    		return param;
-	    	}
-	    }
+    			
     		
-    	// 삭제 시 이전 페이지로 이동
+    	// 이전 페이지로 이동
     	function requestListView() {
     		let url = "/asset/insp/manage/list";
     		
@@ -269,7 +152,6 @@
 				$form.appendTo('body'); 
 				$form.submit();
 	    }
-    	
     	
     	// 자산실사 기본정보 조회
     	function selectInspManageList(){
@@ -302,6 +184,9 @@
 
 					d.resolve(res);
 					
+					// 대상자산정보 그리드 로드
+					//$("#jsGrid").jsGrid("loadData");
+					//jsGridLoad();
 				})
 				.catch((error) => {
 					console.log('[[#{screen.info.status.error.search}]]');
@@ -309,6 +194,13 @@
             
             return d.promise();
     	}
+    	
+	 	// 텍스트 언더라인 함수
+	 	function underlineCellRenderer(value, item) {
+		  return $("<td>").addClass("text-underline").text(value);
+		}
+    	
+    	
 	    
 	    </script>
 	</th:block>
@@ -317,9 +209,10 @@
 		<h3><span>[[#{screen.text.modify.screen.title3}]]</span></h3>
 		<div class="list_head">
 			<div class="list_head">
-				<div><h6>[[#{screen.text.asset.deptCharge}]]</h6></div>
+				<div><h6>[[#{screen.text.asset.asetInspInfo}]]</h6></div>
 			</div>
 			<div class="button">
+				<a class="btn_deadLine">[[#{screen.text.comm.deadline}]]</a>
 				<a class="btn_" id="requestBack" onclick="requestListView()">뒤로가기</a>
 			</div>
 		</div>
@@ -366,7 +259,7 @@
 		</div><br>
 		
 		<div class="list_head" style="display: flex;">
-			<div><h6>[[#{screen.text.modify.screen.title5}]]</h6></div>
+			<div><h6>[[#{screen.text.asset.inspDeptPogress}]]</h6></div>
 			<div class="result" style="margin-left: 20px;">Results : 0,000</div>
 		</div>
 		<div id="jsGrid"></div>

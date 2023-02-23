@@ -107,4 +107,10 @@ public class InspMasterDto {
 	private String insptr5;
 	@ApiModelProperty(value="실사자대상자")
 	private String inspTarget;
+	@ApiModelProperty(value="실사자대상자산수")
+	private String inspTargetCnt;
+	@ApiModelProperty(value="실사자완료자산수")
+	private String inspCmplCnt;
+	@ApiModelProperty(value="결제여부")
+	private String paymentYn;
 }

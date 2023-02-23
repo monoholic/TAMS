@@ -46,4 +46,8 @@ public interface InspManageMapper {
 
 	public int updateInspMngList(Map<String, Object> param);
 
+	public int selectCountInspProgressList(SearchCondition condition);
+
+	public List<InspMasterDto> selectInspProgressList(SearchCondition condition);
+
 }
