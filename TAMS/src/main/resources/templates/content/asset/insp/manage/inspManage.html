@@ -202,10 +202,10 @@
 	            	case 1 : // 실사번호
 	            		openInspDetail(inspNo);
 	            		break;
-	            	case 8 : // 실사대상자
+	            	case 9 : // 실사대상자
 	            		openInspTarget(inspNo);
 	            		break;
-	            	case 9 : // 부서별 진행상황'
+	            	case 10 : // 부서별 진행상황'
 	            		openInspProgress(inspNo);
 	            		break;
 	            	default :
@@ -291,7 +291,8 @@
 	                { name:"inspEndDt"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspEndDt}]]"},   	//실사종료일
 	                { name:"onlineInspBaseDt",type:"text", align:"center", width:"9%", title:"[[#{screen.text.asset.onlineInspBaseDt}]]"},//온라인실사기준일
 	                { name:"regr"			, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspRegr}]]"},     	//실사생성자
-	                { name:"inspTarget"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspTarget}]]", cellRenderer:underlineCellRenderer},   	//실사대상자 산수
+	                { name:"inspTargetCnt"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspTargetCnt}]]"}, //실사대상자 산수
+	                { name:"inspTarget"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspTarget}]]", cellRenderer:underlineCellRenderer},   	//실사대상자 
 	                { name:"inspProgressRate",type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspDeptPogress}]]", cellRenderer:underlineCellRenderer},	//부서별 진행상황
 	                { name:"inspStusNm"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspStus}]]"} 		//실사상태
 	            ]
