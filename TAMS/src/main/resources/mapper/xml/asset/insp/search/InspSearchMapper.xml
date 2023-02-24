@@ -3,9 +3,17 @@
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.trito.tams.web.asset.insp.search.mapper.InspSearchMapper">
 	
+	<!-- 최근생성된 실사년도 조회 -->
+	<select id="selectRecentInspYear" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" parameterType="Map">
+	/* InspSearchMapper.xml selectRecentInspYear */
+	SELECT DATE_FORMAT(MAX(REG_DT), '%Y') INSP_YEAR
+	  FROM TB_INSP_MAS TIM
+	 WHERE 1=1
+	</select>
+	
    	<!-- 자산실사 이름 리스트 조회 -->
     <select id="selectInspNmList" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" parameterType="Map">
-    /* InspManageMapper.xml selectInspNmList */          
+    /* InspSearchMapper.xml selectInspNmList */          
     SELECT DISTINCT INSP_NO
          , INSP_NM
       FROM TB_INSP_MAS TIM
@@ -13,24 +21,149 @@
      ORDER BY INSP_NM
     </select>  
     
+    <!-- 실사부서 조회 -->
     <select id="selectInspDeptNmList" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" parameterType="Map">
-    /* InspManageMapper.xml selectInspDeptNmList */
+    /* InspSearchMapper.xml selectInspDeptNmList */
     SELECT DISTINCT DEPT_CD
          , (SELECT DEPT_NM FROM TB_DEPT TD WHERE TD.DEPT_CD = TIM.DEPT_CD) DEPT_NM 
+         , #{deptCd} USER_DEPT
       FROM TB_INSP_MNG TIM
+     WHERE 1=1 
+     <if test="deptCd != '010020010'">
+       AND TIM.DEPT_CD = (SELECT TU.DEPT_CD FROM TB_USER TU WHERE TU.USER_ID = #{userId})
+     </if>
      ORDER BY DEPT_CD 
     </select>
     
-
+    <!-- 실사 마스터 조회 -->
+    <select id="selectInspMasterSearchList" parameterType="Map" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto">
+    /* InspSearchMapper.xml selectInspMasterSearchList */
+    WITH TOT AS (
+    /* 실사대상 총 자산 */
+    SELECT TIM.INSP_NO 
+         , TIM.INSP_NM 
+         , TIM.INSP_ST_DT
+         , TIM.INSP_END_DT 
+         , TIM.INSP_STUS
+         , (SELECT CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'INSP_MAS_STUS' AND TCC.CODE_ID = TIM.INSP_STUS) INSP_STUS_NM
+         , COALESCE(TIN.DEPT_CD, '') DEPT_CD 
+         , COALESCE((SELECT TD.DEPT_NM FROM TB_DEPT TD WHERE TD.DEPT_CD = TIN.DEPT_CD), '') DEPT_NM
+         , COUNT(TIA.ASET_NO) CNT 
+      FROM TB_INSP_MAS TIM
+      LEFT JOIN TB_INSP_MNG TIN 
+        ON TIM.INSP_NO = TIN.INSP_NO 
+    <if test="deptCd != '' and deptCd != null">
+       AND TIN.DEPT_CD = #{deptCd}
+    </if>
+      LEFT JOIN TB_INSP_ASET TIA 
+        ON TIA.INSP_NO = TIN.INSP_NO 
+       AND TIA.DEPT_CD = TIN.DEPT_CD
+     WHERE TIM.INSP_NO = #{inspNo}
+     GROUP BY TIN.DEPT_CD 
+    ), CMPL AS ( 
+    /* 실사 완료된 자산 */
+    SELECT TIM.INSP_NO 
+         , TIM.INSP_NM 
+         , TIM.INSP_ST_DT
+         , TIM.INSP_END_DT 
+         , TIM.INSP_STUS
+         , (SELECT CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'INSP_MAS_STUS' AND TCC.CODE_ID = TIM.INSP_STUS) INSP_STUS_NM 
+         , COALESCE(TIN.DEPT_CD, '') DEPT_CD 
+         , COALESCE((SELECT TD.DEPT_NM FROM TB_DEPT TD WHERE TD.DEPT_CD = TIN.DEPT_CD), '') DEPT_NM
+         , COUNT(TIA.ASET_NO) CNT
+      FROM TB_INSP_MAS TIM
+      LEFT JOIN TB_INSP_MNG TIN 
+        ON TIM.INSP_NO = TIN.INSP_NO 
+    <if test="deptCd != '' and deptCd != null">
+       AND TIN.DEPT_CD = #{deptCd}
+    </if>
+      LEFT JOIN TB_INSP_ASET TIA 
+        ON TIA.INSP_NO = TIN.INSP_NO 
+       AND TIA.DEPT_CD = TIN.DEPT_CD
+       AND TIA.INSP_CMPL_YN = 'Y'
+     WHERE TIM.INSP_NO = #{inspNo}
+     GROUP BY TIN.DEPT_CD 
+    )
+    SELECT TT.INSP_NO
+         , TT.INSP_NM
+         , TT.INSP_ST_DT
+         , TT.INSP_END_DT
+         , TT.INSP_STUS
+         , TT.INSP_STUS_NM
+         , TT.DEPT_CD 
+         , TT.DEPT_NM
+         , CASE WHEN TT.CNT = 0 THEN 0 
+                ELSE FORMAT(CP.CNT / TT.CNT * 100 , 0)
+            END INSP_PROGRESS_RATE
+      FROM TOT TT
+     INNER JOIN CMPL CP 
+       ON TT.INSP_NO = CP.INSP_NO
+      AND TT.DEPT_CD = CP.DEPT_CD
+    </select>
+    
+    
+	<!-- 실사대상 조회 -->
     <select id="selectCountInspSearchList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-    /* InspManageMapper.xml selectCountInspManageList */
-    SELECT 0
+    /* InspSearchMapper.xml selectCountInspManageList */
+    SELECT COUNT(*)
+      FROM TB_INSP_ASET TIA
+     WHERE 1=1 
+     <if test="params.inspYear != '' and params.inspYear != null">
+       AND TIA.INSP_NO IN (SELECT INSP_NO FROM TB_INSP_MAS TIM WHERE TIM.INSP_ST_DT LIKE CONCAT(#{params.inspYear}, '%') )
+     </if>
+     <if test="params.inspNo != '' and params.inspNo != null">
+       AND TIA.INSP_NO = #{params.inspNo}
+     </if>
+     <if test="params.deptCd != '' and params.deptCd != null">
+       AND TIA.DEPT_CD = #{params.deptCd}
+     </if>
     </select>
     
+    <!-- 실사대상 조회 -->
     <select id="selectInspSearchList" resultType="kr.co.trito.tams.web.asset.insp.manage.dto.InspMasterDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
-    /* InspManageMapper.xml selectInspSearchList */
-    SELECT 0
+    /* InspSearchMapper.xml selectInspSearchList */
+    SELECT TIA.INSP_NO 
+         , TIA.ASET_NO
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'AS_CLASS' AND TCC.CODE_ID = TIA.ASET_TYPE1) ASET_TYPE1
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'AS_CLASS' AND TCC.CODE_ID = TIA.ASET_TYPE2) ASET_TYPE2
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'AS_CLASS' AND TCC.CODE_ID = TIA.ASET_TYPE3) ASET_TYPE3
+         , TIA.MFTCO
+         , TIA.MODEL 
+         , TIA.SN 
+         , (SELECT UTD.DEPT_NM FROM TB_DEPT UTD WHERE UTD.DEPT_CD = (SELECT TD.UPP_DEPT_CD FROM TB_DEPT TD WHERE TD.DEPT_CD = TIA.DEPT_CD )) UPP_DEPT_NM
+         , TIA.DEPT_CD
+         , (SELECT TD.DEPT_NM FROM TB_DEPT TD WHERE TD.DEPT_CD = TIA.DEPT_CD ) DEPT_NM
+         , TIA.CHRGR
+         , TIA.INSP_STUS 
+         , TIA.INSP_MTD 
+         , TIA.INSP_CMPL_YN 
+         , TIA.PTCL 
+         , TIA.RMK
+      FROM TB_INSP_ASET TIA
+     WHERE 1=1 
+     <if test="params.inspYear != '' and params.inspYear != null">
+       AND TIA.INSP_NO IN (SELECT INSP_NO FROM TB_INSP_MAS TIM WHERE TIM.INSP_ST_DT LIKE CONCAT(#{params.inspYear}, '%') )
+     </if>
+     <if test="params.inspNo != '' and params.inspNo != null">
+       AND TIA.INSP_NO = #{params.inspNo}
+     </if>
+     <if test="params.deptCd != '' and params.deptCd != null">
+       AND TIA.DEPT_CD = #{params.deptCd}
+     </if>
+     ORDER BY ASET_NO
     </select>
     
     
+	<!-- 실사관리화면 자산정보 수정 -->
+	<update id="updateInspAsetList" parameterType="Map">
+	/* InspSearchMapper.xml updateInspAsetList */
+    UPDATE TB_INSP_ASET SET
+           INSP_STUS    = #{inspStus} 
+         , INSP_MTD     = #{inspMtd}
+         , INSP_CMPL_YN = #{inspCmplYn}
+         , PTCL         = #{ptcl}
+         , RMK          = #{rmk}
+    WHERE INSP_NO  = #{inspNo}
+      AND ASET_NO  = #{asetNo}
+	</update>
 </mapper>

@@ -113,4 +113,6 @@ public class InspMasterDto {
 	private String inspCmplCnt;
 	@ApiModelProperty(value="결제여부")
 	private String paymentYn;
+	@ApiModelProperty(value="유저부서")
+	private String userDept;
 }

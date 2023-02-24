@@ -35,8 +35,15 @@
 	    let menuId = "[[${menuId}]]";
 	    let numOfRows = 30; //basic = 30
 	    let invData = {};
+    	var inspStusArr   = [];
+    	var inspMtdArr    = [];
+    	var inspCmplYnArr = [];
+    	var inspPtclArr   = [];
 	    
 		$(function(){
+			
+			// 최근생성 실사년도 조회 
+			getRecentInspYear();
 			
 	        // 실사명 코드 조회
 	      	getInspNmList();
@@ -44,7 +51,10 @@
 	        // 실사부서 코드조쇠
 	      	getInspDeptNm();
 	        
-	      	$("#jsGrid").jsGrid("loadData");
+	    	// 셀렉트박스조회 > 그리드 로드 > 실사기본정보 조회 > 그리드 데이터 조회  
+	    	selectInspAsetCodeList().done(function(msg){ // 셀렉트박스 코드 조회 
+	    		jsGridLoad();
+	    	});
 	        
           	//리셋 버튼
     	    $(".btn_reset").click(function() {
@@ -67,92 +77,11 @@
     	        }
     	    });
 			
-			
-		    
 	        $("#pager").on("change", function() {
 	            var page = parseInt($(this).val(), 10);
 	            $("#jsGrid").find(".jsgrid-table").append("<tr class='jsgrid-row'></tr>");
 	        });
-							
-	        $("#jsGrid").jsGrid({
-	        	height: "550",
-                width: "100%",
-                filtering: false,
-                editing: true,
-                inserting: false,
-                sorting: true,
-                paging: true,
-                sorter: "number",
-                pageIndex:1,
-                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
-                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
-                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
-                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
-                pagerFormat: "{first} {prev} {pages} {next} {last}",
-                pagerContainer:null,
-                pageLoading: true,
-                pager: "#pager",
-                pageSize: numOfRows,
-                pageButtonCount: 5,
-                loadonce: true,
-                updateOnResize: true, 
-	            rowClick: function(args) {
-	            	var $target = $(args.event.target); // 클릭한 셀 jquery object 
-	            	var columnIdx = $target.index(); // 클릭한 셀이 몇번째 컬럼인지 저장 
-	            	var inspNo =  args.item.inspNo// 해당 로우의 실사번호 
-	            	
-	            },
-	            pagerContainerClass: "paginate",
-	            controller:  {
-	                loadData: function(filter) {
-	                    var d = $.Deferred();
-	                    
-	                    currentPage = filter.pageIndex; 
-	                    let url = "/asset/insp/manage/selectInspSearchList";
-						let reqType = 'POST';	
-						let data = {
-            				"currentPage"  : filter.pageIndex,
-            				"numOfRows"    : numOfRows,
-            				"inspYear" 	   : $("#inspYear").val(),
-            				"inspNo"  	   : $("#inspNm option:selected").val(),
-            				"deptNo"  	   : $("#inspDept option:selected").val(),
-            				"searchOption" : $("#searchOption option:selected").val(),
-            				"sortField"    : filter.sortField,
-            				"sortOrder"    : filter.sortOrder
-            			}
-						
-						$.commRequest(url, reqType, JSON.stringify(data))
-							.then((res) => {
-								condition = res.condition;
-								$(".result").text("Results : " + res.condition.totalCount);
-								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
-							})
-							.catch((error) => {
-								console.log('[[#{screen.info.status.error.search}]]');
-							});						
-	                    
-	                    return d.promise();
-	                },
-
-           		},
-	            fields: [
-	                { name:"asetNo"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspNo}]]"},   //자산번호
-	                { name:"asetType1"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.aset.type1}]]"},     //자산유형1
-	                { name:"asetType2"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.aset.type2}]]"},     //자산유형2
-	                { name:"asetType3"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.aset.type3}]]"},     //자산유형3
-	                { name:"mftco"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.mftco}]]"},    //메이커
-	                { name:"model"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.model}]]"},    //모델
-	                { name:"sn"			, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.sn}]]"},       //SN
-	                { name:"bizDeptCd"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.bizDeptCd}]]"},//사업부
-	                { name:"deptCd"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.deptCd}]]"},   //부서
-	                { name:"chrgr"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.chrgr}]]"},    //담당자
-	                { name:"inspStus"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspStus}]]"}, //실사상태
-	                { name:"inspMethod"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspMethod}]]"},//실사방법
-	                { name:"inspCmplYn"	, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.inspCmplYn}]]"},//실사완료여부
-	                { name:"ptcl"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.ptcl}]]"},      //특이사항
-	                { name:"rmk"		, type:"text", align:"center", width:"7%", title:"[[#{screen.text.asset.rmk}]]"},       //비고
-	            ]
-	        });          	
+			
 		});
 		
 		
@@ -167,6 +96,23 @@
 	    	if (window.event.keyCode == 13) {
 	    		$("#jsGrid").jsGrid("loadData");
 	        }
+	    }
+	    
+	    // 최근 생성된 실사년도 조회 
+	    function getRecentInspYear(){
+			let url = "/asset/insp/search/selectRecentInspYear";
+			
+  			let reqType = 'POST';
+  			let data={"currentPage"  : 0,
+    				  "numOfRows"    : 999}
+  			$.commRequest(url, reqType, JSON.stringify(data))
+  				.then((res) => {
+  		            $("#inspYear").val(res.data[0].inspYear);
+  		            
+  				})
+  				.catch((error) => {
+  					console.log(error);
+  				})
 	    }
 	    
 		// 실사명 코드리스트
@@ -213,12 +159,171 @@
   					console.log(error);
   				})
 		}
+		
+    	// 셀렉트박스 코드 조회
+    	function selectInspAsetCodeList(){
+    		
+    		var d = $.Deferred();
+    		
+            let url = "/asset/insp/manage/selectInspAsetCodeList"; 
+			let reqType = 'GET';	
+			let data = {
+				"currentPage"  : 0,
+				"numOfRows"    : 1, 
+				"sortField"    : "",
+				"sortOrder"    : ""
+			}
+			
+			$.commRequest(url, reqType, data)
+				.then((res) => {
+					data = res.data;
+					inspStusArr = data.inspStusArr;
+					inspMtdArr = data.inspMtdArr;
+					inspPtclArr = data.inspPtclArr;
+					inspCmplYnArr = [{codeId:"Y", codeNm:"Y"},{codeId:"N", codeNm:"N"}];
+					d.resolve({data : res});
+					
+				})
+				.catch((error) => {
+					console.log('[[#{screen.info.status.error.search}]]');
+				});
+    		
+			return d.promise();
+    	}
 	 	
 	 	// 텍스트 언더라인 함수
 	 	function underlineCellRenderer(value, item) {
 			return $("<td>").addClass("text-underline").text(value);
 		}
 		
+	 	function jsGridLoad(){
+			
+	        $("#jsGrid").jsGrid({
+	        	height: "550",
+                width: "100%",
+                filtering: false,
+                editing: true,
+                inserting: false,
+                sorting: true,
+                paging: true,
+                sorter: "number",
+                pageIndex:1,
+                pageFirstText:'<a class="first"><img src="/images/common/btn_pn_first.gif"></img></a>',
+                pagePrevText: '<a class="pre"><img src="/images/common/btn_pn_pre.gif"></img></a>',
+                pageNextText: '<a class="next"><img src="/images/common/btn_pn_next.gif"></img></a>',
+                pageLastText: '<a class="last"><img src="/images/common/btn_pn_last.gif"></img></a>',
+                pagerFormat: "{first} {prev} {pages} {next} {last}",
+                pagerContainer:null,
+                pageLoading: true,
+                pager: "#pager",
+                pageSize: numOfRows,
+                pageButtonCount: 5,
+                loadonce: true,
+                updateOnResize: true, 
+	            rowClick: function(args) {
+	            	//var $target = $(args.event.target); // 클릭한 셀 jquery object 
+	            	//var columnIdx = $target.index(); // 클릭한 셀이 몇번째 컬럼인지 저장 
+	            	//var inspNo =  args.item.inspNo// 해당 로우의 실사번호 
+	            	jsGrid.Grid.prototype.rowClick.call(this, args);
+	            },
+	            pagerContainerClass: "paginate",
+	            controller:  {
+	            	updateItem: function(args) {
+	                	var d = $.Deferred();
+	                    let url = "/asset/insp/search/updateInspAsetList";  
+						let reqType = 'POST';
+						let data = {
+	        				"inspNo" 	: $("#inspNm option:selected").val(),
+	        				"asetNo" 	: args.asetNo,
+	        				"inspStus" 	: args.inspStus,
+	        				"inspMtd" 	: args.inspMtd,
+	        				"inspCmplYn": args.inspCmplYn,
+	        				"ptcl" 	   	: args.ptcl,
+	        				"rmk" 	   	: args.rmk
+	        			}
+						
+						$.commRequest(url, reqType, JSON.stringify(data))
+							.then((res) => {
+								d.resolve(res);
+								$("#jsGrid").jsGrid("loadData");
+							})
+							.catch((error) => {
+								console.log('[[#{screen.info.status.error.occur}]]');
+							});						
+	                    return d.promise();
+		            },
+	                loadData: function(filter) {
+	                    var d = $.Deferred();
+	                    
+	                    if($("#inspNm option:selected").val() == '' ){
+	                    	alert("[[#{screen.text.asset.inspNm}]][[#{screen.info.status.required.input}]]");
+	                    	return;
+	                    }
+	                    
+	                    currentPage = filter.pageIndex; 
+	                    let url = "/asset/insp/search/selectInspSearchList";
+						let reqType = 'POST';	
+						let data = {
+            				"currentPage"  : filter.pageIndex,
+            				"numOfRows"    : numOfRows,
+            				"inspYear" 	   : $("#inspYear").val(),
+            				"inspNo"  	   : $("#inspNm option:selected").val(),
+            				"deptCd"  	   : $("#inspDept option:selected").val(),
+            				"searchOption" : $("#searchOption option:selected").val(),
+            				"sortField"    : filter.sortField,
+            				"sortOrder"    : filter.sortOrder
+            			}
+						
+						$.commRequest(url, reqType, JSON.stringify(data))
+							.then((res) => {
+								condition = res.condition;
+								// 검색필드 입력
+								var stDt = res.data2[0].inspStDt;
+								console.log("strDt :: "+strDt);
+								var edDt = res.data2[0].inspEndDt;
+								var strDt = stDt.slice(0, 4) + "-" + stDt.slice(4, 6) + "-" + stDt.slice(6) 
+								          + " ~ "
+								          + edDt.slice(0, 4) + "-" + edDt.slice(4, 6) + "-" + edDt.slice(6);
+								//$("#inspYear").val(res.data2[0].inspStDt.substr(0,4));
+								$("#inspPeriod").val(strDt);
+								$("#inspStus").val(res.data2[0].inspStusNm);
+								$("#inspDeptProgressRate").val(res.data2[0].inspProgressRate+"%");
+								if(res.data2[0].inspStus == "CLS"){
+									$('#jsGrid').jsGrid('option', "editing", false);
+								}
+								
+								$(".result").text("Results : " + res.condition.totalCount);
+								d.resolve({data : res.data, itemsCount: res.condition.totalCount});
+							})
+							.catch((error) => {
+								console.log('[[#{screen.info.status.error.search}]]');
+							});						
+	                    
+	                    return d.promise();
+	                },
+
+           		},
+	            fields: [
+	                { name:"asetNo"		, type:"text", align:"center", width:"7%",editing:false, title:"[[#{screen.text.aset.no}]]"},        //자산번호
+	                { name:"asetType1"	, type:"text", align:"center", width:"7%",editing:false, title:"[[#{screen.text.aset.type1}]]"},     //자산유형1
+	                { name:"asetType2"	, type:"text", align:"center", width:"7%",editing:false, title:"[[#{screen.text.aset.type2}]]"},     //자산유형2
+	                { name:"asetType3"	, type:"text", align:"center", width:"7%",editing:false, title:"[[#{screen.text.aset.type3}]]"},     //자산유형3
+	                { name:"mftco"		, type:"text", align:"center", width:"7%",editing:false, title:"[[#{screen.text.asset.mftco}]]"},    //메이커
+	                { name:"model"		, type:"text", align:"center", width:"7%",editing:false, title:"[[#{screen.text.asset.model}]]"},    //모델
+	                { name:"sn"			, type:"text", align:"center", width:"7%",editing:false, title:"[[#{screen.text.asset.sn}]]"},       //SN
+	                { name:"uppDeptNm"	, type:"text", align:"center", width:"7%",editing:false, title:"[[#{screen.text.asset.bizDeptCd}]]"},//사업부
+	                { name:"deptNm"		, type:"text", align:"center", width:"7%",editing:false, title:"[[#{screen.text.asset.deptCd}]]"},   //부서
+	                { name:"chrgr"		, type:"text", align:"center", width:"7%",editing:false, title:"[[#{screen.text.asset.chrgr}]]"},    //담당자
+	                { name:"inspStus"   , type:"select",align:"center",width:"5%",editing: true, title:"[[#{screen.text.asset.inspStus}]]"  , items:inspStusArr  , valueField :"codeId", textField : "codeNm"},
+	                { name:"inspMtd"    , type:"select",align:"center",width:"5%",editing: true, title:"[[#{screen.text.asset.inspMethod}]]", items:inspMtdArr   , valueField :"codeId", textField : "codeNm"},
+	                { name:"inspCmplYn" , type:"select",align:"center",width:"5%",editing: true, title:"[[#{screen.text.asset.inspCmplYn}]]", items:inspCmplYnArr, valueField :"codeId", textField : "codeNm"},
+	                { name:"ptcl"		, type:"text", align:"center", width:"7%",editing: true, title:"[[#{screen.text.asset.ptcl}]]"},      //특이사항
+	                { name:"rmk"		, type:"text", align:"center", width:"7%",editing: true, title:"[[#{screen.text.asset.rmk}]]"},       //비고
+	                { name: "control" , type: "control", width: "3%", align: "center", modeSwitchButton: false, deleteButton: false, editing: false }
+	            ]
+	        });
+	 	}
+	 	
 		</script>
 	</th:block>
         
@@ -249,14 +354,12 @@
 					<td>
 						<input type="hidden" id="inspNo" >
 						<select id="inspNm" style="width:100%;">
-							<option value="">[[#{screen.text.comm.choice}]]</option>
+							<!-- <option value="">[[#{screen.text.comm.choice}]]</option> -->
 						</select>
 					</td>
 					<th>[[#{screen.text.asset.inspDept}]] </th>
 					<td>
-						<select id="inspDept" style="width:100%;">
-							<option value="">[[#{screen.text.comm.choice}]]</option>
-						</select>
+						<select id="inspDept" style="width:100%;"></select>
 					</td>
 				</tr>
 				<tr> <!-- 실사기간 실사상태 부서진행율 -->
@@ -287,7 +390,6 @@
 				<div class="result">Results : 0,000</div>
 				<!-- list_button -->
 				<div class="button">
-					<a class="btn_save">[[#{screen.text.comm.save}]]</a> <!-- 저장 -->
 					<a class="btn_">[[#{screen.text.asset.resultReport}]]</a> <!-- 실사결과보고 -->
 				</div>
 				<!-- list_button -->

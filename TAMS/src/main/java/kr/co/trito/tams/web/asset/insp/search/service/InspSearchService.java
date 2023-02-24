@@ -44,6 +44,24 @@ public class InspSearchService {
 		log.info("[service][selectInspSearchList]");
 		return mapper.selectInspSearchList(condition);
 	}
+
+	public List<InspSearchMasterDto> selectInspMasterSearchList(Map<String, Object> items) {
+		// TODO Auto-generated method stub
+		log.info("[service][selectInspMasterSearchList]");
+		return mapper.selectInspMasterSearchList(items);
+	}
+
+	public int updateInspAsetList(Map<String, Object> items) {
+		// TODO Auto-generated method stub
+		log.info("[service][updateInspAsetList]");
+		return mapper.updateInspAsetList(items);
+	}
+
+	public List<InspSearchMasterDto> selectRecentInspYear(Map<String, Object> items) {
+		// TODO Auto-generated method stub
+		log.info("[service][selectRecentInspYear]");
+		return mapper.selectRecentInspYear(items);
+	}
 	
 	
 	

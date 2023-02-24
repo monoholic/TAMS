@@ -47,7 +47,7 @@ public class InspSearchController {
 	@Autowired
 	CommonService commonService;
 	
-	/** 실사관리화면 */
+	/** 실사대상자산 화면 */
 	@PostMapping("list")
 	public ModelAndView inspSearchView(HttpServletRequest request, 
 			@ApiParam(value = "필터 / 페이징 값", required = true) @RequestParam Map<String, Object> params) {
@@ -72,32 +72,53 @@ public class InspSearchController {
 	}		
 	
 	/** 실사대상자산 조회 */
-	@GetMapping(value="/selectInspSearchList")
+	@PostMapping(value="/selectInspSearchList")
 	@ResponseBody
 	@ApiOperation(value = "실사대상자산 조회", notes = "실사대상자산 조회")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
 	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> selectInspSearchList(
-			@ApiParam(value = "검색 조건 파리미터 Dto", required = true) @RequestParam Map<String, Object> params,
+			@ApiParam(value = "검색 조건 파리미터 Dto", required = true) @RequestBody Map<String, Object> items,
 			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) {
 
 		log.info("[controller][selectInspSearchList]");
 		
-		SearchCondition condition = new SearchCondition(params.get("currentPage").toString(), params.get("numOfRows").toString(), params);
+		List<InspSearchMasterDto> mastList = inspSearchService.selectInspMasterSearchList(items);
+		
+		SearchCondition condition = new SearchCondition(items.get("currentPage").toString(), items.get("numOfRows").toString(), items);
 		condition.pageSetup1(inspSearchService.selectCountInspSearchList(condition));
 		List<InspSearchMasterDto> list = inspSearchService.selectInspSearchList(condition);
 		
-		//return responseService.success(condition, list);
-		return responseService.success(condition, null);
+		return responseService.success(condition, list, mastList);
 	}	
 	
-	//selectInspDeptNmList
+	/** 실사대상조회화면 최근 실사연도 조회 */
+	@PostMapping(value="/selectRecentInspYear")
+	@ResponseBody
+	@ApiOperation(value = "실사대상조회화면 최근 실사연도 조회", notes = "실사대상조회화면 최근 실사연도 조회")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> selectRecentInspYear(
+			@ApiParam(value = "자산정보 데이터", required = true) @RequestBody Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		
+		log.info("[controller][selectInspSearchList]");
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
+		
+		items.put("userId", userId);
+		
+		List<InspSearchMasterDto> list = inspSearchService.selectRecentInspYear(items);
+		
+		return responseService.success(list);
+	}
+	
 	/** 실사대상조회화면 실사명 조회 */
 	@PostMapping(value="/selectInspNmList")
 	@ResponseBody
 	@ApiOperation(value = "실사관리화면 자산정보 수정", notes = "실사관리화면 자산정보 수정")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
-	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
 	public ResponseEntity<? extends Response> selectInspNmList(
 			@ApiParam(value = "자산정보 데이터", required = true) @RequestBody Map<String, Object> items,
 			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
@@ -126,11 +147,33 @@ public class InspSearchController {
 		log.info("[controller][selectInspDeptNmList]");
 		UserInfo userInfo = (UserInfo)userDetail;
 		String userId = userInfo.getDto().getUserId();
-		
-		items.put("regr", userId);
+		String deptCd = userInfo.getDto().getDeptCd();
+		items.put("userId", userId);
+		items.put("deptCd", deptCd);
 		
 		List<InspSearchMasterDto> list = inspSearchService.selectInspDeptNmList(items);
 		
 		return responseService.success(list);
+	}
+	
+	
+	/** 실사대상조회화면 자산정보 수정 */
+	@PostMapping(value="/updateInspAsetList")
+	@ResponseBody
+	@ApiOperation(value = "실사대상조회화면 자산정보 수정", notes = "실사대상조회화면 자산정보 수정")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+	@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response> updateInspAsetList(
+			@ApiParam(value = "자산정보 수정 데이터", required = true) @RequestBody Map<String, Object> items,
+			@ApiParam(value = "사용자정보", required = true) @AuthenticationPrincipal UserDetails userDetail) { 
+		
+		UserInfo userInfo = (UserInfo)userDetail;
+		String userId = userInfo.getDto().getUserId();
+		
+		items.put("regr", userId);
+		
+		int cnt = inspSearchService.updateInspAsetList(items);
+		
+		return responseService.success(null);
 	}
 }

@@ -21,6 +21,12 @@ public interface InspSearchMapper {
 
 	List<InspSearchMasterDto> selectInspSearchList(SearchCondition condition);
 
+	List<InspSearchMasterDto> selectInspMasterSearchList(Map<String, Object> items);
+
+	int updateInspAsetList(Map<String, Object> items);
+
+	List<InspSearchMasterDto> selectRecentInspYear(Map<String, Object> items);
+
 	
 	
 
