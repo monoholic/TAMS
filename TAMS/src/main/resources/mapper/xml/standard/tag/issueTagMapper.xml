@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.trito.tams.web.standard.tag.mapper.IssueTagMapper">
+	
+	
+    
+	<!-- 실사대상 조회 -->
+    <select id="selectCountIssueTagList" resultType="int" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+    /* InspSearchMapper.xml selectCountIssueTagList */
+    SELECT COUNT(*)
+      FROM TB_ASET_MAS TAM
+      LEFT JOIN TB_TAG_MAS TTM
+        ON TAM.ASET_NO = TTM.ASET_NO 
+     WHERE 1=1 
+     <if test="params.asetNo != '' and params.asetNo != null">
+       AND TAM.ASET_NO = #{params.asetNo}
+     </if> 
+     <if test="params.regDt != '' and params.regDt != null">
+       AND TAM.REG_DT = #{params.regDt}
+     </if> 
+     <if test="params.asetType1 != '' and params.asetType1 != null">
+       AND TAM.ASET_TYPE1 = #{params.asetType1} 
+     </if> 
+     <if test="params.asetType2 != '' and params.asetType2 != null">
+       AND TAM.ASET_TYPE1 = #{params.asetType1} 
+     </if> 
+     <if test="params.asetType3 != '' and params.asetType3 != null">
+       AND TAM.ASET_TYPE1 = #{params.asetType1} 
+     </if> 
+     <if test="params.bizDeptCd != '' and params.bizDeptCd != null">
+       AND TAM.BIZ_DEPT_CD = #{params.bizDeptCd}
+     </if> 
+     <if test="params.deptCd != '' and params.deptCd != null">
+       AND TAM.DEPT_CD = #{params.deptCd}
+     </if> 
+     <if test="params.chrgr != '' and params.chrgr != null">
+       AND TAM.CHRGR = #{params.chrgr}
+     </if> 
+     <if test="params.tagYn != '' and params.tagYn != null">
+       AND TTH.TAG_YN = #{params.tagYn}
+     </if> 
+    </select>
+    
+    <!-- 실사대상 조회 -->
+    <select id="selectIssueTagList" resultType="kr.co.trito.tams.web.standard.tag.dto.IssueTagDto" parameterType="kr.co.trito.tams.comm.util.search.SearchCondition">
+    /* InspSearchMapper.xml selectIssueTagList */
+    SELECT TAM.ASET_NO 
+         , TAM.ASET_NM
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'AS_CLASS' AND TCC.CODE_ID = TAM.ASET_TYPE1) ASET_TYPE1
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'AS_CLASS' AND TCC.CODE_ID = TAM.ASET_TYPE2) ASET_TYPE2
+         , (SELECT TCC.CODE_NM FROM TB_COM_CODE TCC WHERE TCC.CODE_GRP_ID = 'AS_CLASS' AND TCC.CODE_ID = TAM.ASET_TYPE3) ASET_TYPE3
+         , TAM.MFTCO 
+         , TAM.MODEL 
+         , TAM.SN 
+         , TAM.BIZ_DEPT_CD 
+         , (SELECT TD.DEPT_NM FROM TB_DEPT TD WHERE TD.DEPT_CD = TAM.BIZ_DEPT_CD) BIZ_DEPT_NM
+         , TAM.DEPT_CD 
+         , (SELECT TD.DEPT_NM FROM TB_DEPT TD WHERE TD.DEPT_CD = TAM.DEPT_CD) DEPT_NM
+         , TAM.CHRGR 
+         , TTM.TAG_ID
+         , CASE WHEN TTM.TAG_ID IS NULL THEN 'N' 
+                ELSE 'Y'
+            END TAG_YN
+         , DATE_FORMAT(TTM.REG_DT, '%Y-%m-%d') REG_DT 
+         , TTM.REGR 
+         , (SELECT COUNT(*) FROM TB_TAG_HIS TTH WHERE TTH.ASET_NO = TTM.ASET_NO AND TTH.TAG_ID = TTM.TAG_ID) TAG_HISTORY
+      FROM TB_ASET_MAS TAM
+      LEFT JOIN TB_TAG_MAS TTM
+        ON TAM.ASET_NO = TTM.ASET_NO 
+     WHERE 1=1 
+     <if test="params.asetNo != '' and params.asetNo != null">
+       AND TAM.ASET_NO = #{params.asetNo}
+     </if> 
+     <if test="params.regDt != '' and params.regDt != null">
+       AND TAM.REG_DT = #{params.regDt}
+     </if> 
+     <if test="params.asetType1 != '' and params.asetType1 != null">
+       AND TAM.ASET_TYPE1 = #{params.asetType1} 
+     </if> 
+     <if test="params.asetType2 != '' and params.asetType2 != null">
+       AND TAM.ASET_TYPE1 = #{params.asetType1} 
+     </if> 
+     <if test="params.asetType3 != '' and params.asetType3 != null">
+       AND TAM.ASET_TYPE1 = #{params.asetType1} 
+     </if> 
+     <if test="params.bizDeptCd != '' and params.bizDeptCd != null">
+       AND TAM.BIZ_DEPT_CD = #{params.bizDeptCd}
+     </if> 
+     <if test="params.deptCd != '' and params.deptCd != null">
+       AND TAM.DEPT_CD = #{params.deptCd}
+     </if> 
+     <if test="params.chrgr != '' and params.chrgr != null">
+       AND TAM.CHRGR = #{params.chrgr}
+     </if> 
+     <if test="params.tagYn != '' and params.tagYn != null">
+       AND TTH.TAG_YN = #{params.tagYn}
+     </if>
+    </select>
+    
+    
+</mapper>

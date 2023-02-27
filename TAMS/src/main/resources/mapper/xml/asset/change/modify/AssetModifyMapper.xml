@@ -21,7 +21,7 @@
 		     , req_stus
 		     , (SELECT code_nm
 		          FROM tb_com_code
-		         WHERE code_id = A.req_stus ) AS req_stus_nm
+		         WHERE code_id = A.req_stus AND code_grp_id  = 'APPR_STATUS') AS req_stus_nm
 		     , move_pupos
 		     , move_dt
 		     , tkout_sche_yn
