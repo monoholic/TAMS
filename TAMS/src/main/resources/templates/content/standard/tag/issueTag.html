@@ -50,8 +50,12 @@
 				tagYnStr += '<option value="N">N</option>';
 			$("#tagYn").append(tagYnStr);
 			
+	    	
 	        //자산유형1 코드 조회
 	        getCommCode("#asetType1", "AS_CLASS", "1", "");
+	        
+	        $("#jsGrid").jsGrid("loadData");
+	        
 	        
 	      	//자산유형1 change 이벤트
 	        $("#asetType1").change(function(){

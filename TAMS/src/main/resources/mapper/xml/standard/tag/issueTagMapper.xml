@@ -96,6 +96,9 @@
      <if test="params.tagYn != '' and params.tagYn != null">
        AND TTH.TAG_YN = #{params.tagYn}
      </if>
+     <!-- 페이징 -->
+     LIMIT #{numOfRows}
+     OFFSET #{start} 
     </select>
     
     
