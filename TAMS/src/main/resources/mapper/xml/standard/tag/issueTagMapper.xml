@@ -70,10 +70,10 @@
         ON TAM.ASET_NO = TTM.ASET_NO 
      WHERE 1=1 
      <if test="params.asetNo != '' and params.asetNo != null">
-       AND TAM.ASET_NO = #{params.asetNo}
+       AND TAM.ASET_NO LIKE CONCAT('%', #{params.asetNo}, '%')
      </if> 
      <if test="params.regDt != '' and params.regDt != null">
-       AND TAM.REG_DT = #{params.regDt}
+       AND DATE_FORMAT(TAM.REG_DT, '%Y-%m-%d') = #{params.regDt}
      </if> 
      <if test="params.asetType1 != '' and params.asetType1 != null">
        AND TAM.ASET_TYPE1 = #{params.asetType1} 
@@ -91,7 +91,7 @@
        AND TAM.DEPT_CD = #{params.deptCd}
      </if> 
      <if test="params.chrgr != '' and params.chrgr != null">
-       AND TAM.CHRGR = #{params.chrgr}
+       AND TAM.CHRGR LIKE CONCAT('%', #{params.chrgr}, '%')
      </if> 
      <if test="params.tagYn != '' and params.tagYn != null">
        AND TTH.TAG_YN = #{params.tagYn}
