@@ -39,6 +39,7 @@ import kr.co.trito.tams.comm.util.file.excel.InvDto;
 import kr.co.trito.tams.comm.util.res.Response;
 import kr.co.trito.tams.comm.util.res.ResponseService;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.common.dto.AppvLineDto;
 import kr.co.trito.tams.web.common.dto.AsetMasDto;
 import kr.co.trito.tams.web.common.dto.CodeTreeDto;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
@@ -615,6 +616,25 @@ public class CommonController {
 		
 		List<CodeDto> list = commonService.selectAsetType("");
 		return responseService.success(list);
+	}
+	
+	/** 공통코드(트리) 조회 */
+	@GetMapping("/comm/commApprLine")
+	@ResponseBody
+	@ApiOperation(value = "Web API Common test", notes = "Web API Test")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "성공적으로 수행 됨"),
+			@ApiResponse(code = 500, message = "API 서버에 문제가 발생하였음") })
+	public ResponseEntity<? extends Response>  commApprLine(
+			@ApiParam(value = "검색 조건(코드그룹)", required = false) @RequestParam(value="appvDiv",required = false) String appvDiv) {
+		
+		Map<String, String> params = new HashMap<>();
+		if (!StringUtils.isEmpty(appvDiv))
+			params.put("appvDiv", appvDiv);
+		
+		List<AppvLineDto> list = commonService.commApprLine(params);
+		
+		return responseService.success(list);
+		
 	}
 	
 	/** 엑셀다운로드 */
