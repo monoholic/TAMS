@@ -1,0 +1,542 @@
+﻿﻿<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+        layout:decorator="layout/popup2">
+<head>
+<meta charset="utf-8" />
+<title>[[#{screen.text.appr.req.screen.text}]]</title>
+
+	<!-- css -->
+	<th:block layout:fragment="css">
+	 	<!-- include summernote css/js -->
+		<link href="/css/summernote/summernote-lite.css" rel="stylesheet">
+		
+		<style type="text/css">
+			ol {
+			    display: block;
+			    list-style-type: decimal;
+			    margin-top: 0;
+			    margin-bottom: 0;
+			    margin-left: 0;
+			    margin-right: 0;
+			    padding-left: 15px;
+			}
+			ol .selecting { background: #FECA40; }
+			ol .selected { background: #F39814; color: #ffffff; }
+			
+			.apprList {
+			 		overflow:auto;
+			 		width:100%;
+			 		height:50px;
+			 		list-style-type:decimal;
+			}
+			
+		</style>
+	</th:block>
+
+	 <th:block layout:fragment="script">
+	 	<!-- include summernote css/js -->
+		<script src="/js/summernote/summernote-lite.js"></script>
+		<script src="/js/summernote/lang/summernote-ko-KR.min.js"></script>
+		
+		<script>
+		var appvId = '[[${appv_id}]]';
+		
+		var apprCnt  = 0;
+		var arrAppr  = [];
+		
+		var agreeCnt = 0;
+		var arrAgree = [];
+		
+		var notiCnt  = 0;
+		var arrNoti  = [];
+		
+		var apprGbn  = "appr";
+		
+		var selectedObj;
+		
+		$(function() {
+			getCommCode("#req_stus", "LINE_ITEM", "1", "");
+			
+			//저장(임시)
+			$("#btnSave").on("click", function(){
+				saveApproval('');
+			});
+			
+			//상신
+			$("#btnApproval").on("click", function(){
+				saveApproval('F');
+			});
+			
+			//결재자 추가
+			$("#btnAdd").on("click", function(){
+				
+				// 팝업 호출 url
+    	        var url = "/common/popup/userPopup";
+    	        var popId = "userPopup";
+    	        var args = {
+    	        	width : 650,
+    	    	    height : 416,
+   	        		pheight : window.opener.innerHeight,
+       	        	pwidth  : window.opener.innerWidth
+    	        };
+    	        
+    	        openPopup2(popId, url, args);
+			});
+			
+			//결재자 이동(위)
+			$("#btnUp").on("click", function(){
+				setMoveAppr("UP");
+			});
+			
+			//결재자 이동(아래)
+			$("#btnDown").on("click", function(){
+				setMoveAppr("DOWN");
+			});
+			
+			//결재자 구분(결재자, 함의자, 통보자)
+			$("input[name='appr_gbn']").on("change", function(){
+				if( $(this).is(":checked") ) {
+					apprGbn = $(this).val();
+				}
+			});
+			
+			//결재상신 내용 : web editor 설정
+			$("#appvContent").summernote(getSummernoteBody());
+			
+			$(".pop_close").on("click", function(){
+				self.close();
+			});
+			
+			//결재자 셋팅
+			$("#req_stus").on("change", function(){
+				
+				var prev = $(this).data('val');
+			    var current = $(this).val();
+			
+				if(prev != current){
+					resetUser();
+				}
+				
+				var appvDiv = $("#req_stus").val();
+				getAppLine(appvDiv);
+			});
+			
+		});
+		
+		// 공통코드 호출
+	    function getCommCode(id, code, level, upperCodeId){	 		
+	 		return new Promise(function(resolve, reject){
+				let url = "/common/comm/selectBox";
+				let reqType = 'GET';
+				$.commRequestSelectbox(url, reqType, id, code, level, upperCodeId)
+				  .then(() => {
+					  resolve();
+				  });				 			
+	 		});
+		}
+		
+	 	// 결재라인 호출
+	    function getAppLine(id){	 		
+			let url = "/common/comm/commApprLine";
+			let reqType = 'GET';
+			
+			let data = {
+					"appvDiv"	:	id
+			};
+			
+			$.commRequest(url, reqType, data)
+				.then((res) => {
+					setApprovalInfo(res.data);
+					console.log('공통코드 조회 성공!!');
+				})
+				.catch((error) => {
+					console.log('공통코드 조회 실패!!');
+				});
+		}
+	 
+		//summer note 설정
+		function getSummernoteBody() {
+		return	{
+	            placeholder: '[[#{screen.info.status.error.input.content}]]',
+	            height: 250,
+	            minHeight: 250,
+	            maxHeight: 250,
+	            lang:"ko-KR",
+	            toolbar: [
+	    		    ['style', ['style']],
+	    		    ['font', ['bold', 'italic', 'underline', 'clear']],
+	    		    ['fontname', ['fontname']],
+	    		    ['color', ['color']],
+	    		    ['para', ['ul', 'ol', 'paragraph']],
+	    		    ['height', ['height']],
+	    		    ['table', ['table']],
+	    		    ['insert', ['link', 'hr']],
+	    		    ['view', ['codeview']],
+	    		    ['help', ['help']]
+	    		]
+	        };
+		}
+		
+		//결재 저장/상신
+		function saveApproval(status) {
+			var list = $("li");
+			
+			var reqSub = String(parseInt(($("#req_no").text()).substr(5,3)));
+			
+			arrAppr.length = 0;
+			arrAgree.length = 0;
+			arrNoti.length = 0;
+			
+			$.each(list, function(index, element){
+				var gbn =  $(element).attr('gbn'); 
+				if(gbn == 'appr') 
+					arrAppr.push($(element).attr('value'));
+				if(gbn == 'agree')
+					arrAgree.push($(element).attr('value'));
+				if(gbn == 'noti')
+					arrNoti.push($(element).attr('value'));
+			});
+			
+			var appvContent = $('#appvContent').summernote('code'); 
+			
+			//상신일 경우 필수 항목 체크
+			if(status == "F") {
+				var apprCnt = arrAppr.length;
+				if( apprCnt == 0 ) {
+					alert("[[#{screen.info.status.error.appr.no.approver}]]");
+					return false;
+				}
+				if( appvContent == "<p><br></p>" ) {
+					alert("[[#{screen.info.status.error.input.content}]]");
+					return false;
+				}
+				if( !confirm("[[#{screen.info.status.approval.yn}]]") ) {
+					return false;
+				}
+			}
+			let url = "/approval/saveApproval";
+			let reqType = 'POST';	
+			let data = {
+				"reqNo"		  : reqSub,
+				"appr"        : arrAppr,
+				"agree"       : arrAgree,
+				"noti"        : arrNoti,
+				"appvId"	  : $("#appvId").val(),
+				"appvTtl"     : $("#appvTtl").val(),
+				"appvType"    : $("#appvType").val(),
+				"appvContent" : appvContent,
+				"status"      : status
+			};
+			$.commRequest(url, reqType, JSON.stringify(data))
+				.then((res) => {
+					console.log('결재상신 성공!!');
+					alert('[[#{screen.info.status.approval.success}]]')
+				})
+				.catch((error) => {
+					console.log('결재상신 실패!!');
+					alert('[[#{screen.info.status.error.occur}]]')
+				});
+		}
+
+		//결재자 위치 이동
+		function setMoveAppr(upDown) {
+			var olObj;
+			var gbn = $(selectedObj).attr('gbn');
+			if( gbn == "appr"  ) olObj = $("#divAppr");
+			if( gbn == "agree" ) olObj = $("#divAgree");
+			if( gbn == "noti"  ) olObj = $("#divNoti");
+			if( upDown == "UP" ) {
+				$(selectedObj).prev().before($(selectedObj));
+			} else 
+			if( upDown == "DOWN" ) {
+				$(selectedObj).next().after($(selectedObj));
+			}  
+		}
+		
+		//팝업에서 받은 결과 처리
+		function setResult(obj) {
+			var flag = true;
+			
+			//결재자 중복 체크
+			if( obj.userId == $("#apprId").text() ) { 
+				alert('[[#{screen.info.status.error.appr.not.yourself}]]');
+				flag = false;
+			}
+			
+			if( flag ) {
+				var list = $("li");
+				$.each(list, function(index, element){
+					if( flag && obj.userId == $(element).attr('value') ) {
+						alert('[[#{screen.info.status.error.appr.dup.approver}]]');
+						flag = false;
+					}	
+				});
+			}
+			
+			if(!flag) return false;
+			
+			
+			var divAppr  = $("#divAppr");
+			var divAgree = $("#divAgree");
+			var divNoti  = $("#divNoti");
+			
+			var objStr = '';
+			    objStr+= '<li value="'+obj.userId+'" gbn="'+apprGbn+'" onclick="selList(this,\''+apprGbn+'\');">';
+			    objStr+= '<span style="width:5px;">&nbsp;</span>';  //공백용
+			    objStr+= '<img src="/images/common/ico_pop_error.png" style="margin-bottom:2px; width:13px;height:13px;cursor:pointer;" onclick="removeUser(this,\''+apprGbn+'\');"/>'; //삭제용
+			    objStr+= '<span style="width:1Opx;">&nbsp;</span>';  //공백용
+			    objStr+= obj.userNm;
+			    objStr+= '</li>';
+			var ojbGr = $(objStr);
+			    
+			if( apprGbn == "appr" ) { //결재자
+				divAppr.append(ojbGr);
+				apprCnt++;
+				
+			} else
+			if( apprGbn == "agree" ) { //합의자
+				divAgree.append(ojbGr);
+				agreeCnt++;
+				
+			} else
+			if( apprGbn == "noti" ) { //통보자
+				divNoti.append(ojbGr);
+				notiCnt++;
+			}
+			setCount();		
+		}
+		
+		//결재자 선택시 배경 표시
+		function selList(obj, gbn) { 
+			selectedObj = obj;
+			var list = $("li");
+			$.each(list, function(index, element){
+					$(element).css('background', '#FFFFFF');
+			});
+			$(obj).css('background', '#E6F8E0');
+		}
+		
+		function resetUser(){
+			
+			console.log('resetUser ===>', $("#divAppr").children());
+			
+			$("#divAppr").children().remove();
+			$("#divAgree").children().remove();
+			$("#divNoti").children().remove();
+			
+			apprCnt = 0;
+			agreeCnt = 0;
+			notiCnt = 0;
+		}
+		
+		//결재자 삭제
+		function removeUser(obj, gbn) {
+			$(obj).parent().remove();
+			
+			if( gbn == "appr" ) {
+				apprCnt--;
+			} else
+			if( gbn == "agree" ) {
+				agreeCnt--;
+			} else
+			if( gbn == "noti" ) {
+				notiCnt--;
+			}
+			setCount();
+		}
+		
+		//결재자 숫자 표시
+		function setCount() {
+			$("#appr_cnt").text(apprCnt);
+			$("#agree_cnt").text(agreeCnt);
+			$("#noti_cnt").text(notiCnt);
+		}
+		
+		function getApprovalInfo(appvId) {
+			let url = "/approval/approvalPopup2";
+			let reqType = 'GET';	
+			let data = {
+				"appv_id" : appvId					
+			};
+			$.commRequest(url, reqType, data)
+				.then((res) => {
+					//결재 제목, 본문
+					var appvDto = res.data.appvDto;
+					$("#appvId").val(appvDto.appvId);
+					$("#appvTtl").val(appvDto.appvTtl);
+					$("#appvContent").summernote("code",appvDto.appvCn);
+					
+					//결재 라인
+					var appvLines = JSON.parse(res.data.appvLines);
+					
+					$.each(appvLines, function(i, el){ 
+						if( el.appvDiv == 'APPROVAL' ) {
+							 var obj = {};
+							 apprGbn = "appr";
+							 obj.userId = el.appvr
+							 obj.userNm = el.appvrNm
+							 setResult(obj);
+						}
+						if( el.appvDiv == 'AGREEMENT' ) {
+							 var obj = {};
+							 apprGbn = "agree";
+							 obj.userId = el.appvr
+							 obj.userNm = el.appvrNm
+							 setResult(obj);
+						}
+						if( el.appvDiv == 'NOTIFY' ) {
+							var obj = {};
+							 apprGbn = "noti";
+							 obj.userId = el.appvr
+							 obj.userNm = el.appvrNm
+							 setResult(obj);
+						}
+					});
+				})
+				.catch((error) => {
+					
+				});
+		}
+		
+		function setApprovalInfo(obj){
+			
+			var divAppr  = $("#divAppr");
+			var divAgree = $("#divAgree");
+			var divNoti  = $("#divNoti");
+			
+
+			$.each(obj, function(index, element){
+				
+				console.log('===> ', element);
+				
+				var objStr = '';
+				    objStr+= '<li value="'+element.appvr+'" gbn="'+element.apprGbn+'" onclick="selList(this,\''+element.apprGbn+'\');">';
+				    objStr+= '<span style="width:5px;">&nbsp;</span>';  //공백용
+				    objStr+= '<img src="/images/common/ico_pop_error.png" style="margin-bottom:2px; width:13px;height:13px;cursor:pointer;" onclick="removeUser(this,\''+element.apprGbn+'\');"/>'; //삭제용
+				    objStr+= '<span style="width:1Opx;">&nbsp;</span>';  //공백용
+				    objStr+= element.appvrNm;
+				    objStr+= '</li>';
+				    
+				var ojbGr = $(objStr);
+				
+				if( element.appvDiv == "APPROVAL" ) { //결재자
+					divAppr.append(ojbGr);
+					apprCnt++;
+					
+				} else
+				if( element.appvDiv == "AGREEMENT" ) { //합의자
+					divAgree.append(ojbGr);
+					agreeCnt++;
+					
+				} else
+				if( element.appvDiv == "NOTIFY" ) { //통보자
+					divNoti.append(ojbGr);
+					notiCnt++;
+				}
+				
+			});
+
+			setCount();	
+		}
+			
+		</script>
+	</th:block> 
+
+</head>
+<body >
+	<div layout:fragment="content">
+	<span id="req_no" th:text='${param.req_no}' style="display: none;"></span>
+	<input id="appvType" th:value='${param.reqType}' style="display: none;">
+	<input type="hidden" id="appvId" name="appvId" />
+		<div id="pop_wrap" >
+			<h3><span id="popTitle"></span>&nbsp;[[#{screen.text.comm.approve}]]
+				 <a href="#;" id="btn_close_pop" class="pop_close" title="닫기">[[#{screen.btn.close}]]</a>
+			</h3>
+			<div id="contents">
+				<div class="srch_wrap single"> 
+					<table class="srch_table" style="width:100%;" >
+						<tr>
+							<td style="font-weight: bold;">
+								<span style="margin-left: 15px; margin-right: 15px;">결재선 지정</span>
+								<select id="req_stus" style="width:80%;">
+								</select>
+							</td>
+							<td>
+								<div style="text-align:right;">
+									<a href="#;" class="btn_srch" id="btnSave">[[#{screen.btn.save}]]</a>
+									<a href="#;" class="btn_srch" id="btnApproval" style="margin-left: 5px;">[[#{screen.btn.approve}]]</a>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td style="font-weight: bold;">
+								<span style="margin-left: 15px;">결재자 추가</span>
+								<input type="radio" name="appr_gbn" value="appr" checked style="margin-left: 30px;">&nbsp;[[#{screen.text.comm.approver1}]]&nbsp;[<span id="appr_cnt">0</span>]&nbsp;&nbsp;
+								<input type="radio" name="appr_gbn" value="agree" >&nbsp;[[#{screen.text.comm.approver2}]]&nbsp;[<span id="agree_cnt">0</span>]&nbsp;&nbsp;
+								<input type="radio" name="appr_gbn" value="noti" >&nbsp;[[#{screen.text.comm.approver3}]]&nbsp;[<span id="noti_cnt">0</span>]&nbsp;&nbsp;
+							
+								<a href="#;" class="btn_srch" id="btnAdd" style="margin-left: 30px;">[[#{screen.text.comm.add.approver}]]</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+				
+				<table class="detail_table" style="width:100%;" >
+					<colgroup>
+							<col width="10%"/>
+							<col />
+					</colgroup>
+					<tr>
+						<th style="text-align:center">[[#{screen.text.appr.draft}]]</th>
+						<td style="display: flex; justify-content: space-between;">
+							<div>
+								<span sec:authentication="principal.dto.userNm"></span><span id="apprId" sec:authentication="principal.dto.userId" style="display:none;"></span>
+							</div>
+							<div>
+								<a href="#;" id="btnUp" title="[[#{screen.btn.up}]]">▲</a>
+								<a href="#;" id="btnDown" title="[[#{screen.btn.down}]]">▼</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th style="text-align:center">[[#{screen.text.appr.approval}]]</th>
+						<td>
+							<div class="apprList">
+							<ol id="divAppr"  ></ol>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th style="text-align:center">[[#{screen.text.appr.agreement}]]</th>
+						<td>
+							<div class="apprList">
+							<ol id="divAgree" ></ol>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th style="text-align:center">[[#{screen.text.appr.inform}]]</th>
+						<td>
+							<div class="apprList">
+							<ol id="divNoti" ></ol>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th  style="text-align:center">[[#{screen.text.appr.title}]]</th>
+						<td>
+							<input type="text" name="appvTtl" id="appvTtl" style="width:100%;"/>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" >
+							<div id="appvContent"></div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
