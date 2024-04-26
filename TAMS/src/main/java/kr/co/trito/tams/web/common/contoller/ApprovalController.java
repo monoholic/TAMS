@@ -181,5 +181,29 @@ public class ApprovalController {
 		
 		return responseService.success(null);
 	}
+	
+	/** 결재상신 팝업 화면 */
+	@PostMapping("/approvalDeptMng")
+	public ModelAndView approvalDeptMngView(HttpServletRequest request) {
+		
+		ModelAndView view = new ModelAndView();	
+		view.addObject("menuId", request.getParameter("menuId"));
+		view.addObject("menuNm", request.getParameter("menuNm"));
+		view.addObject("menuDesc", request.getParameter("menuDesc"));
+		view.setViewName("/content/common/approvalDeptMng");
+		
+		return view;
+	}
+	
+	/** 결재상신 팝업 화면 */
+	@GetMapping("/approvalDeptPopup")
+	public ModelAndView approvalDeptPopupView(HttpServletRequest request) {
+		
+		ModelAndView view = new ModelAndView();
+		String appv_id = request.getParameter("appv_id");
+		view.addObject("appv_id", appv_id);
+		view.setViewName("/content/common/popup/approvalDeptPopup");
+		return view;
+	}
 }
 
