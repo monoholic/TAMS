@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import kr.co.trito.tams.comm.util.file.FileDto;
 import kr.co.trito.tams.comm.util.file.excel.InvDto;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.common.dto.AppvLineDto;
 import kr.co.trito.tams.web.common.dto.AsetMasDto;
 import kr.co.trito.tams.web.common.dto.CodeTreeDto;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
@@ -159,4 +160,11 @@ public class CommonService {
 	public List<CodeDto> selectAsetType(String email){
 		return mapper.selectAsetType(email);
 	}
+	
+	/** 
+	 * 공통) 필터 데이터 조회
+	 * */
+	public List<AppvLineDto> commApprLine(Map<String,String> map){
+		return mapper.selectCommApprLine(map);
+	}	
 }
