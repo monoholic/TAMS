@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import kr.co.trito.tams.comm.util.file.FileDto;
 import kr.co.trito.tams.comm.util.file.excel.InvDto;
 import kr.co.trito.tams.comm.util.search.SearchCondition;
+import kr.co.trito.tams.web.common.dto.AppvLineDto;
 import kr.co.trito.tams.web.common.dto.AsetMasDto;
 import kr.co.trito.tams.web.common.dto.CodeTreeDto;
 import kr.co.trito.tams.web.common.dto.ComCodeDto;
@@ -56,4 +57,6 @@ public interface CommonMapper {
 	public int selectCountAsetMas(SearchCondition condition);
 	
 	public List<CodeDto> selectAsetType(String email);
+	
+	public List<AppvLineDto> selectCommApprLine(Map<String,String> map);
 }
