@@ -463,4 +463,19 @@
 		WHERE code_grp_id = "AS_CLASS"
 	</select>
 	
+	<!-- 공통 필터 조회 -->	
+	<select id="selectCommApprLine" resultType="kr.co.trito.tams.web.common.dto.AppvLineDto" parameterType="map">
+		SELECT A.appv_line_id 
+		     , A.appv_line_item 
+		     , A.appvr 
+		     , A.appv_ord 
+		     , A.appv_div
+		     , B.user_nm as appvr_nm
+		  FROM TB_CMS_COM_APPV_LINE A
+		     , TB_USER B
+		 WHERE A.appvr = B.user_id
+		   AND A.appv_line_item = #{appvDiv}
+		 ORDER BY A.appv_ord
+	</select>	
+	
 </mapper>
