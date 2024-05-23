@@ -136,6 +136,36 @@
 	                    clearInterval(handler);
 	            }, 30);
 	      }
+
+		  function drawChart3() {
+			// Some raw data (not necessarily accurate)
+			var data = google.visualization.arrayToDataTable([
+				['Month', 'Bolivia', 'Ecuador', 'Madagascar', 'Papua', 'Rwanda', 'Average'],
+				['2023/01',  165,      938,         522,             998,           450,      614.6],
+				['2023/02',  135,      1120,        599,             1268,          288,      682],
+				['2023/03',  157,      1167,        587,             807,           397,      623],
+				['2023/04',  139,      1110,        615,             968,           215,      609.4],
+				['2023/05',  136,      691,         629,             1026,          366,      569.6],
+				['2023/06',  143,      1221,        629,             1026,          366,      569.6],
+				['2023/07',  146,      841,         629,             1026,          366,      569.6],
+				['2023/08',  166,      861,         629,             1026,          366,      569.6],
+				['2023/09',  116,      781,         629,             1026,          366,      569.6],
+				['2023/10',  126,      651,         629,             1026,          366,      569.6],
+				['2023/11',  136,      1231,        629,             1026,          366,      569.6],
+				['2023/12',  156,      1111,        629,             1026,          366,      569.6],
+			]);
+
+			var options = {
+				title : 'Monthly Coffee Production by Country',
+				vAxis: {title: ''},
+				hAxis: {title: 'Year/Month'},
+				seriesType: 'bars',
+				series: {12: {type: 'line'}}
+			};
+
+			var chart = new google.visualization.ComboChart(document.getElementById('chart'));
+			chart.draw(data, options);
+		}
 	      
 	      
 	      function getChartData() {
@@ -170,6 +200,7 @@
 						var cols2 = ['asset_status','asset_qty'];
 						setData2Array(chartData2, res.data.chart2, cols2);
 						google.charts.setOnLoadCallback(drawChart2);
+						google.charts.setOnLoadCallback(drawChart3);
 						
 						
 
@@ -213,6 +244,7 @@
 
 	<div layout:fragment="content">
 		<!-- Quarterly Trend -->
+		<div id="chart" style="width: 1250px; height: 500px;margin-bottom:50px;"></div>
 		<div class="box1" style="height:570px;">
 			<!-- <header>
 				<h3>Quarterly Trend</h3>
@@ -306,10 +338,10 @@
 		<!-- //Inventory -->
 		
 		<!-- Notice -->
-		<div class="box1">
+		<div class="box1" style="height:200px;">
 			<header>
 				<h3>Notice</h3>
-				<a class="ico_more" href="#;">More</a>
+				<a class="ico_more" href="javascript:void(0);" onclick="goNotice()">More</a>
 			</header>
 			<ul class="ul_list">
 				<li><label>고객기대를 뛰어넘는 가치 전달하기!</label></li>
@@ -319,6 +351,18 @@
 			</ul>
 		</div>
 		<!--  //Notice -->
+		<script>
+			function goNotice(){
+				let url = "/system/bbs/list";
+				
+				var $form = $('<form></form>'); 
+					$form.attr('action', url); 
+					$form.attr('method', 'Post'); 
+					$form.attr('target', '_self'); 			
+					$form.appendTo('body'); 					
+					$form.submit();
+			}
+		</script>
 	</div>
 	
 
